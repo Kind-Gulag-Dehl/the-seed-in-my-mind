@@ -1,0 +1,140 @@
+/* ideadetailspage.css */
+
+
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding-bottom: 50px; /* Space for the fixed horizontal scrollbar */
+}
+
+.idea-details-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sub-ideas-container {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 20px;
+  overflow-x: auto; /* Horizontal scroll */
+  padding-left: 350px; /* Add padding to ensure content doesn't get cut off */
+  padding-bottom: 20px; /* Space for the scrollbar */
+}
+
+.horizontal-scrollbar-placeholder {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px; /* Height of the scrollbar */
+  z-index: 10;
+  background: transparent; /* Making the placeholder transparent */
+}
+
+/* The rest of your CSS stays the same */
+
+
+
+
+
+
+/* Adjustments for sidebar content */
+.sidebar {
+  /* Your existing styles */
+  z-index: 2; /* Make sure the sidebar is above the horizontal scroll wrapper */
+}
+
+/* Your other existing styles... */
+
+
+
+/* Adjust padding at the bottom of the page-layout to prevent content from being hidden behind the fixed container */
+.page-layout {
+  padding-bottom: 50px; /* This should be equal to or greater than the height of the sub-ideas-container */
+}
+
+
+.sidebar-toggle {
+  position: fixed;
+  z-index: 2;
+  left: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #eee;
+  height: 100vh; /* Keeps the sidebar full height */
+  position: fixed;
+  top: 0;
+  left: -250px; /* Initially hidden */
+  transition: left 0.3s ease;
+  padding-top: 50px;
+  box-sizing: border-box;
+  z-index: 1; /* Ensure it's above page content */
+  overflow-y: auto; /* Adds scrollbar when content overflows */
+}
+
+/* Ensures that the sidebar content does not overflow the viewport height */
+.sidebar-content {
+  max-height: calc(100vh - 50px - 20px); /* Adjust based on header size or padding */
+  overflow-y: scroll; /* Shows scrollbar when content is taller than max-height */
+  
+}
+.sidebar.open {
+  left: 0; /* Slide in */
+}
+
+.idea-details-container.with-sidebar {
+  margin-left: 250px; /* Adjust layout when sidebar is visible */
+}
+
+@media (max-width: 768px) {
+  .sidebar,
+  .idea-details-container.with-sidebar {
+    width: 100vw;
+    margin-left: 0; /* Full width and no margin on smaller screens */
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sub-ideas-row {
+    flex-direction: column;
+    align-items: center; /* Stack sub-ideas vertically on small screens */
+  }
+}
+
+.sidebar-section h2,
+.sidebar-sub-idea-title {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  margin: 5px 10px;
+  border-radius: 10px;
+  color: #000000; /* Improve contrast for readability */
+  text-align: center;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-main-idea-title {
+  padding: 10px;
+  background-color: #b3afaf; /* Or use the variable for main idea color if defined */
+  margin: 5px 10px;
+  border-radius: 10px; /* Gives rounded corners */
+  color: #020202; /* Improve contrast for readability */
+  text-align: center;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow for depth */
+}
+

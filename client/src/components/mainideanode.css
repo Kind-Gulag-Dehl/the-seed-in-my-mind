@@ -1,0 +1,47 @@
+.main-idea-node {
+  width: 150px; /* Adjust size as needed */
+  height: 60px; /* Adjust size as needed */
+  margin: 1rem;
+  padding: 1rem;
+  background-color: #b3afaf; /* Main idea color */
+  border: 3px solid black;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-idea-node h3 {
+  font-size: 12px; /* Decreased font size */
+  margin: 0; /* Adjust as needed */
+  padding: 0; /* Adjust as needed */
+}
+.vote-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 2px;
+  margin-top: auto; /* Pushes the vote buttons towards the bottom */
+}
+
+.upvote-button, .downvote-button {
+  padding: 4px 4px;
+  margin: 0 5px;
+  background-color: #4CAF50; /* Green background for positive interaction */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.downvote-button {
+  background-color: #f44336; /* Red background for negative interaction */
+}
+
+.upvote-button:hover, .downvote-button:hover {
+  opacity: 0.8;
+}
+
+

@@ -1,29 +1,38 @@
-const request = require('supertest'); // Import supertest for making requests
-const app = require('../index'); // Adjust this path to your app's main file
-const { setupDB, teardownDB, clearDB } = require('./testsetup'); // Import your test setup utilities
+const request = require('supertest');
+const app = require('../index'); // Adjust this path to correctly point to your server's entry file
+const { setupDB, teardownDB, clearDB, createParentIdea } = require('./testsetup');
 
 describe('Idea CRUD operations', () => {
   let token;
+  let parentIdeaId;
 
-  // Setup and teardown your test database
   beforeAll(async () => {
     await setupDB();
 
-    // Register the user
-    await request(app).post('/auth/register').send({
+    // Create a new user and login to obtain a token
+    const userCredentials = {
       username: "testUser",
       email: "test@testing.com",
       password: "hardcodedPassword",
-      // Include any other required fields according to your user model
-    });
+    };
 
-    // Now, log in to get the token using the same credentials
-    const loginResponse = await request(app).post('/auth/login').send({
-      email: "test@testing.com",
-      password: "hardcodedPassword",
-    });
-    token = loginResponse.body.token; // Ensure this path correctly matches the structure of your login response
+    await request(app)
+      .post('/api/auth/register')
+      .send(userCredentials);
+
+    const loginResponse = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: userCredentials.email,
+        password: userCredentials.password,
+      });
+
+    token = loginResponse.body.token; // Assuming your login response includes the token
     console.log("Token obtained for tests:", token);
+
+    // Create a parent idea for use in sub-idea tests
+    // Make sure to pass global.dummyUserId to createParentIdea function
+    parentIdeaId = await createParentIdea(global.dummyUserId);
   });
 
   afterAll(async () => {
@@ -38,16 +47,41 @@ describe('Idea CRUD operations', () => {
     const newIdea = {
       title: 'Test Idea',
       description: 'This is a test idea',
-      author: '507f1f77bcf86cd799439011', // Make sure this author ID is valid or relevant to your test setup
-      votes: 0,
+      // The author field is now automatically set by the middleware based on the token, so it's not needed here
     };
 
-    const response = await request(app).post('/ideas')
+    console.log("Sending request to create a new idea", newIdea);
+    const response = await request(app)
+      .post('/api/ideas')
       .set('Authorization', `Bearer ${token}`)
       .send(newIdea);
+
+    console.log("Received response from create idea request", response.body);
+
     expect(response.statusCode).toBe(201);
     expect(response.body.title).toBe(newIdea.title);
+    expect(response.body.author).toBeTruthy(); // This checks if an author ID is present
   });
 
-  // Continue with other tests
+  test('Create a new sub-idea under a parent idea - Success', async () => {
+    const newSubIdea = {
+      title: 'Test Sub Idea',
+      description: 'This is a test sub-idea',
+      parentId: parentIdeaId, // Ensure this matches your model's field for linking to a parent idea
+    };
+
+    console.log("Sending request to create a new sub-idea", newSubIdea);
+    const response = await request(app)
+      .post('/api/ideas') // Ensure this is the correct endpoint for creating a sub-idea. Adjust if necessary.
+      .set('Authorization', `Bearer ${token}`)
+      .send(newSubIdea);
+
+    console.log("Received response from create sub-idea request", response.body);
+
+    expect(response.statusCode).toBe(201);
+    expect(response.body.title).toBe(newSubIdea.title);
+    expect(response.body.parentId.toString()).toBe(parentIdeaId.toString()); // Verify the sub-idea is linked to the correct parent
+  });
+
+  // Additional CRUD operation tests for sub-ideas can follow here
 });

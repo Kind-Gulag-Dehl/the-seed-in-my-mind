@@ -1,0 +1,64 @@
+/* subideanode.css */
+
+.sub-idea-node {
+  width: 180px;
+  min-height: 90px;
+  margin: 1px;
+  padding: 5px;
+  border: 3px solid #333;
+ 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-size: var(--dynamicFontSize, 1rem); /* Use a CSS variable for the font size */
+}
+
+.sub-idea-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sub-ideas-children {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap; /* Prevent vertical stacking */
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+  overflow-x: auto; /* Allows horizontal scrolling */
+}
+
+@media (max-width: 768px) {
+  .sub-ideas-children {
+    flex-direction: column; /* Stack children vertically on smaller screens */
+  }
+}
+
+.vote-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 2px;
+}
+
+.upvote-button, .downvote-button {
+  padding: 4px 4px;
+  margin: 0 5px;
+  background-color: #4CAF50; /* Green background for positive interaction */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.downvote-button {
+  background-color: #f44336; /* Red background for negative interaction */
+}
+
+.upvote-button:hover, .downvote-button:hover {
+  opacity: 0.8;
+}

@@ -6,25 +6,70 @@ const ideaSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  description: {
+  sentenceDescription: {
     type: String,
-    required: true,
     trim: true,
+    maxLength: 150,
+  },
+  paragraphDescription: {
+    type: String,
+    trim: true,
+    maxLength: 500,
+  },
+  fullDescription: {
+    type: String,
+    trim: true,
+    maxLength: 2000,
+  },
+  parentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Idea',
+    default: null,
+  },
+  tier: {
+    type: Number,
+    required: true,
+   
+    default: 1, // Start with tier 1 for main ideas, increment for sub-ideas
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Assuming you have a User model
+    ref: 'User',
     required: true,
   },
-  votes: {
-    type: Number,
-    default: 0,
-  },
+  upvotes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  downvotes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  challenges: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Challenge',
+  }],
+  isApproved: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+// Virtuals to get upvotes and downvotes count
+ideaSchema.virtual('upvoteCount').get(function() {
+  return this.upvotes.length;
+});
+ideaSchema.virtual('downvoteCount').get(function() {
+  return this.downvotes.length;
+});
+
+// Ensure virtual fields are included when converting documents to JSON
+ideaSchema.set('toJSON', { virtuals: true });
+ideaSchema.set('toObject', { virtuals: true });
 
 const Idea = mongoose.model('Idea', ideaSchema);
 

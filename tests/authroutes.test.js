@@ -18,25 +18,30 @@ describe('Auth Routes', () => {
   });
 
   it('should register a new user', async () => {
+    console.log("Starting test: Register a new user");
     const res = await request(app)
-      .post('/auth/register') // Adjust if your route is different
+      .post('/api/auth/register') // Adjust if your route is different
       .send({
         username: 'testuser',
         email: 'testuser@example.com',
         password: 'password123'
       });
+      console.log("Registration request sent:", res.body);
     
     expect(res.statusCode).toEqual(201);
     expect(res.body).toHaveProperty('message', 'User registered successfully');
   });
 
   it('should login the registered user', async () => {
+    console.log("Starting test: Login a registered user");
     const res = await request(app)
-      .post('/auth/login') // Adjust if your route is different
+      .post('/api/auth/login') // Adjust if your route is different
       .send({
         email: 'testuser@example.com',
         password: 'password123'
+        
       });
+      console.log("Login request sent:", res.body);
 
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('token');

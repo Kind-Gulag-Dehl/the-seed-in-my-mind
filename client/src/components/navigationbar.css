@@ -1,0 +1,43 @@
+/* NavigationBar.css */
+nav {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    display: flex; /* Ensures the nav is a flex container */
+    justify-content: center; /* Centers the children horizontally */
+    align-items: center; /* Aligns children vertically */
+}
+
+nav ul {
+    list-style: none; /* Removes bullets from the list */
+    margin: 0; /* Removes default margin */
+    padding: 0; /* Removes default padding */
+    display: flex; /* Display list items in a row */
+}
+
+nav li {
+    margin: 0 10px; /* Add horizontal margin for spacing between items */
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.nav-button {
+    padding: 8px 16px;
+    background-color: #007BFF;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.nav-button:hover {
+    background-color: #0056b3;
+}
