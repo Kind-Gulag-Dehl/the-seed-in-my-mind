@@ -1,6 +1,7 @@
 const Challenge = require('../models/challenge'); // Assuming the model file is named challenge.js
 const Idea = require('../models/idea'); 
 const Argument = require('../models/argument');  // Adjust the path as necessary
+const rankingController = require('./rankingcontroller');
 
 
 exports.initiateChallenge = async (req, res) => {
@@ -108,6 +109,22 @@ exports.getRandomChallenge = async (req, res) => {
         res.status(500).json({ message: 'Error fetching random challenge', error: error.message });
     }
 };
+
+
+
+
+exports.resolveChallenge = async (req, res) => {
+  const { challengeId, result } = req.body;
+  try {
+    const challenge = await Challenge.findById(challengeId);
+    // assume result handling logic
+    rankingController.adjustRankings(challenge);
+    res.status(200).json({ message: 'Challenge resolved and rankings adjusted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error resolving challenge', error: error.message });
+  }
+};
+
 
 
 

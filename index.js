@@ -7,6 +7,9 @@ const path = require('path');
 // Load environment variables
 require('dotenv').config();
 
+//scheduler
+require('./scheduler');
+
 // Initialize Express
 const app = express();
 
@@ -39,7 +42,10 @@ app.use('/api/challenges', challengeRoutes); // This will attach your challenge 
 
 // Argument routes
 console.log("Registering /api/arguments routes");
-app.use('/api/arguments', protect, argumentRoutes); 
+app.use('/api/arguments', protect, argumentRoutes);
+
+require('./scheduler'); // Assuming the scheduler.js is in the root directory
+
 
 // Regular idea routes (unprotected)
 console.log("Registering /api/ideas routes");
@@ -58,6 +64,9 @@ app.get('*', (req, res) => {
 if (process.env.NODE_ENV !== 'test') {
   connectDB();
 }
+
+
+
 
 // Start server only if not in test mode
 if (process.env.NODE_ENV !== 'test') {

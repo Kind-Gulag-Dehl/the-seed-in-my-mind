@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import IdeaSubmissionForm from './ideasubmissionform';
 
-// Note: Rename SubIdeaModalContent to MainIdeaModalContent to reflect its purpose
 const MainIdeaModalContent = ({ idea, onClose }) => {
   const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
 
-  // Define the default color for the main idea
   const defaultColor = '#b3afaf';
 
   const navigateToDetails = () => {
@@ -15,19 +13,22 @@ const MainIdeaModalContent = ({ idea, onClose }) => {
     onClose(); // Close the modal upon navigation
   };
 
+  const navigateToImportanceRank = () => {
+    navigate(`/importance-page/${idea._id}`); // Assuming 'importance-page' is the route for the importance page
+    onClose(); // Close the modal upon navigation
+  };
+
   const toggleShowForm = () => setShowForm(!showForm);
 
   return (
     <div style={{ backgroundColor: defaultColor, padding: '20px', color: 'white' }}>
-      {/* Use idea.title and ensure it is not null or undefined */}
       <h2>{idea.title || 'No Title'}</h2>
-      {/* Display the sentence description */}
       <p>{idea.sentenceDescription}</p>
       {!showForm ? (
         <>
           <button onClick={toggleShowForm}>Add new sub idea</button>
           <button onClick={navigateToDetails}>View Full Details</button>
-          {/* Add any other buttons or information you need here */}
+          <button onClick={navigateToImportanceRank}>Importance Rank Page</button> {/* New button for navigating to importance rank page */}
         </>
       ) : (
         <IdeaSubmissionForm

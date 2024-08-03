@@ -34,15 +34,30 @@ async function buildHierarchy(ideaId) {
 
 exports.createIdea = async (req, res) => {
   try {
-    const {
-      title,
-      sentenceDescription,
-      paragraphDescription,
-      fullDescription,
-      parentId
-    } = req.body;
+    const { title, sentenceDescription, paragraphDescription, fullDescription, parentId } = req.body;
+    const author = req.user.userId;
 
-    const author = req.user.userId; // This line needs to be inside the async function.
+    const rankInitialization = {
+      currentRank: 0,
+      previousRank: 0,
+      hasBeenAssessed: false,
+      rankHistory: []
+    };
+
+    const categoryInitialization = {
+      forIndividuals: {...rankInitialization},
+      toIndividuals: {...rankInitialization},
+      forUniverseLife: {...rankInitialization},
+      toUniverseLife: {...rankInitialization}
+    };
+
+    const timeframeInitialization = {
+      immediate: {...categoryInitialization},
+      shortTerm: {...categoryInitialization},
+      mediumTerm: {...categoryInitialization},
+      longTerm: {...categoryInitialization},
+      century: {...categoryInitialization}
+    };
 
     const newIdea = new Idea({
       title,
@@ -50,20 +65,20 @@ exports.createIdea = async (req, res) => {
       paragraphDescription,
       fullDescription,
       parentId,
-      author, // Assuming 'author' is necessary; make sure this ID exists in your database
-      isApproved: false
+      author,
+      tier: 1, // default tier for new ideas
+      importanceRanks: timeframeInitialization,
+      overallRank: 0
     });
-    
-    console.log("New Idea Instance:", newIdea);
 
     const savedIdea = await newIdea.save();
-    console.log("Saved Idea:", savedIdea);
     res.status(201).json(savedIdea);
   } catch (error) {
     console.error("Failed to create idea", error);
     res.status(500).json({ message: "Failed to create idea", error: error.message });
   }
 };
+
 
 // Get all main ideas regardless of isApproved status
 exports.getMainIdeas = async (req, res) => {
@@ -332,3 +347,75 @@ exports.deleteIdeaById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getImportanceRanks = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const idea = await Idea.findById(id).select('importanceRanks');
+      if (!idea) {
+          return res.status(404).json({ message: 'Idea not found' });
+      }
+      res.json(idea.importanceRanks);
+  } catch (error) {
+      console.error('Error retrieving importance ranks:', error);
+      res.status(500).json({ message: 'Error retrieving importance ranks', error: error.message });
+  }
+};
+
+
+
+exports.updateRankAfterChallenge = async (req, res) => {
+  const { winnerId, loserId } = req.body;
+
+  try {
+    const winner = await Idea.findById(winnerId);
+    const loser = await Idea.findById(loserId);
+
+    // If winner's rank is less than or equal to loser's rank, it implies winner should potentially move up
+    if (winner.importanceRanks.currentRank <= loser.importanceRanks.currentRank) {
+      // Mark the winner as reassessed
+      winner.importanceRanks.hasBeenAssessed = true;
+      await winner.save();
+    }
+    
+    res.status(200).json({ message: "Rank updated successfully." });
+  } catch (error) {
+    console.error('Failed to update rank:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+exports.periodicReRanking = async (req, res) => {
+  try {
+    // Fetch all ideas that need re-ranking
+    const ideas = await Idea.find({ "importanceRanks.hasBeenAssessed": true });
+
+    // Example logic to reassess and update ranks
+    ideas.forEach(idea => {
+      // Assess each timeframe and category based on new assessments or accumulated data
+      Object.keys(idea.importanceRanks).forEach(timeframe => {
+        Object.keys(idea.importanceRanks[timeframe]).forEach(category => {
+          const rankData = idea.importanceRanks[timeframe][category];
+          rankData.previousRank = rankData.currentRank; // Shift current rank to previous
+          rankData.currentRank = calculateNewRank(rankData); // Placeholder for actual calculation logic
+          rankData.rankHistory.push({
+            date: new Date(),
+            rank: rankData.currentRank
+          });
+        });
+      });
+
+      idea.overallRank = calculateOverallRank(idea); // Placeholder for actual calculation
+      idea.save();
+    });
+
+    res.status(200).json({ message: "Rankings updated successfully." });
+  } catch (error) {
+    console.error("Failed to perform periodic ranking", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
