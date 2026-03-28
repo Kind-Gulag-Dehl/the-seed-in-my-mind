@@ -1,0 +1,13 @@
+[package]
+name = "replay"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+chrono.workspace = true
+event-log = { path = "../event-log" }
+encoding = { path = "../encoding" }
+serde_json.workspace = true
+sqlx.workspace = true
+uuid.workspace = true

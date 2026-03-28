@@ -1,0 +1,13 @@
+[package]
+name = "snapshot-verify"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+encoding = { path = "../../crates/encoding" }
+replay = { path = "../../crates/replay" }
+snapshot = { path = "../../crates/snapshot" }
+sqlx = { workspace = true, features = ["runtime-tokio", "postgres", "uuid", "chrono", "derive"] }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+uuid = { workspace = true }

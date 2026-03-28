@@ -1,0 +1,22 @@
+[package]
+name = "storage"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+common = { path = "../common" }
+encoding = { path = "../encoding" }
+event-log = { path = "../event-log" }
+snapshot = { path = "../snapshot" }
+anyhow.workspace = true
+chrono.workspace = true
+hmac.workspace = true
+rand_core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+sqlx.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

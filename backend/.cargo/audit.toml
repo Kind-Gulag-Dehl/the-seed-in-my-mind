@@ -1,0 +1,5 @@
+[advisories]
+ignore = [
+  # sqlx 0.8.6 lockfile includes sqlx-mysql -> rsa, but this workspace builds PostgreSQL-only paths.
+  "RUSTSEC-2023-0071",
+]

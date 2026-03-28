@@ -1,0 +1,24 @@
+{
+  "name": "seed-root",
+  "private": true,
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    "dev": "concurrently -k --success all --kill-others-on-fail \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:check\"",
+    "dev:backend": "powershell -ExecutionPolicy Bypass -File backend/scripts/run-server.ps1",
+    "dev:check": "powershell -ExecutionPolicy Bypass -Command \"& backend/scripts/wait-health.ps1; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; Write-Host '[wait-health] monitoring until Ctrl+C'; while ($true) { Start-Sleep -Seconds 3600 }\"",
+    "dev:frontend": "powershell -ExecutionPolicy Bypass -Command \"& backend/scripts/wait-health.ps1; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; npm --prefix frontend run dev\"",
+    "verify:boundaries": "node ./scripts/check-open-core-boundaries.mjs --frontend-dir frontend/open-core-reference",
+    "verify:canonical-dto": "node ./tools/open-core/verify-canonical-dto.mjs",
+    "verify:open-core-export": "node ./scripts/verify-open-core-export.mjs",
+    "extract:open-core": "node ./tools/open-core/extract-open-core.mjs --zip",
+    "extract:open-core:dir": "node ./tools/open-core/extract-open-core.mjs",
+    "extract:open-core:zip": "node ./tools/open-core/extract-open-core.mjs --zip",
+    "review:quickstart": "powershell -ExecutionPolicy Bypass -File scripts/grant-reviewer-quickstart.ps1",
+    "review:demo": "powershell -ExecutionPolicy Bypass -File scripts/open-core-demo.ps1",
+    "verify:frontend": "npm --prefix frontend run verify",
+    "verify:backend": "powershell -ExecutionPolicy Bypass -File backend/scripts/verify-backend.ps1",
+    "verify": "npm run verify:frontend && npm run verify:backend"
+  }
+}

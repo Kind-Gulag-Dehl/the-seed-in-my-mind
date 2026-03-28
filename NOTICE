@@ -1,0 +1,14 @@
+The Seed in My Mind
+
+Copyright (c) 2026 The Seed in My Mind contributors.
+
+This repository contains:
+- a public open-core infrastructure package intended for AGPLv3 distribution,
+- separate downstream product-specific components that are not part of the public export.
+
+The public export is defined by the repository's open-core boundary and export manifest. See:
+- README.md
+- docs/open-core-boundary-manifest.md
+- docs/open-core-split-and-data-boundary-spec.md
+
+Third-party dependency notices, where required, remain in the relevant package manifests and lockfiles.

@@ -1,0 +1,4 @@
+[package]
+name = "curator-admin"
+version.workspace = true
+edition.workspace = true

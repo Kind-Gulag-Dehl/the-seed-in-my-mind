@@ -1,0 +1,80 @@
+name: open-core-boundary
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+
+jobs:
+  boundary-and-build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: seed_open_core
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d seed_open_core"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/seed_open_core
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: setup rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: install postgres client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: backend -> target
+
+      - name: install root dependencies
+        run: npm ci
+
+      - name: install frontend dependencies
+        run: npm --prefix frontend ci
+
+      - name: verify boundary rules
+        run: npm run verify:boundaries
+
+      - name: verify canonical dto surface
+        run: npm run verify:canonical-dto
+
+      - name: verify backend
+        shell: pwsh
+        run: ./backend/scripts/verify-backend.ps1
+
+      - name: extract and verify open-core export
+        run: npm run extract:open-core
+
+      - name: verify export metadata and zip
+        run: |
+          test -f _export/open-core/EXPORT_INFO.txt
+          test -f tools/open-core/dist/open-core-export.zip
+
+      - name: smoke exported open-core runtime
+        shell: pwsh
+        run: ./tools/open-core/smoke-export.ps1

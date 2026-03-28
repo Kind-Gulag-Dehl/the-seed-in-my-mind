@@ -1,0 +1,12 @@
+[package]
+name = "snapshot"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+chrono = { workspace = true }
+encoding = { path = "../encoding" }
+replay = { path = "../replay" }
+serde.workspace = true
+sha2 = { workspace = true }
+uuid = { workspace = true }

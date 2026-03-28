@@ -1,0 +1,86 @@
+{
+  "version": "seed-data-v0",
+  "events": [
+    {
+      "id": "11111111-1111-7111-8111-111111111111",
+      "kind": "identity_create",
+      "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
+      "payload": {
+        "identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
+        "title": "kind gulag dehl",
+        "description": "Canonical bootstrap identity for the public open-core reviewer demo",
+        "initial_public_key_ref": "seed-system-public-key",
+        "verification_reference": "seed-system-verification"
+      }
+    },
+    {
+      "id": "11111111-1111-7111-8111-111111111112",
+      "kind": "idea_create",
+      "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
+      "payload": {
+        "idea_id": "59427f80-5901-7128-990e-90b49f288bcc",
+        "title": "abstraction over redaction",
+        "sentence": "abstraction over redaction",
+        "paragraph": "Abstraction preserves meaning at safe levels; redaction is a last-resort, explicit action.",
+        "full": null,
+        "payload_hash": "384db1a169fa6b6a4585af8994eba5ae07f41442a2f6a6248cb9c05527fd776d"
+      }
+    },
+    {
+      "id": "11111111-1111-7111-8111-111111111113",
+      "kind": "idea_create",
+      "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
+      "payload": {
+        "idea_id": "e4eb0525-bba3-764f-96c7-f4afdb0f99c5",
+        "title": "acceleration capture",
+        "sentence": "acceleration capture",
+        "paragraph": "Speed and volume allow coordinated actors to force outcomes before others can examine or respond, creating brittle and unaccountable power.",
+        "full": null,
+        "payload_hash": "221d26c603edad4a707835789b517f6a3eb0553b949f8cc4171996d140f58fc6"
+      }
+    },
+    {
+      "id": "11111111-1111-7111-8111-111111111114",
+      "kind": "idea_create",
+      "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
+      "payload": {
+        "idea_id": "0cc62835-6d37-75b6-bc5a-7ea0c73afa89",
+        "title": "accountability and budgets",
+        "sentence": "accountability and budgets",
+        "paragraph": "accountability and budgets",
+        "full": null,
+        "payload_hash": "b88ab2ebe9e8f7db5be42272cf0998702b0594495a9c641e6f82a5b86ed379b8"
+      }
+    },
+    {
+      "id": "11111111-1111-7111-8111-111111111115",
+      "kind": "connection_create",
+      "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
+      "payload": {
+        "connection_id": "11111111-1111-7111-8111-222222222221",
+        "from_idea_id": "59427f80-5901-7128-990e-90b49f288bcc",
+        "to_idea_id": "e4eb0525-bba3-764f-96c7-f4afdb0f99c5",
+        "connection_type": "relative_importance",
+        "usage": "general",
+        "axis": "collective_for_long_term",
+        "timeframe": "long_term",
+        "scope": "universal"
+      }
+    },
+    {
+      "id": "11111111-1111-7111-8111-111111111116",
+      "kind": "connection_create",
+      "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
+      "payload": {
+        "connection_id": "11111111-1111-7111-8111-222222222222",
+        "from_idea_id": "e4eb0525-bba3-764f-96c7-f4afdb0f99c5",
+        "to_idea_id": "0cc62835-6d37-75b6-bc5a-7ea0c73afa89",
+        "connection_type": "relative_importance",
+        "usage": "general",
+        "axis": "collective_for_long_term",
+        "timeframe": "long_term",
+        "scope": "universal"
+      }
+    }
+  ]
+}

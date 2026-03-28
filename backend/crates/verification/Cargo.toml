@@ -1,0 +1,4 @@
+[package]
+name = "verification"
+version.workspace = true
+edition.workspace = true

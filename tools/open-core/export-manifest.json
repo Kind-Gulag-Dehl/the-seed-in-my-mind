@@ -1,0 +1,218 @@
+{
+  "version": 1,
+  "export_root": "_export/open-core",
+  "include_globs": [
+    ".github/workflows/open-core-boundary.yml",
+    "backend/**",
+    "docs/authoritative-index.md",
+    "docs/api-contract-read-only.md",
+    "docs/canonical-encoding-and-hashing-spec.md",
+    "docs/canonical-preservation-and-provenance-spine-spec.md",
+    "docs/cross-doc-invariants.md",
+    "docs/deterministic-replay-and-merge-spec.md",
+    "docs/map.encoding-snapshots-bundles.md",
+    "docs/map.index.md",
+    "docs/map.node-and-replay.md",
+    "docs/map.offline-and-preservation.md",
+    "docs/map.protocol-v5.md",
+    "docs/map.token-governance.md",
+    "docs/node-and-conformance-spec.md",
+    "docs/offline-and-mindseed-spec.md",
+    "docs/open-core-architecture-overview.md",
+    "docs/open-core-boundary-manifest.md",
+    "docs/open-core-demo-flow.md",
+    "docs/open-core-implementation-status.md",
+    "docs/open-core-reviewer-guide.md",
+    "docs/open-core-split-and-data-boundary-spec.md",
+    "docs/pod-consensus-and-canonical-publication-spec.md",
+    "docs/protocol v5-appendix-a.md",
+    "docs/protocol v5.md",
+    "docs/snapshot-format-v0.md",
+    "docs/stage0-runtime-configuration.md",
+    "frontend/open-core-reference/**",
+    "frontend/src/shared/types/canonical.ts",
+    "package.json",
+    "package-lock.json",
+    "scripts/check-open-core-boundaries.mjs",
+    "scripts/grant-reviewer-quickstart.ps1",
+    "scripts/open-core-demo.ps1",
+    "scripts/verify-open-core-export.mjs",
+    "tools/open-core/**",
+    "seed/**",
+    "LICENSE",
+    "NOTICE",
+    "TRADEMARKS.md",
+    ".gitignore",
+    "README.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md"
+  ],
+  "exclude_globs": [
+    "**/.git/**",
+    "**/.github/cache/**",
+    "**/.env",
+    "**/.env.local",
+    "**/.env.development",
+    "**/.env.production",
+    "**/.env.test",
+    "**/.env.*.local",
+    "**/.vite/**",
+    "**/*.cache",
+    "**/*.db",
+    "**/*.log",
+    "**/*.sqlite",
+    "**/*.sqlite3",
+    "**/*.tmp",
+    "**/*.tsbuildinfo",
+    "**/coverage/**",
+    "**/dist/**",
+    "**/node_modules/**",
+    "backend/target/**",
+    "backend/target-codex/**",
+    "backend/crates/api-types-private/**",
+    "backend/var/**",
+    "docs/archive/**",
+    "docs/audit/**",
+    "docs/codex-devlog.md",
+    "docs/codex-notes.md",
+    "docs/planning/**",
+    "_export/**"
+  ],
+  "required_absent_paths": [
+    "backend/.env",
+    "backend/crates/api-types-private",
+    "backend/var",
+    "docs/archive",
+    "docs/audit",
+    "docs/codex-devlog.md",
+    "docs/codex-notes.md",
+    "docs/planning",
+    "frontend/open-core-reference/dist",
+    "frontend/open-core-reference/node_modules",
+    "frontend/open-core-reference/package-lock.json",
+    "frontend/open-core-reference/tsconfig.tsbuildinfo",
+    "tools/open-core/dist"
+  ],
+  "forbidden_path_globs": [
+    "**/.env",
+    "**/.env.local",
+    "**/.env.development",
+    "**/.env.production",
+    "**/.env.test",
+    "**/.env.*.local",
+    "**/.vite/**",
+    "**/*.cache",
+    "**/*.db",
+    "**/*.log",
+    "**/*.sqlite",
+    "**/*.sqlite3",
+    "**/*.tmp",
+    "**/*.tsbuildinfo",
+    "**/coverage/**",
+    "**/dist/**",
+    "**/node_modules/**",
+    "_target/**",
+    "backend/target/**",
+    "backend/target-codex/**",
+    "backend/var/**",
+    "docs/archive/**",
+    "docs/audit/**",
+    "docs/planning/**",
+    "docs/codex-devlog.md",
+    "docs/codex-notes.md",
+    "frontend/open-core-reference/package-lock.json",
+    "tools/open-core/dist/**"
+  ],
+  "must_not_appear": [
+    {
+      "glob": "frontend/open-core-reference/src/**/*.{ts,tsx,js,jsx}",
+      "pattern": "domains/private|domains/private-overlay|api/private|app/workspaceshell|app/tabstate|builderview",
+      "description": "reference frontend must not import proprietary/private/product modules"
+    },
+    {
+      "glob": "backend/crates/**/*.{rs,toml}",
+      "pattern": "api_types_private|api-types-private",
+      "description": "open-core backend crates should not reference private DTO crate (except the private crate itself)",
+      "exclude_globs": [
+        "backend/crates/api-types-private/**"
+      ]
+    }
+  ],
+  "required_root_files": [
+    "LICENSE",
+    "NOTICE",
+    "TRADEMARKS.md",
+    ".gitignore",
+    "README.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "backend/.env.example",
+    "package.json",
+    "package-lock.json",
+    "docs/open-core-architecture-overview.md",
+    "docs/open-core-demo-flow.md",
+    "docs/open-core-implementation-status.md",
+    "docs/open-core-reviewer-guide.md",
+    "scripts/grant-reviewer-quickstart.ps1",
+    "scripts/check-open-core-boundaries.mjs",
+    "scripts/open-core-demo.ps1",
+    "scripts/verify-open-core-export.mjs",
+    "tools/open-core/verify-canonical-dto.mjs",
+    "tools/open-core/canonical-dto-surface.json",
+    "tools/open-core/smoke-export.ps1"
+  ],
+  "verification_commands": [
+    [
+      "node",
+      "tools/open-core/verify-canonical-dto.mjs"
+    ],
+    [
+      "node",
+      "scripts/verify-open-core-export.mjs"
+    ]
+  ],
+  "required_npm_projects": [
+    {
+      "path": "frontend/open-core-reference",
+      "required_scripts": [
+        "lint:boundaries",
+        "test",
+        "build"
+      ],
+      "commands": [
+        ["npm", "install"],
+        ["npm", "run", "lint:boundaries"],
+        ["npm", "test"],
+        ["npm", "run", "build"]
+      ]
+    }
+  ],
+  "required_rust_workspaces": [
+    {
+      "path": "backend",
+      "required_workspace_members": [
+        "crates/common",
+        "crates/encoding",
+        "crates/event-log",
+        "crates/replay",
+        "crates/snapshot",
+        "crates/storage",
+        "crates/api-types-canonical",
+        "bins/api-server",
+        "bins/snapshot-builder",
+        "bins/snapshot-verify",
+        "bins/seed-importer"
+      ],
+      "commands": [
+        ["cargo", "build"],
+        ["cargo", "test"]
+      ]
+    }
+  ],
+  "boundary_check_command": [
+    "node",
+    "scripts/check-open-core-boundaries.mjs",
+    "--frontend-dir",
+    "frontend/open-core-reference"
+  ]
+}

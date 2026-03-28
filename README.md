@@ -1,0 +1,169 @@
+# the-seed-in-my-mind
+
+The Seed in My Mind open-core repo is the public infrastructure package for a deterministic canonical-history substrate and its reference reviewer surface.
+
+This public open-core package contains the implemented and reviewer-runnable infrastructure layer:
+- canonical event ingestion and validation,
+- deterministic replay and snapshot generation,
+- a read-only reference node/API,
+- an open-core reference viewer,
+- curated protocol and conformance docs,
+- export and boundary verification tooling.
+
+This repo also publishes some broader protocol/spec documents for architectural transparency. Those documents describe intended open-core architecture, but they do not imply that the described runtime is already implemented. Use [open-core-implementation-status.md](docs/open-core-implementation-status.md) as the authoritative current-state reference.
+
+The private/product layer is the richer game/product experience built on top of the same canonical substrate. That code is intentionally outside this public repo.
+
+## What reviewers can verify today
+
+Today's open core is not a finished decentralized network. It is a working Stage 0 substrate with a reviewer-ready evaluation path.
+
+Implemented now:
+- Rust backend workspace for canonical ingest, replay, snapshots, and read-only API serving.
+- Snapshot builder and snapshot verifier binaries.
+- Seed importer for deterministic canonical bootstrap/demo ingestion.
+- Open-core boundary enforcement and canonical DTO drift checks.
+- Public open-core export generation with cleanliness verification and zip packaging.
+- Minimal reference frontend for inspecting verified snapshot state.
+
+Public spec-only or not yet operational in the public runtime:
+- multi-node consensus and committee-based canonical publication,
+- public canonical write flows in the exported open-core package,
+- governance activation using the live system,
+- token/economic runtime enforcement beyond specs and partial code paths,
+- the full game layer and broader product UX.
+
+## Fast reviewer paths
+
+15-minute path:
+```powershell
+npm run review:quickstart
+```
+
+30-minute path:
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/grant-reviewer-quickstart.ps1 -Profile 30
+```
+
+If you do not already have a local Postgres database configured, see the minimal setup section below.
+
+Both paths are described in [open-core-reviewer-guide.md](docs/open-core-reviewer-guide.md). For the implemented-versus-spec-only split, see [open-core-implementation-status.md](docs/open-core-implementation-status.md).
+
+## What the demo proves
+
+The deterministic demo path:
+1. resets a Postgres database,
+2. applies migrations,
+3. ingests a tiny public canonical seed,
+4. replays canonical state and builds a snapshot,
+5. verifies the snapshot commitment,
+6. serves that state through the read-only open-core API,
+7. optionally builds the reference frontend against the same surface.
+
+Run it directly:
+```powershell
+npm run review:demo
+```
+
+See [open-core-demo-flow.md](docs/open-core-demo-flow.md). The demo proves the implemented runtime path only; it is not evidence that the full public spec set is already operational.
+
+## Architecture at a glance
+
+```text
+public seed/demo data
+        |
+        v
+  seed-importer ----> canonical events table ----> deterministic replay ----> snapshot-builder
+                                                                  |                 |
+                                                                  |                 v
+                                                                  |          snapshot-verify
+                                                                  v
+                                                        read-only api-server
+                                                                  |
+                                                                  v
+                                                     open-core reference viewer
+```
+
+Boundary model:
+- Implemented open core runtime: protocol-facing backend crates, replay/snapshot tooling, read-only API surface, reference viewer, export/boundary tooling.
+- Public spec architecture: curated protocol and conformance docs, including some future/spec-only open-core documents published for transparency.
+- Private/product layer: game logic, richer UX flows, private overlays, builder/product shells, and other downstream product-specific modules.
+
+See [open-core-architecture-overview.md](docs/open-core-architecture-overview.md) and [open-core-boundary-manifest.md](docs/open-core-boundary-manifest.md).
+
+## Repo structure
+
+```text
+backend/                      Rust workspace for canonical ingest, replay, snapshots, and API
+frontend/open-core-reference/ Minimal public viewer for verified canonical state
+docs/                         Curated specs and reviewer-facing documentation
+scripts/                      Boundary, demo, and reviewer orchestration scripts
+tools/open-core/              Export, packaging, DTO verification, and smoke tooling
+seed/                         Deterministic public seed/demo data
+```
+
+## Prerequisites
+
+- Windows PowerShell
+- Rust stable
+- Node.js 20+
+- Postgres with `psql` on PATH
+- `DATABASE_URL` set in the environment, or `backend/.env` created from `backend/.env.example`
+
+Runtime details: [stage0-runtime-configuration.md](docs/stage0-runtime-configuration.md)
+
+## Minimal local setup (quickstart)
+
+Local/dev example only:
+
+- example database name: `seed_open_core`
+- example user: `seed_local`
+- example password: `seed_local_pw`
+- exact `DATABASE_URL`:
+
+```text
+postgres://seed_local:seed_local_pw@127.0.0.1:5432/seed_open_core
+```
+
+PowerShell example:
+
+```powershell
+$env:DATABASE_URL="postgres://seed_local:seed_local_pw@127.0.0.1:5432/seed_open_core"
+```
+
+Or put the same value in `backend/.env` as:
+
+```text
+DATABASE_URL=postgres://seed_local:seed_local_pw@127.0.0.1:5432/seed_open_core
+```
+
+This example is for local reviewer setup only. It is not production guidance.
+
+## Export the public open-core package
+
+From the repo root:
+
+```powershell
+npm run extract:open-core
+```
+
+That command:
+- creates `_export/open-core`,
+- verifies the export is clean and publishable,
+- runs build/test/smoke checks against the exported tree,
+- writes `EXPORT_INFO.txt`,
+- produces `tools/open-core/dist/open-core-export.zip`.
+
+## Current status
+
+Use [open-core-implementation-status.md](docs/open-core-implementation-status.md) for the honest implemented-vs-planned status matrix.
+
+## Funding framing
+
+This package is intended to support infrastructure funding for:
+- hardening the public reference node/export,
+- improving evaluator and contributor onboarding,
+- extending the canonical publication path beyond the current bootstrap/runtime stage,
+- preparing the system for independent operators and downstream applications.
+
+The correct claim today is: there is a real deterministic substrate, a real public export path, and a credible staged path forward. The correct claim is not that the full long-term system is already complete.

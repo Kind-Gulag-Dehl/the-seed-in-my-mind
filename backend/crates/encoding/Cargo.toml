@@ -1,0 +1,8 @@
+[package]
+name = "encoding"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+blake3 = "1.5"
+unicode-normalization = "0.1"

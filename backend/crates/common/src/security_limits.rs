@@ -1,0 +1,22 @@
+pub const API_GLOBAL_BODY_LIMIT_BYTES: usize = 1024 * 1024;
+pub const API_AUTH_BODY_LIMIT_BYTES: usize = 8 * 1024;
+pub const API_PRIVATE_BODY_LIMIT_BYTES: usize = 256 * 1024;
+pub const API_PRIVATE_AI_BODY_LIMIT_BYTES: usize = 64 * 1024;
+pub const API_CANONICAL_BODY_LIMIT_BYTES: usize = 256 * 1024;
+
+pub const IDEA_TITLE_MAX_CHARS: usize = 50;
+pub const IDEA_SENTENCE_MAX_CHARS: usize = 250;
+pub const IDEA_PARAGRAPH_MAX_CHARS: usize = 1_250;
+pub const IDEA_FULL_MAX_CHARS: usize = 6_250;
+
+pub const CANONICAL_CONNECTION_TYPE_MAX_CHARS: usize = 64;
+pub const CANONICAL_IDEA_TYPE_MAX_CHARS: usize = 64;
+pub const CANONICAL_USAGE_MAX_CHARS: usize = 256;
+pub const CANONICAL_AXIS_MAX_CHARS: usize = 128;
+pub const CANONICAL_TIMEFRAME_MAX_CHARS: usize = 128;
+pub const CANONICAL_SCOPE_MAX_CHARS: usize = 128;
+pub const CANONICAL_CONTEXT_KEY_MAX_CHARS: usize = 128;
+pub const CANONICAL_VOTE_CHOICE_MAX_CHARS: usize = 16;
+pub const CANONICAL_WRITER_LEVEL_MAX_CHARS: usize = 16;
+
+pub const AI_RAW_TEXT_MAX_CHARS: usize = 16_000;

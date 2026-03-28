@@ -1,0 +1,11 @@
+export_name=the-seed-in-my-mind-open-core
+export_scope=reference node, deterministic replay and snapshot tooling, curated protocol docs, reference viewer
+export_timestamp=2026-03-24T20:14:22.732Z
+git_commit=e52cfc5c4edf73744d8d4b835a90310ea71b3ecb
+manifest_version=1
+manifest_sha256=1453e1225d48852e52d2839a4508fc0111433afa9d2acff3161eb8e5fd9c8648
+extract_command=npm run extract:open-core
+verify_commands=npm run verify:backend | npm run verify:boundaries | npm run verify:canonical-dto | npm run extract:open-core | powershell -ExecutionPolicy Bypass -File tools/open-core/smoke-export.ps1
+reviewer_guide=docs/open-core-reviewer-guide.md
+demo_guide=docs/open-core-demo-flow.md
+implementation_status=docs/open-core-implementation-status.md
