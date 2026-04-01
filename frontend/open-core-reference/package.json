@@ -4,10 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite --open",
+    "dev": "node ./node_modules/vite/bin/vite.js --open",
     "lint:boundaries": "node ./scripts/check-reference-boundaries.mjs",
-    "build": "tsc -b && vite build",
-    "test": "vitest run"
+    "build": "node ./node_modules/typescript/bin/tsc -b && node ./node_modules/vite/bin/vite.js build",
+    "test": "node ./node_modules/vitest/vitest.mjs run"
   },
   "dependencies": {
     "react": "^18.3.1",

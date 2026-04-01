@@ -40,7 +40,7 @@ keywords:
 
 ## Deterministic Replay & Merge Specification [anchor: deterministic_replay_merge_specification]
 
-(Normative â€” subordinate to Protocol v5; defines the algorithmic rules that guarantee identical state reconstruction and safe reintegration of offline logs.)
+(Normative - subordinate to Protocol v5; defines the algorithmic rules that guarantee identical state reconstruction and safe reintegration of offline logs.)
 
 ---
 
@@ -349,7 +349,7 @@ Each event payload MUST satisfy all of the following:
 Payload validation MUST be performed deterministically and MUST NOT rely on external context, caches, or heuristics.
 Replay height corresponds to block height as defined in snapshot-format-v0.md. State reconstruction at snapshot boundaries uses the specified `state_root_hash`, `title_sentence_payload_root` (equal to `pocket_map_payload_root`), and derived `shared_map_commitment`.
 
-### 4.3 Invariant validation (Protocol v5 Â§0) [anchor: invariant_validation_protocol_v5_0]
+### 4.3 Invariant validation (Protocol v5 §0) [anchor: invariant_validation_protocol_v5_0]
 
 Invariant validation enforces the **constitutional constraints** defined in Protocol v5 Section 0.
 
@@ -520,7 +520,7 @@ For deterministic replay, each overlay connection event MUST resolve a stable me
 Application rules:
 - `overlay_connection_create`
   - Appends a new canonical overlay-connection state record for the resolved merge key.
-  - If prior state exists for the same merge key, replay preserves history and computes effective state by deterministic resolution order (see Â§5.5.3).
+  - If prior state exists for the same merge key, replay preserves history and computes effective state by deterministic resolution order (see §5.5.3).
 
 - `overlay_connection_update`
   - Applies to the resolved merge key.
@@ -553,12 +553,12 @@ Application rules:
 
 For each overlay merge key (`overlay_connection_merge_key` or `scoped_display_override_merge_key`), effective state MUST be derived as follows:
 
-1. Collect all valid events for the merge key in canonical order as defined by Â§2.
+1. Collect all valid events for the merge key in canonical order as defined by §2.
 2. Apply events in that order with no local reordering.
 3. The latest valid event for the key determines effective state:
    - create/update/set => active effective value
    - delete/clear => inactive effective value
-4. Exact duplicate events (identical canonical hash) are idempotent under Â§10.3.
+4. Exact duplicate events (identical canonical hash) are idempotent under §10.3.
 
 No alternative merge heuristic (including wall-clock precedence, peer-arrival order, client preference, or AI ranking) is permitted.
 
@@ -589,7 +589,7 @@ Replay height corresponds to block height as defined in snapshot-format-v0.md. S
    - Argument submission closes at a deterministic boundary (defined by rulebook and replay height, not wall-clock time).
 
 3. **Voter selection**
-   - The eligible voter set is computed deterministically (see Â§6.2).
+   - The eligible voter set is computed deterministically (see §6.2).
    - The voter set is fixed for the remainder of the challenge lifecycle unless explicitly allowed otherwise by rulebook.
 
 4. **Voting window**
@@ -597,7 +597,7 @@ Replay height corresponds to block height as defined in snapshot-format-v0.md. S
    - Voting closes at a deterministic boundary defined by rulebook and replay height.
 
 5. **Verdict**
-   - Votes are aggregated deterministically (see Â§6.3).
+   - Votes are aggregated deterministically (see §6.3).
    - A verdict is computed but does not affect canonical state until finalized.
 
 6. **Transformation**
@@ -612,7 +612,7 @@ Voter eligibility MUST be computed deterministically and reproducibly by all nod
 
 **Inputs to eligibility computation:**
 
-- the rulebook set active at the challengeâ€™s defined reference point (typically challenge creation or argument close)
+- the rulebook set active at the challenge's defined reference point (typically challenge creation or argument close)
 - identity verification status at that same reference point
 - participation constraints defined by rulebooks (e.g., exclusions, minimum activity requirements)
 
@@ -622,7 +622,7 @@ Voter eligibility MUST be computed deterministically and reproducibly by all nod
 - Eligibility MUST be derived solely from canonical state reachable by replay at the reference point.
 - The resulting eligibility list MUST be identical across all conformant implementations.
 
-The computed eligibility list becomes part of the challengeâ€™s canonical context and MUST NOT change unless explicitly permitted by rulebook.
+The computed eligibility list becomes part of the challenge's canonical context and MUST NOT change unless explicitly permitted by rulebook.
 
 ### 6.3 Vote aggregation and tally rules [anchor: vote_aggregation_and_tally_rules]
 
@@ -640,7 +640,7 @@ Vote aggregation MUST be deterministic and defined per challenge domain and ball
 
 - **Ties**
   - Ties MUST be resolved deterministically according to rulebook-defined procedures.
-  - If no tie-breaking rule is defined, the outcome MUST be a deterministic â€œno-changeâ€ or equivalent neutral verdict.
+  - If no tie-breaking rule is defined, the outcome MUST be a deterministic “no-change” or equivalent neutral verdict.
 
 - **Invalid ballots**
   - Invalid ballots MUST be excluded deterministically and MUST NOT affect tallies.
@@ -717,7 +717,7 @@ Two conformant implementations replaying the same canonical inputs MUST produce 
 If rank snapshots are emitted:
 
 - They MUST be derived directly from replayed canonical state at the snapshot boundary.
-- They MUST be reproducible from the snapshotâ€™s canonical facts at the same boundary.
+- They MUST be reproducible from the snapshot's canonical facts at the same boundary.
 - Any mismatch between replay-derived rankings and snapshot-stored rankings indicates a derived-view discrepancy and MUST NOT invalidate `state_root_hash` verification.
 
 If rankings are **derived-only** and not stored:
@@ -794,7 +794,7 @@ The verification procedure is:
    - Compute the deterministic state hash from replayed state using the Canonical Encoding and Hashing Specification (v0).
 
 3. **Compare**
-   - Compare the computed hash with the snapshot headerâ€™s declared state hash.
+   - Compare the computed hash with the snapshot header's declared state hash.
 
 4. **Handle mismatch**
    - If hashes match, the snapshot is valid.
@@ -867,7 +867,7 @@ Reintegration MUST treat offline-produced canonical events **as if they were rec
 The pipeline is:
 
 1. **Validation**
-   - Perform full envelope, payload, invariant, and rulebook validation (Â§4) on each event.
+   - Perform full envelope, payload, invariant, and rulebook validation (§4) on each event.
 
 2. **Publication ordering**
    - Offline events become canonical **only when included in a finalized prefix certificate through the canonical publication mechanism**.
@@ -938,7 +938,7 @@ The following conflict types MAY arise during replay or reintegration:
 
 - **Competing scoped overlay writes**
   - Multiple overlay events may target the same overlay merge key while disconnected.
-  - Coexistence is preserved in history; effective state is selected only by deterministic key resolution order defined in Â§5.5.3.
+  - Coexistence is preserved in history; effective state is selected only by deterministic key resolution order defined in §5.5.3.
 
 Conflict existence alone does NOT imply invalidity.
 Replay height corresponds to block height as defined in snapshot-format-v0.md. State reconstruction at snapshot boundaries uses the specified `state_root_hash`, `title_sentence_payload_root` (equal to `pocket_map_payload_root`), and derived `shared_map_commitment`.
@@ -1001,7 +1001,7 @@ During deterministic replay, nodes MUST identify violations of Protocol v5 Secti
 
 Rules:
 
-- Any event or rulebook violating Â§0 invariants constitutes a **constitutional breach**.
+- Any event or rulebook violating §0 invariants constitutes a **constitutional breach**.
 - Breached events or blocks MUST be rejected deterministically.
 - Nodes MUST NOT apply breached events, regardless of majority adoption or network prevalence.
 
@@ -1015,7 +1015,7 @@ When a breach is detected:
 - Events following the breach are excluded from canonical state.
 - Legitimacy is defined solely by invariant adherence, not by vote counts or participant numbers.
 
-Forks that violate Â§0 invariants are non-canonical, even if widely adopted.
+Forks that violate §0 invariants are non-canonical, even if widely adopted.
 
 ### 11.4 Recording other lineages and external systems [anchor: recording_other_lineages_and_external_systems]
 
@@ -1031,7 +1031,7 @@ Constraints:
 
 - No external lineage or system state may be merged directly into canonical state.
 - All such records are descriptive only and subject to challenge like any other claim.
-- â€œMerge by referenceâ€ (treating external state as canonical without replay) is forbidden.
+- “Merge by reference” (treating external state as canonical without replay) is forbidden.
 
 This ensures historical awareness without compromising canonical integrity.
 ### 11.5 continuity basis and external representation (normative clarification) [anchor: continuity_basis_and_external_representation_normative]
@@ -1050,11 +1050,11 @@ Conformance ensures that independent implementations produce identical canonical
 A node claiming conformance with Protocol v5 and this specification MUST:
 
 - **Implement canonical ordering rules**
-  - Apply events in identical order according to Â§2.
+  - Apply events in identical order according to §2.
   - Reject any ordering influenced by forbidden inputs.
 
 - **Implement the validation pipeline identically**
-  - Perform envelope, payload, invariant, and rulebook validation exactly as defined in Â§4.
+  - Perform envelope, payload, invariant, and rulebook validation exactly as defined in §4.
   - Produce identical accept/reject outcomes for identical inputs.
 
 - **Compute deterministic state hash identically**
@@ -1062,11 +1062,11 @@ A node claiming conformance with Protocol v5 and this specification MUST:
   - Use the same ordering, encoding, and hash function per the Canonical Encoding and Hashing Specification (v0).
 
 - **Support snapshot verification**
-  - Verify snapshots according to Â§8.3.
+  - Verify snapshots according to §8.3.
   - Reject invalid snapshots deterministically.
 
 - **Support offline reintegration validation**
-  - Validate publication packs using the same rules as online events (Â§9).
+  - Validate publication packs using the same rules as online events (§9).
   - Reject non-conformant offline submissions without special treatment.
 
 Nodes MUST be capable of full replay from genesis given access to the complete canonical event log.
@@ -1179,4 +1179,4 @@ These vectors ensure that breach detection and lineage continuity are implemente
 - Event with invalid signature
 - Expected: Full rejection, no state change
 
-(Provide 5â€“6 vectors with input events, pack formats, and expected outcomes/hashes.)
+(Provide 5-6 vectors with input events, pack formats, and expected outcomes/hashes.)

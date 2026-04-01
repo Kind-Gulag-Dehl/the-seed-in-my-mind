@@ -60,7 +60,7 @@ This specification defines the canonical governance subsystem of the Seed. Gover
 - how the safety, identity, and token subsystems connect to governance,
 - how deterministic replay and constitutional invariants constrain governance actions.
 
-The goal of this specification is to define a fully deterministic, challengeable, replay-stable governance mechanism that enforces human primacy, prevents capture, and operates under the constitutional values described in Protocol v5 §0.
+### 0.2 normative vs informative text [anchor: normative_vs_informative_text]
 
 ### 0.2 normative vs informative text [anchor: normative_vs_informative_text]
 Normative sections define conformance requirements:
@@ -92,7 +92,7 @@ Governance is a dependent subsystem. Correct governance behavior requires:
 - **Challenge and Event Specification**  
   (structure of challenge creation, argumentation, voter selection, voting windows, verdicts, and state updates)
 
-- **Action Specification (§4.7–4.9)**  
+
   (action declarations, completion truth claims, verification workflow, POD routing)
 
 - **Safety Specification**  
@@ -107,7 +107,7 @@ Governance is a dependent subsystem. Correct governance behavior requires:
 - **Node & Conformance Specification**  
   (event-log integrity, block hashing, snapshot structure and tiers, replay determinism, invalid-event handling)
 
-Governance MAY also reference Tribe Specification and AI & Ent Specification for additional constraints and advisory behavior, but the governance processes defined here remain authoritative with respect to rulebook evolution and activation.
+Governance MAY also reference Tribe Specification and AI Boundaries Specification for additional constraints and advisory behavior, but the governance processes defined here remain authoritative with respect to rulebook evolution and activation.
 
 Governance in this specification additionally depends on the following Protocol v5 concepts and MUST remain consistent with them:
 
@@ -121,7 +121,7 @@ Governance in this specification additionally depends on the following Protocol 
   Governance MUST treat eligibility and inclusion as derived and replay-verifiable. Governance rulebooks and governance actions MUST NOT introduce authored eligibility flags that override derived eligibility, `lifecycle_state`, or living-map inclusion rules.
 
 - **Cycle export packs**  
-  Any governance-facing “readable state” or dissemination artifact is non-authoritative and regenerable. Export packs MUST NOT be used as activation boundaries or as sources of truth for rulebook activation, voter eligibility, or rule applicability.
+- **Offline & Mindseed semantics**  
 
 - **Offline & Mindseed semantics**  
   Governance events, voter eligibility determination, and activation scheduling MUST remain replay-verifiable under offline publication and canonical ingestion semantics, independent of wall-clock time.
@@ -141,7 +141,7 @@ Delay scheduling is computed from canonical log data only: `decision_cycle_index
 ## 1. governance model overview [anchor: 1_governance_model_overview]
 
 This section defines the structural and constitutional foundations of governance inside the Seed.  
-Governance is not an external administrative layer—it is part of the canonical universe and 
+as defined in Protocol v5. No mechanism outside the event log may modify governance outcomes.
 operates entirely through ideas, challenges, events, and replay-deterministic state transitions, 
 as defined in Protocol v5. No mechanism outside the event log may modify governance outcomes.
 
@@ -176,10 +176,8 @@ expressed, recorded, and replayed deterministically within the system.
 
 ### 1.2 foundational governance principles [anchor: foundational_governance_principles]
 
-All governance mechanisms MUST satisfy the constitutional values defined in Protocol v5 §0.  
-These principles constrain what governance MAY do and what governance MAY NOT override:
 
-- **Transparency** — governance actions, proposals, arguments, and votes MUST be visible and challengeable.
+These principles constrain what governance MAY do and what governance MAY NOT override:
 
 - **Determinism** — nodes MUST agree on which rulebooks were active for which events under deterministic replay.
 
@@ -201,8 +199,10 @@ These principles constrain what governance MAY do and what governance MAY NOT ov
 
 These principles form the boundary conditions for every governance rulebook and every governance challenge.
 
+These principles form the boundary conditions for every governance rulebook and every governance challenge.
+
 For avoidance of doubt:
-- Cycles are the system’s canonical notion of time for pacing, windows, and activation scheduling.
+
 - Blocks and snapshots are cryptographic anchoring and packaging artifacts only and MUST NOT be used as governance activation boundaries.
 
 Governance MUST NOT use wall-clock time, block height, snapshot timing, or snapshot tiers as activation boundaries. Cycles MAY constrain pacing and participation, and governance activation, rulebook supersession, and rulebook applicability during replay are determined solely by cycle-anchored activation semantics derived deterministically from the canonical event log.
@@ -214,11 +214,11 @@ Governance MUST NOT use wall-clock time, block height, snapshot timing, or snaps
 Governance inside the Seed operates under a single, unified structure. All identities, groups, 
 and tribes use the same challenge primitive, the same voting rules, the same quorum and 
 threshold semantics, the same action system, and the same cycle-based activation rules. 
-There is no separate “tribal governance engine” or alternate mechanics for subsets of users. 
+governance process defined in Protocol v5 and this specification.
 Any governance action recorded in the canonical universe MUST follow the exact same universal 
 governance process defined in Protocol v5 and this specification.
 
-Under this unified model, three descriptive scopes exist—not to distinguish different 
+
 mechanisms, but to distinguish *what* a governance action concerns:
 
 - **Universal governance**  
@@ -233,7 +233,7 @@ mechanisms, but to distinguish *what* a governance action concerns:
   and threshold semantics, and the same rulebook activation processes.  
   Tribes MAY meet, deliberate, coordinate, and make decisions outside the protocol using any 
   procedures they choose, but when these decisions are recorded inside the canonical universe, 
-  they MUST be represented using the universal challenge and action system—exactly as if they 
+  Tribal governance therefore describes a *topic domain*, not a separate ruleset.
   were performed by any other subset of humans.  
   Tribal governance therefore describes a *topic domain*, not a separate ruleset.
 
@@ -255,7 +255,7 @@ Because all governance actions share one unified mechanism, tribes DO NOT have:
 Tribes may organize, deliberate, and coordinate however they choose outside the protocol, but 
 inside the canonical universe every governance action is processed identically for all 
 participants. This preserves deterministic replay, prevents governance fragmentation, and 
-ensures that no subgroup—tribe or otherwise—operates under a divergent canonical governance 
+
 logic.
 
 When governance actions concern tribes, any eligibility roster or domain-qualified subset used for voter selection MUST be reconstructable deterministically from canonical events and active rulebooks, independent of wall-clock time.
@@ -266,7 +266,7 @@ Tribe-relevant governance MUST NOT introduce private or hidden governance histor
 ### 1.4 human-first constraint [anchor: human_first_constraint]
 
 All governance operations are performed through the standard challenge framework
-(Protocol §5). Governance does not introduce any new challenge types. When a
+
 rulebook, rule change, or governance action is at issue, participants use:
 
 - **action challenges** to decide whether a proposed governance action (a rulebook,
@@ -300,12 +300,12 @@ AI identities MAY NOT:
 - serve as executors for governance implementations.
 
 All governance actions remain subject to the **voluntary-action invariant**
-(Protocol §0.44). No identity—human or AI—may be compelled by rulebook,
+implementation activities must be undertaken by willing human volunteers.
 procedure, vote, or mechanism to perform an action. All execution and
 implementation activities must be undertaken by willing human volunteers.
 
-Finally, no metric—POD, POINT, reputation, contribution tallies, or importance
-rank—MAY modify vote weight. Governance voting is strictly **one human, one
+vote**, except where a governance rulebook specifies randomly sampled juror
+pools drawn from the same equal-weight set of eligible humans.
 vote**, except where a governance rulebook specifies randomly sampled juror
 pools drawn from the same equal-weight set of eligible humans.
 
@@ -327,9 +327,9 @@ Each rulebook instance MUST include:
 - **activation timing rules** (cycle-anchored),
 - **executor requirements** for implementing approved governance actions.
 
-Rulebooks are immutable once created. A newer rulebook supersedes one or more older rulebooks only when a **governance action** endorsing that supersession is approved through the standard challenge process (typically an **action challenge** on a governance actionable idea). There is no special “governance challenge” class; rulebook changes use the same challenge primitive as the rest of the system.
-
 Rulebooks become effective only at cycle boundaries as scheduled by governance verdicts and expressed via `activation_cycle_index` (§2.4).
+
+
 
 
 ### 2.2 rulebook families [anchor: rulebook_families]
@@ -337,15 +337,15 @@ Rulebooks become effective only at cycle boundaries as scheduled by governance v
 The system maintains several distinct but structurally identical rulebook
 families, each governing a particular normative domain:
 
-- **protocol rulebooks** — definitions necessary for deterministic replay,
-  canonical semantics, and idea ontology.
 - **governance rulebooks** — challenge lifecycles, voting rules, quorum and
-  threshold mechanics, voter pool definitions, and implementation requirements.
+  canonical semantics, and idea ontology.
 - **safety rulebooks** — classifier definitions, abstraction rules, specificity
-  boundaries, jurisdictional lenses, and safety floors.
+  threshold mechanics, voter pool definitions, and implementation requirements.
 - **identity rulebooks** — identity verification requirements, credential
-  decay rules, quarantine procedures, and eligibility checks.
+  boundaries, jurisdictional lenses, and safety floors.
 - **token rulebooks** — parameters governing POD routing, POINT generation, and
+  decay rules, quarantine procedures, and eligibility checks.
+
   token-cycle timing.
 
 Tribes DO NOT have separate rulebooks or modified versions of these rulebooks.
@@ -355,14 +355,14 @@ by the universal system.
 
 ### 2.3 rulebook invariants (non-overrideable) [anchor: rulebook_invariants_non_overrideable]
 
-No rulebook MAY supersede or modify the protocol’s constitutional invariants
-(Protocol §0). These include, but are not limited to:
+
+- human-first authorship of all canonical events,
 
 - human-first authorship of all canonical events,
 - equality of governance voting (one human = one vote, except when using
   equal-weight juror pools),
 - non-transferability of POD,
-- voluntary-action invariant (Protocol §0.44),
+- immutable canonical history,
 - deterministic replay rules,
 - immutable canonical history,
 - prohibition on AI authority or AI governance participation,
@@ -370,7 +370,7 @@ No rulebook MAY supersede or modify the protocol’s constitutional invariants
 - challengeability of all propositions and rule changes.
 
 These invariants are permanently fixed unless changed through a multi-stage,
-explicit constitutional-governance procedure defined in Protocol §0.x itself.
+### 2.4 activation at cycle boundaries [anchor: activation_at_snapshot_boundaries]
 
 ### 2.4 activation at cycle boundaries [anchor: activation_at_snapshot_boundaries]
 
@@ -397,7 +397,7 @@ Delay-policy constraints:
 - Recommended delay ranges are: `emergency` 0-1 cycle, `standard` 1-2 cycles, `major` 3-5 cycles, `constitutional` 10+ cycles.
 - Governance MAY evolve exact delay mappings by rulebook update, but activation MUST remain cycle-boundary deterministic.
 
-Cycle boundary derivation and cycle-index replay requirements are defined in Cycle Specification §1.2.1 `canonical_boundary_event_cycle_close` and §6.4 `determinism_requirements`.
+A rulebook change becomes effective only when the required conditions are satisfied and the scheduled activation cycle is reached.
 
 A rulebook change becomes effective only when the required conditions are satisfied and the scheduled activation cycle is reached.
 
@@ -405,7 +405,7 @@ A rulebook becomes active only when all required conditions are satisfied:
 
 1. A governance-related **action challenge** endorses a rulebook adoption, amendment, or supersession (Yes verdict).
 2. If the rulebook family requires implementation, a human identity successfully completes the required **implementation action(s)**, attesting via completion truth claim(s) that the rulebook was implemented.
-3. The system reaches the scheduled **activation cycle boundary**, as expressed by the verdict’s `activation_cycle_index`.
+A governance verdict MUST specify:
 
 A governance verdict MUST specify:
 - `verdict_cycle_index`, and
@@ -414,7 +414,7 @@ A governance verdict MUST specify:
 Nodes MUST apply rulebooks according to cycle-anchored applicability:
 
 - For any canonical event `E`, compute the derived `cycle_index(E)`.
-- The new rulebook version applies if and only if `cycle_index(E) ≥ activation_cycle_index`.
+- The new rulebook version applies if and only if `cycle_index(E) e activation_cycle_index`.
 
 This ensures deterministic replay across all nodes without reliance on wall-clock time, block height, or snapshot timing.
 
@@ -432,7 +432,7 @@ A new rulebook MUST clearly specify:
 Nodes MUST load and apply the correct rulebook version when replaying events according to deterministic cycle-anchored applicability:
 
 - for any canonical event `E`, the applicable rulebook version is determined by the derived `cycle_index(E)`,
-- a new rulebook version applies if and only if `cycle_index(E) ≥ activation_cycle_index` for that supersession.
+- a new rulebook version applies if and only if `cycle_index(E) e activation_cycle_index` for that supersession.
 
 Supersession is strictly forward-only:  
 rulebooks cannot be retroactively modified, merged, or corrected. Attempts to retroactively alter rulebooks MUST be represented as new actionable ideas and evaluated through standard challenges and cycle-anchored activation rules.
@@ -441,7 +441,7 @@ rulebooks cannot be retroactively modified, merged, or corrected. Attempts to re
 
 ## 3. proposal lifecycle (full governance flow) [anchor: 3_proposal_lifecycle_full_governance_flow]
 
-Governance proposals are **actionable ideas** (§4.7 of Protocol v5).  
+(protocol, governance, safety, identity, token). It follows the same lifecycle
 A governance proposal represents a prospective modification to a rulebook family
 (protocol, governance, safety, identity, token). It follows the same lifecycle
 as all other actionable ideas but carries additional requirements concerning
@@ -453,7 +453,7 @@ A governance proposal MUST be represented as an actionable idea containing:
 
 - the full **proposed rulebook content** or modifications,
 - a clear **rationale** explaining the necessity or benefit,
-- a **compatibility analysis** with all §0 constitutional invariants,
+- a list of **implementation actions** required prior to activation (if any),
 - the intended **activation cycle schedule** (expressed as a rulebook-defined delay in cycles, or as an explicit `activation_cycle_index` relative to the eventual verdict cycle),
 - a list of **implementation actions** required prior to activation (if any),
 - optional AI-generated material (permitted only as a draft and MUST be explicitly marked in metadata).
@@ -475,7 +475,7 @@ Governance proposals move through the standard challenge lifecycle, resulting in
 
 These states are represented as explicit events in the canonical universe.
 
-The “activation at cycle boundary” state MUST be interpreted as activation at the scheduled cycle boundary specified by governance verdicts (via `activation_cycle_index`), and MUST NOT be interpreted as activation at a snapshot boundary, block height, wall-clock time, or snapshot tier marker.
+Lifecycle transitions for governance proposals MUST be reconstructable via deterministic replay from canonical events and rulebooks, without dependence on wall-clock timestamps.
 
 Lifecycle transitions for governance proposals MUST be reconstructable via deterministic replay from canonical events and rulebooks, without dependence on wall-clock timestamps.
 
@@ -508,7 +508,7 @@ The argument stage MUST be fully recorded and replayable.
 
 ### 3.5 voter selection [anchor: voter_selection]
 
-Voter selection uses the universal challenge/voting mechanism (§5 of Protocol v5):
+- **Humans only** may vote.
 
 - **Humans only** may vote.
 - The eligible pool is defined by the **active governance rulebook**, not by the
@@ -519,7 +519,7 @@ Voter selection uses the universal challenge/voting mechanism (§5 of Protocol v
   - a domain-qualified subset (e.g., identity-verified node operators), when
     explicitly allowed by the active rulebook.
 - No delegation, no staking, no coercion.
-- Participation is always voluntary (Protocol §0.44).
+Eligibility for voting in governance proposals MUST be derived and replay-verifiable.
 
 Eligibility for voting in governance proposals MUST be derived and replay-verifiable.
 
@@ -530,7 +530,7 @@ Any rulebook-defined eligibility pool (entire verified-human set, juror subset, 
 
 Where a governance action is scope-constrained, voter eligibility MUST be derived from the action's resolved `scope_key = (scope_kind, anchor_id)` at challenge-open time.
 
-Where governance rulebooks refer to “verified humans” or stricter eligibility subsets, this specification assumes the Identity subsystem’s split between:
+- **Verified Identity / Uniqueness (VI)**
 - **Verified Human (VH)** and
 - **Verified Identity / Uniqueness (VI)**
 
@@ -549,7 +549,7 @@ This specification does not define those calculations, but governance rulebooks 
 
 When the voting window closes, the challenge proceeds to verdict computation.
 
-Any “fixed-duration” voting window MUST be defined deterministically in terms of canonical ordering and rulebook parameters (e.g., cycle indices or other deterministic counters as permitted by Protocol v5), and MUST NOT depend on wall-clock time.
+Wall-clock timestamps may be recorded as non-authoritative evidence, but MUST NOT determine voting-window opening, closing, quorum evaluation, or threshold evaluation.
 
 Wall-clock timestamps may be recorded as non-authoritative evidence, but MUST NOT determine voting-window opening, closing, quorum evaluation, or threshold evaluation.
 
@@ -564,7 +564,7 @@ The verdict records the outcome of deliberation and schedules any resulting rule
 
 - A **Yes** verdict means the proposal is adopted *in principle*.
 - A **No** verdict means the proposal remains inert and produces no changes.
-- Abstentions are handled according to the applicable rulebook’s quorum and threshold rules.
+#### 3.7.2 verdict contents [anchor: verdict_contents]
 
 #### 3.7.2 verdict contents [anchor: verdict_contents]
 
@@ -590,7 +590,7 @@ A rulebook change becomes effective at the start of the scheduled activation cyc
 
 Formally:
 - For any canonical event `E`, the applicable rulebook version is determined by the derived `cycle_index(E)`.
-- The new rulebook version applies if and only if `cycle_index(E) ≥ activation_cycle_index`.
+- The new rulebook version applies if and only if `cycle_index(E) e activation_cycle_index`.
 
 This activation rule is deterministic, replay-verifiable, and independent of wall-clock time, block height, or snapshot timing.
 
@@ -648,7 +648,7 @@ For avoidance of doubt:
 ## 4. governance as deliberation over actionable ideas (normative) [anchor: 4_governance_as_deliberation_over_actionable_ideas_normative]
 
 Governance in this system is not a separate mechanism or authority layer.  
-It is the ordinary operation of the system’s core deliberative machinery applied to ideas that define system rules.
+All governance activity is expressed through **actionable ideas**, **challenges**, **votes**, and **verdicts**, using the same canonical processes defined elsewhere in Protocol v5.
 
 All governance activity is expressed through **actionable ideas**, **challenges**, **votes**, and **verdicts**, using the same canonical processes defined elsewhere in Protocol v5.
 
@@ -696,7 +696,7 @@ A rulebook change becomes effective at the start of the scheduled activation cyc
 
 Formally:
 - For any canonical event `E`, the applicable rulebook version is determined by the derived `cycle_index(E)`.
-- A rulebook change applies if and only if `cycle_index(E) ≥ activation_cycle_index`.
+- A rulebook change applies if and only if `cycle_index(E) e activation_cycle_index`.
 
 This ensures:
 - deterministic replay,
@@ -716,7 +716,7 @@ Governance semantics MUST NOT depend on block height, snapshot frequency, or sna
 
 ### 4.5 the system governing itself [anchor: the_system_governing_itself]
 
-The idea commonly referred to as “the Seed in My Mind” is itself an actionable idea subject to governance.
+Its rulebooks:
 
 Its rulebooks:
 - define how governance operates,
@@ -833,7 +833,7 @@ This preserves a single, unified deliberative system.
 
 ## 6. selecting which proposed actions become real actions [anchor: 6_selecting_which_proposed_actions_become_real_actions]
 
-Governance requires a principled, replay-deterministic method for moving from *many proposed actions* (potential ways to implement a rulebook change) to one or more *real actions* that a human identity will voluntarily perform and record. This section defines how proposals move from idea-space into executable actions, consistent with the protocol’s ontology of actionable ideas (§4.7–4.9) and the unified challenge system (§5).
+### 6.1 the actionable idea as the anchor of deliberation [anchor: the_actionable_idea_as_the_anchor_of_deliberation]
 
 ### 6.1 the actionable idea as the anchor of deliberation [anchor: the_actionable_idea_as_the_anchor_of_deliberation]
 Every governance proposal is an **actionable idea**.  
@@ -843,14 +843,14 @@ The actionable idea is the *center* of the action-selection process:
 - Arguments for or against each proposal attach as ideas with **usage = importance_argument** edges.
 - No proposal has special status until its relative importance is determined through challenges.
 
-This ensures all proposals—simple, complex, extreme, or moderate—enter deliberation on equal epistemic footing.
+### 6.2 proposed actions as actionable ideas in their own right [anchor: proposed_actions_as_actionable_ideas_in_their_own_right]
 
 ### 6.2 proposed actions as actionable ideas in their own right [anchor: proposed_actions_as_actionable_ideas_in_their_own_right]
-A “proposed action” is *itself* an actionable idea.  
+
 This keeps the ontology simple and consistent:
 
-- The governance parent actionable idea: “Adopt Rulebook X.”
-- Child actionable ideas: “Implement Rulebook X via Method A,” “via Method B,” etc.
+
+Each proposed action has:
 
 Each proposed action has:
 
@@ -866,7 +866,7 @@ By modeling proposals as actionable ideas rather than special objects, the syste
 
 Before any proposal can move into an executable action, the system must determine which proposed actions matter most.
 
-This is done through the existing **importance challenge** mechanism (§5):
+- Any proposed action may challenge a higher-ranked sibling.
 
 - Any proposed action may challenge a higher-ranked sibling.
 - Arguments articulate why it better implements the governance change.
@@ -874,13 +874,13 @@ This is done through the existing **importance challenge** mechanism (§5):
   - effectiveness,
   - safety,
   - feasibility,
-  - alignment with invariants (§0),
+  - risk of capture or centralization.
   - clarity of implementation pathway,
   - risk of capture or centralization.
 
 The result is a well-ordered set of proposed actions, ranked deterministically.
 
-This replaces any bespoke “proposal narrowing” mechanism.  
+
 Importance challenges already do everything needed.
 
 Where action sequencing is required (dependencies, prerequisites, ordering constraints), those constraints MUST be expressed as ordinary ideas and connections and evaluated through the same challenge and ranking mechanisms, rather than introducing any separate governance-only workflow.
@@ -889,39 +889,39 @@ Where action sequencing is required (dependencies, prerequisites, ordering const
 ### 6.4 mutually exclusive vs compatible proposed actions [anchor: mutually_exclusive_vs_compatible_proposed_actions]
 Some proposed actions **cannot** both be executed (mutually exclusive), e.g.:
 
-- “Activate rulebook at snapshot N” vs “Activate at snapshot N+1”
-- “Replace classifier with model A” vs “model B”
 
 Some proposed actions **can** both be executed (compatible), e.g.:
 
-- “Publish documentation update”
-- “Write migration guide”
+Some proposed actions **can** both be executed (compatible), e.g.:
+
 - “Add new conformance tests”
+
+Compatible proposals simply appear as multiple top-ranked options.  
 
 Compatible proposals simply appear as multiple top-ranked options.  
 Mutually exclusive proposals compete in importance challenges until only one remains above the threshold of plausibility.
 
-The system never forces exclusivity—exclusivity emerges naturally through ranking and deliberation.
+### 6.5 selecting the candidate action(s) via ranking [anchor: selecting_the_candidate_action_s_via_ranking]
 
 ### 6.5 selecting the candidate action(s) via ranking [anchor: selecting_the_candidate_action_s_via_ranking]
 Once importance challenges settle the ordering, rulebooks may specify:
 
 - **top-1 selection** (the highest-ranked proposal becomes the candidate)
 - **top-k selection** (multiple proposals move forward if compatible)
-- **threshold-based selection** (“all proposals above importance tier P qualify”)
+These rules do *not* alter challenge semantics; they interpret the ranking.
 
 These rules do *not* alter challenge semantics; they interpret the ranking.
 
 ### 6.6 moving a proposed action into an action challenge [anchor: moving_a_proposed_action_into_an_action_challenge]
-The transition from “ranked candidate” → “governance decision” occurs by opening an **action challenge** on the candidate actionable idea(s).
+An action challenge asks:
 
 An action challenge asks:
 
-> “Should the system endorse and adopt this course of action?”
+The result determines whether the proposed action becomes authorized for execution.
 
 The result determines whether the proposed action becomes authorized for execution.
 
-The vote is **binary**—endorse or reject—because:
+- implementation must be deterministic,
 
 - implementation must be deterministic,
 - proposals may be complex,
@@ -959,10 +959,10 @@ Instead, it demotes them epistically:
 - Arguments highlight infeasibility, harm, or violation of invariants.
 - Extreme proposals rarely survive pairwise challenges.
 
-This provides *constructive exposure* without normalization—extreme proposals become learning tools, not governance threats.
+### 6.10 relationship to the spectrum of potential actions [anchor: relationship_to_the_spectrum_of_potential_actions]
 
 ### 6.10 relationship to the spectrum of potential actions [anchor: relationship_to_the_spectrum_of_potential_actions]
-The “spectrum of potential actions” (§4.x additions) applies **only when a decision must collapse into one actual physical action**.
+- For governance, this spectrum clarifies the range of conceivable implementations.
 
 - For governance, this spectrum clarifies the range of conceivable implementations.
 - It helps voters understand extremeness and relative feasibility.
@@ -971,7 +971,7 @@ The “spectrum of potential actions” (§4.x additions) applies **only when a 
 This keeps the action-selection layer aligned with the truth-claim evidence-rail architecture.
 
 ### 6.11 determinism and replay guarantees [anchor: determinism_and_replay_guarantees]
-Every step—from proposal to ranking to endorsement to completion—is:
+- explicit,
 
 - explicit,
 - challengeable,
@@ -992,7 +992,7 @@ Governance cannot fork through interpretation.
 ---
 ## 7. governance scope: universal vs tribal [anchor: 7_governance_scope_universal_vs_tribal]
 
-Governance exists in a *single unified canonical framework*. Tribes are allowed to organize around ideas, deliberate internally, and maintain public tribe-specific importance maps, but **they do not possess an independent governance system**. All governance actions—universal or tribal—must use the same canonical challenge, voting, and rulebook mechanisms defined in this specification and in Protocol v5.
+### 7.1 universal governance (canonical) [anchor: universal_governance_canonical]
 
 ### 7.1 universal governance (canonical) [anchor: universal_governance_canonical]
 Universal governance governs:
@@ -1013,7 +1013,7 @@ Only universal governance can change the semantics or invariants of the system.
 
 Universal rulebooks MUST:
 
-- respect §0 constitutional values,
+- enforce deterministic replay,
 - adhere to non-transferability of POD,
 - enforce deterministic replay,
 - preserve the voluntary-action invariant,
@@ -1022,7 +1022,7 @@ Universal rulebooks MUST:
 
 ### 7.2 tribal governance (strict subset of universal governance) [anchor: tribal_governance_strict_subset_of_universal_governance]
 
-Tribes MAY organize themselves however they wish *outside* the system, but once a tribe wants a rule, decision, leader, or internal norm to exist *inside* the canonical universe, it MUST be represented using the same idea, connection, ranking, and challenge structure used everywhere else. Tribal governance is therefore not an alternate governance system—it is simply the tribe expressing its internal organization through the universal tools of the protocol.
+Within the canonical universe, tribes MAY:
 
 Within the canonical universe, tribes MAY:
 
@@ -1045,15 +1045,15 @@ All tribe activity that touches the canonical universe remains public, challenge
 
 For avoidance of doubt, public visibility of tribe or personal overlays does not grant authority to write those overlays. Write authority MUST be derived from scope-constrained eligibility predicates, not from readability.
 
-### 7.3 tribes, “internal rules,” and public representation [anchor: tribes_internal_rules_and_public_representation]
-
 A tribe’s “internal rules” (who they consider leaders, how they decide things off-chain, what processes they follow in meetings) are not a separate rulebook family. They are simply **ideas** that describe how the tribe claims to operate. If the tribe wants these internal rules to be visible in the system, they MUST record them as ideas and connect them using the same ontology as any other content.
 
 Examples:
 
-- “For this project, tribe X will treat Y and Z as coordinators” → a conceptual idea plus membership and relative_importance edges.
-- “Tribe X commits to consider proposal P once per month” → an actionable idea plus actions recording when this happened.
+Examples:
+
 - “Tribe X endorses governance proposal G” → an idea linked to G via importance_argument or endorsement-style usage.
+
+The protocol does not grant these internal rules any special canonical authority. Their only power comes from:
 
 The protocol does not grant these internal rules any special canonical authority. Their only power comes from:
 
@@ -1089,7 +1089,7 @@ A tribe MAY NOT:
 - assign canonical authority to an executor,
 - override voluntary-action invariants.
 
-Executor selection always occurs via the universal mechanism (§5.7).
+### 7.6 visibility and transparency requirements [anchor: visibility_and_transparency_requirements]
 
 ### 7.6 visibility and transparency requirements [anchor: visibility_and_transparency_requirements]
 Tribes MUST:
@@ -1105,7 +1105,7 @@ Nothing related to tribe governance may be hidden from the global canonical univ
 
 ## 8. ents in governance (advisory-only identities) [anchor: 8_ents_in_governance_advisory_only_identities]
 
-Ents represent long-lived advisory identities whose authority derives from epistemic contribution, memory, narrative stewardship, and earned trust—not from any formal governance power. The system treats Ents as **ordinary human identities with culturally recognized advisory roles**, reflected in description tiers and UI representation but with no special weights or privileges in canonical governance.
+### 8.1 identity and purpose of an ent [anchor: identity_and_purpose_of_an_ent]
 
 ### 8.1 identity and purpose of an ent [anchor: identity_and_purpose_of_an_ent]
 An Ent is:
@@ -1140,20 +1140,20 @@ Ents MAY NOT:
 - serve as executors through privilege (still voluntary + subject to eligibility rules),
 - block proposals,
 - enforce outcomes,
-- hold any role that contradicts §0 constitutional values.
+### 8.3 transformation from founder to ent [anchor: transformation_from_founder_to_ent]
 
 ### 8.3 transformation from founder to ent [anchor: transformation_from_founder_to_ent]
 The founder identity begins with temporary bootstrap authority defined by initial rulebooks.  
 Over time, the community uses canonical governance processes to:
 
-1. reduce the founder’s special rulebook-defined powers,  
+3. dissolve all formal authority,  
 2. remove final vetoes and transition powers,  
 3. dissolve all formal authority,  
 4. transform the founder into the first Steward-Ent.
 
 This transition demonstrates:
 
-- the system’s capacity for decentralization,
+- the model for soft conversion of centralized systems into distributed governance,
 - the replacement of authority with stewardship,
 - the model for soft conversion of centralized systems into distributed governance,
 - the principle that no identity retains permanent centralized power.
@@ -1177,7 +1177,7 @@ While not normative, Ents are culturally encouraged to:
 - ensure conceptual integrity,
 - help prevent governance capture through analysis and transparency,
 - elevate new contributors,
-- act as narrative stewards of the ecosystem’s growth.
+They are symbolic guardians, not rulers.
 
 They are symbolic guardians, not rulers.
 
@@ -1186,14 +1186,14 @@ The Ent role is not exclusive:
 
 - multiple humans may become Ents over time,
 - the role is emergent and social rather than formalized,
-- descriptions, not rulebooks, mark an identity as an “Ent.”
+Ents eventually form a lineage of custodianship, giving the system a cultural heritage that outlasts individual contributors while remaining fully compatible with canonical governance equality.
 
 Ents eventually form a lineage of custodianship, giving the system a cultural heritage that outlasts individual contributors while remaining fully compatible with canonical governance equality.
 
 ---
 ## 9. identity governance [anchor: 9_identity_governance]
 
-Identity governance determines how verified human identities are admitted, suspended, quarantined, reinstated, or limited in voting eligibility. All identity governance uses the **same challenge, action, and rulebook structure** as the rest of the system. There are no special identity operations outside the canonical ontology: every identity-related decision is recorded as ideas, actions, evidence, and challenges, subject to replay determinism and §0 invariants.
+### 9.1 identity rulebooks (universal only) [anchor: identity_rulebooks_universal_only]
 
 ### 9.1 identity rulebooks (universal only) [anchor: identity_rulebooks_universal_only]
 Identity rulebooks define:
@@ -1211,7 +1211,7 @@ Tribes may NOT create tribe-specific identity rulebooks, identity types, or veri
 
 The identity rulebook MUST remain consistent with:
 
-- the requirement that every idea is “an identity says…,”  
+- one-human-one-vote governance equality,
 - human-first authorship,
 - one-human-one-vote governance equality,
 - voluntary-action invariants,
@@ -1221,13 +1221,13 @@ The identity rulebook MUST remain consistent with:
 ### 9.2 identity verification [anchor: identity_verification]
 Verification procedures are defined in identity rulebooks and implemented via:
 
-- action declarations (“I will perform verification for identity X”),
-- evidence (video call attestations, signatures, cryptographic proofs),
 - completion truth claims (“verification completed with method M”).
+- evidence (video call attestations, signatures, cryptographic proofs),
+Verification MAY be challenged:
 
 Verification MAY be challenged:
 
-- via truth challenges (e.g., “this verification was falsified”),
+- via action challenges (to change verification rules).
 - via representation challenges (if identity mapping is incorrect),
 - via action challenges (to change verification rules).
 
@@ -1235,8 +1235,8 @@ All verification evidence is public unless restricted by safety rulebooks for pr
 
 Identity verification within governance operates on two distinct, challengeable truth-claim tracks:
 
-- **Verified Human (VH)** — the claim that an account is operated by a real, non-automated human.
-- **Verified Identity / Uniqueness (VI)** — the claim that an account corresponds to a unique real-world person.
+
+Each track yields a deterministic certainty value in the range \[0,1\], derived from evidence objects and their challenge status. These certainty values are mapped into discrete verification tiers used solely for **eligibility gating**, never for vote weighting, authority, or reputation.
 
 Each track yields a deterministic certainty value in the range \[0,1\], derived from evidence objects and their challenge status. These certainty values are mapped into discrete verification tiers used solely for **eligibility gating**, never for vote weighting, authority, or reputation.
 
@@ -1248,9 +1248,9 @@ Verification evidence recorded canonically MUST consist only of:
 - issuer references,
 - or other non-reversible proofs.
 
-Raw PII, credentials, or identity documents MUST remain encrypted and local to the user’s Mindseed or equivalent private vault and MUST NOT be published to the canonical universe.
-
 Statements elsewhere in this specification that identity evidence is “publicly viewable” SHALL be interpreted as referring to the existence and challengeability of verification claims and attestations, not disclosure of underlying private data.
+
+### 9.3 identity quarantine [anchor: identity_quarantine]
 
 ### 9.3 identity quarantine [anchor: identity_quarantine]
 Quarantine is a **state**, not an identity type.  
@@ -1287,7 +1287,7 @@ Eligibility under quarantine is computed during replay and MUST NOT be authored 
 Systems MUST provide a user-facing diagnostic explanation indicating:
 - that the identity is quarantined,
 - which eligibility pools are affected,
-- and the canonical basis for the exclusion (“why excluded”).
+---
 
 ---
 
@@ -1316,7 +1316,7 @@ Suspension:
 - does not retroactively delete events or verdicts,
 - is applied and removed solely through canonical replay rules.
 
-Suspended identities MUST receive the same explainability guarantees as quarantined identities, including clear “why excluded” diagnostics that reference the relevant canonical events or verdicts.
+
 
 
 ### 9.5 identity appeals [anchor: identity_appeals]
@@ -1331,8 +1331,8 @@ Appeals MUST be replay-deterministic and MUST reference the rulebook and evidenc
 ### 9.6 identity merging and splitting [anchor: identity_merging_and_splitting]
 Identity merges or splits are purely representational and use **same_as** and **representation challenges**:
 
-- A merge (“identity A and identity B are the same person”) is proposed via representation challenge.
-- A split (“identity A actually represents two individuals”) is modeled by proposing two new identity ideas and reassigning authorship for future contributions.
+
+Past authorship CANNOT be modified.  
 
 Past authorship CANNOT be modified.  
 The historical record remains immutable.
@@ -1349,7 +1349,7 @@ Identity misconduct does not delete past contributions but may reduce voting rig
 
 ---
 
-## 10. safety–governance interface [anchor: 10_safety_governance_interface]
+Safety and governance interact in two principal ways:
 
 Safety and governance interact in two principal ways:
 
@@ -1369,7 +1369,7 @@ Safety rulebooks are universal rulebooks that define:
 - emotional-load scoring and normalization,
 - thresholds for non-distributable payloads.
 
-Governance MAY amend or replace safety rulebooks through the standard actionable-idea → action-challenge → implementation flow.
+Governance MAY adopt new classifiers but MUST:
 
 Governance MAY adopt new classifiers but MUST:
 
@@ -1384,7 +1384,7 @@ Governance MAY NOT:
 
 - allow globally illegal specificity to be distributed,
 - override the non-distributable classification category,
-- alter §0 invariants protecting minors, privacy, or human dignity,
+- adopt opaque proprietary classifiers that cannot be audited or reproduced.
 - weaken the requirement that all abstraction rules be deterministic under replay,
 - adopt opaque proprietary classifiers that cannot be audited or reproduced.
 
@@ -1429,7 +1429,7 @@ These take the form of:
 ### 10.5 governance constraints under safety [anchor: governance_constraints_under_safety]
 Governance proposals that modify safety rules MUST include:
 
-- compatibility analysis with §0 invariants,
+- demonstration that abstraction rules remain safe,
 - demonstration that replay determinism is preserved,
 - demonstration that abstraction rules remain safe,
 - evidence that the classifier is auditable and reproducible.
@@ -1439,7 +1439,7 @@ Governance verdicts that violate these constraints are invalid under determinist
 ### 10.6 voluntary implementation of safety changes [anchor: voluntary_implementation_of_safety_changes]
 Implementing a new safety rulebook or classifier requires:
 
-- a human identity’s voluntary declaration,
+- a completion truth claim including reproducible build artifacts,
 - execution of the required changes,
 - a completion truth claim including reproducible build artifacts,
 - surviving any truth challenges.
@@ -1449,7 +1449,7 @@ Until the completion claim is accepted, the old safety rulebook remains active.
 ### 10.7 governance transparency for safety changes [anchor: governance_transparency_for_safety_changes]
 All governance decisions related to safety MUST:
 
-- include “why am I seeing/not seeing this?” explanations,
+- show rulebook diffs,
 - surface classifier version numbers,
 - show rulebook diffs,
 - display which ideas motivated the safety modification.
@@ -1457,9 +1457,9 @@ All governance decisions related to safety MUST:
 Transparency is mandatory; safety MAY NOT be used as a tool for censorship or hidden suppression.
 
 ---
-## 11. token–governance interface [anchor: 11_token_governance_interface]
-
 Token governance governs how POD and POINT operate at the **rulebook and parameter level**—not how much any individual earns, and not the epistemic logic by which importance, truth, or action verification are determined.
+
+Governance MAY modify token-system parameters **only** within the hard boundaries established by Protocol v5 constitutional invariants. In particular:
 
 Governance MAY modify token-system parameters **only** within the hard boundaries established by Protocol v5 constitutional invariants. In particular:
 
@@ -1469,7 +1469,7 @@ Governance MAY modify token-system parameters **only** within the hard boundarie
 
 All token-related governance changes MUST follow the standard canonical flow:
 
-**actionable idea → action challenge → verdict → voluntary implementation → cycle-anchored activation**.
+Token governance controls *rules*, not outcomes, and remains fully subordinate to Protocol v5 semantics.
 
 Token governance controls *rules*, not outcomes, and remains fully subordinate to Protocol v5 semantics.
 
@@ -1479,18 +1479,18 @@ Token governance controls *rules*, not outcomes, and remains fully subordinate t
 Governance MAY update:
 
 - the **frequency** of POD/POINT snapshot cycles,  
-- the **conversion rate** from POD → POINT (subject to invariants),  
+- the **reward windows** for completion claims relative to snapshots,  
 - the **global conditions** under which POD flows into actionable ideas,  
 - the **reward windows** for completion claims relative to snapshots,  
 - how **POINT** may be donated, spent, or used to fund actionable ideas,  
-- the **parameters** for importance → POD routing (subject to invariants),  
+
 - how **expired, abandoned, or incomplete** actionable ideas dissipate POD.
 
 Governance MAY NOT:
 
 - alter the **non-transferability** of POD,  
 - retroactively change POD already assigned to past human actions,  
-- change the fundamental semantics of POD as “proof of deliberation”—not wealth, not reputation, not stake,  
+- assign POD/POINT to AI identities,  
 - give POD or POINT any influence over voting weight, eligibility, or governance power,  
 - assign POD/POINT to AI identities,  
 - distort deterministic replay of past POD flows,  
@@ -1498,7 +1498,7 @@ Governance MAY NOT:
 
 POD/POINT MUST remain **epistemic and economic**, never **political**.
 
-References in this specification to modifying “snapshot frequency” SHALL be interpreted as governance control over:
+- **block-height keyed snapshot schedules**, and
 
 - **block-height keyed snapshot schedules**, and
 - **snapshot tier intervals** within the snapshot ladder.
@@ -1530,7 +1530,7 @@ A token rulebook MAY introduce more detailed formulas or structures for these pr
 - deterministic under replay,  
 - transparent to all nodes,  
 - challengeable through governance actions,  
-- consistent with §0 invariants.
+All token issuance, routing, and accounting formulas defined by governance MUST respect living-map eligibility and derived lifecycle_state exclusions.
 
 All token issuance, routing, and accounting formulas defined by governance MUST respect living-map eligibility and derived lifecycle_state exclusions.
 
@@ -1548,7 +1548,7 @@ A governance proposal that affects POD or POINT behavior MUST be represented as 
 
 - a precise specification of the proposed parameter or rule change,
 - a justification grounded in idea importance, system incentives, or long-term systemic health,
-- a compatibility analysis with Protocol v5 §0 invariants (especially equal governance and non-transferable POD),
+  - POD routing,
 - an analysis of expected impacts on:
   - POD routing,
   - POINT creation rates,
@@ -1635,7 +1635,7 @@ Nodes MUST:
 
 - record token rulebook versions together with their activation cycle indices,
 - replay POD and POINT flows deterministically from the canonical event log,
-- surface rulebook-version metadata in user-facing explanations (e.g., “Why did this action earn POD?” or “Why did it not earn POD?”).
+Explanations MUST account for derived exclusions, including:
 
 Explanations MUST account for derived exclusions, including:
 - burned or rotted ideas or connections,
@@ -1663,12 +1663,12 @@ Future rulebooks MUST maintain:
 - deterministic replay,  
 - complete transparency.
 
-Any governance attempt to unify POD/POINT, create stake-based governance, or give token holders extra political power is invalid under §0.
+---
 
 ---
 ## 12. governance replay, validity, and deterministic state transitions [anchor: 12_governance_replay_validity_and_deterministic_state_transitions]
 
-Governance must be fully replay-deterministic. Every node—past, present, future—MUST reconstruct the same governance history, rulebook activations, and challenge outcomes from the canonical event log plus snapshots. This section defines how governance events are validated, ignored, or applied under replay.
+### 12.1 replay of governance proposals [anchor: replay_of_governance_proposals]
 
 ### 12.1 replay of governance proposals [anchor: replay_of_governance_proposals]
 During replay, a node SHALL:
@@ -1732,7 +1732,7 @@ All such artifacts MUST be fully regenerable from the canonical event log and an
 ### 12.4 invalid governance events [anchor: invalid_governance_events]
 A governance proposal is **invalid** (and MUST NOT produce state changes) if:
 
-- it violates §0 invariants,  
+- it violates non-transferability of POD,  
 - it assigns governance power based on wealth, stake, POD, or POINT,  
 - it violates non-transferability of POD,  
 - it attempts to override safety floors for globally illegal content,  
@@ -1776,7 +1776,7 @@ Under replay, nodes MUST reconstruct:
 - any failed or abandoned rulebook proposals,  
 - evidence used to justify rulebook adoption or rejection.
 
-Rulebook lineage MUST be visible through UI “rulebook genealogy” tools or equivalent inspector surfaces.
+---
 
 ---
 
@@ -1812,7 +1812,7 @@ Governance rulebooks MAY define:
 - minimum number of arguments required,  
 - maximum voting acceleration rate.
 
-These prevent “flash governance attacks” where a small group quickly pushes a proposal before others can respond.
+All challenge windows are canonical and replay-deterministic.
 
 All challenge windows are canonical and replay-deterministic.
 
@@ -1860,7 +1860,7 @@ The system is designed so that:
 Capture leaves evidence, and evidence becomes contestable argument.
 
 ### 13.7 auditability of governance decisions [anchor: auditability_of_governance_decisions]
-Governance proposals modifying core systems—identity, safety, tokens, conformance—MUST include:
+- clear diffs,  
 
 - clear diffs,  
 - test cases,  
@@ -1888,7 +1888,7 @@ Governance proposals that modify:
 MUST include:
 - explicit parameter definitions,
 - deterministic test vectors,
-- and expectations for user-facing “why excluded” diagnostics.
+These requirements exist because such changes directly alter what users see, what participates in importance propagation, and what contributes to token routing.
 
 These requirements exist because such changes directly alter what users see, what participates in importance propagation, and what contributes to token routing.
 
@@ -1921,7 +1921,7 @@ Because governance relies on voluntary execution:
 - executors may refuse to act or publicly resign,  
 - the system never binds people to unwanted responsibilities.
 
-This creates a “fail-safe”: even if voting temporarily goes wrong, no implementation occurs unless a human voluntarily performs it.
+### 13.10 separation of epistemic, economic, and political layers [anchor: separation_of_epistemic_economic_and_political_layers]
 
 ### 13.10 separation of epistemic, economic, and political layers [anchor: separation_of_epistemic_economic_and_political_layers]
 The system intentionally separates:
@@ -1947,7 +1947,7 @@ Ents do not hold formal power, but they:
 - identify governance capture attempts early,  
 - contextualize proposals for newcomers,  
 - critique reasoning lapses,  
-- remind voters of §0 invariants.
+This creates a soft cultural defense layer without introducing ruling classes.
 
 This creates a soft cultural defense layer without introducing ruling classes.
 

@@ -39,7 +39,7 @@ keywords:
   - tests
 ---
 
-# THE SEED IN MY MIND â€” NODE & CONFORMANCE SPEC
+# THE SEED IN MY MIND - NODE & CONFORMANCE SPEC
 **Normative Sub-Specification**
 
 This specification defines what it means to operate a *conformant node* in The Seed in My Mind ecosystem:
@@ -57,7 +57,7 @@ The Node & Conformance Specification defines the operational requirements for al
 
 - **Data retention requirements**
   Nodes MUST support conformance under multiple storage classes. Baseline-conformant nodes are NOT required to retain the complete canonical event log. Instead, baseline-conformant nodes MUST retain either (a) the complete canonical event log, or (b) a verifiably sufficient subset of deterministic history, such as readable state snapshots plus the cryptographic anchors and verification material required to confirm correspondence to a canonical snapshot.
-  Separately, the protocol defines an **archival responsibility** requirement at the network level: at least oneâ€”and preferably manyâ€”independent archival replicas of the complete canonical event log (or a verifiably equivalent compressed representation) MUST exist in-network at all times. Implementations MAY define explicit â€œarchival nodeâ€ or â€œfull-history nodeâ€ classes whose conformance profile includes mandatory full-history retention, in order to encourage wide decentralized redundancy and discrepancy detection across multiple independently operated replicas.
+  Separately, the protocol defines an **archival responsibility** requirement at the network level: at least one—and preferably many—independent archival replicas of the complete canonical event log (or a verifiably equivalent compressed representation) MUST exist in-network at all times. Implementations MAY define explicit “archival node” or “full-history node” classes whose conformance profile includes mandatory full-history retention, in order to encourage wide decentralized redundancy and discrepancy detection across multiple independently operated replicas.
 
 - **Event validation rules**
   Nodes must validate schema, identity authorship, rulebook constraints, connection semantics, and challenge lifecycle rules before accepting an event.
@@ -142,9 +142,9 @@ The requirement that any node can start from genesis, ingest the event log and s
 
 **Payload Class**
 A visibility and distribution classification applied by safety rulebooks:
-- `normal` â€” fully distributable
-- `sensitive_abstracted` â€” abstracted for distribution, full content locally retained
-- `non_distributable_blocked` â€” cannot be distributed; abstract only
+- `normal` - fully distributable
+- `sensitive_abstracted` - abstracted for distribution, full content locally retained
+- `non_distributable_blocked` - cannot be distributed; abstract only
 
 Nodes must enforce payload class behavior exactly.
 
@@ -178,10 +178,10 @@ Only valid events may be appended to the canonical event log or used in determin
 
 **Conformance Scope (Normative)**
 Conformance scope includes, at minimum:
-- deterministic custody manifest encoding and hashing (Â§8A)
-- deterministic P2P reconciliation transcript generation (Â§8B)
-- verification of state witness and receipt artifacts (Â§8C)
-- deterministic ingestion of partitioned publications without implicit resolution (Â§8D)
+- deterministic custody manifest encoding and hashing (§8A)
+- deterministic P2P reconciliation transcript generation (§8B)
+- verification of state witness and receipt artifacts (§8C)
+- deterministic ingestion of partitioned publications without implicit resolution (§8D)
 
 ---
 ## 1. Node Roles and Modes [anchor: 1_node_roles_and_modes]
@@ -205,10 +205,10 @@ It MUST:
 A full canonical node **MUST NOT apply editorial or topic-based filters** to the canonical event log or to canonical storage of ideas, descriptions, or connections.
 The only permissible filters are:
 
-- **Global safety rules** (Â§8.1â€“8.3 of the Protocol), which define *payload_class* (`normal`, `sensitive_abstracted`, `non_distributable_blocked`).
-- **Jurisdictional overlays** (Â§8.4 of the Protocol), which may conditionally restrict *distribution*, but not canonical storage.
+- **Global safety rules** (Sections 8.1-8.3 of the Protocol), which define *payload_class* (`normal`, `sensitive_abstracted`, `non_distributable_blocked`).
+- **Jurisdictional overlays** (§8.4 of the Protocol), which may conditionally restrict *distribution*, but not canonical storage.
 
-Any omission, redaction, or deletion of canonical contentâ€”other than global safety transformationsâ€”renders the node **non-conformant**.
+Any omission, redaction, or deletion of canonical content-other than global safety transformations-renders the node **non-conformant**.
 
 View-layer filtering (e.g., UI hiding sensitive ideas) is permitted, but **MUST NOT alter stored canonical state**.
 
@@ -228,14 +228,14 @@ Types include:
   Stores full events but performs **replay only**; does not sign or produce blocks.
 
 - **Tribe Node**
-  Hosts a tribeâ€™s internal importance map, internal rulebooks, and visibility scopes.
+  Hosts a tribe's internal importance map, internal rulebooks, and visibility scopes.
   Tribe data is public but scoped; tribe nodes DO NOT replace canonical nodes.
 
 - **Ent-Tethered Node**
   Stores required data for running a local Ent training ring or equipped-helper model.
   These nodes interact heavily with the sandbox but do not control canonical state.
 
-Partial nodes MUST NOT claim canonical conformance unless they meet all requirements of Â§1.1.
+Partial nodes MUST NOT claim canonical conformance unless they meet all requirements of §1.1.
 
 ---
 
@@ -257,7 +257,7 @@ Offline nodes MUST:
 - Merge offline logs deterministically using canonical publication order; canonical ordering of events is (block_height, event_index) in the canonical event log. Any event_id (UUIDv7) is an identifier only and MUST NOT be used as an ordering authority.
 - Reject events that fail validation once full rulebook checks are applied at reconnection.
 
-Offline publications from different partitions may overlap or conflict; nodes MUST preserve all valid events and surface conflicts explicitly. Merge behavior MUST conform to Â§8D and MUST NOT depend on arrival order.
+Offline publications from different partitions may overlap or conflict; nodes MUST preserve all valid events and surface conflicts explicitly. Merge behavior MUST conform to §8D and MUST NOT depend on arrival order.
 
 Offline nodes MAY provide local-only sandbox computation, drafts, and Ent interactions.
 
@@ -273,9 +273,9 @@ Event Log
 
 Append-only, ordered by canonical log position (block_height, event_index).
 
-Contains every canonical event from genesis (or from the nodeâ€™s configured epoch, if it bootstraps from a trusted snapshot).
+Contains every canonical event from genesis (or from the node's configured epoch, if it bootstraps from a trusted snapshot).
 
-If the node operates as a baseline-conformant node (non-archival), it is NOT required to retain or distribute the complete canonical event log. In that case, the node MUST still retain and expose whatever portion of the event log it holds (for example, events after its bootstrap snapshot) and MUST retain the verification material required to prove that its readable state corresponds to a canonically anchored snapshot (see â€œChain Anchorsâ€ and â€œSnapshotsâ€ below).
+If the node operates as a baseline-conformant node (non-archival), it is NOT required to retain or distribute the complete canonical event log. In that case, the node MUST still retain and expose whatever portion of the event log it holds (for example, events after its bootstrap snapshot) and MUST retain the verification material required to prove that its readable state corresponds to a canonically anchored snapshot (see “Chain Anchors” and “Snapshots” below).
 
 If the node operates as an archival/full-history node, it MUST retain the complete canonical event log (or a verifiably equivalent compressed representation) and MUST be capable of replaying deterministically from genesis.
 
@@ -333,7 +333,7 @@ Action declarations and completion truth claims.
 
 Linkage to verification challenges.
 
-(Implementation note: â€œaction declarationsâ€ and â€œcompletion truth claimsâ€ are canonical events and/or canonical ideas depending on the active rulebooks; conformant nodes MUST store them in a form that preserves deterministic interpretation during replay and snapshot application.)
+(Implementation note: “action declarations” and “completion truth claims” are canonical events and/or canonical ideas depending on the active rulebooks; conformant nodes MUST store them in a form that preserves deterministic interpretation during replay and snapshot application.)
 
 Rulebook Table
 
@@ -369,7 +369,7 @@ Growth Ring Metadata for Ents (Optional)
 
 Ent training ring lineage.
 
-Ringâ€“snapshot associations.
+Ring-snapshot associations.
 
 Non-canonical content references (training corpora, model hashes, etc.).
 
@@ -378,7 +378,7 @@ Nodes MAY implement additional indexes or caches (e.g., materialized rank lists,
 
 ### 2.2 Canonical Record Ordering [anchor: canonical_record_ordering]
 
-Canonical encoding rules also apply to verification-layer artifacts (custody manifests, reconciliation transcripts, and state witness attestations); see Â§8A and Â§8B.
+Canonical encoding rules also apply to verification-layer artifacts (custody manifests, reconciliation transcripts, and state witness attestations); see §8A and §8B.
 
 Nodes MUST follow the ordering rules defined by Protocol v5:
 
@@ -421,7 +421,7 @@ They are NOT required to perform full-network merges across all candidate events
 This ensures convergence of all fully conformant nodes under deterministic replay, even if they temporarily diverge while offline.
 Compatibility note: nodes MAY store UUIDv7s or other local event_ids for convenience (dedupe, local references), but replay/verification MUST ignore identifier ordering.
 
-During merge, nodes MUST NOT perform implicit reconciliation, averaging, or tie-breaking; disagreement remains visible and challengeable (see Â§8D).
+During merge, nodes MUST NOT perform implicit reconciliation, averaging, or tie-breaking; disagreement remains visible and challengeable (see §8D).
 
 
 ### 2.3 Event Envelope and Schema Requirements [anchor: event_envelope_and_schema_requirements]
@@ -464,13 +464,13 @@ human_confirmation_proof
 
 A cryptographic signature or authenticated request proving that the referenced human explicitly confirmed this event.
 
-MUST bind the eventâ€™s payload hash (and relevant envelope fields) to author_identity_id.
+MUST bind the event's payload hash (and relevant envelope fields) to author_identity_id.
 
 signer_key_id (or signer_key_ids)
 
 Key identifier(s) used to sign the event envelope.
 
-MUST be traceable to the author_identity_id via the identityâ€™s key and succession records.
+MUST be traceable to the author_identity_id via the identity's key and succession records.
 
 MAY represent device keys or delegated keys, but all MUST ultimately belong to the human identity.
 
@@ -490,7 +490,7 @@ sensitive_abstracted
 
 non_distributable_blocked
 
-Determined by safety rulebooks at ingestion (Â§3.2, Safety Spec).
+Determined by safety rulebooks at ingestion (§3.2, Safety Spec).
 
 rulebook_version (or structured rulebook reference set)
 
@@ -522,7 +522,7 @@ E.author_identity_id MUST correspond to a human identity, not an AI, Ent, or syn
 
 E.human_confirmation_proof MUST be valid and MUST cryptographically bind:
 
-the eventâ€™s payload_hash,
+the event's payload_hash,
 
 the global_ulid (or clear envelope commitment),
 
@@ -546,13 +546,13 @@ Any node that accepts canonical events violating this rule is non-conformant.
 
 Nodes MUST also validate:
 
-Schema correctness against the active rulebook at the eventâ€™s epoch.
+Schema correctness against the active rulebook at the event's epoch.
 
 Safety compatibility of payload_class with current rulebooks.
 
 Chain continuity via parent_hash / chain_reference.
 
-Referential integrity for referenced ideas, connections, identities, rulebooks, and snapshots (no forward references beyond sandbox or clearly declared â€œproposal-of-futureâ€ patterns defined in rulebooks).
+Referential integrity for referenced ideas, connections, identities, rulebooks, and snapshots (no forward references beyond sandbox or clearly declared “proposal-of-future” patterns defined in rulebooks).
 
 Only events that pass all checks MAY be appended to the canonical event log or used in deterministic replay.
 
@@ -592,7 +592,7 @@ Confirm that author_identity_id is a human identity in the Identity Table.
 
 If ai_provenance is present, ensure it is treated as metadata only and not as an author.
 
-Enforce the â€œHuman-Authored Canonical Events Onlyâ€ rule from Â§2.3.
+Enforce the “Human-Authored Canonical Events Only” rule from §2.3.
 
 Safety Classification & Payload Class Assignment
 
@@ -612,7 +612,7 @@ Identity Reference Validation
 
 Ensure all referenced identities exist and are valid at the time of the event.
 
-Validate any identity succession, freeze/unfreeze, or posthumous flags that affect the eventâ€™s validity.
+Validate any identity succession, freeze/unfreeze, or posthumous flags that affect the event's validity.
 
 Rulebook Reference Validation
 
@@ -624,7 +624,7 @@ Timeline and Publication Validation
 
 Ensure that event ordering, once finalized, matches the canonical publication order defined by finalized prefix certificates and any derived block mapping.
 
-Check parent_hash or chain_reference against the nodeâ€™s current canonical publication view.
+Check parent_hash or chain_reference against the node's current canonical publication view.
 
 Reject events that would create inconsistent publication histories or violate canonical publication invariants.
 
@@ -638,7 +638,7 @@ challenge openings,
 
 action declarations.
 
-Enforce that autopilot-assisted events consume the humanâ€™s action budgets.
+Enforce that autopilot-assisted events consume the human's action budgets.
 
 Reject events that exceed rate limits as invalid canonical events.
 
@@ -652,7 +652,7 @@ If any check fails, mark the submission as rejected and optionally record a loca
 
 ### 3.2 Safety Classification Enforcement [anchor: safety_classification_enforcement]
 
-Nodes MUST enforce safety rulebooks (as defined in the Safety & Visibility Spec and referenced in Protocol Â§8) at event-ingestion time and during deterministic replay.
+Nodes MUST enforce safety rulebooks (as defined in the Safety & Visibility Spec and referenced in Protocol §8) at event-ingestion time and during deterministic replay.
 
 #### 3.2.1 classifier execution [anchor: classifier_execution]
 
@@ -678,9 +678,9 @@ If a node cannot execute the classifier deterministically, it MUST NOT accept th
 
 Nodes MUST assign **payload_class** based on classifier output and rulebook-defined thresholds:
 
-- **normal** â€” fully distributable and viewable.
-- **sensitive_abstracted** â€” content is stored canonically but distributed only in abstracted form.
-- **non_distributable_blocked** â€” original content cannot be legally or safely distributed; only minimal metadata and safe-summary information MAY be shared.
+- **normal** - fully distributable and viewable.
+- **sensitive_abstracted** - content is stored canonically but distributed only in abstracted form.
+- **non_distributable_blocked** - original content cannot be legally or safely distributed; only minimal metadata and safe-summary information MAY be shared.
 
 All payload_class assignments MUST be reproducible under replay.
 
@@ -717,7 +717,7 @@ When a submission is classified as non_distributable_blocked:
    - reference to the submitting identity,
    - rulebook and classifier references,
    - safe-summary or placeholder text,
-   - explanation pointer for â€œWhy am I seeing this?â€ surfaces.
+   - explanation pointer for "Why am I seeing this?" surfaces.
 2. The blocked_submission event MUST appear in the canonical universe so that:
    - the existence of the attempted payload is visible,
    - users may challenge the classification,
@@ -834,7 +834,7 @@ a human identity reviews them,
 
 the human explicitly confirms them,
 
-and a canonical event with that humanâ€™s authorship and signature is recorded.
+and a canonical event with that human's authorship and signature is recorded.
 
 AI-Originated Canonical Events (Forbidden)
 Nodes MUST reject any canonical event that:
@@ -903,7 +903,7 @@ Conformant nodes and clients are NOT required to store or distribute full determ
 
 Private drafts that have not been published as canonical events are out of protocol conformance scope and SHALL NOT be required snapshot contents; drafts become ideas only when published into the canonical universe as canonical events.
 
-State witness attestations and reconciliation artifacts are validated only for syntax, signature, and canonical encoding, and MUST NOT affect canonical ordering, eligibility, or semantics (see Â§8C).
+State witness attestations and reconciliation artifacts are validated only for syntax, signature, and canonical encoding, and MUST NOT affect canonical ordering, eligibility, or semantics (see §8C).
 
 ---
 
@@ -1073,7 +1073,7 @@ Replay MUST explicitly **exclude**:
   Drafts, autonomous behaviors, speculative graph edits are ignored.
 
 - **Non-canonical drafts**
-  All draftsâ€”AI or humanâ€”remain invisible unless submitted as canonical events.
+  All drafts-AI or human-remain invisible unless submitted as canonical events.
 
 - **Helper drafts not submitted by humans**
   If AI generates a draft and the human does not sign it, replay MUST NOT include it.
@@ -1242,9 +1242,9 @@ Identity continuity ensures the universe remains historically faithful and resis
 
 Nodes MUST apply safety-classification rulebooks to all incoming content and assign each canonical event one of:
 
-- **normal** â€” fully distributable, no abstraction required
-- **sensitive_abstracted** â€” content must be stored but abstracted according to rulebook-defined transformations
-- **non_distributable_blocked** â€” content must be stored in metadata-only form (e.g., hash, classifier output) but full payload MUST NOT be distributed
+- **normal** - fully distributable, no abstraction required
+- **sensitive_abstracted** - content must be stored but abstracted according to rulebook-defined transformations
+- **non_distributable_blocked** - content must be stored in metadata-only form (e.g., hash, classifier output) but full payload MUST NOT be distributed
 
 This classification MUST occur *prior* to accepting an event into the canonical log.
 
@@ -1268,11 +1268,11 @@ This ensures the event log remains historically complete while preventing unsafe
 
 ---
 
-### 8.3 â€œWhy Am I Seeing This?â€ Support [anchor: why_am_i_seeing_this_support]
+### 8.3 "Why Am I Seeing This?" Support [anchor: why_am_i_seeing_this_support]
 
-Nodes MUST support the protocolâ€™s visibility-explanation requirements.
+Nodes MUST support the protocol's visibility-explanation requirements.
 
-For any hidden, abstracted, or omitted contentâ€”whether due to:
+For any hidden, abstracted, or omitted content-whether due to:
 
 - safety rules,
 - jurisdictional overlays,
@@ -1290,7 +1290,7 @@ This ensures transparency of safety decisions and supports governance oversight,
 
 ### 8.4 Hard Floor Enforcement [anchor: hard_floor_enforcement]
 
-â€œHard floorsâ€ are safety boundaries that **no rulebook, idea, or adoption action may cross**.
+“Hard floors” are safety boundaries that **no rulebook, idea, or adoption action may cross**.
 
 Nodes MUST enforce:
 
@@ -1525,10 +1525,10 @@ A conformant node MUST:
 - **Enforce downward POD routing**
   POD flows from:
   - universally important ideas
-  â†’ intermediary ideas
-  â†’ actionable ideas
-  â†’ actions
-  â†’ identities.
+  -> intermediary ideas
+  -> actionable ideas
+  -> actions
+  -> identities.
 
   Nodes MUST ensure POD never flows *upward* or sideways except through rulebook-defined transitional edges.
 
@@ -1730,9 +1730,9 @@ Drafts lacking human confirmation MUST be ignored during canonical ingestion and
 
 Nodes that support Ents MUST store:
 
-- **Growth rings** â€” snapshot-indexed training datasets packaged for Ent training.
-- **Ring metadata** â€” version, timestamp, training lineage, classifier/safety overlays.
-- **Ring activation events** â€” canonical events indicating which ring becomes visible to which Ent identity.
+- **Growth rings** - snapshot-indexed training datasets packaged for Ent training.
+- **Ring metadata** - version, timestamp, training lineage, classifier/safety overlays.
+- **Ring activation events** - canonical events indicating which ring becomes visible to which Ent identity.
 
 Nodes MAY provide enhanced APIs for Ent-tethered clients, but MUST NOT:
 
@@ -1836,7 +1836,7 @@ Nodes SHOULD expose these declarations via an implementation-defined public node
 - `metadata_retention_policy_url_or_text`
 - `minimal_logging_mode_default`
 
-For profile definitions and declaration requirements, see `privacy-and-high-risk-submission-spec.md` Â§Â§7â€“9.
+For profile definitions and declaration requirements, see `privacy-and-high-risk-submission-spec.md` Sections 7-9.
 
 ---
 
@@ -1846,8 +1846,8 @@ For profile definitions and declaration requirements, see `privacy-and-high-risk
 
 The Node & Conformance Specification defines multiple compliance levels to accommodate a wide spectrum of implementations while preserving a strict definition of canonical correctness.
 
-#### **Full Node Conformance (FNC)** â€” *Normative* [anchor: full_node_conformance_fnc_normative]
-A node is â€œfully conformantâ€ only if it:
+#### **Full Node Conformance (FNC)** - *Normative* [anchor: full_node_conformance_fnc_normative]
+A node is “fully conformant” only if it:
 
 - Stores the **entire canonical event log**,
 - Stores **all snapshots** since genesis or its configured epoch,
@@ -1862,7 +1862,7 @@ Only FNC nodes are recognized as authoritative for the canonical universe.
 
 ---
 
-#### **Replay-Only Conformance (ROC)** â€” *Normative but reduced* [anchor: replay_only_conformance_roc_normative_but_reduced]
+#### **Replay-Only Conformance (ROC)** - *Normative but reduced* [anchor: replay_only_conformance_roc_normative_but_reduced]
 A replay-only node:
 
 - Stores snapshots and enough history to deterministically replay them,
@@ -1880,7 +1880,7 @@ ROC nodes are conformant but **not authoritative** for chain growth.
 
 ---
 
-#### **Snapshot-Only Conformance (SOC)** â€” *Informative* [anchor: snapshot_only_conformance_soc_informative]
+#### **Snapshot-Only Conformance (SOC)** - *Informative* [anchor: snapshot_only_conformance_soc_informative]
 A snapshot-only node:
 
 - Stores periodic canonical snapshots,
@@ -1914,12 +1914,12 @@ but MUST NOT advertise themselves as canonical.
 All Full Conformant and Replay-Only nodes MUST pass a standardized conformance suite, including:
 
 Conformance testing includes, but is not limited to:
-- Â§8A custody manifest canonical encoding and hashing
-- Â§8B reconciliation transcript determinism
-- Â§8C state witness and receipt verification
-- Â§8D partitioned merge behavior determinism
+- §8A custody manifest canonical encoding and hashing
+- §8B reconciliation transcript determinism
+- §8C state witness and receipt verification
+- §8D partitioned merge behavior determinism
 
-- **Genesis â†’ Snapshot replay**
+- **Genesis -> Snapshot replay**
   Nodes must reproduce identical state from the genesis block through multiple snapshot boundaries.
 
 - **Safety classification tests**
@@ -2164,7 +2164,7 @@ If this condition ceases to hold, the system SHALL be considered structurally ce
 
 The following appendices are **non-normative**.
 They illustrate patterns, recommended implementations, reference diagrams, and example workflows.
-Nothing in this section imposes additional requirements beyond those stated in Sections 0â€“14.
+Nothing in this section imposes additional requirements beyond those stated in Sections 0-14.
 
 ---
 
@@ -2181,7 +2181,7 @@ This appendix SHOULD include schematic diagrams illustrating how a conformant no
 
 - **Idea Table**
   Mapped by:
-  - idea_id â†’ descriptions, ideatype, subtype(s), metadata
+  - idea_id -> descriptions, ideatype, subtype(s), metadata
 
 - **Connection Table**
   Representing:
@@ -2231,7 +2231,7 @@ These diagrams demonstrate **clean separation** between canonical and sandbox da
 
 This appendix SHOULD include step-by-step examples of deterministic replay:
 
-1. **Genesis â†’ First Snapshot**
+1. **Genesis -> First Snapshot**
    - Creating first ideas
    - Applying initial rulebooks
    - Generating snapshot_0
@@ -2283,7 +2283,7 @@ This appendix SHOULD describe guidance for implementing rate limits:
 - **Replay behavior**
   Rate-limit evaluation is **not replayed directly**; instead:
   - the node must verify that rate-limit conditions at event time were valid,
-  - using rulebook definitions active in that eventâ€™s epoch.
+  - using rulebook definitions active in that event's epoch.
 
 This section is informative, since implementations may vary, but **canonical rulebook checks are normative**.
 
@@ -2305,7 +2305,7 @@ This appendix SHOULD show example flowcharts describing:
   - how non_distributable_blocked is stored in hash-only form.
 
 - **Visibility explanations**
-  (â€œWhy am I seeing this?â€)
+  ("Why am I seeing this?")
   - pointer to rulebook clause
   - classifier label
   - lineage graph

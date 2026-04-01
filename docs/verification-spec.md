@@ -264,7 +264,7 @@ Each derived snapshot MUST expose:
 - vh_certainty,
 - vi_certainty,
 - vl_tier,
-- eligibility_flags ∈ {can_create, can_invite, voter_pool_member}.
+- eligibility_flags  {can_create, can_invite, voter_pool_member}.
 
 These outputs are computed deterministically from evidence objects under this specification.
 
@@ -911,7 +911,7 @@ At each boundary where derived state is updated, replay MUST produce:
 Implementations MAY also output:
 - vh_components and vi_components (breakdown of evidence class contributions),
 - taint_flags and quarantine_flags,
-- and decision_explanations (for UI “why am I seeing this?” panels).
+All derived outputs MUST be reproducible from the canonical log plus Appendix A.
 
 All derived outputs MUST be reproducible from the canonical log plus Appendix A.
 
@@ -983,7 +983,7 @@ The Token specification defines POD and POINT. Verification interacts with token
 
 Safety rulebooks govern visibility and payload abstraction. Verification artifacts are subject to the same safety lens mechanisms as any other content. Safety may:
 - restrict exposure of sensitive metadata,
-- provide “why am I seeing this?” explanations,
+
 - and control UI presentation.
 
 Safety MUST NOT alter verification scoring outputs beyond what is implied by canonical artifact availability and deterministic replay.

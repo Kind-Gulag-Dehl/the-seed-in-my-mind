@@ -40,9 +40,9 @@ keywords:
 
 # Token System Specification  
 ## POD (Proof of Deliberation) and POINT [anchor: pod_proof_of_deliberation_and_point]
-*(Normative — subordinate to Protocol v5)*
-
 This document defines the deterministic semantics of the protocol’s dual-token system. It specifies how POD and POINT are computed, how they change over time, how they interact with governance and safety mechanisms, and how they remain replayable, auditable, and resistant to capture.
+
+This specification is **normative**. Any conformant node MUST implement the behaviors described here exactly and MUST derive identical POD and POINT balances from the same canonical event log, snapshots, and active rulebooks.
 
 This specification is **normative**. Any conformant node MUST implement the behaviors described here exactly and MUST derive identical POD and POINT balances from the same canonical event log, snapshots, and active rulebooks.
 
@@ -73,7 +73,7 @@ This specification does **not** define UI behavior, client presentation, storage
 
 This specification is subordinate to and composes with the following documents, in descending order of authority:
 
-1. **Protocol v5 — Constitutional Invariants (§0)**  
+
    Defines non-negotiable constraints such as human equality, deterministic replay, and separation of epistemic and economic power.
 
 2. **Deterministic Replay & Merge Specification**  
@@ -97,7 +97,7 @@ The token system is explicitly divided into **canonical inputs** and **derived o
 
 Canonical inputs include:
 - the ordered canonical event log,
-- block-hash–anchored snapshots (including snapshot tier markers where applicable),
+  - governance rulebook activation at cycle boundaries (as defined by the governance system), and
 - the active rulebook set as determined by deterministic replay, including:
   - governance rulebook activation at cycle boundaries (as defined by the governance system), and
   - token rulebook effectiveness at cycle boundaries (as defined by this specification).
@@ -106,7 +106,7 @@ POD balances, POINT balances, derived `lifecycle_state`, derived eligibility, mi
 
 No node may:
 - persist token balances as canonical truth,
-- “fix up” balances manually,
+- introduce non-deterministic shortcuts.
 - skip recomputation steps,
 - introduce non-deterministic shortcuts.
 
@@ -152,7 +152,7 @@ Any relaxation or tightening of early-stage constraints MUST:
 
 The token layer exists to solve a specific problem:
 
-> How can a large group of humans coordinate economically around what is true, important, and worth doing, **without allowing money to influence those determinations**?
+The protocol answers this by separating:
 
 The protocol answers this by separating:
 - **epistemic power** (truth, importance, governance), and
@@ -167,7 +167,7 @@ The token system does not decide what is true, what is important, or what rules 
 The protocol uses exactly two tokens with strictly separated roles:
 
 - **POD (Proof of Deliberation)**  
-  A non-transferable, continuously recomputed metric representing a verified human identity’s current share of universal importance, derived from deliberation and action in the graph.
+- **POINT**  
 
 - **POINT**  
   A transferable economic token that circulates across cycles, minted and redistributed at cycle boundaries in proportion to POD, and used for coordination, bounties, and funding.
@@ -181,7 +181,7 @@ This separation is fundamental. Any system that allows economic assets to influe
 POD is not a historical reward, reputation score, or badge of honor.
 
 POD represents:
-- a **current share** of the protocol’s active universal importance,
+- continuously recomputed at cycle boundaries.
 - derived from the *alive* portion of the idea graph,
 - continuously recomputed at cycle boundaries.
 
@@ -210,7 +210,7 @@ This creates a circulatory system in which economic value:
 - slowly drains from inactive or obsolete positions,
 - cannot be hoarded indefinitely without continued relevance.
 
-POINT may be transferred, pooled, or spent, but it confers no special rights within the protocol’s truth, importance, or governance processes.
+---
 
 ---
 
@@ -237,7 +237,7 @@ The result is a token system that behaves less like a speculative asset and more
 
 ## 2. Constitutional invariants [anchor: 2_constitutional_invariants]
 
-The following invariants define the hard boundaries of the token system. They are subordinate only to the constitutional commitments defined in Protocol v5 §0 and MUST be enforced by all conformant nodes. No governance action, rulebook, client behavior, or operational circumstance may violate these invariants.
+These invariants are not preferences or defaults; they are structural constraints. Any system behavior that contradicts them is invalid, regardless of intent or outcome.
 
 These invariants are not preferences or defaults; they are structural constraints. Any system behavior that contradicts them is invalid, regardless of intent or outcome.
 
@@ -406,7 +406,7 @@ In particular:
 - rotted ideas MAY be excluded or treated according to the active token rulebooks, but any such treatment MUST be deterministic, replay-verifiable, and consistent with Protocol v5 living-map eligibility rules,
 - any idea that is excluded by derived eligibility rules (burn/rot/taint/safety/quarantine) MUST be treated as excluded for token routing and issuance purposes.
 
-The token system MUST NOT introduce authored “token eligibility” flags for ideas. Eligibility is derived during replay.
+### 3.3 Connections [anchor: connections]
 
 ### 3.3 Connections [anchor: connections]
 
@@ -485,7 +485,7 @@ If an idea, connection, identity, vote, or action is excluded by derived rules, 
 - token redistribution,
 - supply-affecting computations.
 
-Nodes MUST surface explainability metadata for eligibility filtering, including “why excluded” and “why counted” signals that cover derived exclusions beyond safety (including burn/rot/taint/quarantine/suspension), consistent with Protocol v5 explainability requirements.
+## 4. Idea lifecycle and pruning semantics (token-relevant) [anchor: 4_idea_lifecycle_and_pruning_semantics_token_relevant]
 
 ## 4. Idea lifecycle and pruning semantics (token-relevant) [anchor: 4_idea_lifecycle_and_pruning_semantics_token_relevant]
 
@@ -552,9 +552,9 @@ No lifecycle state may retroactively alter past POD attribution. All effects app
 
 Burning an idea is a strong, forward-only exclusion from the living map.
 
-When an idea’s derived lifecycle state becomes **burned**:
-- all token-relevant routing paths through that idea are severed for future cycles,
 - the idea’s contribution weight is treated as zero for all future token computations,
+- all token-relevant routing paths through that idea are severed for future cycles,
+- and no supply-affecting computations may count that idea as eligible.
 - no new POD may be routed through that idea,
 - and no supply-affecting computations may count that idea as eligible.
 
@@ -593,7 +593,7 @@ As ideas rot and burn:
 - total eligible routing mass contracts,
 - and supply-affecting computations reflect the reduced living structure.
 
-Pruning is therefore a core component of the token system’s self-regulating behavior.
+---
 
 ---
 
@@ -612,12 +612,12 @@ A conformant node MUST:
 - recompute eligibility and exclusions deterministically from canonical replay,
 - treat excluded objects as non-participating in issuance, routing, redistribution, and supply-affecting computations,
 - preserve excluded objects in history and search views according to applicable lenses,
-- and provide “why excluded / why counted” explainability signals for token outcomes consistent with Protocol v5 requirements.
+
 
 
 ## 5. POD (Proof of Deliberation) semantics [anchor: 5_pod_proof_of_deliberation_semantics]
 
-POD represents an identity’s **current share of universal importance** within the living system. It is derived entirely from canonical human actions and the alive importance structure through which those actions are routed.
+POD is not a stored balance, reward, or credential. It is a continuously recomputed measure of participation in present relevance.
 
 POD is not a stored balance, reward, or credential. It is a continuously recomputed measure of participation in present relevance.
 
@@ -627,7 +627,7 @@ POD is not a stored balance, reward, or credential. It is a continuously recompu
 
 Formally, POD is defined as:
 
-> The proportion of the protocol’s active universal importance that currently routes through a verified human identity, as derived from eligible canonical events and alive importance structures at a cycle boundary.
+POD serves three purposes:
 
 POD serves three purposes:
 1. to make importance legible and auditable,
@@ -740,7 +740,7 @@ POD routing respects lifecycle states:
 - routing may be reduced or altered by rotting ideas,
 - routing adapts automatically as the living graph evolves.
 
-When relevance fades, POD fades. When structure revives, POD may return — but only prospectively.
+This closes the loop between deliberation, relevance, and economic alignment.
 
 This closes the loop between deliberation, relevance, and economic alignment.
 
@@ -773,7 +773,7 @@ POD routes through the **alive importance structure** defined by:
 
 Routing is evaluated independently for each scope, axis, and timeframe and then aggregated according to Protocol v5 rules for universal importance.
 
-Ideas and connections that are rotting or burned are excluded or down-weighted as defined in §4.
+---
 
 ---
 
@@ -823,7 +823,7 @@ For a given routing step, the **local neighborhood** is defined as:
 - originating from the current idea
 - that satisfy lifecycle and downhill constraints.
 
-Only this neighborhood participates in share curve computation (§7).
+---
 
 ---
 
@@ -869,7 +869,7 @@ All share curves MUST be:
 - monotonically non-increasing by rank,
 - independent of identity attributes, POD, POINT, reputation, wealth, or any non-canonical data.
 
-Share curve evaluation occurs during deterministic replay at cycle boundaries (see §11).
+---
 
 ---
 
@@ -886,7 +886,7 @@ Within a routing neighborhood:
 If two or more outgoing edges are tied under the relative importance ordering, ties MUST be broken deterministically using the following sequence:
 
 1. **Higher relative-importance strength** (if a numeric strength exists under the active rulebook).
-2. **Earlier canonical event-log ordering** of the edge’s most recent rank-determining event.
+
 3. **Lexicographic ascending order of the canonical edge identifier**.
 
 If a tie-breaking field is unavailable, the implementation MUST skip that criterion and proceed to the next without introducing nondeterminism.
@@ -979,7 +979,7 @@ All correction mechanisms operate forward-only and are mediated through canonica
 
 ### 8.1 Fraud detection via challenges [anchor: fraud_detection_via_challenges]
 
-There is no special “fraud channel” in the token system.
+All allegations of fraud, falsification, manipulation, or improper conduct MUST be expressed as canonical challenges under the Challenge Engine Specification. These challenges may concern:
 
 All allegations of fraud, falsification, manipulation, or improper conduct MUST be expressed as canonical challenges under the Challenge Engine Specification. These challenges may concern:
 
@@ -1017,7 +1017,7 @@ When a challenge establishes that a claim, connection, or action is fraudulent o
 
 Edge cutting has the following effects:
 
-- The affected connection’s routing weight is set to zero for all future cycles.
+  - routing neighborhoods,
 - The connection is removed from:
   - routing neighborhoods,
   - share curve normalization,
@@ -1078,11 +1078,11 @@ The token system distinguishes **invalidity** from **malice** and applies the le
 
 ## 9. POINT semantics [anchor: 9_point_semantics]
 
-POINT is the protocol’s transferable economic token. It is produced from POD at cycle boundaries, circulates across cycles, and decays over time. POINT exists to support coordination and execution without influencing epistemic or governance processes.
+All POINT behavior is derived deterministically at cycle boundaries from:
 
 All POINT behavior is derived deterministically at cycle boundaries from:
 - the canonical event log,
-- the current cycle’s computed POD distribution,
+- the active token rulebooks (bounded by constitutional invariants).
 - prior cycle POINT balances,
 - the active token rulebooks (bounded by constitutional invariants).
 
@@ -1121,7 +1121,7 @@ The system then computes the **base mint** for the cycle:
 \]
 
 Where:
-- \( M \) is the mint coefficient (bounded by rulebooks; defaults defined in §9.8).
+Each identity \( u \) receives newly minted POINT proportional to their POD share:
 
 Each identity \( u \) receives newly minted POINT proportional to their POD share:
 
@@ -1144,7 +1144,7 @@ To reflect expansion or contraction of meaningful deliberation, the system appli
 Let:
 - \( E_t \) = the number of **eligible POD-distributing edges** at cycle \( t \)
 - \( E_{t-1} \) = the same quantity at cycle \( t-1 \)
-- \( \text{TotalPOINT}_{t-1} \) = total POINT supply immediately after the previous cycle’s full processing
+The growth rate is:
 
 The growth rate is:
 
@@ -1159,7 +1159,7 @@ The dynamic adjustment is:
 \]
 
 Where:
-- \( k \) is the dynamic adjustment constant (bounded by rulebooks; defaults in §9.8),
+
 - \( \text{DynamicAdjust} \) MAY be negative during contraction.
 
 #### 9.3.1 Eligible POD-distributing edge definition [anchor: eligible_pod_distributing_edge_definition]
@@ -1179,16 +1179,16 @@ This definition is intentionally strict so that inflation tracks the living, rou
 
 POINT decays via cycle-based melt.
 
-For each identity \( u \), let \( \text{POINT}_u \) be that identity’s balance immediately before melt at the current cycle boundary. Melt is:
+\[
 
 \[
 \text{Melt}_u = m \cdot \text{POINT}_u
 \]
 
 Where:
-- \( m \in (0,1) \) is the melt rate (bounded by rulebooks; defaults in §9.8).
-
 Melted POINT is removed from individual balances and contributes to the cycle’s redistribution pool (§9.5).
+
+Melt MUST NOT be 100% in a single cycle. Rulebooks MUST enforce an upper bound strictly less than 1.
 
 Melt MUST NOT be 100% in a single cycle. Rulebooks MUST enforce an upper bound strictly less than 1.
 
@@ -1252,9 +1252,9 @@ For each identity \( u \), the cycle update (excluding transfers and inheritance
 + \text{Payout}_u
 \]
 
-All terms are evaluated at the cycle boundary in the deterministic order defined in §11.
-
 Transfers (when enabled) and inheritance (on identity death) apply in their own phases in §11 and §10.
+
+---
 
 ---
 
@@ -1266,7 +1266,7 @@ When structures are pruned (rot/burn) or cut due to fraud:
 - existing POINT remains subject to melt and redistribution,
 - no retroactive confiscation occurs.
 
-If an identity’s contributions become excluded from routing due to a canonical fraud verdict:
+- therefore their future mint and payout decrease,
 - their future POD share decreases,
 - therefore their future mint and payout decrease,
 - but previously minted POINT is not retroactively removed.
@@ -1297,7 +1297,7 @@ At genesis, the protocol MUST initialize a complete deterministic default parame
    (1% of each balance melts per cycle.)
 
 4. **Pool non-negativity**
-   - The clamp in §9.5.1 is always active.
+5. **TotalPOD = 0 handling**
 
 5. **TotalPOD = 0 handling**
    - By default, the pool is **burned** when \(\text{TotalPOD}=0\).
@@ -1367,7 +1367,7 @@ Identity death:
 - permanently halts all future POD attribution to that identity,
 - removes the identity as a terminal POD sink for future cycles,
 - prevents any future transfers authored by or directed from that identity,
-- freezes the identity’s participation in future deliberation (no new canonical actions).
+Historical events authored by the identity remain part of the canonical record.
 
 Historical events authored by the identity remain part of the canonical record.
 
@@ -1397,10 +1397,10 @@ The default inheritance order is:
    If no beneficiary exists, the POINT transfers to the identity that invited the deceased identity into the system (if that inviter is alive and eligible).
 
 3. **Anthill fallback**  
-   If neither exists, POINT is distributed proportionally among eligible active identities within the deceased identity’s anthill.
+4. **Burn fallback**  
 
 4. **Burn fallback**  
-   If no eligible recipients exist, POINT is burned by default. Governance MAY define “return to redistribution pool” as an alternative, but the choice MUST be explicit and deterministic.
+Governance MAY parameterize this hierarchy but MUST preserve determinism and MUST NOT allow discretionary assignment.
 
 Governance MAY parameterize this hierarchy but MUST preserve determinism and MUST NOT allow discretionary assignment.
 
@@ -1457,7 +1457,7 @@ A transfer MUST be rejected if:
 - `amount <= 0`,
 - `from_identity_id == to_identity_id`,
 - the sender is dead or ineligible at validation time,
-- the sender’s available balance is insufficient after accounting for earlier accepted transfers in the same cycle ordering context.
+#### 10.8.3 Canonical ordering for simultaneous transfers [anchor: canonical_ordering_for_simultaneous_transfers]
 
 #### 10.8.3 Canonical ordering for simultaneous transfers [anchor: canonical_ordering_for_simultaneous_transfers]
 
@@ -1520,7 +1520,7 @@ Cycle boundaries:
 - MUST NOT depend on wall-clock time observed by a node,
 - MUST NOT depend on network arrival order or connectivity.
 
-Each cycle boundary is anchored by a canonical `cycle_close` event at block height `H_close`. All cycle-based recomputations (importance, POD, POINT mint/melt, mana) evaluate the replay prefix through and including `H_close`; events after `H_close` MUST NOT affect that boundary’s outputs.
+All token updates occur only at cycle boundaries.
 
 All token updates occur only at cycle boundaries.
 
@@ -1542,25 +1542,25 @@ At each cycle boundary, conformant nodes MUST perform the following operations i
    Apply derived exclusions, including fraud findings, identity quarantine/suspension, taint rules, and lifecycle-based ineligibility. Safety abstraction affects visibility but MUST NOT be treated as a token-eligibility override unless an explicit rulebook-defined eligibility rule is in force.
 
 4. **POD routing and attribution**  
-   Route POD from eligible events through the living importance structure using the share curve defined in §7.
+5. **POINT base minting**  
 
 5. **POINT base minting**  
-   Compute and apply per-identity base minting from POD (§9.2).
+6. **Dynamic supply adjustment**  
 
 6. **Dynamic supply adjustment**  
-   Compute and apply growth-based dynamic adjustments (§9.3).
+7. **POINT melt**  
 
 7. **POINT melt**  
-   Apply cycle melt to existing POINT balances (§9.4).
+8. **Redistribution**  
 
 8. **Redistribution**  
-   Compute redistribution pools and apply POD-proportional payouts (§9.5).
+9. **Inheritance processing**  
 
 9. **Inheritance processing**  
-   Apply inheritance for identities that ceased to exist during the cycle (§10.5–§10.6).
+10. **Finalize cycle commitment**  
 
 10. **Finalize cycle commitment**  
-    Produce the cycle boundary commitment output sufficient for replay verification (§11.6).
+No step may be skipped, reordered, merged, or partially executed.
 
 No step may be skipped, reordered, merged, or partially executed.
 
@@ -1593,7 +1593,7 @@ Cycle computation MUST:
 Routing terminates because:
 - routing neighborhoods are finite,
 - the routing/propagation rules are monotonic and bounded,
-- share allocation is normalized and monotonic (§7).
+---
 
 ---
 
@@ -1609,7 +1609,7 @@ Nodes MUST be able to explain, for any identity:
 Explanations MUST reference:
 - canonical events,
 - the applicable routing neighborhood and tie-break outcomes,
-- the share curve (§7),
+- and the derived inclusion/exclusion predicates that applied at replay time.
 - effective rulebook parameters and effective cycles,
 - and the derived inclusion/exclusion predicates that applied at replay time.
 
@@ -1677,7 +1677,7 @@ If an error is discovered (e.g., an exploit, misconfigured rulebook, or incorrec
 
 If two nodes disagree during synchronization about whether a cycle boundary has been finalized:
 - the dispute MUST resolve by referencing the canonical record (snapshot or boundary marker),
-- local clocks, local arrival times, or subjective “current time” MUST NOT be used to decide.
+This preserves the requirement that system time is derived from shared canonical commitments, not local authority.
 
 This preserves the requirement that system time is derived from shared canonical commitments, not local authority.
 
@@ -1743,7 +1743,7 @@ No token rulebook MAY:
 - alter past cycle results,
 - introduce discretionary or identity-specific behavior,
 - introduce private parameters or non-public configuration,
-- introduce “admin override,” manual correction, or non-challengeable controls.
+All rulebook effects MUST be:
 
 All rulebook effects MUST be:
 - forward-only,
@@ -1766,12 +1766,12 @@ For avoidance of doubt:
 Governance MAY define token rulebooks in the following categories. Categories are normative labels that constrain what a rulebook is allowed to modify.
 
 1. **POINT minting and redistribution parameters**
-   - Base mint coefficient \( M \) (see §9.2, §9.8)
-   - Dynamic adjustment constant \( k \) (see §9.3, §9.8)
    - Pool handling when \( \text{TotalPOD} = 0 \) (burn vs carry-forward) (see §9.5.2)
 
 2. **POINT decay parameters**
-   - Melt rate \( m \) (see §9.4, §9.8)
+
+2. **POINT decay parameters**
+
    - Upper bounds preventing total melt in a single cycle
 
 3. **Eligibility and exclusion filters (token-relevant)**
@@ -1784,7 +1784,7 @@ Governance MAY define token rulebooks in the following categories. Categories ar
    - Transfer enablement or disablement
    - Rate limits and deterministic throttling
    - Context restrictions (e.g., bounty-only transfers)
-   - Optional emergency freezes (see §10.9 and §12.9, if present)
+5. **Inheritance policy parameters**
 
 5. **Inheritance policy parameters**
    - Inheritance hierarchy option set (beneficiary / inviter / anthill / burn vs pool)
@@ -1802,7 +1802,7 @@ This category MUST NOT be used to redefine cycle boundary derivation.
 In particular:
 - Token rulebooks MUST NOT select a boundary form, boundary interval, or boundary marker mechanism for cycles.
 - Cycle boundary derivation is defined by Protocol v5 and its composed specifications.
-- If cycle boundary derivation is governance-modifiable at all, it MUST be modified only through the protocol’s designated governance path for cycle rules (not through token rulebooks), and remains subject to Protocol v5 invariants.
+Each token rulebook MUST explicitly declare:
 
 Each token rulebook MUST explicitly declare:
 - its category,
@@ -1816,14 +1816,14 @@ If a token rulebook attempts to modify cycle boundary derivation, snapshot sched
 
 Governance MUST NOT:
 
-- change the downhill routing rule (§6.3),
-- replace or modify the linear share curve (§7),
+- introduce identity-weighted mechanics (by POD, POINT, reputation, wealth, role, or account age),
+- create permanent exemptions from decay,
 - introduce identity-weighted mechanics (by POD, POINT, reputation, wealth, role, or account age),
 - create permanent exemptions from decay,
 - grant POD or POINT to non-human identities,
 - enable token-weighted voting, governance, moderation, or visibility control,
 - retroactively modify balances, attribution, or past cycle results,
-- introduce discretionary approvals or “operator keys” that can alter balances.
+Any rulebook that violates these constraints is invalid and MUST be rejected during replay.
 
 Any rulebook that violates these constraints is invalid and MUST be rejected during replay.
 
@@ -1835,7 +1835,7 @@ Emergency rulebooks MAY be defined to respond to:
 - systemic attacks,
 - discovered exploits,
 - catastrophic implementation flaws,
-- existential safety threats affecting the protocol’s integrity.
+Emergency rulebooks:
 
 Emergency rulebooks:
 - MUST be time-bounded or sunset-bound,
@@ -1900,11 +1900,11 @@ If deterministic conflict resolution cannot be performed from canonical data, th
 
 ### 12.7 Rulebook transparency requirements (operational) [anchor: rulebook_transparency_requirements_operational]
 
-Implementations MUST support “why did this happen?” reconstruction for token outcomes.
+For any cycle and any identity, a node MUST be able to produce an explanation bundle that includes:
 
 For any cycle and any identity, a node MUST be able to produce an explanation bundle that includes:
 - which token rulebooks were active,
-- each active rulebook’s effective cycle and identifier,
+- any exclusions/quarantines/freeze rules that affected:
 - all parameter values actually used,
 - any exclusions/quarantines/freeze rules that affected:
   - routing neighborhoods,
@@ -2133,7 +2133,7 @@ Upon importing a mindseed, a conformant node MUST execute the following determin
    Apply fraud findings, quarantines, suspensions, and other derived exclusions as of that boundary.
 
 6. **POD routing**  
-   Route POD deterministically using the linear share curve and neighborhood rules defined in §7.
+7. **POINT computation**  
 
 7. **POINT computation**  
    Recompute POINT minting, dynamic adjustment, melt, redistribution, and inheritance from the identified cycle onward.
@@ -2164,10 +2164,10 @@ Cycle boundaries guarantee that:
 Merge determinism relies exclusively on:
 
 - canonical event ordering,
-- canonical cycle boundary representation (§11.6),
-- forward-only correction rules (§11.7).
 
 Any implementation that attempts to “merge balances” or reconcile outcomes directly violates deterministic replay.
+
+---
 
 ---
 
@@ -2197,7 +2197,7 @@ Token cycles MUST NOT depend on:
 - local wall-clock time,
 - trusted timestamps,
 - external time authorities,
-- subjective notions of “current time.”
+Instead:
 
 Instead:
 
@@ -2328,7 +2328,7 @@ Clients or lightweight nodes MAY omit:
 
 However, any component that claims to compute or display POD or POINT MUST fully conform to this specification.
 
-There is no “partial correctness” for token semantics.
+
 
 
 ## 16. Non-normative extensions and optional integrations [anchor: 16_non_normative_extensions_and_optional_integrations]

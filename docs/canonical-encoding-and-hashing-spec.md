@@ -111,10 +111,10 @@ Encodings that allow multiple byte representations for the same logical value ar
 
 The system uses the following unsigned integer primitives:
 
-* `u8`  â€” 8-bit unsigned integer
-* `u16` â€” 16-bit unsigned integer
-* `u32` â€” 32-bit unsigned integer
-* `u64` â€” 64-bit unsigned integer
+* `u8`  — 8-bit unsigned integer
+* `u16` — 16-bit unsigned integer
+* `u32` — 32-bit unsigned integer
+* `u64` — 64-bit unsigned integer
 
 Encoding rules:
 
@@ -158,7 +158,7 @@ Where:
 
 Validation rules:
 
-* If `length â‰  36`, reject.
+* If `length ≠ 36`, reject.
 * If any character is not valid lowercase hex or a hyphen at the required positions, reject.
 * If the UUID version is not 7 or the variant is not RFC 4122, reject.
 * If uppercase or mixed-case encodings are encountered, reject.
@@ -267,7 +267,7 @@ Encoding rules:
 
 * Each field is encoded sequentially according to its defined type.
 * No field names or keys are included in the byte stream unless explicitly specified.
-* Field boundaries are determined solely by the encoding rules of each fieldâ€™s type.
+* Field boundaries are determined solely by the encoding rules of each field’s type.
 
 If two implementations encode the same logical object but produce different byte orders, at least one is non-conformant.
 
@@ -507,7 +507,7 @@ The following sections are explicitly **excluded** from `state_root_hash`:
 
 Rules:
 
-* Each included section MUST be hashed using the section hashing rules defined in Â§7.1.
+* Each included section MUST be hashed using the section hashing rules defined in §7.1.
 * Section hashes MUST be sorted by ascending `section_id` before Merkle construction.
 * The Merkle root of these section hashes is the `state_root_hash`.
 
@@ -541,9 +541,9 @@ Rules:
 * `object_kind` is `0` for `idea` and `1` for `rail`.
 * `encode_id(object_id)` MUST follow the identifier encoding defined in §2.2.
 * `tier_enum` is `0` for `title` and `1` for `sentence`.
-* `payload_hash` MUST be the hash of the canonicalized payload bytes (Â§3).
+* `payload_hash` MUST be the hash of the canonicalized payload bytes (§3).
 * Leaves MUST be sorted by raw bytewise comparison of `leaf_bytes` prior to Merkle construction.
-* Merkle construction MUST follow Â§6.
+* Merkle construction MUST follow §6.
 
 Payload roots commit to:
 
@@ -583,7 +583,7 @@ These rules ensure that publication finality, omission proofs, and derived block
 
 ### 8. Shared Map Commitment [anchor: 8_shared_map_commitment]
 
-The shared map commitment represents the systemâ€™s collectively agreed, human-readable map of reality.
+The shared map commitment represents the system's collectively agreed, human-readable map of reality.
 
 The shared map commitment at height `H` is defined as:
 
@@ -596,7 +596,7 @@ shared_map_commitment(H) =
 
 Where:
 
-* `state_root_hash(H)` commits to canonical facts (Â§7.2),
+* `state_root_hash(H)` commits to canonical facts (§7.2),
 * `pocket_map_payload_root(H)` commits to the selected set of payloads distributed as the shared map.
 
 Properties:
@@ -1037,7 +1037,7 @@ This appendix defines mandatory test vectors that conformant implementations MUS
 
 Domain tags are UTF-8 encoded strings defined in implementation (e.g., "seed-primitive").
 
-(Provide 3â€“5 vectors with computed BLAKE3 outputs once reference implementation available.)
+(Provide 3–5 vectors with computed BLAKE3 outputs once reference implementation available.)
 
 #### D.3 Merkle Tree Constructions [anchor: d_3_merkle_tree_constructions]
 

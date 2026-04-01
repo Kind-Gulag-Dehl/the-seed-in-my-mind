@@ -51,7 +51,7 @@ keywords:
 
 This specification defines **Tempo**: the subsystem responsible for representing, evaluating, and adjudicating time-related information inside the protocol.
 
-Tempo’s sole function is to transform **challengeable, in-protocol time evidence** into **deterministic predicates and mode flags** that the Cycle Specification consumes as guardrails.
+Tempo does **not** advance cycles.
 
 Tempo does **not** advance cycles.
 Tempo does **not** authorize power.
@@ -136,10 +136,10 @@ Time claims MUST be expressed as inequalities, not exact timestamps.
 
 Canonical forms include:
 
-* “Since anchor A, elapsed time ≥ X”
-* “Since anchor A, elapsed time ≤ Y” (optional, if enabled)
 
 Exact wall-clock timestamps (e.g., “it is now 14:32 UTC”) MUST NOT appear as claim content.
+
+---
 
 ---
 
@@ -152,7 +152,7 @@ Tempo produces only the following **cycle-level predicates**, each with an assoc
 
 These predicates are consumed by the Cycle Specification as guardrails.
 
-Tempo MUST NOT produce any predicate that directly implies “seal now,” “advance cycle,” or “authorize effects.”
+Predicates are evaluated against the most recent `cycle_close` anchor at block height `H_close`, as defined in the Cycle Specification.
 
 Predicates are evaluated against the most recent `cycle_close` anchor at block height `H_close`, as defined in the Cycle Specification.
 
@@ -169,7 +169,7 @@ Tempo recognizes two evidence channels with different authority levels:
 * **Voluntary attestations** (strong)
 * **Passive timestamp evidence** (weak)
 
-These channels are defined normatively in §3.
+---
 
 ---
 
@@ -201,13 +201,13 @@ Beacon-level claims are the **only** time objects eligible for:
 * lagged legitimacy checks in the Cycle Specification,
 * authorizing exit from constrained mode.
 
-The criteria for beacon elevation are defined in §6.
+---
 
 ---
 
 ## 2. Time Claim Types [anchor: 2_time_claim_types]
 
-### 2.1 Guardrail Lower-Bound Claims (Elapsed ≥ X) [anchor: guardrail_lower_bound_claims_elapsed_x]
+### 2.1 Guardrail Lower-Bound Claims (Elapsed e X) [anchor: guardrail_lower_bound_claims_elapsed_x]
 
 #### Definition [anchor: definition]
 
@@ -216,7 +216,7 @@ A **lower-bound time claim** asserts that at least `X` time has elapsed since a 
 Canonical form:
 
 ```
-elapsed(anchor) ≥ X
+elapsed(anchor) e X
 ```
 
 These claims are used to support:
@@ -234,7 +234,7 @@ These claims are used to support:
 
 ---
 
-### 2.2 Guardrail Upper-Bound Claims (Elapsed ≤ Y) *(Optional)* [anchor: guardrail_upper_bound_claims_elapsed_y_optional]
+### 2.2 Guardrail Upper-Bound Claims (Elapsed d Y) *(Optional)* [anchor: guardrail_upper_bound_claims_elapsed_y_optional]
 
 #### Definition [anchor: definition_2]
 
@@ -243,7 +243,7 @@ An **upper-bound time claim** asserts that no more than `Y` time has elapsed sin
 Canonical form:
 
 ```
-elapsed(anchor) ≤ Y
+elapsed(anchor) d Y
 ```
 
 These claims are optional and MAY be disabled by governance.
@@ -254,7 +254,7 @@ These claims are optional and MAY be disabled by governance.
 
 When enabled, upper-bound claims:
 
-* help detect implausible or malicious “too much time passed” assertions,
+* improve certainty discrimination.
 * provide contradiction evidence against false lower-bound claims,
 * improve certainty discrimination.
 
@@ -270,8 +270,8 @@ An **anchor consolidation claim** is a time claim explicitly intended to become 
 
 Examples include:
 
-* “Cycle r lasted at least Dmin”
-* “Cycle r was not sealed before Dmin elapsed”
+
+These claims:
 
 These claims:
 
@@ -285,8 +285,8 @@ These claims:
 
 At the start of each cycle, the system MAY create **placeholder time claims** for:
 
-* `elapsed(cycle_start) ≥ Dmin`
-* `elapsed(cycle_start) ≥ Dmax`
+* `elapsed(cycle_start) e Dmin`
+* `elapsed(cycle_start) e Dmax`
 
 Placeholder claims:
 
@@ -327,8 +327,8 @@ A **voluntary attestation** is an explicit human action asserting support for or
 
 Examples:
 
-* “Yes, at least Dmin has elapsed since cycle r began.”
-* “No, Dmax has not yet elapsed.”
+
+Attestations MUST:
 
 Attestations MUST:
 
@@ -501,7 +501,7 @@ This preserves neutrality and determinism.
 Time claims MAY be created by:
 
 * any eligible identity,
-* the system as placeholder claims (see §2.4).
+All claims begin with **zero certainty**.
 
 All claims begin with **zero certainty**.
 
@@ -517,7 +517,7 @@ After creation:
 * passive timestamps accumulate automatically,
 * claims remain open to challenge.
 
-There is no fixed “voting window”; accumulation is continuous.
+---
 
 ---
 
@@ -525,7 +525,7 @@ There is no fixed “voting window”; accumulation is continuous.
 
 Any eligible identity MAY challenge a time claim.
 
-Challenges are structured deliberations governed by the protocol’s challenge mechanism.
+Challenges MAY introduce:
 
 Challenges MAY introduce:
 
@@ -594,7 +594,7 @@ Tempo never forces advancement.
 
 Beacon-level time claims exist to provide **durable, high-confidence temporal anchors** that can be safely consumed by other parts of the protocol, especially for **lagged legitimacy checks**.
 
-Beacons are not absolute truth. They are the system’s strongest available time references under continuous challengeability.
+---
 
 ---
 
@@ -603,7 +603,7 @@ Beacons are not absolute truth. They are the system’s strongest available time
 A time claim MAY be elevated to **beacon status** if and only if all of the following conditions are met:
 
 1. **Certainty Threshold Met**
-   The claim’s certainty MUST exceed a governance-defined beacon threshold `T_beacon`.
+2. **Diversity of Support**
 
 2. **Diversity of Support**
    Certainty MUST be supported by attestations from a minimum number of distinct eligible identities.
@@ -626,7 +626,7 @@ When eligibility criteria are met:
 * its anchor identifier becomes admissible for legitimacy checks,
 * its elevation is recorded in the canonical log.
 
-No human action is required to “approve” a beacon beyond normal attestations and challenges.
+---
 
 ---
 
@@ -670,7 +670,7 @@ If conflicting beacons exist:
 * certainty aggregation resolves their relative strength,
 * downstream consumers MUST rely only on predicates, not raw beacons.
 
-Tempo never selects a “winner” arbitrarily.
+---
 
 ---
 
@@ -811,8 +811,8 @@ T_allow < T_beacon
 
 A predicate (e.g. `cycle_age_ge_dmin`) MAY evaluate to `true` if and only if:
 
-* at least one supporting claim has certainty ≥ `T_allow`,
-* no contradictory claim has certainty ≥ `T_allow`,
+* at least one supporting claim has certainty e `T_allow`,
+* no contradictory claim has certainty e `T_allow`,
 * passive evidence ceilings are respected.
 
 Predicate truth does **not** imply durability, legitimacy, or authorization.
@@ -1002,7 +1002,7 @@ Tempo exists only to **measure contested time** and expose it safely.
 
 Tempo outputs **informational predicates and mode flags only**.
 
-Under no circumstances may any Tempo output—including time predicates, beacon-level claims, or tempo mode flags—be interpreted as authorization to:
+* seal a cycle,
 
 * seal a cycle,
 * advance a cycle,
@@ -1012,7 +1012,7 @@ Under no circumstances may any Tempo output—including time predicates, beacon-
 
 All such actions remain exclusively governed by the Cycle Specification.
 
-Cycle closure validity is determined only by Cycle-owned closure rules. Tempo’s role is limited to certifying predicate truth values consumed by Cycle (including `cycle_age_ge_dmin` and `cycle_age_ge_dmax`) and never extends to boundary emission authority.
+---
 
 ---
 

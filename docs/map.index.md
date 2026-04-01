@@ -85,10 +85,14 @@ Public note: this repo is a curated documentation subset. Some broader specs are
 - `verification-spec.md`
 - `safety-spec.md`
 - `safety-rulebook-interface-mechanics-spec.md`
+- `privacy-and-high-risk-submission-spec.md`
+- `tribe-spec.md`
+- `roles-and-stewardship-spec.md`
+- `ai-boundaries-spec.md`
 
 ## how to interpret the broader public specs
 
-- `tempo-spec.md`, `challenge-engine-spec.md`, `governance-spec.md`, `token-spec.md`, `verification-spec.md`, `safety-spec.md`, and `safety-rulebook-interface-mechanics-spec.md` are public for architectural transparency.
+- `tempo-spec.md`, `challenge-engine-spec.md`, `governance-spec.md`, `token-spec.md`, `verification-spec.md`, `safety-spec.md`, `safety-rulebook-interface-mechanics-spec.md`, `privacy-and-high-risk-submission-spec.md`, `tribe-spec.md`, `roles-and-stewardship-spec.md`, and `ai-boundaries-spec.md` are public for architectural transparency.
 - Those docs carry explicit status banners at the top.
 - Their publication does not imply full runtime implementation.
 - Use `open-core-implementation-status.md` for the current implemented surface.

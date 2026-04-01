@@ -22,3 +22,6 @@ frontend/.tmp-*.json
 # frontend build output
 frontend/dist/
 frontend/tsconfig.tsbuildinfo
+frontend/open-core-reference/dist/
+frontend/open-core-reference/node_modules/
+frontend/open-core-reference/tsconfig.tsbuildinfo

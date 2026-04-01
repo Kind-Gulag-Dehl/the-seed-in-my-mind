@@ -165,10 +165,10 @@ Purpose: quick navigation of encoding, snapshot, and bundle format sections and 
 | n/a | 1. Design principles | none | See shared-map-and-payload-bundles-spec.md (no_anchor). Covers 1. Design principles. |
 | n/a | 2. Canonical text payload model (recap) | none | See shared-map-and-payload-bundles-spec.md (no_anchor). Covers 2. Canonical text payload model (recap). |
 | n/a | 3. Bundle tiers (standardized distribution artifacts) | none | See shared-map-and-payload-bundles-spec.md (no_anchor). Covers 3. Bundle tiers (standardized distribution artifacts). |
-| 3.1 | Tier 0 â€” â€œPocket Mapâ€ | none | See shared-map-and-payload-bundles-spec.md §3.1 (no_anchor). Covers Tier 0 â€” â€œPocket Mapâ€. |
-| 3.2 | Tier 1 â€” â€œCitizen Mapâ€ | none | See shared-map-and-payload-bundles-spec.md §3.2 (no_anchor). Covers Tier 1 â€” â€œCitizen Mapâ€. |
-| 3.3 | Tier 2 â€” â€œCivic Archiveâ€ | none | See shared-map-and-payload-bundles-spec.md §3.3 (no_anchor). Covers Tier 2 â€” â€œCivic Archiveâ€. |
-| 3.4 | Tier 3 â€” â€œFull Archiveâ€ | none | See shared-map-and-payload-bundles-spec.md §3.4 (no_anchor). Covers Tier 3 â€” â€œFull Archiveâ€. |
+| 3.1 | Tier 0 - "Pocket Map" | none | See shared-map-and-payload-bundles-spec.md Section 3.1 (no_anchor). Covers Tier 0 - "Pocket Map". |
+| 3.2 | Tier 1 - "Citizen Map" | none | See shared-map-and-payload-bundles-spec.md Section 3.2 (no_anchor). Covers Tier 1 - "Citizen Map". |
+| 3.3 | Tier 2 - "Civic Archive" | none | See shared-map-and-payload-bundles-spec.md Section 3.3 (no_anchor). Covers Tier 2 - "Civic Archive". |
+| 3.4 | Tier 3 - "Full Archive" | none | See shared-map-and-payload-bundles-spec.md Section 3.4 (no_anchor). Covers Tier 3 - "Full Archive". |
 | n/a | Publication and Retention Schedule | none | See shared-map-and-payload-bundles-spec.md (no_anchor). Defines bundle publication cadence variables and retention policy, referencing snapshot and pack cadence rules. |
 | n/a | 4. Deterministic bundle selection rules | none | See shared-map-and-payload-bundles-spec.md (no_anchor). Covers 4. Deterministic bundle selection rules. |
 | n/a | 5. Shared map commitment | none | See shared-map-and-payload-bundles-spec.md (no_anchor). Covers 5. Shared map commitment. |

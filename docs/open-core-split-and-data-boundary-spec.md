@@ -106,7 +106,7 @@ Normative pointers:
 - optional encrypted backups controlled by the user.
 
 ### 2.2 data placement matrix (normative) [anchor: data_placement_matrix_normative]
-| data class | canonical? | stored in open | stored in node | stored in individual | notes |
+### 2.2 data placement matrix (normative) [anchor: data_placement_matrix_normative]
 | --- | --- | --- | --- | --- | --- |
 | canonical event log | yes | yes | yes (host/mirror) | optional cache | OPEN defines meaning and conformance |
 | canonical snapshots + commitments | yes | yes | yes (host/mirror) | optional cache | verification artifacts only |
@@ -191,9 +191,9 @@ Both options use identical boundary rules.
 
 ### 5.3 enforcement mechanisms [anchor: enforcement_mechanisms]
 `frontend`:
-- lint `no-restricted-imports`:
-  - `frontend/src/reference/**` MUST NOT import `frontend/src/domains/private/**`,
-  - `frontend/src/reference/**` MUST NOT import builder/game modules.
+- boundary check via `frontend/open-core-reference/scripts/check-reference-boundaries.mjs`:
+  - `frontend/open-core-reference/src/**` MUST NOT import `domains/private/**`, `domains/private-overlay/**`, or `api/private/**`,
+  - `frontend/open-core-reference/src/**` MUST NOT import builder/game modules such as `app/workspaceshell`, `app/tabstate`, or `components/viewers/builderview`.
 
 `backend`:
 - canonical dto crates MUST NOT depend on private/auth dto crates.

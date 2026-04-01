@@ -2,7 +2,7 @@
 
 # Safety Rulebook Interface & Visibility Mechanics
 
-*(Normative — subordinate to Protocol v5; defines the mechanical interface between safety governance, canonical data, and user-visible representations without altering canonical truth.)*
+---
 
 ---
 
@@ -29,7 +29,7 @@ This specification governs:
 - safety classification events and their canonical representation,
 - abstraction versus redaction mechanics,
 - jurisdictional and local lenses,
-- “Why am I seeing this?” explanation requirements,
+- conformance requirements for nodes and clients.
 - interaction between safety handling and challenge mechanics,
 - conformance requirements for nodes and clients.
 
@@ -45,7 +45,7 @@ No safety mechanism defined here may override, reinterpret, or weaken Protocol v
 
 ### 0.4 Normative precedence and conflict handling [anchor: normative_precedence_and_conflict_handling]
 
-1. If any part of this specification conflicts with Protocol v5 (especially §0 constitutional invariants), **Protocol v5 prevails**.
+   - canonical semantics are determined by Protocol v5 together with Appendix A schema and event semantics,
 2. If this specification conflicts with other subordinate specifications (including but not limited to Governance, Challenge Engine, Deterministic Replay & Merge, Offline & Mindseed, or Token Specification), then:
    - canonical semantics are determined by Protocol v5 together with Appendix A schema and event semantics,
    - this document governs only the safety and visibility interface layer,
@@ -90,7 +90,7 @@ Nodes and clients MUST treat the following as expected adversarial pressures:
 - coordinated campaigns attempting to weaponize safety labels to suppress ideas rather than protect users,
 - attempts to launder disallowed payload specificity into canonical descriptions or abstractions,
 - classifier bias, drift, or opaque decision-making (human or AI),
-- inconsistent local policy causing “split reality” presentation that users cannot audit or understand.
+The interface defined in this specification MUST remain legible, deterministic, and auditable under these pressures.
 
 The interface defined in this specification MUST remain legible, deterministic, and auditable under these pressures.
 
@@ -112,9 +112,9 @@ Canonical history is immutable; safety governs how it is seen, not whether it ex
 - Two nodes replaying the same canonical event log MUST derive identical canonical state regardless of safety configuration, lenses, or UI policies.
 - Safety differences MAY change what users see, but MUST NOT change what exists.
 
-### 1.3 Interpretation of “ignore safety rules” (normative clarification) [anchor: interpretation_of_ignore_safety_rules_normative_clarification]
-
 For avoidance of doubt, “Canonical replay MUST ignore safety rules” refers specifically to post-admission visibility and presentation handling. The precise requirements are:
+
+- Canonical replay MUST ignore node-local and client-local visibility preferences, UI settings, personalized filters, and jurisdictional lens settings when deriving canonical state.
 
 - Canonical replay MUST ignore node-local and client-local visibility preferences, UI settings, personalized filters, and jurisdictional lens settings when deriving canonical state.
 - Canonical replay MUST apply all rulebook-defined validity rules, including safety floors that govern event admission (for example, prohibitions on accepting events containing certain prohibited payload specificity levels, or requirements for mandatory abstraction/withholding during submission).
@@ -126,19 +126,19 @@ This distinction ensures that safety floors protect users and comply with law at
 ### 1.4 Canonical existence vs safe representation (normative) [anchor: canonical_existence_vs_safe_representation_normative]
 
 - Canonical existence MUST remain discoverable at a safe level of representation, even when full details are gated, abstracted, or withheld.
-- When full detail cannot be shown, nodes and clients MUST provide the maximum permissible safe-level description, together with a reasoned explanation path (rulebook → classification → visibility action).
+The system MUST never pretend that something does not exist merely because it cannot be fully shown.
 
 The system MUST never pretend that something does not exist merely because it cannot be fully shown.
 
 ### 1.5 Determinism and portability requirements (normative) [anchor: determinism_and_portability_requirements_normative]
 
 - Applying the same canonical event log and the same active rulebook set MUST produce the same safety classification state and the same required minimum visibility actions (safety floors).
-- Any additional local or jurisdictional gating beyond the safety floor MUST be explicitly disclosed as a lens and MUST be explainable as “additional strictness,” not as a different canonical interpretation.
+
 - Safety handling MUST remain portable across nodes, clients, and offline contexts, relying only on snapshot-visible data and declared lenses.
 
 ### 1.6 No silent suppression (normative) [anchor: no_silent_suppression_normative]
 
-- Nodes and clients MUST NOT silently hide content without leaving an auditable trace in the user-visible view (e.g., placeholders, “gated” markers, safe summaries, and “Why am I seeing this?” links).
+
 - If something is withheld due to a safety floor or lens, users MUST be able to see that withholding occurred and understand why, without requiring privileged access or moderator tools.
 
 
@@ -197,7 +197,7 @@ Node-local policy or client preferences MUST NOT alter which safety rulebooks ar
 ### 2.4 Rulebook identity, versioning, and immutability (normative) [anchor: rulebook_identity_versioning_and_immutability_normative]
 
 - A safety rulebook MUST have a stable identifier and an immutable content hash.
-- Any modification to a rulebook’s content MUST be expressed as a new version (either as a new identifier or as a version within an explicit lineage) and MUST be adopted via governance.
+
 - Nodes MUST be able to prove which safety rulebook version(s) were active at a given snapshot boundary using only canonical data.
 
 Historical rulebook versions remain inspectable and challengeable even after supersession.
@@ -207,7 +207,7 @@ Historical rulebook versions remain inspectable and challengeable even after sup
 When multiple safety rulebooks coexist, the active set MUST define:
 
 - a deterministic precedence order or deterministic merge semantics,
-- a deterministic conflict resolution rule (e.g., “most restrictive safety floor wins”),
+- an explicit list of permitted visibility actions and their constraints.
 - deterministic tie-breaking rules,
 - an explicit list of permitted visibility actions and their constraints.
 
@@ -287,9 +287,9 @@ Challenges MAY take the form of:
   - preserves maximal safe meaning,
   - avoids semantic mutation,
   - avoids silent suppression,
-  - and correctly follows the active rulebook set’s mapping from labels → required floor actions.
-
   Representation challenges MUST target representation artifacts (e.g., competing safe abstractions, competing redaction placeholders, competing warning/summary representations) consistent with the Challenge Engine Specification’s rules for representation challenges.
+
+- **Governance challenges (action challenges with governance constraints)**  
 
 - **Governance challenges (action challenges with governance constraints)**  
   Used to contest the *rule-level* causes of a safety outcome, including:
@@ -298,7 +298,7 @@ Challenges MAY take the form of:
   - rulebook composition / precedence rules,
   - and any governance-controlled configuration that determines safety floors.
 
-  For avoidance of doubt: “governance challenges” are **action challenges** with additional constraints defined by the Governance Specification. They result in governance verdicts that can adopt, supersede, or amend rulebooks at cycle boundaries.
+No safety classification is final or immune from challenge. Reclassification and supersession MUST occur only through new canonical events; there is no retroactive erasure.
 
 No safety classification is final or immune from challenge. Reclassification and supersession MUST occur only through new canonical events; there is no retroactive erasure.
 
@@ -331,7 +331,7 @@ Labels describe safety handling, not epistemic validity.
 
 ### 3.7 Authorship and accountability (normative) [anchor: authorship_and_accountability_normative]
 
-- Every safety classification event MUST be attributable to an identity consistent with Protocol v5’s identity model.
+- Canonical safety classification events MUST be authored by a **verified human identity** as required by Protocol v5 Appendix A. AI systems MAY assist by proposing classifications, but an AI MUST NOT directly author canonical safety classification events.
 
 - Canonical safety classification events MUST be authored by a **verified human identity** as required by Protocol v5 Appendix A. AI systems MAY assist by proposing classifications, but an AI MUST NOT directly author canonical safety classification events.
 
@@ -347,7 +347,7 @@ Labels describe safety handling, not epistemic validity.
   - the applied label namespace and label(s),
   - and the derived floor visibility action (as deterministically computed under the active rulebook set).
 
-Safety handling MUST never eliminate the user’s ability to discover that classified content exists and to understand, at a safe level, why its visibility changed.
+
 
 
 ### 3.8 Minimal safe description requirement (normative) [anchor: minimal_safe_description_requirement_normative]
@@ -355,9 +355,9 @@ Safety handling MUST never eliminate the user’s ability to discover that class
 If a safety classification results in gating, abstraction, or withholding of content:
 
 - a safe-level description MUST remain available, and
-- the explanation path (“Why am I seeing this?”) MUST remain renderable without privileged access.
-
 Safety handling MUST never eliminate the user’s ability to discover that something exists and understand, at a safe level, why its visibility changed.
+
+
 
 
 
@@ -374,7 +374,7 @@ Safety rulebooks MAY specify only the following visibility actions for user-faci
    The content is rendered as a safe-level abstraction that preserves meaning at the maximum permissible level while removing disallowed specificity. The abstraction MUST preserve topic identity, role, and structural context.
 
 3. **Gated visibility (explicit opt-in)**  
-   The content is hidden by default behind an explicit user action (e.g., “show details”).  
+   - Gating MUST always allow refusal without penalty.  
    - The interface MUST display a safe-level summary and a warning before opt-in.  
    - Gating MUST always allow refusal without penalty.  
    - Gating MUST NOT be used to create silent invisibility or denial of existence.
@@ -426,7 +426,7 @@ Visibility actions MUST be applicable at multiple granularities, including at mi
 - challenge container level (without affecting voting, tallying, or verdict mechanics),
 - connection display level (the connection may be visible while the payload of a label or description is abstracted).
 
-Safety rulebooks MUST specify which targets are valid for each action and how inheritance operates (for example, “if a description is gated, the idea container remains discoverable with a safe summary”).
+### 4.5 Prohibited actions (normative) [anchor: prohibited_actions_normative]
 
 ### 4.5 Prohibited actions (normative) [anchor: prohibited_actions_normative]
 
@@ -443,7 +443,7 @@ Safety rulebooks MUST NOT permit:
 Whenever content is not fully visible due to safety handling, nodes and clients MUST:
 
 - render a placeholder indicating that withholding occurred,
-- provide a “Why am I seeing this?” explanation link or action,
+
 - show at least a safe-level description sufficient to understand the general nature of what is withheld.
 
 If even a safe-level description is prohibited, the placeholder MUST explicitly state that visible detail is legally or safely constrained and identify the governing rulebook at a safe level.
@@ -457,7 +457,7 @@ If even a safe-level description is prohibited, the placeholder MUST explicitly 
 Abstraction replaces detailed content with a higher-level representation that preserves, to the maximum permissible degree:
 
 - **topic identity** (what the object is broadly about),
-- **claim structure** (e.g., “X claims Y,” “A argues against B,” “evidence supports or undermines Z”),
+- **existence of disagreement or contestation** (when applicable),
 - **argumentative role** (claim, counterclaim, evidence, plan step, action report, etc.),
 - **existence of disagreement or contestation** (when applicable),
 - **graph continuity** (links, rankings, challenge containers, and navigability).
@@ -470,7 +470,7 @@ When an object supports multi-tier descriptions (sentence, paragraph, full; fund
 
 - which tiers are permitted under each visibility action,
 - whether abstraction is generated deterministically from an allowed tier (preferred) or provided as a separate representation artifact,
-- how clients should fall back across tiers (e.g., canonical → standard → fundamental) while remaining within safety floors.
+Fallback behavior MUST be deterministic and explainable.
 
 Fallback behavior MUST be deterministic and explainable.
 
@@ -506,7 +506,7 @@ Canonical structure MUST survive safety handling unchanged.
 
 ### 5.6 Avoiding meaning-loss attacks (normative) [anchor: avoiding_meaning_loss_attacks_normative]
 
-Safety handling MUST avoid “semantic starvation,” where abstraction is used to erase meaning or argumentative role.
+At minimum, the system MUST preserve:
 
 At minimum, the system MUST preserve:
 
@@ -525,8 +525,8 @@ A **jurisdictional lens** is a deterministic mapping from canonical content to v
 
 A jurisdictional lens may be applied by:
 
-- a node distribution policy (e.g., “this node serves users in jurisdiction X”), and/or
-- an explicit user-selected lens (e.g., “show me what this looks like under EU rules”).
+
+A jurisdictional lens MUST be explicit, named, and inspectable. It MUST be possible for a user to identify when a lens is active and what legal or regulatory context it represents.
 
 A jurisdictional lens MUST be explicit, named, and inspectable. It MUST be possible for a user to identify when a lens is active and what legal or regulatory context it represents.
 
@@ -563,9 +563,9 @@ Even when content is hidden or gated under a jurisdictional lens, interfaces MUS
   - a mandatory safety floor, or
   - an additional local or node-specific strictness policy.
 
-Users MUST be able to distinguish “this is required by the rulebook for this jurisdiction” from “this node or client is being stricter than required.”
-
 ### 6.5 Lens stacking and “stricter-than-floor” behavior (normative) [anchor: lens_stacking_and_stricter_than_floor_behavior_normative]
+
+If multiple lenses or local policies apply simultaneously:
 
 If multiple lenses or local policies apply simultaneously:
 
@@ -589,11 +589,11 @@ Jurisdictional lenses MUST be usable in offline contexts.
 
 ---
 
-## 7. “Why am I seeing this?” explanations [anchor: 7_why_am_i_seeing_this_explanations]
+### 7.1 Mandatory explainability (normative) [anchor: mandatory_explainability_normative]
 
 ### 7.1 Mandatory explainability (normative) [anchor: mandatory_explainability_normative]
 
-For any safety-induced visibility change—including gating, abstraction, redaction placeholders, or jurisdictional withholding—clients MUST be able to display a “Why am I seeing this?” explanation that includes, at minimum:
+- the applied safety rulebook set (or the specific rulebooks relevant to the decision),
 
 - the applied safety rulebook set (or the specific rulebooks relevant to the decision),
 - the relevant safety classification event(s) and label(s),
@@ -630,7 +630,7 @@ Lack of payload access MUST NOT block access to the explanation itself.
 
 ### 7.4 No privileged-only explanations (normative) [anchor: no_privileged_only_explanations_normative]
 
-The “Why am I seeing this?” mechanism MUST NOT require privileged access.
+- Ordinary users MUST be able to view the baseline explanation path at a safe level.
 
 - Ordinary users MUST be able to view the baseline explanation path at a safe level.
 - Privileged tools for moderators or stewards MAY exist, but MUST NOT replace or hide the baseline explanation.
@@ -690,8 +690,8 @@ If such floors apply:
 
 - submissions MAY be rejected, required to be abstracted, or required to be transformed at submission time,
 - any rejection or abstraction MUST be deterministic under the active rulebook set at the relevant snapshot boundary,
-- when lawful and safe, the system MUST preserve the fact that a submission attempt occurred (for example, via a “withheld submission” placeholder as a representation artifact),
-- the challenge structure MUST remain intact, with no silent removal of one side’s participation or existence.
+
+Safety floors MUST regulate payload handling, not the existence of disagreement or participation.
 
 Safety floors MUST regulate payload handling, not the existence of disagreement or participation.
 
@@ -704,7 +704,7 @@ Permitted challenge pathways include:
 - **Representation challenges**  
   To contest whether the *resulting representation-layer artifacts* (abstractions, redaction placeholders, summaries, warnings, or other representation outputs permitted by rulebooks) are correct and maximally meaning-preserving under the active safety floors.
 
-  Representation challenges MUST be anchored to specific representation artifacts and MUST follow the Challenge Engine Specification’s constraints (e.g., selecting among two or more competing representations already present in canonical history).
+- **Governance challenges (action challenges with governance constraints)**  
 
 - **Governance challenges (action challenges with governance constraints)**  
   To contest the *governance-layer causes* of a safety outcome, including:
@@ -730,7 +730,7 @@ When a safety classification or rulebook application is under active dispute:
 
 - the system MUST continue to apply the current safety floor until a governance or representation verdict changes the applicable classification or rulebook state,
 - any change in classification, rulebook text, or visibility outcome MUST be represented as new canonical events; there is no retroactive erasure,
-- the “Why am I seeing this?” explanation MUST indicate dispute status (for example, “this classification is under active challenge”).
+Dispute handling MUST preserve continuity, auditability, and user comprehension throughout the challenge lifecycle.
 
 Dispute handling MUST preserve continuity, auditability, and user comprehension throughout the challenge lifecycle.
 
@@ -786,7 +786,7 @@ In such cases:
 
 - each universe MUST remain internally deterministic,
 - nodes MUST disclose which universe or fork they are serving,
-- cross-fork viewing MAY be supported via explicit “foreign-universe lenses,” but such views MUST be clearly labeled and MUST NOT be presented as canonical state within the local universe.
+
 
 
 
@@ -800,7 +800,7 @@ No individual is required to:
 - opt in to see full or higher-specificity details,
 - participate in challenges,
 - engage with safety-gated material,
-- accept a jurisdictional lens beyond the node’s compliance floor.
+Clients MAY offer additional user-selected lenses or opt-in paths where permitted by the safety floor, but MUST NOT force deeper viewing, expanded disclosure, or engagement as a condition of access to unrelated canonical functionality.
 
 Clients MAY offer additional user-selected lenses or opt-in paths where permitted by the safety floor, but MUST NOT force deeper viewing, expanded disclosure, or engagement as a condition of access to unrelated canonical functionality.
 
@@ -872,7 +872,7 @@ All safety actions MUST leave an inspectable trail sufficient for independent re
 - the derived floor visibility action,
 - the applied lens configuration (if any),
 - any stricter-than-floor handling declared by the node or client,
-- the complete “Why am I seeing this?” explanation path.
+Audit trails MUST be:
 
 Audit trails MUST be:
 
@@ -899,7 +899,7 @@ Explanation and audit views MUST be designed so that:
 
 - they do not leak sensitive personal data,
 - they do not require revealing private drafts or non-canonical material,
-- they preserve accountability through identity references consistent with Protocol v5’s identity model, including private-by-default identities where applicable.
+Safety infrastructure MUST strengthen resistance to doxxing, not weaken it.
 
 Safety infrastructure MUST strengthen resistance to doxxing, not weaken it.
 
@@ -955,7 +955,7 @@ Withholding MUST be explicit and inspectable.
 
 #### Explainability and audit outputs [anchor: explainability_and_audit_outputs]
 
-A conformant node MUST expose sufficient metadata for clients (or node-rendered views) to construct “Why am I seeing this?” explanations, including at minimum:
+- references to relevant safety classification events,
 
 - references to relevant safety classification events,
 - referenced rulebook identifiers and versions,
@@ -980,13 +980,13 @@ A conformant client MUST satisfy all of the following requirements.
 A conformant client MUST:
 
 - clearly mark gated, abstracted, redacted, withheld-by-floor, or jurisdictionally withheld content,
-- never present withheld content as “absent” when canonical existence is discoverable.
+#### Explainability interface [anchor: explainability_interface]
 
 #### Explainability interface [anchor: explainability_interface]
 
 A conformant client MUST:
 
-- provide a “Why am I seeing this?” explanation surface for any safety-induced visibility change,
+
 - display, at a safe level, the applicable rulebook references, classification labels, visibility action taken, lens identity (if any), and the challengeability path.
 
 #### No silent suppression [anchor: no_silent_suppression_2]
@@ -1034,7 +1034,7 @@ If a node or client cannot apply a required safety floor (e.g., missing rulebook
 
 - it MUST fail closed with respect to the restricted payload (do not serve disallowed details),
 - it MUST still preserve canonical existence indicators and explanation placeholders,
-- it MUST report the failure in an inspectable and user-visible way (e.g., “rulebook missing; content withheld by safety floor”).
+Failure handling MUST NOT silently degrade safety or canonical integrity.
 
 Failure handling MUST NOT silently degrade safety or canonical integrity.
 
@@ -1044,7 +1044,7 @@ Failure handling MUST NOT silently degrade safety or canonical integrity.
 
 This specification does not:
 
-- define moral judgments or “good/bad” ontologies,
+- prioritize comfort over truth; canonical existence and challengeability are preserved,
 - adjudicate legality beyond applying explicitly declared jurisdictional lenses and rulebook-defined distribution floors,
 - prioritize comfort over truth; canonical existence and challengeability are preserved,
 - personalize canonical reality feeds or create user-specific canonical universes,
@@ -1087,7 +1087,7 @@ This specification is explicitly subordinate to Protocol v5 and composes with th
   Defines POD, POINT, and any incentive mechanics and their strict non-use in governance weighting.  
   This specification assumes that safety decisions and rulebook adoption are not influenced or weighted by token balances.
 
-- **Roles & Stewardship / AI & Ent Specifications**  
+- **Roles & Stewardship / AI Boundaries Specifications**  
   Define role responsibilities, stewardship expectations, and AI advisory boundaries.  
   This specification relies on those documents to constrain who may propose safety classifications, under what conditions AI assistance is permitted, and how accountability is preserved.
 
@@ -1104,7 +1104,7 @@ The responsibilities across specifications are explicitly delegated as follows:
   - permitted visibility actions and safety floors,
   - abstraction and redaction mechanics,
   - jurisdictional and local lenses,
-  - explanation requirements (“Why am I seeing this?”),
+
   - node and client conformance requirements for safety visibility.
 
 - **Governance Specification** defines:
@@ -1127,5 +1127,5 @@ The responsibilities across specifications are explicitly delegated as follows:
   - how offline nodes apply lenses, safety floors, and explanations without external dependencies,
   - how merged logs preserve safety semantics.
 
-This document is intentionally limited to the safety–visibility interface layer. It neither introduces new canonical powers nor reallocates authority across specifications.
+
 

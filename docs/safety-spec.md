@@ -108,9 +108,9 @@ This Safety Specification interacts with:
 - **Protocol v5** (semantic invariants, challenge lifecycle, canonical event model).  
 - **Node & Conformance Specification** (payload classes, validation rules, deterministic replay).  
 - **Governance Specification** (safety rulebooks, classifier configuration, appeals).  
-- **AI & Ent Specification** (AI access constraints, summarization duties).  
+- **AI Boundaries Specification** (AI access constraints, summarization duties).  
 - **Offline / Mindseed Specification** (propagation of safety metadata, offline classification behavior).  
-- **UI & Interaction Specification** (blur/collapse behavior, slider, “why am I seeing this?” surfaces).
+Where conflicts arise, **Protocol v5 invariants supersede**, followed by this specification, then rulebooks.
 
 Where conflicts arise, **Protocol v5 invariants supersede**, followed by this specification, then rulebooks.
 
@@ -130,17 +130,17 @@ In any ambiguity, interpretations MUST defer to deterministic replay semantics a
 
 The system distinguishes three layers:
 
-1. **Ideas** — canonical epistemic entities.  
+1. **Ideas** - canonical epistemic entities.  
    - Immutable, challengeable, and always visible as objects.
 
-2. **Payloads** — textual or media expressions attached to ideas.  
+2. **Payloads** - textual or media expressions attached to ideas.  
    - MAY be blurred, collapsed, substituted, or masked under safety rules.
 
-3. **Specificity** — the level of detail in a payload.  
+   - Safety operates **only** on specificity, not on idea existence.
    - Some ideas are safe conceptually but harmful or illegal at high specificity.  
    - Safety operates **only** on specificity, not on idea existence.
 
-Filtering NEVER hides or removes ideas themselves—only their textual manifestations.
+---
 
 ---
 
@@ -235,7 +235,7 @@ Jurisdiction becomes metadata—not censorship—and must be visible and challen
 
 ### 1.7 relationship to user experience and world metaphor
 
-In the Seed’s world metaphor:
+- Ideas (trees, fungi, flowers) always exist in the forest.  
 
 - Ideas (trees, fungi, flowers) always exist in the forest.  
 - Filtering is represented as fog around text, not removal of the tree.  
@@ -254,9 +254,9 @@ Safety rulebooks SHALL be represented as ideas within the canonical graph, combi
 
 Each safety rulebook is therefore:
 
-1. **Fully challengeable** — subject to representation challenges and revision through the governance process.  
-2. **Fully traceable** — rulebooks carry explicit provenance, authorship, activation history, and dependencies.  
 3. **Immutable once adopted** — changes to rulebooks occur only through new rulebooks that supersede the previous ones; historical rulebooks remain intact for replay.
+2. **Fully traceable** - rulebooks carry explicit provenance, authorship, activation history, and dependencies.  
+Rulebooks MUST be stored as first-class ideas to ensure:
 
 Rulebooks MUST be stored as first-class ideas to ensure:
 
@@ -307,7 +307,7 @@ Safety rulebooks MAY specify:
    - Scoring models, normalization curves, calibration parameters, and emotional intensity thresholds.
 
 3. **Jurisdictional overlays**  
-   - Explicit mappings from jurisdiction → allowable specificity → required abstraction.
+4. **Abstraction, sanitization, and summarization rules**  
 
 4. **Abstraction, sanitization, and summarization rules**  
    - Procedures for generating safe summaries, blurs, and placeholders.
@@ -494,7 +494,7 @@ They SHALL NOT be deleted, hidden, or omitted from replay.
 
 Their canonical representation ensures:
 
-- Users know that **“someone attempted to say X”**,  
+- The community can trace and reevaluate safety decisions over time,  
 - The epistemic history includes attempted contributions even when disallowed,  
 - The community can trace and reevaluate safety decisions over time,  
 - Governance retains an accurate record of classifier and rulebook performance.
@@ -528,7 +528,7 @@ Blocked submissions SHALL be open to re-evaluation under three mechanisms:
    then previously blocked submissions MUST be eligible for **automatic or manual reprocessing** at the next scheduled cycle boundary.
 
 3. **Classifier version updates**  
-   If a rulebook authorizes new classifier versions, nodes MUST re-evaluate historical blocked submissions that fall within the updated classifier’s domain.
+A blocked submission MAY become admissible after re-evaluation.  
 
 A blocked submission MAY become admissible after re-evaluation.  
 If so, the system shall emit:
@@ -688,7 +688,7 @@ Clients MUST support the following textual visibility states, applied per-payloa
    - Text is visually obscured but present; blur intensity governed by rulebook guidelines.
 
 3. **warning-gated**  
-   - Content hidden behind an explicit “click-to-reveal” gate, requiring user acknowledgment.
+4. **safe-summary**  
 
 4. **safe-summary**  
    - Payload replaced with a deterministic, rulebook-defined summary preserving conceptual meaning but removing harmful specificity.
@@ -796,8 +796,8 @@ A jurisdictional lens MUST:
 
 Users MAY switch between:
 
-- **global canonical view** (conceptual “no filters” reference), and  
-- **local jurisdiction lens** (their region’s legal reality).
+- **global canonical view** (conceptual "no filters" reference), and  
+When switching views, idea structure MUST remain unchanged.
 
 When switching views, idea structure MUST remain unchanged.
 
@@ -830,7 +830,7 @@ The map SHALL:
   - fully masked regions,  
 - allow switching between:
   - global canonical (unfiltered) representation,  
-  - per-jurisdiction lenses (e.g., “Country A lens”, “EU lens”).
+This map SHALL NOT reveal restricted payloads themselves; it reveals **patterns of restriction**, not forbidden content.
 
 This map SHALL NOT reveal restricted payloads themselves; it reveals **patterns of restriction**, not forbidden content.
 
@@ -861,7 +861,7 @@ The canonical chain MUST retain the full history of jurisdictional interpretatio
 
 ## 8. explanation surfaces
 
-### 8.1 “why am i seeing / not seeing this?”
+A conformant client MUST provide an **explanation surface** for every instance in which payload text is:
 
 A conformant client MUST provide an **explanation surface** for every instance in which payload text is:
 
@@ -1151,7 +1151,7 @@ Instead, ALL safety enforcement occurs **after** the payload is generated, at in
 This guarantees parity:
 
 - Humans can paste external model output.  
-- The system cannot meaningfully “prevent” model generation.  
+- The system cannot meaningfully "prevent" model generation.  
 - Safety is applied uniformly to the text once produced.
 
 Payload origin NEVER changes safety processing logic.
@@ -1213,7 +1213,7 @@ Safety rulebooks are themselves ideas and MUST follow the standard governance an
 
 2. **Debate**  
    Users MAY submit arguments, counterarguments, and supporting ideas.  
-   Debate occurs in the open challenge window, using the protocol’s standard adversarial-cooperative structure.
+3. **Verdict**  
 
 3. **Verdict**  
    A governance challenge proceeds through:
@@ -1364,7 +1364,7 @@ Conformant clients MUST:
    - Changes MUST update the visible text immediately.
 
 3. **Render explanation surfaces**  
-   - Every blurred, collapsed, or abstracted segment MUST link to a “why am I seeing this?” explanation.
+4. **Show placeholders and suppression notices**  
 
 4. **Show placeholders and suppression notices**  
    - For jurisdictional masking, placeholder text and explanation MUST be shown.
@@ -1406,7 +1406,7 @@ Non-conformant clients or nodes MUST NOT be allowed to participate in canonical 
 ## 14. appendices (informative)
 
 Appendices provide **examples**, **illustrations**, **reference patterns**, and **non-normative guidance** to support implementers.  
-They SHALL NOT introduce new requirements or alter normative behavior defined in Sections 0–13.  
+They SHALL NOT introduce new requirements or alter normative behavior defined in Sections 0-13.  
 All examples are illustrative only; rulebooks and canonical protocol text remain authoritative.
 
 ---
@@ -1417,7 +1417,7 @@ This appendix MAY include:
 
 - example rulebook-defined boundaries between `normal`, `sensitive_abstracted`, and `non_distributable_blocked`,
 - sample payloads showing why a classifier assigns each payload_class,
-- illustrative specificity boundaries (e.g., when “harmful operational detail” triggers abstraction),
+- walkthroughs of deterministic classifier decisions under replay.
 - examples of multi-model classifier agreement thresholds,
 - walkthroughs of deterministic classifier decisions under replay.
 

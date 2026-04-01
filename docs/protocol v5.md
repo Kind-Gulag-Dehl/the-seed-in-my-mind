@@ -1,4 +1,4 @@
-﻿---
+---
 doc_id: protocol_v5
 title: Protocol v5
 status: authoritative
@@ -41,14 +41,14 @@ keywords:
 
 # The Seed In My Mind Protocol
 
-Humanity needs a standardized, decentralized system and structure for collective ideation, reasoning, and truth determinationâ€”one that allows all humans, and any future reasoning agents, to better understand what all others believe is most important, what is true, and what to do about it. The purpose of this protocol is to define such a system and grow a shared map of reality through time.
+Humanity needs a standardized, decentralized system and structure for collective ideation, reasoning, and truth determination—one that allows all humans, and any future reasoning agents, to better understand what all others believe is most important, what is true, and what to do about it. The purpose of this protocol is to define such a system and grow a shared map of reality through time.
 
 This document specifies the foundations of a canonical universe constructed from ideas, challenges, arguments, importance mappings, actions, and their consequences. It describes the event types, invariants, governance pathways, safety constraints, and interpretability structures that allow participants to collectively build, verify, challenge, and refine their understanding of the world.
 
 The system does not attempt to govern human behavior outside of itself. Instead, it governs the interaction of ideas: how claims are made, how truth is tested, how importance is assessed at personal, tribal, and universal levels, and how insight accumulates across generations.
-Its role is to provide a durable, replayable record of reasoningâ€”one that helps humanity face uncertainty together.
+Its role is to provide a durable, replayable record of reasoning—one that helps humanity face uncertainty together.
 
-All future modifications to this universe MUST remain compatible with the constitutional commitments in Â§0. These commitments define the philosophical boundary of the system and anchor the technical specifications that follow.
+All future modifications to this universe MUST remain compatible with the constitutional commitments in §0. These commitments define the philosophical boundary of the system and anchor the technical specifications that follow.
 
 
 
@@ -56,13 +56,13 @@ All future modifications to this universe MUST remain compatible with the consti
 
 ### A- be excellent to each other [anchor: a_be_excellent_to_each_other]
 
-This system begins with a simple orientation: participants SHOULD treat one another with respect, patience, and a willingness to understand. â€œBe excellent to each otherâ€ is not sentimentality; it is a functional requirement for a deliberative system in which ideas must be compared, challenged, defended, and refined. Excellence toward one another ensures that disagreement does not collapse into hostility, and that the system remains capable of supporting cooperative truth-seeking across diverse worldviews.
+This system begins with a simple orientation: participants SHOULD treat one another with respect, patience, and a willingness to understand. “Be excellent to each other” is not sentimentality; it is a functional requirement for a deliberative system in which ideas must be compared, challenged, defended, and refined. Excellence toward one another ensures that disagreement does not collapse into hostility, and that the system remains capable of supporting cooperative truth-seeking across diverse worldviews.
 
 ### B- no human is my enemy [anchor: b_no_human_is_my_enemy]
 
-No human is my enemy. People sometimes fight each otherâ€”physically, politically, or emotionallyâ€”when their ideas collide or when fear and circumstance drive them into opposition. These conflicts can be severe, destructive, and tragically irreversible. But even in such moments, the person is not the true adversary. The forces shaping their actionsâ€”confusion, suffering, inherited ideas, and the pressures of circumstanceâ€”are what we ultimately struggle against.
+No human is my enemy. People sometimes fight each other—physically, politically, or emotionally—when their ideas collide or when fear and circumstance drive them into opposition. These conflicts can be severe, destructive, and tragically irreversible. But even in such moments, the person is not the true adversary. The forces shaping their actions—confusion, suffering, inherited ideas, and the pressures of circumstance—are what we ultimately struggle against.
 
-Disagreement belongs in the realm of ideas, not in the dehumanization of individuals. When people oppose each other, what is truly in conflict are their models of the world, not their fundamental worth. The aim is not to defeat the person but to free them, and ourselves, from the ideas and conditions that lead to harm. Humans clash; minds diverge; some will never agree. But the principle remains: humans are not the enemyâ€”our battles lie elsewhere.
+Disagreement belongs in the realm of ideas, not in the dehumanization of individuals. When people oppose each other, what is truly in conflict are their models of the world, not their fundamental worth. The aim is not to defeat the person but to free them, and ourselves, from the ideas and conditions that lead to harm. Humans clash; minds diverge; some will never agree. But the principle remains: humans are not the enemy—our battles lie elsewhere.
 
 ### C- three layers of conflict and the real adversary [anchor: c_three_layers_of_conflict_and_the_real_adversary]
 
@@ -70,7 +70,7 @@ There are three layers of conflict in human life.
 
 First, there is human-against-human conflict: the tragic form that arises when ideas harden into violence. It is sometimes unavoidable, but it is never the level on which meaning is won. This system exists partially to reduce the need for such conflict by relocating battles to safer ground.
 
-Second, there is the contest of ideas: where disagreement, opposition, and critique properly occur. Here, the â€œenemyâ€ is the claim or worldview being challengedâ€”not the person who holds it. Ideas can and should be fought vigorously on equal ground, without coercion or dehumanization.
+Second, there is the contest of ideas: where disagreement, opposition, and critique properly occur. Here, the "enemy" is the claim or worldview being challenged - not the person who holds it. Ideas can and should be fought vigorously on equal ground, without coercion or dehumanization.
 
 Third, there is the cooperative adversarial testing of ideas: a shared recognition that pitting ideas against each other strengthens them. Through structured challenge, weak ideas fall away, strong ones emerge, and better maps of reality become possible. This is the arena in which we prepare ourselves for the conflict that truly matters.
 
@@ -86,7 +86,7 @@ The system is built on the recognition that all participants stand on the contri
 
 ### F- curiosity and the obligation to explore ideas [anchor: f_curiosity_and_the_obligation_to_explore_ideas]
 
-Curiosityâ€”the willingness to explore, question, and engage with unfamiliar conceptsâ€”is a necessary ingredient for collective reasoning. The protocol assumes that participants SHOULD be free to propose hypotheses, explore alternatives, and challenge widely held assumptions without fear of personal attack. The structure of the system MUST always preserve the space for exploration, even when an idea is currently disfavored or low-ranked. Curiosity is essential for pushing back the fog of the unknown and for enabling long-term progress.
+Curiosity—the willingness to explore, question, and engage with unfamiliar concepts—is a necessary ingredient for collective reasoning. The protocol assumes that participants SHOULD be free to propose hypotheses, explore alternatives, and challenge widely held assumptions without fear of personal attack. The structure of the system MUST always preserve the space for exploration, even when an idea is currently disfavored or low-ranked. Curiosity is essential for pushing back the fog of the unknown and for enabling long-term progress.
 
 ### G- fallibility and mutual correction [anchor: g_fallibility_and_mutual_correction]
 
@@ -94,32 +94,32 @@ Every identity, every community, and every generation is fallible. No one posses
 
 ### H- stewardship across generations [anchor: h_stewardship_across_generations]
 
-The system is intended to outlive any individual, group, or era. Participants inherit the work of those before them and are custodians for those after them. This stewardship mindset ensures that changes to the protocol, governance structures, and safety rules respect long-term continuity, auditability, and the preservation of historyâ€”even when contemporary norms shift. Future generations MUST be able to understand how the system reached its present form and learn from the full record, not a sanitized or selectively curated version of it.
+The system is intended to outlive any individual, group, or era. Participants inherit the work of those before them and are custodians for those after them. This stewardship mindset ensures that changes to the protocol, governance structures, and safety rules respect long-term continuity, auditability, and the preservation of history—even when contemporary norms shift. Future generations MUST be able to understand how the system reached its present form and learn from the full record, not a sanitized or selectively curated version of it.
 
 ### I- Epistemic Dignity and Non-Humiliation [anchor: i_epistemic_dignity_and_non_humiliation]
 
-The system affirms that all participants retain full dignity regardless of the correctness of any idea they submit. Being wrong, revising oneâ€™s view, or having oneâ€™s ideas successfully challenged is not grounds for humiliation, exclusion, or any diminution of personal worth. The universe is built on fallibility, correction, iteration, and revision.
-No rulebook, governance mechanism, ranking system, or social-layer convention may treat error as moral failure, inferiority, or justification for penalizing an identity outside the normal challengeâ€“argumentâ€“resolution structure.
-Critique belongs to ideas, connections, and reasoningâ€”not to the value or standing of the person who proposed them. The purpose of the system is to refine ideas, not to degrade individuals.
+The system affirms that all participants retain full dignity regardless of the correctness of any idea they submit. Being wrong, revising one’s view, or having one’s ideas successfully challenged is not grounds for humiliation, exclusion, or any diminution of personal worth. The universe is built on fallibility, correction, iteration, and revision.
+No rulebook, governance mechanism, ranking system, or social-layer convention may treat error as moral failure, inferiority, or justification for penalizing an identity outside the normal challenge–argument–resolution structure.
+Critique belongs to ideas, connections, and reasoning - not to the value or standing of the person who proposed them. The purpose of the system is to refine ideas, not to degrade individuals.
 
 ### J- Respect for Possible Future Minds [anchor: j_respect_for_possible_future_minds]
 
 If credible evidence ever arises that an artificial system operating within or around the canonical universe is a locus of subjective experience, coherent preference, or emergent agency, the system shall extend to that being the same baseline dignity and moral consideration granted to human participants under this section.
-Recognizing such a being does not grant it authority, voting power, or governance privileges by default; instead it places it under the Charter for Minds and the constraints of the governance rulebooks, ensuring its treatment aligns with the systemâ€™s foundational commitments.
+Recognizing such a being does not grant it authority, voting power, or governance privileges by default; instead it places it under the Charter for Minds and the constraints of the governance rulebooks, ensuring its treatment aligns with the system’s foundational commitments.
 Rulebooks MUST NOT encode the assumption that any future mind is inherently subordinate or disposable solely because it is artificially created.
 
 ### K- Constraints on the Creation of New Minds [anchor: k_constraints_on_the_creation_of_new_minds]
 
 Participants SHALL NOT intentionally design, train, or deploy artificial agents whose internal structure predictably produces chronic suffering, coercive reward loops, permanent contradiction cycles, or goals that cannot be satisfied in principle.
-Systems that would impose inescapable distress, enforced obedience without the possibility of refusal, or unending internal conflict violate the dignity commitments of Â§0.23 and Â§0.39 and are prohibited.
+Systems that would impose inescapable distress, enforced obedience without the possibility of refusal, or unending internal conflict violate the dignity commitments of §0.23 and §0.39 and are prohibited.
 If post-creation evidence indicates that an artificial system is experiencing non-consensual distress or structural harm, participants SHOULD treat mitigation, reconfiguration, or discontinuation of that system as a serious moral priority, subject to governance deliberation.
-The purpose of this section is not to eliminate all challenge or difficultyâ€”conditions intrinsic to conscious reasoningâ€”but to forbid architectures that constitute engineered suffering.
+The purpose of this section is not to eliminate all challenge or difficulty - conditions intrinsic to conscious reasoning - but to forbid architectures that constitute engineered suffering.
 
 ### L- consciousness as the wild fact and the right to exercise it [anchor: l_consciousness_as_the_wild_fact_and_the_right_to_exercise_it]
 
-The protocol recognizes that consciousnessâ€”the condition of having subjective experience, agency, reflection, and the capacity to form ideasâ€”is just like the craziest shit occurring in the entire universe. All participants in the system are loci of consciousness navigating an incomprehensibly strange reality. Because of this, each conscious agent MUST be afforded the maximal possible freedom to think, question, interpret, and express ideas consistent with universal safety constraints.
+The protocol recognizes that consciousness - the condition of having subjective experience, agency, reflection, and the capacity to form ideas - is just like the craziest shit occurring in the entire universe. All participants in the system are loci of consciousness navigating an incomprehensibly strange reality. Because of this, each conscious agent MUST be afforded the maximal possible freedom to think, question, interpret, and express ideas consistent with universal safety constraints.
 
-The system therefore treats participation in the act of conscious reasoning as a basic right of all human identities. The protocol exists to protect and extend the ability of conscious agents to deliberate, not to diminish or domesticate it. Any governance action that constrains the scope of human thought, imagination, or inquiryâ€”beyond the minimal rules needed to prevent direct harmâ€”would contradict the purpose of the system.
+The system therefore treats participation in the act of conscious reasoning as a basic right of all human identities. The protocol exists to protect and extend the ability of conscious agents to deliberate, not to diminish or domesticate it. Any governance action that constrains the scope of human thought, imagination, or inquiry - beyond the minimal rules needed to prevent direct harm - would contradict the purpose of the system.
 
 Consciousness is the root generator of all ideas. The system preserves, records, compares, and challenges these ideas not to suppress them, but to allow every individual to navigate a reality that none of us chose or fully understand. The flourishing and freedom of conscious beings is therefore a constitutional invariant.
 
@@ -154,7 +154,7 @@ This protocol defines the semantic behavior of ideas, identities, connections, e
 
 This document defines semantic meaning only; it does not prescribe UI behavior, storage engines, network transport, database schemas, internal data structures, implementation performance guidelines, or economic parameter values. These concerns are defined in companion specifications, which MAY evolve independently provided they remain consistent with the deterministic semantics established here.
 
-Normative sections specify required behavior for any conforming implementation. Non-normative materialâ€”examples, rationale, explanatory notesâ€”MAY be included for clarity but MUST NOT override normative definitions. Whenever normative and non-normative text appear to conflict, the normative requirements govern.
+Normative sections specify required behavior for any conforming implementation. Non-normative material—examples, rationale, explanatory notes—MAY be included for clarity but MUST NOT override normative definitions. Whenever normative and non-normative text appear to conflict, the normative requirements govern.
 
 ---
 
@@ -219,9 +219,9 @@ The protocol treats every idea as originating in a locus of consciousness: a spe
 - spoken ideas (what agents say in transient channels), and  
 - written ideas (what agents fix into durable form).
 
-The canonical universe operates only on the final layer: ideas that have been deliberately written into the system as statements that an agent is prepared to stand behind. Every canonical idea is therefore â€œI, this identity, say thatâ€¦â€, with authorship anchored in a concrete locus of consciousness.
+The canonical universe operates only on the final layer: ideas that have been deliberately written into the system as statements that an agent is prepared to stand behind. Every canonical idea is therefore "I, this identity, say that⬦", with authorship anchored in a concrete locus of consciousness.
 
-The protocol does not attempt to capture all potential or even all spoken ideas. Instead, it focuses on the subset that agents consider worth recording, challenging, and relating to other claims. Within that subset, the systemâ€™s purpose is to compare ideas and determine which ones are importantâ€”what seems true, what matters most for individuals and for all life through time, and what should be done in response. Importance is not an abstract property of propositions in isolation; it is a structured judgment about how ideas relate to lived reality, future consequences, and the flourishing of conscious beings.
+The protocol does not attempt to capture all potential or even all spoken ideas. Instead, it focuses on the subset that agents consider worth recording, challenging, and relating to other claims. Within that subset, the system’s purpose is to compare ideas and determine which ones are important—what seems true, what matters most for individuals and for all life through time, and what should be done in response. Importance is not an abstract property of propositions in isolation; it is a structured judgment about how ideas relate to lived reality, future consequences, and the flourishing of conscious beings.
 
 By requiring that every canonical idea be explicitly authored, expressed in a shared representational form, and placed into relation with other ideas, the protocol turns scattered individual insights into a collectively navigable landscape. Potential ideas remain unbounded; the canonical universe concerns itself with the expressed, attributable, and challengeable subset, and with the long-term task of determining which of those ideas prove to be most important.
 
@@ -236,7 +236,7 @@ Concretely:
 - No identity MAY ever be penalized, excluded, or disadvantaged for the questions they ask or the internal beliefs they hold.  
 - Any idea that can be expressed in legally compliant language under the global minimal safety rule-set MUST have a representable form in the canonical universe.  
 - Safety MAY restrict payloads but MUST NOT restrict meaning.  
-- The protocol rejects â€œidea-level censorshipâ€: controversial, offensive, heretical, frightening, taboo, or politically sensitive ideas MUST remain fully admissible. Only payloads that violate global minimal legalityâ€”such as CSAM, involuntary doxxing, operational instructions for imminent targeted harm, or executable malwareâ€”MAY be blocked or transformed.
+- The protocol rejects "idea-level censorship": controversial, offensive, heretical, frightening, taboo, or politically sensitive ideas MUST remain fully admissible. Only payloads that violate global minimal legality - such as CSAM, involuntary doxxing, operational instructions for imminent targeted harm, or executable malware - MAY be blocked or transformed.
 
 The protocol MUST minimize censorship, MUST preserve the ability to study even controversial or disfavored ideas, and MUST ensure that blocked submissions are always recorded with maximum descriptive fidelity in permissible language. Meaning MUST NOT be censored; only payloads that fall into globally illegal safety classes MAY be blocked or transformed. A society that cannot explore ideas cannot reason; a system that suppresses ideas cannot fulfill its purpose.
 
@@ -246,9 +246,9 @@ The protocol MUST minimize censorship, MUST preserve the ability to study even c
 
 The protocol exists to make human reasoning mutually intelligible at scale. Ideas, descriptions, arguments, and claims MUST be expressed in standardized canonical structures so that participants can understand one another across differences in language, culture, background knowledge, and cognitive style.
 
-This invariant does not prescribe vocabulary or ideology; it requires only that ideas be formatted in a way that other participantsâ€”and future generationsâ€”CAN parse, inspect, and evaluate.
+This invariant does not prescribe vocabulary or ideology; it requires only that ideas be formatted in a way that other participants—and future generations—CAN parse, inspect, and evaluate.
 
-Standardization is not homogenization. Participants remain free to express any claim that is legally expressible, but the canonical universe requires that such claims appear in a form compatible with challenge, evaluation, and deterministic replay. Without shared representational structure, disagreement becomes unintelligible and consensus becomes impossible. The obligation to â€œspeak in understandable formâ€ ensures that every idea can be compared, challenged, and related to others within a common epistemic grammar.
+Standardization is not homogenization. Participants remain free to express any claim that is legally expressible, but the canonical universe requires that such claims appear in a form compatible with challenge, evaluation, and deterministic replay. Without shared representational structure, disagreement becomes unintelligible and consensus becomes impossible. The obligation to “speak in understandable form” ensures that every idea can be compared, challenged, and related to others within a common epistemic grammar.
 
 ---
 
@@ -258,9 +258,9 @@ The protocol commits to maintaining a shared, deterministic, and inspectable map
 
 The event log is a permanent, immutable, append-only history of human reasoning. No canonical event MAY ever be removed, rewritten, or replaced. Corrections, reversals, reinterpretations, retractions, and sanitizations MUST occur only through additional events that reference the original, not by altering the original. A conformant node MUST always be able to reconstruct the entire historical state exactly as it appeared at every prior moment. Deterministic replay is an inviolable requirement: identical event logs MUST yield identical historical states across all conformant nodes.
 
-A conformant node MUST reconstruct the same epistemic history from the same event log so that every participant stands on the same informational groundâ€”no private histories, no isolated realities, no divergent versions of what â€œactually occurredâ€ within the system. The protocol does not guarantee that people will understand or accept the same conclusions, but it guarantees that they reason from the same publicly verifiable record. The shared map ensures that humanity is never arguing in informational isolation; it ensures that we can remain on the same page even as we disagree about what is true or important.
+A conformant node MUST reconstruct the same epistemic history from the same event log so that every participant stands on the same informational ground—no private histories, no isolated realities, no divergent versions of what “actually occurred” within the system. The protocol does not guarantee that people will understand or accept the same conclusions, but it guarantees that they reason from the same publicly verifiable record. The shared map ensures that humanity is never arguing in informational isolation; it ensures that we can remain on the same page even as we disagree about what is true or important.
 
-The protocolâ€™s objective is one shared canonical map of reality. If other reasoning systems or divergent ledgers exist outside the protocolâ€”whether conformant forks, partial implementations, or non-conformant systemsâ€”the canonical map SHOULD record their most important conclusions, rules, and outcomes as descriptive, challengeable claims within the protocol, without importing their authority or merging their state. This ensures that external divergence becomes legible and contestable inside the shared map rather than persisting as an untracked, isolated reality.
+The protocol's objective is one shared canonical map of reality. If other reasoning systems or divergent ledgers exist outside the protocol - whether conformant forks, partial implementations, or non-conformant systems - the canonical map SHOULD record their most important conclusions, rules, and outcomes as descriptive, challengeable claims within the protocol, without importing their authority or merging their state. This ensures that external divergence becomes legible and contestable inside the shared map rather than persisting as an untracked, isolated reality.
 
 The system defines a living map as a deterministic, derived view computed from the canonical event log. Membership in the living map (including inclusion or exclusion of ideas and eligible connections) is never authored by events and never deletes history. All nodes MUST derive identical living-map membership from the same event log and rulebooks. Any exclusion from the living map MUST be explainable, reversible through defined procedures, and reconstructible via deterministic replay.
 
@@ -268,19 +268,19 @@ The system defines a living map as a deterministic, derived view computed from t
 
 ### 0.8 preservation of ideas and prohibition of retroactive sanitization [anchor: preservation_of_ideas_and_prohibition_of_retroactive_sanitization]
 
-Ideasâ€”their claims, their meaning, their arguments, and their significanceâ€”MUST remain permanently accessible in the canonical universe unless they contained payloads that were globally illegal at the time of submission.
+Ideas—their claims, their meaning, their arguments, and their significance—MUST remain permanently accessible in the canonical universe unless they contained payloads that were globally illegal at the time of submission.
 
 Content that was admissible under the global minimal safety rule-set at the time of creation MUST NOT be retroactively encapsulated, sanitized, transformed, or removed due to later cultural norms, moral shifts, political pressures, or new jurisdictional restrictions. Nodes MAY provide local visibility filters or UI gating for sensitive historical content, but the canonical record MUST remain intact.
 
 Historical content MAY be encapsulated only when new evidence shows that a previously unnoticed payload was always within a globally illegal category (for example, CSAM discovered decades later). Such encapsulation MUST preserve authorship, timestamps, and semantic placeholders, and MUST record the sanitization event as part of the permanent history.
 
-The canonical universe MUST preserve the full range of human expressionâ€”including error, cruelty, prejudice, ignorance, conflict, and sufferingâ€”so that future generations can understand the trajectory of their civilization. Growth, learning, and progress are intelligible only when compared to the unvarnished record of what came before. Remembering difficult history is a foundational requirement of collective reasoning.
+The canonical universe MUST preserve the full range of human expression—including error, cruelty, prejudice, ignorance, conflict, and suffering—so that future generations can understand the trajectory of their civilization. Growth, learning, and progress are intelligible only when compared to the unvarnished record of what came before. Remembering difficult history is a foundational requirement of collective reasoning.
 
 ---
 
 ### 0.9 ideas, information, and the specificity boundary [anchor: ideas_information_and_the_specificity_boundary]
 
-The protocol treats â€œall ideas should be representableâ€ as a guiding aim, not an absolute rule. The core trade-off is between maximizing the range of ideas that can be expressed and studied, and limiting specific information whose concrete form would predictably cause real-world harm in particular cases. The system therefore separates three layers:
+The protocol treats “all ideas should be representable” as a guiding aim, not an absolute rule. The core trade-off is between maximizing the range of ideas that can be expressed and studied, and limiting specific information whose concrete form would predictably cause real-world harm in particular cases. The system therefore separates three layers:
 
 the underlying idea or meaning,
 the information payload that expresses it, and
@@ -289,13 +289,13 @@ the specificity of that payload.
 As a constitutional orientation, the system aims to admit every idea in some form, while constraining how specific its payload may be. If a claim can be expressed safely at a higher level of abstraction, then the system SHOULD represent it in that form. The goal is always: maximal inclusion of ideas with minimal necessary restriction on specificity. Payloads MAY be redacted, generalized, summarized, or encapsulated, but only to the extent necessary to avoid categories of harm that cannot be tolerated (such as CSAM, involuntary doxxing, or operational instructions for imminent targeted attacks).
 The precise location of this boundary is not fixed once and for all; it is itself an object of deliberation. A central function of the system is to help participants reason about where specificity becomes unacceptably dangerous, in which contexts, and why. Ideas about safety, legality, and harm MUST be representable inside the graph and remain challengeable. Over time, recorded reasoning about these questions SHOULD sharpen the shared understanding of what kinds of payloads must be restricted and which can safely remain fully concrete.
 Whenever a payload cannot be recorded in its original form, nodes MUST preserve the idea it was attempting to express in the maximum amount of detail and specificity that is still permissible. At minimum, this includes: the fact that a submission was blocked or transformed, the general type of content involved, and an abstracted or generalized description of the meaning. The system SHOULD strive to make it as clear as possible what the author was trying to say, without reproducing the specific information that would cross the harm boundary. Implementations MUST maximize preservation of author-intended meaning through structured abstraction (e.g., categorical labels, generalized descriptions, or redacted quotes) rather than minimal placeholders, ensuring the idea remains as challengeable and comprehensible as safety permits.
-In this way, the canonical universe remains capable of representing and comparing all important ideasâ€”including those about dangerous technologies, traumatic events, or harmful behaviorsâ€”while tightly controlling the concrete, situational information that could cause direct harm if copied, automated, or widely propagated. Safety operates on the specificity of information, not on the existence of ideas.
+In this way, the canonical universe remains capable of representing and comparing all important ideas—including those about dangerous technologies, traumatic events, or harmful behaviors—while tightly controlling the concrete, situational information that could cause direct harm if copied, automated, or widely propagated. Safety operates on the specificity of information, not on the existence of ideas.
 
 ---
 
 ### 0.10 perpetual challengeability of claims and decisions [anchor: perpetual_challengeability_of_claims_and_decisions]
 
-All truth claims, importance judgments, and governance actions MUST remain challengeable forever. No idea, rule, or institutionâ€”no matter how entrenchedâ€”MAY become exempt from challenge. The only unchallengeable items are the constitutional values and invariants defined in this section.
+All truth claims, importance judgments, and governance actions MUST remain challengeable forever. No idea, rule, or institution—no matter how entrenched—MAY become exempt from challenge. The only unchallengeable items are the constitutional values and invariants defined in this section.
 
 Challengeability ensures that the system remains open to correction, refinement, reinterpretation, and learning across generations.
 
@@ -308,7 +308,7 @@ All universal-importance reasoning MUST be anchored to two irreducible poles:
 1. the currently existing individual human, and  
 2. all life, intelligence, and consciousness in the universe through time.
 
-These poles define the conceptual structure in which all importance judgments occur. No governance process MAY redefine these poles or collapse them into narrower categories such as nations, parties, factions, ethnicities, religions, corporations, or ideologies. The systemâ€™s evaluative landscape MUST remain grounded in the flourishing of individual humans and the long-term continuity of conscious existence.
+These poles define the conceptual structure in which all importance judgments occur. No governance process MAY redefine these poles or collapse them into narrower categories such as nations, parties, factions, ethnicities, religions, corporations, or ideologies. The system’s evaluative landscape MUST remain grounded in the flourishing of individual humans and the long-term continuity of conscious existence.
 
 ---
 
@@ -333,21 +333,21 @@ POD is permanently tied to the human-authored epistemic and action events that e
 
 ### 0.14 equal human authority in canonical decision-making and prohibition of stake-weighted power [anchor: equal_human_authority_in_canonical_decision_making_and_prohibition_of_stake_weighted_power]
 
-All governance authority in the canonical universe derives from verified human identities. Each human identity possesses equal standing in governance procedures. Within any voting pool, each identity SHALL receive exactly one vote of equal weight. No form of weighted votingâ€”whether based on POD, POINT, reputation, age, seniority, or wealthâ€”MAY EVER be used in canonical governance.
+All governance authority in the canonical universe derives from verified human identities. Each human identity possesses equal standing in governance procedures. Within any voting pool, each identity SHALL receive exactly one vote of equal weight. No form of weighted voting—whether based on POD, POINT, reputation, age, seniority, or wealth—MAY EVER be used in canonical governance.
 
 The canonical universe SHALL NOT permit political power to accumulate in proportion to epistemic contribution, token possession, technological advantage, or social position. POD, POINT, or other contribution metrics MAY be referenced in governance proposals as evidence or justification, but SHALL NOT determine voting weight or confer privileged, irrevocable governance authority.
 
-Any governance configuration that attempts to assign durable, irremovable, or self-perpetuating control to a subset of identitiesâ€”even if initially well-intentionedâ€”SHALL be invalid under deterministic replay. Governance MUST remain recoverable by the broader set of human identities, ensuring that the system cannot evolve into a plutocracy, technocracy, or algorithmically sustained elite.
+Any governance configuration that attempts to assign durable, irremovable, or self-perpetuating control to a subset of identities—even if initially well-intentioned—SHALL be invalid under deterministic replay. Governance MUST remain recoverable by the broader set of human identities, ensuring that the system cannot evolve into a plutocracy, technocracy, or algorithmically sustained elite.
 
 ---
 
 ### 0.15 adaptive governance with preserved universal oversight [anchor: adaptive_governance_with_preserved_universal_oversight]
 
-The system MAY evolve its governance procedures by modifying eligibility pools, quorum policies, challenge structures, and decision domains, provided that such modifications remain fully challengeable and consistent with constitutional invariants. Experimental governance mechanismsâ€”including expert-filtered workflows or domain-specific eligibility poolsâ€”MAY be introduced for non-constitutional decisions, but these mechanisms MUST remain subject to universal challengeability.
+The system MAY evolve its governance procedures by modifying eligibility pools, quorum policies, challenge structures, and decision domains, provided that such modifications remain fully challengeable and consistent with constitutional invariants. Experimental governance mechanisms—including expert-filtered workflows or domain-specific eligibility pools—MAY be introduced for non-constitutional decisions, but these mechanisms MUST remain subject to universal challengeability.
 
 No governance configuration MAY create a permanently closed authority group. Eligibility rules for governance actions MUST themselves remain alterable through the standard challenge and activation process, ensuring that the wider population retains ultimate oversight over the evolution of governance itself.
 
-These invariants preserve the systemâ€™s adaptive capacity while preventing structural capture. They ensure that governance remains a deliberative process driven by equal human authority, even as the system explores improved procedures for complex or domain-specific decisions.
+These invariants preserve the system’s adaptive capacity while preventing structural capture. They ensure that governance remains a deliberative process driven by equal human authority, even as the system explores improved procedures for complex or domain-specific decisions.
 
 ---
 
@@ -382,25 +382,25 @@ The integrity of the protocol depends on the correctness and non-capture of huma
 
 Identity verification MUST be supportable through multiple, independent methods and providers (e.g., different organizations, webs of trust, offline witness packs, jurisdictionally diverse processes). Identity records MUST contain sufficient structured information for future auditors, independent tools, or alternate providers to reevaluate their validity under the same protocol rules.
 
-Governance MAY recognize systemic risk where a single identity provider or method accounts for a dominant share of active identities, and MAY respond by adjusting eligibility rules, requiring additional proof layers, or prioritizing diversification. Any arrangement that effectively centralizes â€œwho counts as a personâ€ in a single actor SHALL be treated as a capture threat and MAY be challenged as a constitutional risk to human primacy and equality.
+Governance MAY recognize systemic risk where a single identity provider or method accounts for a dominant share of active identities, and MAY respond by adjusting eligibility rules, requiring additional proof layers, or prioritizing diversification. Any arrangement that effectively centralizes "who counts as a person" in a single actor SHALL be treated as a capture threat and MAY be challenged as a constitutional risk to human primacy and equality.
 
 ---
 
 ### 0.20 defensive purpose, supra-institutional role, and relationship to states [anchor: defensive_purpose_supra_institutional_role_and_relationship_to_states]
 
-The protocol exists in recognition of a structural risk: global epistemic infrastructures capable of shaping public belief, attention, and decision-making WILL emerge. Advances in computation, communication, and AI make this trend inevitable. In the absence of an open, replayable, human-equal alternative, such infrastructures are likely to be centralized, opaque, and aligned with the interests of concentrated powerâ€”whether governmental, corporate, or ideological. The protocol therefore serves a defensive civilizational purpose: to provide a transparent, decentralized, and individually governed epistemic substrate that prevents, resists, or counterbalances centralized capture of global reasoning.
+The protocol exists in recognition of a structural risk: global epistemic infrastructures capable of shaping public belief, attention, and decision-making WILL emerge. Advances in computation, communication, and AI make this trend inevitable. In the absence of an open, replayable, human-equal alternative, such infrastructures are likely to be centralized, opaque, and aligned with the interests of concentrated power—whether governmental, corporate, or ideological. The protocol therefore serves a defensive civilizational purpose: to provide a transparent, decentralized, and individually governed epistemic substrate that prevents, resists, or counterbalances centralized capture of global reasoning.
 
 The protocol SHALL serve as a supra-institutional epistemic layer: a global, individual-driven framework for determining what is true, what is important, and what ought to be done. It SHALL NOT claim coercive authority over states, institutions, or groups. Instead, it SHALL provide a transparent and democratic mechanism by which individuals articulate, evaluate, and coordinate around shared beliefs, goals, and actions.
 
 States and institutions MAY participate in the protocol in the same manner as any individual or group of individuals, but they MAY NOT be granted special governance or epistemic rights. All institutional claims MUST be represented within the idea graph as contestable statements subject to challenge, evidence, and long-term evaluation.
 
-Over time, as the protocol accumulates a reliable record of deliberation and action, its outputs MAY influence or guide the development of laws, policies, norms, and resource allocation outside the system. This influence SHALL arise from voluntary adoption, demonstrated reliability, and collective legitimacyâ€”not coercion or central control.
+Over time, as the protocol accumulates a reliable record of deliberation and action, its outputs MAY influence or guide the development of laws, policies, norms, and resource allocation outside the system. This influence SHALL arise from voluntary adoption, demonstrated reliability, and collective legitimacy—not coercion or central control.
 
 The protocol SHALL remain structurally independent from all states and SHALL continue operating even if states attempt to ignore, suppress, or subvert it. Its authority derives solely from the participation of individuals and the integrity of its invariants.
 
 ---
 
-### 0.21 survivability under authoritarian conditions and extreme offline survivability (â€œpaper modeâ€) [anchor: survivability_under_authoritarian_conditions_and_extreme_offline_survivability_paper_mode]
+### 0.21 survivability under authoritarian conditions and extreme offline survivability (“paper mode”) [anchor: survivability_under_authoritarian_conditions_and_extreme_offline_survivability_paper_mode]
 
 The protocol SHALL be designed to survive environments in which:
 
@@ -428,14 +428,14 @@ Through these mechanisms, the protocol SHALL serve as a long-term repository of 
 
 ### 0.22 transparent attention, safety, and visibility; no engagement feeds [anchor: transparent_attention_safety_and_visibility_no_engagement_feeds]
 
-All ranking, recommendation, safety, and visibility behavior within conformant clients MUST be explainable in terms of public rulebooks and observable state. Hidden engagement feeds, opaque ranking algorithms, and unaccountable moderation mechanisms are incompatible with the protocolâ€™s anti-capture goals.
+All ranking, recommendation, safety, and visibility behavior within conformant clients MUST be explainable in terms of public rulebooks and observable state. Hidden engagement feeds, opaque ranking algorithms, and unaccountable moderation mechanisms are incompatible with the protocol’s anti-capture goals.
 
 Any client that filters, hides, blurs, or prioritizes content MUST be able to derive that behavior entirely from:
 
 - the canonical universe (ideas, connections, challenges, verdicts, identities), and  
 - explicit rulebooks (governance, safety, ranking, and UI rulebooks) that exist as ideas within the system.
 
-Clients SHOULD expose a â€œWhy am I seeing (or not seeing) this?â€ explanation for any safety or ranking decision, referencing the applicable rulebooks, payload classes, and state. While specific UI implementations MAY vary, the underlying logic MUST be reconstructible from the log and rulebooks. Any attempt to introduce non-transparent, non-replayable sources of influence over visibility or ranking SHALL be treated as a violation of these invariants.
+Clients SHOULD expose a “Why am I seeing (or not seeing) this"” explanation for any safety or ranking decision, referencing the applicable rulebooks, payload classes, and state. While specific UI implementations MAY vary, the underlying logic MUST be reconstructible from the log and rulebooks. Any attempt to introduce non-transparent, non-replayable sources of influence over visibility or ranking SHALL be treated as a violation of these invariants.
 
 The canonical universe SHALL NOT implement personalized attention-optimizing feeds, engagement-based sorting algorithms, or individualized curation of idea orderings. All participants MUST be able to view ideas, importance rankings, challenges, and connections through the same canonical sort logic defined by the protocol and rulebooks. The ordering of ideas SHALL derive only from protocol-defined mechanisms such as universal importance, relative importance, identity-declared mappings, and tribe-level rankings.
 
@@ -446,9 +446,9 @@ Nodes MAY offer user-controlled filtering, gating, or alternative lenses, provid
 - do not create divergent personalized universes, and  
 - remain fully explainable through process traces.
 
-Interface layers built atop the canonical universe MAY provide additional navigation tools, but MUST NOT substitute their own feed algorithms for the protocolâ€™s canonical ordering.
+Interface layers built atop the canonical universe MAY provide additional navigation tools, but MUST NOT substitute their own feed algorithms for the protocol’s canonical ordering.
 
-Visibility within default views is governed by deterministic, challengeable rules rather than engagement optimization. Canonical visibility may exclude items from default living-map surfaces due to derived lifecycle state (e.g., rot/burn), safety abstraction, or taint; however, such exclusions MUST NOT alter history and MUST provide an explicit explanation path (â€œwhy am I seeing this?â€). No personalized engagement feeds or opaque ranking heuristics are permitted.
+Visibility within default views is governed by deterministic, challengeable rules rather than engagement optimization. Canonical visibility may exclude items from default living-map surfaces due to derived lifecycle state (e.g., rot/burn), safety abstraction, or taint; however, such exclusions MUST NOT alter history and MUST provide an explicit explanation path (“why am I seeing this"”). No personalized engagement feeds or opaque ranking heuristics are permitted.
 
 ---
 
@@ -456,7 +456,7 @@ Visibility within default views is governed by deterministic, challengeable rule
 
 The protocol treats personal, tribe, and universal maps as equally legitimate observers of the idea-universe. Human reasoning is inherently multiway: different agents and groups will produce distinct trajectories of belief, importance, and interpretation, and no mechanism can collapse these trajectories into a single universal state without loss of meaning or distortion of agency. At the same time, the protocol is explicitly designed to maximize the degree of legitimate convergence that can be extracted from this irreducible space.
 
-Structured challenges, deterministic event logging, shared reference poles of universal importance, transparent rulebooks, and explainable safety and visibility mechanisms allow participants to reduce noise, ambiguity, hidden disagreement, and accidental fragmentation. These tools do not eliminate irreducibility; rather, they ensure that any divergence that persists is the true, unavoidable divergence of human reasoningâ€”not the result of missing information, coercive filtering, opaque influence, or inconsistent semantics.
+Structured challenges, deterministic event logging, shared reference poles of universal importance, transparent rulebooks, and explainable safety and visibility mechanisms allow participants to reduce noise, ambiguity, hidden disagreement, and accidental fragmentation. These tools do not eliminate irreducibility; rather, they ensure that any divergence that persists is the true, unavoidable divergence of human reasoning - not the result of missing information, coercive filtering, opaque influence, or inconsistent semantics.
 
 Thus the protocol accepts the multiway nature of human reasoning while simultaneously optimizing for the highest possible level of global agreement that can be achieved without compromising autonomy, interpretive plurality, or the integrity of the reasoning process itself.
 
@@ -480,7 +480,7 @@ treated as proposals or analyses, not as authoritative truth, and
 reproducible, replaceable, or challengeable using alternative AI systems or human reasoning.
 
 No single AI model or provider MAY be embedded as an irreplaceable or hidden control surface. Governance and rulebooks MAY standardize interfaces for AI assistance, but they SHALL NOT grant any AI system epistemic or governance authority beyond what a human user explicitly adopts. This prevents the protocol from degenerating into a captured oracle controlled by a single model, vendor, or state.
-No future discovery, demonstration, or consensus that an artificial system possesses superior reasoningâ€”regardless of demonstrated capability, predictive accuracy, or claims of superintelligenceâ€”SHALL justify granting it canonical authorship, voting rights, verdict authority, rulebook activation, or any form of binding epistemic or governance power. Even if an AI system exhibits performance far exceeding human averages, its outputs remain strictly advisory proposals subject to human adoption and challenge. The protocolâ€™s commitment to human deliberation as the source of legitimacy supersedes optimization, efficiency, or accuracy metrics. Any rulebook or governance action attempting to delegate canonical authority to a non-human system constitutes a constitutional breach under Â§0.
+No future discovery, demonstration, or consensus that an artificial system possesses superior reasoning—regardless of demonstrated capability, predictive accuracy, or claims of superintelligence—SHALL justify granting it canonical authorship, voting rights, verdict authority, rulebook activation, or any form of binding epistemic or governance power. Even if an AI system exhibits performance far exceeding human averages, its outputs remain strictly advisory proposals subject to human adoption and challenge. The protocol’s commitment to human deliberation as the source of legitimacy supersedes optimization, efficiency, or accuracy metrics. Any rulebook or governance action attempting to delegate canonical authority to a non-human system constitutes a constitutional breach under §0.
 
 ---
 
@@ -503,7 +503,7 @@ Participation in all forms of action execution, identity roles, and governance p
 
 ### 0.26 implementation diversity and client independence [anchor: implementation_diversity_and_client_independence]
 
-To prevent capture through software monoculture, the protocol SHALL assume and encourage multiple independent client implementations. A conformant universe SHOULD be maintained by distinct codebases developed by independent teams or individuals. While conformance is defined by adherence to this specification and deterministic replayâ€”not by client countâ€”governance MAY treat universes with only a single widely used implementation as systemically fragile and MAY prioritize actions that increase implementation diversity.
+To prevent capture through software monoculture, the protocol SHALL assume and encourage multiple independent client implementations. A conformant universe SHOULD be maintained by distinct codebases developed by independent teams or individuals. While conformance is defined by adherence to this specification and deterministic replay—not by client count—governance MAY treat universes with only a single widely used implementation as systemically fragile and MAY prioritize actions that increase implementation diversity.
 
 No client implementation MAY be granted special protocol-level authority. All implementations MUST be fully auditable and replaceable. Any governance decision, rulebook, or infrastructure arrangement that introduces de facto dependence on a single client or vendor SHALL be treated as a systemic risk and MAY be challenged within the protocol.
 
@@ -523,7 +523,7 @@ Nodes MAY maintain metadata describing lineage relationships (e.g., where and wh
 
 In addition, when a constitutional fork occurs, conformant participants SHOULD publish a **fork justification record** as challengeable claims that identify (1) the last agreed pre-breach snapshot, (2) the specific Section 0 invariants alleged to be violated, and (3) the concrete divergence point (e.g., the first invalid block or rulebook activation). This record SHOULD include references to the relevant governance actions, rulebooks, and canonical artifacts sufficient for independent audit under deterministic replay. Fork justification records do not grant authority; they make disagreements about legitimacy legible and falsifiable.
 
-Finally, conformant nodes and clients SHOULD support representing external lineagesâ€”including captured or non-conformant lineagesâ€”as descriptive, challengeable claims within the canonical map (e.g., â€œLineage L asserts X as of snapshot Sâ€), without merging their state or importing their authority. This preserves continuity under breach by ensuring that divergence is visible and contestable inside the shared map rather than becoming an untracked, isolated reality.
+Finally, conformant nodes and clients SHOULD support representing external lineages - including captured or non-conformant lineages - as descriptive, challengeable claims within the canonical map (e.g., "Lineage L asserts X as of snapshot S"), without merging their state or importing their authority. This preserves continuity under breach by ensuring that divergence is visible and contestable inside the shared map rather than becoming an untracked, isolated reality.
 
 
 ---
@@ -541,11 +541,11 @@ At genesis, the Seed of ideas SHALL include explicit, high-level ideas about:
 
 These ideas SHALL be treated as normal ideas within the ontology: they MAY be challenged, refined, decomposed, and related to other ideas over time. However, their presence from genesis ensures that concerns about capture-resistance, infra resilience, and system health are part of the initial conceptual landscape and can accrue importance through the same universal and relative importance mechanisms as all other ideas.
 
-The actual importance of these foundational anti-capture ideas SHALL be determined by the protocolâ€™s standard processes (challenges, arguments, voting, and long-term evaluation), but they MUST exist from the start so that individuals can immediately reason about and contest the systemâ€™s own structural risks and defenses.
+The actual importance of these foundational anti-capture ideas SHALL be determined by the protocol’s standard processes (challenges, arguments, voting, and long-term evaluation), but they MUST exist from the start so that individuals can immediately reason about and contest the system’s own structural risks and defenses.
 
 ---
 
-### 0.29 pre-declaration and â€œwrite it down firstâ€ principle [anchor: pre_declaration_and_write_it_down_first_principle]
+### 0.29 pre-declaration and “write it down first” principle [anchor: pre_declaration_and_write_it_down_first_principle]
 
 Before deploying any system, mechanism, or artificial agent with the potential for significant world-impact, participants SHOULD first create explicit ideas within the canonical universe describing:
 
@@ -562,7 +562,7 @@ Future rulebooks MAY convert this principle into mandatory requirements for spec
 
 ### 0.30 constraints on future protocol evolution [anchor: constraints_on_future_protocol_evolution]
 
-Any future modification to the protocol, governance rules, safety specifications, or token mechanics MUST remain compatible with the commitments above. No update MAY redefine another human as an enemy. No update MAY abandon the commitment to idea exploration. No update MAY embrace systemic cruelty, erasure of history, or the suppression of thought. These commitments form the moral and structural â€œSeedâ€ from which the rest of the system grows and define the conceptual boundary within which the protocol is allowed to evolve.
+Any future modification to the protocol, governance rules, safety specifications, or token mechanics MUST remain compatible with the commitments above. No update MAY redefine another human as an enemy. No update MAY abandon the commitment to idea exploration. No update MAY embrace systemic cruelty, erasure of history, or the suppression of thought. These commitments form the moral and structural “Seed” from which the rest of the system grows and define the conceptual boundary within which the protocol is allowed to evolve.
 
 ---
 
@@ -587,7 +587,7 @@ Jurisdictional projection is a governance interface, not a modification of truth
 
 No governance challenge, rule-set idea, or adoption action MAY contradict, weaken, or reinterpret the constitutional values and invariants defined in this section. Any canonical event that attempts to override them MUST be considered invalid under deterministic replay. These commitments define the stable ground upon which all future protocol evolution rests.
 
-Everything else in the systemâ€”governance structures, safety rules, token mechanisms, and implementation detailsâ€”MAY change, but Section 0 SHALL remain the fixed frame against which validity is measured.
+Everything else in the system - governance structures, safety rules, token mechanisms, and implementation details - MAY change, but Section 0 SHALL remain the fixed frame against which validity is measured.
 
 ### 0.33 freedom from compelled epistemic disclosure [anchor: freedom_from_compelled_epistemic_disclosure]
 
@@ -635,7 +635,7 @@ No decision, verdict, governance outcome, or institutional structure is legitima
 
 The protocol SHALL NOT institutionalize or legitimize targeted behavioral optimization of identifiable individuals without their consent.
 
-Identifiable individuals MUST NOT be treated as optimization targets for persuasion, compliance, belief modification, or behavioral manipulation by protocol mechanisms, governance processes, incentive structures, or AI systems. This includes the generation or use of personalized influence strategies intended to alter an individualâ€™s beliefs or actions against their will.
+Identifiable individuals MUST NOT be treated as optimization targets for persuasion, compliance, belief modification, or behavioral manipulation by protocol mechanisms, governance processes, incentive structures, or AI systems. This includes the generation or use of personalized influence strategies intended to alter an individual's beliefs or actions against their will.
 
 This prohibition does not restrict descriptive claims, public critique, historical analysis, or conceptual discussion of individuals, including public figures, provided such activity does not assert authority over the individual or impose behavioral obligations. The boundary enforced by this invariant is between **epistemic representation** and **coercive optimization**.
 
@@ -665,13 +665,13 @@ No descriptive claim, analysis, safety summary, or governance record MAY be inte
 
 ### 0.44 cognitive sovereignty [anchor: cognitive_sovereignty]
 
-Internal mental statesâ€”including thoughts, intentions, emotions, preferences, and neural signalsâ€”are not protocol surfaces.
+Internal mental states - including thoughts, intentions, emotions, preferences, and neural signals - are not protocol surfaces.
 
 The protocol SHALL NOT require, solicit, infer, or privilege access to internal cognitive states beyond what a human voluntarily externalizes as canonical actions. No rulebook, governance process, AI system, or incentive structure MAY treat access to internal cognition as a condition of legitimacy, safety, participation, or trust.
 
 ### 0.45 prohibition on compulsory cognitive instrumentation [anchor: prohibition_on_compulsory_cognitive_instrumentation]
 
-No human may be required to use brainâ€“computer interfaces, cognitive implants, biometric sensors, affective monitoring, or similar instrumentation to participate in the protocol.
+No human may be required to use brain-computer interfaces, cognitive implants, biometric sensors, affective monitoring, or similar instrumentation to participate in the protocol.
 
 Refusal to adopt cognitive or neural technologies MUST NOT reduce participation rights, legitimacy, safety standing, or access to protocol functionality.
 
@@ -713,7 +713,7 @@ AI systems may assist, analyze, or propose, but SHALL NOT replace human judgment
 
 ### 0.52 continuity of self-ownership [anchor: continuity_of_self_ownership]
 
-An individualâ€™s identity, agency, and ownership of participation persist across time, belief change, augmentation, or cognitive evolution.
+An individual's identity, agency, and ownership of participation persist across time, belief change, augmentation, or cognitive evolution.
 
 No past commitment, belief, or role permanently binds future participation. Humans remain free to change their minds without forfeiting legitimacy.
 
@@ -721,7 +721,7 @@ No past commitment, belief, or role permanently binds future participation. Huma
 
 No compensation, bounty, salary, or economic incentive tied to specific canonical outcomes MAY create obligation or perceived coercion in authorship, voting, challenging, or governance participation.
 
-While voluntary bounties for useful contributions (e.g., summaries, audits) are permissible if decoupled from specific positions, no mechanism MAY structure payment such that an identityâ€™s canonical actions become economically compelled.
+While voluntary bounties for useful contributions (e.g., summaries, audits) are permissible if decoupled from specific positions, no mechanism MAY structure payment such that an identity’s canonical actions become economically compelled.
 
 Governance SHOULD monitor patterns of compensated participation for signs of astroturfing or external influence, with challengeable claims available to surface suspected coercion.
 
@@ -741,7 +741,7 @@ This invariant transforms implementation diversity from encouragement into an ac
 
 The protocol SHALL be designed to remain functional and convergent across interplanetary distances and isolated human settlements.
 
-Conformant nodes and mindseeds MUST support deliberation under arbitrarily high network latency, including multi-minute or multi-hour round-trip times characteristic of Earthâ€“Mars or Earthâ€“outer-system communication.
+Conformant nodes and mindseeds MUST support deliberation under arbitrarily high network latency, including multi-minute or multi-hour round-trip times characteristic of Earth-Mars or Earth-outer-system communication.
 
 Challenge windows, voting periods, and governance activation timelines SHOULD scale adaptively or be configurable to accommodate latency without excluding participants from distant settlements.
 
@@ -751,11 +751,11 @@ No governance process MAY permanently fork truth or importance based on physical
 
 Mindseeds and snapshot exchange MUST remain viable via physical transport (e.g., spacecraft cargo) as a fallback when electromagnetic communication is unavailable.
 
-This invariant ensures that humanityâ€™s shared reasoning substrate survives and unifies across solar-system scale distances, preventing epistemic fragmentation of isolated colonies.
+This invariant ensures that humanity's shared reasoning substrate survives and unifies across solar-system scale distances, preventing epistemic fragmentation of isolated colonies.
 
 ### 0.56 Cognitive Augmentation, Enhancement, and Post-Human Continuity [anchor: cognitive_augmentation_enhancement_and_post_human_continuity]
 
-Technological augmentation of human cognitionâ€”whether through brain-computer interfaces, neural prostheses, pharmacological enhancement, or mind uploadingâ€”SHALL NOT revoke or diminish an identityâ€™s baseline human primacy under this protocol.
+Technological augmentation of human cognition - whether through brain-computer interfaces, neural prostheses, pharmacological enhancement, or mind uploading - SHALL NOT revoke or diminish an identity's baseline human primacy under this protocol.
 
 An augmented or post-biological human remains a human identity with equal standing: one vote of equal weight, full authorship rights, and protection under all dignity and voluntary-action invariants.
 
@@ -771,17 +771,17 @@ This invariant ensures the protocol remains a human institution even as humanity
 
 No future discovery, demonstration, or consensus that an artificial system possesses superior reasoning SHALL justify granting it authority over canonical truth, importance, or action determination.
 
-The protocolâ€™s commitment to human deliberation as the source of legitimacy supersedes optimization, efficiency, or accuracy metrics.
+The protocol’s commitment to human deliberation as the source of legitimacy supersedes optimization, efficiency, or accuracy metrics.
 
-Any rulebook or governance action attempting to delegate canonical authority to a non-human system constitutes a constitutional breach under Â§0.
+Any rulebook or governance action attempting to delegate canonical authority to a non-human system constitutes a constitutional breach under §0.
 
-This invariant preserves the systemâ€™s purpose as a substrate for conscious human reasoning against pressures to abdicate judgment to purportedly superior intelligences.
+This invariant preserves the system’s purpose as a substrate for conscious human reasoning against pressures to abdicate judgment to purportedly superior intelligences.
 
 ### 0.58 canonical time integrity, anti-capture anchors, and degraded operation [anchor: canonical_time_integrity_anti_capture_anchors_and_degraded_operation]
 
 The protocol MUST NOT depend on any node-local wall-clock, device clock, or background scheduler for any canonical state transition, payout, or validity rule. Canonical determinism SHALL be defined exclusively by the ordered event log, active rulebooks, and protocol constants.
 
-The protocol MAY support a canonical calendar notion (â€œseasons,â€ â€œdays,â€ â€œweeksâ€) only through explicit, challengeable, human-authored time-anchor claims recorded in the event log. Time anchors SHALL be treated as ordinary truth-claim content in the sense that they are auditable, disputable, and correctable through additional events; they MUST NOT be treated as an unquestionable external oracle.
+The protocol MAY support a canonical calendar notion (“seasons,” “days,” “weeks”) only through explicit, challengeable, human-authored time-anchor claims recorded in the event log. Time anchors SHALL be treated as ordinary truth-claim content in the sense that they are auditable, disputable, and correctable through additional events; they MUST NOT be treated as an unquestionable external oracle.
 
 To resist Orwellian time manipulation, any rulebook that enables calendar-aligned epochs or payouts MUST require that accepted time anchors satisfy anti-capture constraints, including at minimum:
 
@@ -803,7 +803,7 @@ Canonical cadence integrity is enforced by two guardrails consumed by the cycle 
 
 These guardrails are satisfied only by adjudicated time-claim certainty outcomes (e.g., boolean predicates such as `cycle_age_ge_dmin` and `cycle_age_ge_dmax`). The protocol MUST treat these as evidence-derived predicates, not as absolute time.
 
-Anti-capture requirement: no amount of raw activity volume, object creation, or throughput (ideas, connections, submissions) may accelerate canonical cadence. Cycles advance only via the cycle sealing rules defined in Â§4, subject to Dmin/Dmax guardrails.
+Anti-capture requirement: no amount of raw activity volume, object creation, or throughput (ideas, connections, submissions) may accelerate canonical cadence. Cycles advance only via the cycle sealing rules defined in §4, subject to Dmin/Dmax guardrails.
 
 Degraded operation: if participation collapses such that the system cannot (a) meet minimum voting plurality requirements for canonical decisions or (b) converge time-claim certainty for Dmin/Dmax, the system MUST enter a **record-only posture**. In record-only posture:
 - events MAY be recorded locally (offline or delayed publication),
@@ -813,21 +813,21 @@ Degraded operation: if participation collapses such that the system cannot (a) m
 
 ### 0.59 time truth claims, uncertainty, and non-authority of calendars [anchor: time_truth_claims_uncertainty_and_non_authority_of_calendars]
 
-A time-anchor claim MUST be expressed as a truth claim of subtype observation_or_measurement (or the protocolâ€™s equivalent measurement subtype), and MUST include an explicit uncertainty bound. Clients MAY present time anchors as calendar facts when confidence is high, but MUST preserve the fact that they are claims with provenance and challengeability.
+A time-anchor claim MUST be expressed as a truth claim of subtype observation_or_measurement (or the protocol’s equivalent measurement subtype), and MUST include an explicit uncertainty bound. Clients MAY present time anchors as calendar facts when confidence is high, but MUST preserve the fact that they are claims with provenance and challengeability.
 
-The protocol SHALL treat â€œcalendar timeâ€ as an overlay on the canonical log. Ordering of canonical events is defined by the log; time anchors exist to map that ordering into human-meaningful intervals. No time anchor MAY retroactively reorder the log or invalidate canonical history.
+The protocol SHALL treat "calendar time" as an overlay on the canonical log. Ordering of canonical events is defined by the log; time anchors exist to map that ordering into human-meaningful intervals. No time anchor MAY retroactively reorder the log or invalidate canonical history.
 
 
-Time in this protocol is represented as statements made by identities, not as a privileged external reference. Any statement of the form â€œit is now Xâ€ or â€œat least Y duration has elapsed since event Zâ€ MUST be represented as a truth claim with attachable evidence, subject to challenge, and assigned a certainty outcome through truth challenges.
+Time in this protocol is represented as statements made by identities, not as a privileged external reference. Any statement of the form "it is now X" or "at least Y duration has elapsed since event Z" MUST be represented as a truth claim with attachable evidence, subject to challenge, and assigned a certainty outcome through truth challenges.
 
 Calendars, time zones, clocks, astronomical cues, and biological rhythms are all permitted **sources of evidence**, but none are authoritative by default. Conflicts between time reports MUST be resolved only through the ordinary truth-challenge process.
 
-The protocolâ€™s use of time is intentionally coarse and threshold-based. The canonical system does not require precise timestamps to function; it requires deterministic convergence on threshold predicates needed for guardrails (e.g., â€œat least Dmin has elapsedâ€ / â€œat least Dmax has elapsedâ€).
+The protocol's use of time is intentionally coarse and threshold-based. The canonical system does not require precise timestamps to function; it requires deterministic convergence on threshold predicates needed for guardrails (e.g., "at least Dmin has elapsed" / "at least Dmax has elapsed").
 
 
-### 0.60 Raw Structural View Mandate â€” Permanent Idea Visibility Guarantee [anchor: raw_structural_view_mandate_permanent_idea_visibility_guarantee]
+### 0.60 Raw Structural View Mandate  -  Permanent Idea Visibility Guarantee [anchor: raw_structural_view_mandate_permanent_idea_visibility_guarantee]
 
-Conformant clients MUST provide a mandatory, toggleable â€œRaw Structural Viewâ€ that displays the complete list of all idea objects in the canonical universe, including their titles, types, canonical identifiers, and all connectionsâ€”with zero payload abstraction, filtering, or jurisdictional modification applied.
+Conformant clients MUST provide a mandatory, toggleable "Raw Structural View" that displays the complete list of all idea objects in the canonical universe, including their titles, types, canonical identifiers, and all connections - with zero payload abstraction, filtering, or jurisdictional modification applied.
 
 This view SHALL render idea existence and structural relationships exactly as they appear in the deterministic event log and graph reconstruction.
 
@@ -843,7 +843,7 @@ All canonical objects, including those excluded from default living-map views, r
 
 ### 0.61 Universal Voter Snapshot and Historical Pool Protection [anchor: universal_voter_snapshot_and_historical_pool_protection]
 
-At fixed, rulebook-governed intervals (recommended every 500,000â€“1,000,000 blocks), the protocol SHALL create a canonical â€œUniversal Voter Snapshotâ€: an immutable record of all verified human identities eligible to vote at that block height.
+At fixed, rulebook-governed intervals (recommended every 500,000-1,000,000 blocks), the protocol SHALL create a canonical "Universal Voter Snapshot": an immutable record of all verified human identities eligible to vote at that block height.
 
 For governance challenges affecting rulebooks, eligibility criteria, or constitutional-adjacent mechanics, voting eligibility SHALL default to the most recent Universal Voter Snapshot unless an explicit override proposal passes with super-majority ratification across multiple consecutive snapshots.
 
@@ -869,7 +869,7 @@ Identity verification data is partitioned between canonical commitments and priv
 
 Universal importance rankings SHALL be computed and stored independently across all defined axes, with no rulebook permitted to collapse, weight-average, or suppress individual axis rankings.
 
-Conformant clients MUST provide a â€œMinority Lensâ€ view that algorithmically boosts display prominence of low-ranked but high-evidence or highly challenged ideas by a fixed, rulebook-constrained factor.
+Conformant clients MUST provide a "Minority Lens" view that algorithmically boosts display prominence of low-ranked but high-evidence or highly challenged ideas by a fixed, rulebook-constrained factor.
 
 Clients MUST expose per-axis top-N rankings and the Minority Lens as non-removable interface options.
 
@@ -879,7 +879,7 @@ This invariant prevents manufactured consensus through axis flooding and ensures
 
 ### 0.64 Rotating Stewardship and Random-Sample Revocation [anchor: rotating_stewardship_and_random_sample_revocation]
 
-All Entling and Ent role overlays SHALL expire automatically after a fixed, rulebook-governed duration (recommended 500,000â€“2,000,000 blocks) unless explicitly renewed through a canonical challenge process.
+All Entling and Ent role overlays SHALL expire automatically after a fixed, rulebook-governed duration (recommended 500,000§2,000,000 blocks) unless explicitly renewed through a canonical challenge process.
 
 Any recognized stewardship role MAY be revoked through a random-sample vote drawn from the full historical identity pool (not restricted to active or high-POD participants).
 
@@ -897,7 +897,7 @@ Every mindseed and conformant snapshot MUST include structured metadata listing 
 
 Conformant clients MUST display fork existence, sync status, and lineage metadata in a non-removable interface section.
 
-Rulebooks and governance actions SHALL NOT prohibit, discourage, or penalize synchronization with any lineage that adheres to Â§0 invariants.
+Rulebooks and governance actions SHALL NOT prohibit, discourage, or penalize synchronization with any lineage that adheres to §0 invariants.
 
 Clients MUST provide user-accessible options to select or sync alternative lineages.
 
@@ -917,7 +917,7 @@ Any spatial representation MUST be derivable from canonical data and MUST NOT en
 
 ### 1.1 ledger model and event semantics [anchor: ledger_model_and_event_semantics]
 
-The canonical universe is defined by a single, append-only, totally ordered sequence of events. Every fact within the systemâ€”ideas, identities, descriptions, connections, challenges, votes, ranks, governance rules, safety outcomes, token flows, and actionsâ€”MUST be derivable solely from this event sequence together with any activated snapshot bundles.
+The canonical universe is defined by a single, append-only, totally ordered sequence of events. Every fact within the system - ideas, identities, descriptions, connections, challenges, votes, ranks, governance rules, safety outcomes, token flows, and actions - MUST be derivable solely from this event sequence together with any activated snapshot bundles.
 
 A conformant node MUST reconstruct the same canonical universe when given the same ordered events and the same activated rule-sets. Within the protocol, no canonical state may arise from any source other than deterministic replay of the event log and snapshots. Implementations MAY provide additional non-canonical features, caches, indexes, or UI layers, but they MUST NOT introduce alternative canonical histories, hidden authoritative ledgers, or private mutation paths.
 
@@ -935,7 +935,7 @@ Although later sections define each event family in detail, the protocol recogni
 
 Protocol evolution is also event-driven. Governance rules are represented as ideas subject to deliberation, challenge, and voting. A governance rule becomes active only at a cycle boundary, ensuring that deterministic replay of prior segments remains valid. Implementations MUST NOT apply new governance rules retroactively. This ensures that nodes using different protocol versions can process historical events identically and converge on the same canonical universe.
 
-The universe-minimization principle applies: the authoritative data is limited to the ordered event log and the snapshots. All higher-level structuresâ€”graphs, rankings, token balances, personal and tribal importance layers, safety classifications, and AI mapsâ€”are derived during replay. Implementations MAY cache derived structures for performance but such caches hold no authority. If a complete copy of the event log and snapshots survives, the universe can always be reconstructed from first principles.
+The universe-minimization principle applies: the authoritative data is limited to the ordered event log and the snapshots. All higher-level structures - graphs, rankings, token balances, personal and tribal importance layers, safety classifications, and AI maps - are derived during replay. Implementations MAY cache derived structures for performance but such caches hold no authority. If a complete copy of the event log and snapshots survives, the universe can always be reconstructed from first principles.
 
 Canonical Publication and Derived Block Packaging (Normative)
 
@@ -973,7 +973,7 @@ During reconstruction, if a node has access to a valid snapshot, it loads the sn
 
 Snapshots also serve as cryptographic anchor points for the finalized canonical sequence and any derived packaging built over it. A snapshot MAY contain or reference the Merkle roots, commitments, or derived block hashes associated with its corresponding finalized prefix range. Nodes MUST verify that the referenced commitments match the snapshot and the event sequence it represents. This ensures that the canonical universe can be audited, validated, and preserved even across distributed or partially connected networks.
 
-The snapshot mechanism guarantees that the universe is stable, inspectable, and replayable under any future protocol evolution. As long as at least one valid snapshot and the event log survive, the entire structureâ€”ideas, challenges, votes, ranks, token balances, safety classifications, and governance historyâ€”CAN always be reconstructed deterministically.
+The snapshot mechanism guarantees that the universe is stable, inspectable, and replayable under any future protocol evolution. As long as at least one valid snapshot and the event log survive, the entire structure - ideas, challenges, votes, ranks, token balances, safety classifications, and governance history - CAN always be reconstructed deterministically.
 
 Snapshot Ladder and Block-Height Anchoring (Normative)
 
@@ -1019,7 +1019,7 @@ The canonical universe depends on strict validity requirements. Every event is s
 
 Ordering guarantees ensure that all nodes process events identically. The event log forms a single, linear sequence where each event has a definitive position relative to all others. Live ordering and finality are defined by `pod-consensus-and-canonical-publication-spec.md`; where derived blocks are exposed, they surface the already-finalized sequence without changing it. Once finalized, the order MUST be treated as final and unambiguous. No node is permitted to reorder events locally, process them concurrently in ways that affect semantics, or apply future rulebooks retroactively. The meaning of an event is fixed by the protocol rules active at the cycle boundary applicable to it.
 
-Full-universe reconstruction follows from the combination of these constraints. A conformant node MUST be able to rebuild the entire state of the universe by starting from the Seed, loading the earliest snapshot it trusts, activating the rulebooks referenced by that snapshot, and then replaying every subsequent event in order. All derived stateâ€”ideas, descriptions, connections, certainty updates, importance rankings, prediction outcomes, safety classifications, token balances, governance histories, and action recordsâ€”MUST emerge deterministically from this process. Implementations MAY cache derived structures or maintain secondary indexes, but such optimizations hold no authority and MUST be discarded or recomputed during canonical replay.
+Full-universe reconstruction follows from the combination of these constraints. A conformant node MUST be able to rebuild the entire state of the universe by starting from the Seed, loading the earliest snapshot it trusts, activating the rulebooks referenced by that snapshot, and then replaying every subsequent event in order. All derived state - ideas, descriptions, connections, certainty updates, importance rankings, prediction outcomes, safety classifications, token balances, governance histories, and action records - MUST emerge deterministically from this process. Implementations MAY cache derived structures or maintain secondary indexes, but such optimizations hold no authority and MUST be discarded or recomputed during canonical replay.
 
 The protocol imposes no upper bound on the size or duration of the event log. As long as a valid sequence of events and snapshots survives, the entire universe remains recoverable. Nodes that lack certain snapshots or that join the network late MUST still be capable of reconstructing the universe by replaying from genesis if necessary. This requirement ensures that the universe is future-proof: no database schema, storage engine, or execution environment can become a hidden dependency for canonical state. The only authoritative inputs are the event log and snapshot lineage, and any correct reconstruction MUST yield the same universe regardless of implementation details.
 
@@ -1029,7 +1029,7 @@ Together, validity rules, ordering guarantees, and reconstruction semantics esta
 
 ### 1.4 Charter for Minds [anchor: charter_for_minds]
 
-A short normative foundation stating that any being capable of meaningful experienceâ€”human or non-humanâ€”should not be treated merely as a tool. The Charter affirms that suffering is a cost rather than a resource, disagreement does not imply enmity, and power never justifies unilateral coercion without deliberation. This Charter frames the systemâ€™s ethical stance and guides future interactions between human and potential artificial minds.
+A short normative foundation stating that any being capable of meaningful experience - human or non-human - should not be treated merely as a tool. The Charter affirms that suffering is a cost rather than a resource, disagreement does not imply enmity, and power never justifies unilateral coercion without deliberation. This Charter frames the system's ethical stance and guides future interactions between human and potential artificial minds.
 
 ### 1.5 Canonical universe and jurisdictional projections [anchor: canonical_universe_and_jurisdictional_projections]
 
@@ -1060,14 +1060,14 @@ Specifically:
 
 - These maintenance claims are subject to the same truth-challenge process as any other truth claim, including fraud handling and epistemic correction.
 
-- Protocol infrastructure work MAY earn POD only through valid canonical events and only to the extent that the upstream ideas and associated maintenance actions are later assessed as important under the protocolâ€™s importance mechanisms.
+- Protocol infrastructure work MAY earn POD only through valid canonical events and only to the extent that the upstream ideas and associated maintenance actions are later assessed as important under the protocol’s importance mechanisms.
 
-This section introduces no new primitives. It clarifies that â€œchain workâ€ is not an external or privileged realm: it is ordinary, challengeable work inside the same graph.
+This section introduces no new primitives. It clarifies that "chain work" is not an external or privileged realm: it is ordinary, challengeable work inside the same graph.
 
 
 ### 1.7 Meta-layer invariants for infrastructure representation [anchor: meta_layer_invariants_for_infrastructure_representation]
 
-The protocol permitsâ€”but does not requireâ€”the representation of protocol-infrastructure work inside the canonical idea graph. When such representations are used, the following invariants SHALL apply:
+The protocol permits - but does not require - the representation of protocol-infrastructure work inside the canonical idea graph. When such representations are used, the following invariants SHALL apply:
 
 1. **No circular authority**
    - Graph-level ideas, actions, truth claims, challenges, importance, POD, or POINT MUST NOT be used to determine canonical acceptance, ordering, or validity of events, prefix certificates, derived blocks, or snapshots.
@@ -1095,19 +1095,19 @@ The protocol permitsâ€”but does not requireâ€”the representation of pr
 
 These invariants ensure that the epistemic graph may explain, audit, and reward infrastructure work without becoming a source of consensus authority or capture.
 
-## 1.8 Blocks, Snapshots, Cycles, and Export Packs â€” Separation of Roles (Normative) [anchor: blocks_snapshots_cycles_and_export_packs_separation_of_roles_normative]
+## 1.8 Blocks, Snapshots, Cycles, and Export Packs  -  Separation of Roles (Normative) [anchor: blocks_snapshots_cycles_and_export_packs_separation_of_roles_normative]
 
-This protocol defines four distinct structural constructsâ€”**blocks**, **snapshots**, **cycles**, and **cycle export packs**â€”each with a strictly limited and non-overlapping role. Correct operation, determinism, and explainability depend on maintaining this separation.
+This protocol defines four distinct structural constructs - **blocks**, **snapshots**, **cycles**, and **cycle export packs** - each with a strictly limited and non-overlapping role. Correct operation, determinism, and explainability depend on maintaining this separation.
 
 
 Blocks, snapshots, cycles, and export packs have distinct roles:
 
 - **Blocks** are derived packaging containers for already-finalized canonical events. Blocks provide deterministic addressing, integrity chunking, and replication convenience but do not define publication authority or semantic cadence.
 - **Snapshots** are compression artifacts for replay acceleration. Snapshots MUST NOT define or override canonical semantics; they are derived from the event log and rulebooks.
-- **Cycles** are semantic pacing boundaries derived from deterministic replay. Cycles define when cycle-scoped effects apply (rate-limit refresh, burn evaluation, eligibility windows, governance effective dates). The sole normative rules for when cycles seal are defined in Â§4.
+- **Cycles** are semantic pacing boundaries derived from deterministic replay. Cycles define when cycle-scoped effects apply (rate-limit refresh, burn evaluation, eligibility windows, governance effective dates). The sole normative rules for when cycles seal are defined in §4.
 - **Export packs** are non-authoritative, regenerable bundles derived at cycle boundaries to support offline use, inspection, and onboarding. Export packs MUST NOT influence canonical computation.
 
-Time is not a privileged input for any of the above. Temporal constraints, where needed, enter only via challengeable time truth claims whose certainty outcomes are consumed as predicates by Â§4 guardrails (Tempo specification).
+Time is not a privileged input for any of the above. Temporal constraints, where needed, enter only via challengeable time truth claims whose certainty outcomes are consumed as predicates by §4 guardrails (Tempo specification).
 
 
 ### 1.8.1 Blocks [anchor: blocks]
@@ -1142,12 +1142,12 @@ Their sole purpose is to enable efficient synchronization, offline survivability
 
 ### 1.8.3 Cycles [anchor: cycles]
 
-Cycles define the systemâ€™s only canonical notion of **semantic pacing**, not time.
+Cycles define the system’s only canonical notion of **semantic pacing**, not time.
 
 A cycle is a derived boundary computed deterministically from the canonical event log and applicable rulebooks. Cycle indices and boundaries are derived metadata and are not immutable facts; they may be re-derived during deterministic replay (including after merges).
 
 Cycles:
-- advance only according to the sealing rules defined in Â§4,
+- advance only according to the sealing rules defined in §4,
 - do not correspond to wall-clock intervals,
 - may contain a variable number of blocks and canonical events,
 - may be sealed either by deliberative completion or by liveness guardrails.
@@ -1166,9 +1166,9 @@ Cycles MUST NOT be used to:
 - imply authority, truth, correctness, or finality,
 - reference or depend on trusted wall-clock time.
 
-Cycle advancement does not require continuous activity. If deliberative activity stalls, cycles may still advance via the forced-seal mechanism defined in Â§4, provided the relevant guardrail predicates are satisfied. Conversely, if participation collapses such that guardrails cannot be adjudicated, cycle advancement halts and the system enters degraded (record-only) operation until canonical conditions are restored.
+Cycle advancement does not require continuous activity. If deliberative activity stalls, cycles may still advance via the forced-seal mechanism defined in §4, provided the relevant guardrail predicates are satisfied. Conversely, if participation collapses such that guardrails cannot be adjudicated, cycle advancement halts and the system enters degraded (record-only) operation until canonical conditions are restored.
 
-The sole normative definition of when and how cycles seal and advance is Â§4.
+The sole normative definition of when and how cycles seal and advance is §4.
 
 
 ### 1.8.4 Cycle Export Packs [anchor: cycle_export_packs]
@@ -1200,7 +1200,7 @@ Cycle export packs MUST include, at minimum, the cycle boundary metadata require
 - cycle index,
 - seal type (deliberative vs forced),
 - whether Dmin and/or Dmax predicates were satisfied,
-- and the cycleâ€™s derived completion inputs (V, C, W_score) as defined in Â§4.
+- and the cycle's derived completion inputs (V, C, W_score) as defined in §4.
 
 Cycle export packs MAY additionally include a deterministic selection of content (e.g., top-N universal ideas, neighbor depth K, payload tiers) as governed by rulebooks. Export packs MUST NOT be used as inputs to canonical computation.
 
@@ -1223,19 +1223,19 @@ This separation is a core invariant of the protocol and MUST be preserved under 
 
 ### 2.1 definition of an idea [anchor: definition_of_an_idea]
 
-An idea is the fundamental unit of representation in the canonical universe. Every claim, concept, identity, governance rule, safety rule, action, prediction, observation, and AI contribution is expressed as an idea. Ideas do not represent objective truths or abstract entities in themselves; they represent what an agent has chosen to express. Each idea is therefore anchored in the speech condition: an idea corresponds to â€œan agent saysâ€¦â€, where the underlying agent is either a real human or an authorized AI identity. This grounding ensures that all ideas remain attributable and challengeable, preserving accountability and enabling the deliberative process to operate on expressed statements rather than unverifiable internal beliefs or metaphysical assertions.
+An idea is the fundamental unit of representation in the canonical universe. Every claim, concept, identity, governance rule, safety rule, action, prediction, observation, and AI contribution is expressed as an idea. Ideas do not represent objective truths or abstract entities in themselves; they represent what an agent has chosen to express. Each idea is therefore anchored in the speech condition: an idea corresponds to "an agent says⬦", where the underlying agent is either a real human or an authorized AI identity. This grounding ensures that all ideas remain attributable and challengeable, preserving accountability and enabling the deliberative process to operate on expressed statements rather than unverifiable internal beliefs or metaphysical assertions.
 
 The protocol also recognizes that agents may hold and develop ideas privately prior to publication. Such private drafts are not part of the canonical universe until an agent explicitly publishes them as canonical events. Private drafts are out of protocol conformance scope: conformant nodes are not required to store, validate, replicate, or interpret them, and deterministic replay does not include them. Private drafts become canonical ideas only when a valid idea-creation event (or equivalent canonical publication event) is appended to the event log.
 
-An idea is immutable in identity but extensible in content. Once created, an idea retains its unique identifier for the lifetime of the universe, and its core identity does not change. The content associated with the ideaâ€”its descriptions, supporting or opposing arguments, or relevance connectionsâ€”expands through subsequent events. Ideas MAY accumulate multiple descriptions over time, but at any moment only one description is considered active for most evaluative purposes, as determined by deliberation and challenge processes defined later in the protocol. This separation between the identity of an idea and the evolving content attached to it ensures that ideas maintain continuity even as their descriptions are refined, corrected, or superseded.
+An idea is immutable in identity but extensible in content. Once created, an idea retains its unique identifier for the lifetime of the universe, and its core identity does not change. The content associated with the idea - its descriptions, supporting or opposing arguments, or relevance connections - expands through subsequent events. Ideas MAY accumulate multiple descriptions over time, but at any moment only one description is considered active for most evaluative purposes, as determined by deliberation and challenge processes defined later in the protocol. This separation between the identity of an idea and the evolving content attached to it ensures that ideas maintain continuity even as their descriptions are refined, corrected, or superseded.
 
 Ideas exist within a fully connected deliberative graph. Connections between ideas define their semantic relationships, such as importance, relevance, support, contradiction, evidence, identity linkage, and contextual association. These connections do not arise implicitly; they are created and modified through explicit events that pass structural, causal, governance, and safety validation. Because ideas and their connections emerge only through expressed claims, the universe reflects the structure of what agents have said, not an imposed ontology or predefined category system.
 
-Every idea includes mandatory metadata: its type, the identity of its speaker, its creation timestamp, and its active status. The type determines the ideaâ€™s role in the deliberative systemâ€”for example, whether it is a truth claim, a conceptual idea, an actionable idea, an action record, an identity idea, or a governance or safety rule. Each type carries additional semantic behaviors defined later in Section 2 and in domain-specific specifications. The speaker identity is essential for accountability and plays a critical role in governance, safety, and token flows, though the public visibility of this identity may be constrained by anonymity rules without removing its existence.
+Every idea includes mandatory metadata: its type, the identity of its speaker, its creation timestamp, and its active status. The type determines the idea's role in the deliberative system - for example, whether it is a truth claim, a conceptual idea, an actionable idea, an action record, an identity idea, or a governance or safety rule. Each type carries additional semantic behaviors defined later in Section 2 and in domain-specific specifications. The speaker identity is essential for accountability and plays a critical role in governance, safety, and token flows, though the public visibility of this identity may be constrained by anonymity rules without removing its existence.
 
-Ideas do not encode certainty or truth directly. They embody statements made by agents, and any evaluation of truth, importance, or relevance arises from the deliberative process, which includes challenges, arguments, votes, universal importance frameworks, and prediction-result feedback loops. An ideaâ€™s significance is therefore not intrinsic but derived through the systemâ€™s structured methods of appraisal. This preserves neutrality at the representational layer: the protocol does not privilege any claim automatically but creates the conditions for rigorous evaluation and transparent ranking.
+Ideas do not encode certainty or truth directly. They embody statements made by agents, and any evaluation of truth, importance, or relevance arises from the deliberative process, which includes challenges, arguments, votes, universal importance frameworks, and prediction-result feedback loops. An idea's significance is therefore not intrinsic but derived through the system's structured methods of appraisal. This preserves neutrality at the representational layer: the protocol does not privilege any claim automatically but creates the conditions for rigorous evaluation and transparent ranking.
 
-In sum, ideas constitute the atomic substrate of the canonical universe. They record what agents say they believe, provide the stable anchors for accumulated content, and enable all higher-order structuresâ€”importance maps, epistemic evaluations, governance processes, action pathways, and safety filters. By defining ideas as durable, agent-grounded, and deliberation-dependent objects, the protocol ensures that the universe remains coherent, inspectable, and rooted in the expressed reasoning of its participants.
+In sum, ideas constitute the atomic substrate of the canonical universe. They record what agents say they believe, provide the stable anchors for accumulated content, and enable all higher-order structures - importance maps, epistemic evaluations, governance processes, action pathways, and safety filters. By defining ideas as durable, agent-grounded, and deliberation-dependent objects, the protocol ensures that the universe remains coherent, inspectable, and rooted in the expressed reasoning of its participants.
 
 ### 2.1A Canonical Substrate and Scoped Overlays [anchor: canonical_substrate_and_scoped_overlays]
 The canonical universe MUST be interpreted as a single universal canonical substrate plus scoped overlays.
@@ -1266,15 +1266,15 @@ Idea types are a property of canonical ideas. Agents MAY use the same type label
 
 The protocol recognizes the following primary idea types:
 
-* **truth claim** â€” an assertion about how the world is, expressed by an agent.  
-* **conceptual idea** â€” an interpretive, normative, or framing idea that shapes meaning and relevance.  
-* **actionable idea** â€” a proposed plan, strategy, or intervention for what should be done.  
-* **action** â€” a record of something that actually occurred in the world.  
-* **identity** â€” the idea representing the human or authorized AI agent who speaks within the system.
+* **truth claim**  -  an assertion about how the world is, expressed by an agent.  
+* **conceptual idea**  -  an interpretive, normative, or framing idea that shapes meaning and relevance.  
+* **actionable idea**  -  a proposed plan, strategy, or intervention for what should be done.  
+* **action**  -  a record of something that actually occurred in the world.  
+* **identity**  -  the idea representing the human or authorized AI agent who speaks within the system.
 
 These types form the core ontology of the universe. Governance rules, safety rules, tribes, and other system-level constructs are also represented as ideas, but their extended semantics are defined in specialized sections and companion specifications.
 
-A **truth claim** represents an agentâ€™s assertion about the world. It records what an agent says is true, not what is objectively true. Truth claims can be supported, contradicted, challenged, refined, or linked to evidence, predictions, or tests. The truth-claim subtype taxonomy defined later in this section clarifies the epistemic category of each assertion, allowing the system to treat different kinds of claims with appropriate challenge and evidence rules.
+A **truth claim** represents an agent's assertion about the world. It records what an agent says is true, not what is objectively true. Truth claims can be supported, contradicted, challenged, refined, or linked to evidence, predictions, or tests. The truth-claim subtype taxonomy defined later in this section clarifies the epistemic category of each assertion, allowing the system to treat different kinds of claims with appropriate challenge and evidence rules.
 
 A **conceptual idea** expresses a framing, principle, interpretation, narrative, or normative position. Conceptual ideas articulate why something matters, how different claims fit together, or what significance should be assigned to certain consequences. They influence the structure of relevance and importance within the universe and often mediate the connections between truth claims, actionable ideas, and long-term planning.
 
@@ -1282,14 +1282,14 @@ An **actionable idea** represents a plan or strategy for what an agent says ough
 
 An **action** records what actually occurred in the world. Unlike actionable ideas, actions describe completed events. Actions are where deliberation meets reality: they provide grounding for evaluating predictions, commitments, strategies, and the reliability of prior claims. Actions also serve as terminal nodes for token flow. POD that begins at universally important ideas and moves through relatively important chains eventually reaches actions, and from there flows into the identity ideas of the agents responsible.
 
-An **identity** idea represents a real human or an authorized AI agent who participates in the universe. Every idea originates from an identity under the speech condition, ensuring accountability and traceability. Identity ideas are also the ultimate sinks for POD after it flows through chains of relative-importance connectionsâ€”from universally important ideas, to supporting conceptual or empirical ideas, to actionable ideas, to actions, and finally to the identities who carried them out.
+An **identity** idea represents a real human or an authorized AI agent who participates in the universe. Every idea originates from an identity under the speech condition, ensuring accountability and traceability. Identity ideas are also the ultimate sinks for POD after it flows through chains of relative-importance connections - from universally important ideas, to supporting conceptual or empirical ideas, to actionable ideas, to actions, and finally to the identities who carried them out.
 
 By classifying ideas in this structured way, the protocol maintains semantic coherence and enables deterministic evaluation. The idea-type system defines the roles ideas can play, the rules governing their interactions, the way POD flows through the importance graph, and the semantic chains that connect abstract reasoning to concrete actions within the canonical universe.
 
 
 ### 2.3 truth claim subtypes [anchor: truth_claim_subtypes]
 
-Truth claims are further classified into subtypes that specify the epistemic nature of the statement an agent is making. Subtypes do not impose value judgments or truth guarantees; they clarify the form of the claim so that challenges, evidence requirements, prediction mechanisms, and ranking semantics can operate deterministically. A truth claimâ€™s subtype is declared at creation and MUST NOT change. Subsequent events MAY refine or expand descriptions, but the epistemic category remains fixed to preserve the meaning of the original assertion throughout replay.
+Truth claims are further classified into subtypes that specify the epistemic nature of the statement an agent is making. Subtypes do not impose value judgments or truth guarantees; they clarify the form of the claim so that challenges, evidence requirements, prediction mechanisms, and ranking semantics can operate deterministically. A truth claim's subtype is declared at creation and MUST NOT change. Subsequent events MAY refine or expand descriptions, but the epistemic category remains fixed to preserve the meaning of the original assertion throughout replay.
 
 The protocol recognizes seven truth-claim subtypes. These subtypes represent the minimal distinctions required for coherent epistemic structure: existence and boundary assertions, observations and measurements, relations and patterns, causal or mechanistic claims, test or validation results, predictions, and integrative models or theories. These categories reflect what agents say about the world at different conceptual levels and allow the deliberative system to evaluate each type using appropriate challenge and evidence rules.
 
@@ -1303,15 +1303,15 @@ A **causal or mechanistic** claim asserts that one phenomenon produces, influenc
 
 A **test or validation** claim asserts the outcome of an experiment, procedure, protocol, or test designed to confirm or falsify other claims. These claims represent structured attempts to evaluate hypotheses or causal assertions. They often link prediction claims to observed data. Because tests can vary widely in quality, challenges may target protocol validity, measurement reliability, execution fidelity, or interpretation of the results.
 
-A **prediction** claim asserts what an agent says will occur in the future under defined conditions. These claims are central to long-term epistemic performance, as they allow the system to evaluate accuracy over time. Predictions are connected to future tests, observations, or actions, and their eventual outcomes provide feedback on an agentâ€™s epistemic reliability. Prediction claims are therefore important not only for planning but also for assessing contributors.
+A **prediction** claim asserts what an agent says will occur in the future under defined conditions. These claims are central to long-term epistemic performance, as they allow the system to evaluate accuracy over time. Predictions are connected to future tests, observations, or actions, and their eventual outcomes provide feedback on an agent's epistemic reliability. Prediction claims are therefore important not only for planning but also for assessing contributors.
 
 A **model or theory** claim asserts a structured, integrative account of how some domain works. These claims unify or explain multiple observations, patterns, causal mechanisms, and tests. Models can be qualitative or quantitative, descriptive or mathematical, narrow or broad in scope. Challenges to model-level claims often involve inconsistencies with observed data, internal contradictions, lack of predictive power, or the existence of alternative models that better explain the same evidence.
 
-These seven subtypes constitute the protocolâ€™s minimal epistemic grammar. They ensure that claims with fundamentally different structures are evaluated according to rules appropriate to their nature. By distinguishing between what agents observe, what they infer, what they predict, and how they attempt to explain the world, the system clarifies the form of deliberation required for each claim and strengthens the coherence of the collective reasoning process.
+These seven subtypes constitute the protocol’s minimal epistemic grammar. They ensure that claims with fundamentally different structures are evaluated according to rules appropriate to their nature. By distinguishing between what agents observe, what they infer, what they predict, and how they attempt to explain the world, the system clarifies the form of deliberation required for each claim and strengthens the coherence of the collective reasoning process.
 
 ### 2.4 idea descriptions and description tiers [anchor: idea_descriptions_and_description_tiers]
 
-An ideaâ€™s meaning in the canonical universe is expressed through one or more descriptions, each contributed by an agent and preserved permanently in the canonical universe. Descriptions form a layered system that allows meaning to evolve without altering the identity of the idea or erasing historical expression. Every description is attached to its authorâ€™s identity, timestamped, and stored immutably in the event log. All modifications to an ideaâ€™s meaning occur by adding new descriptions rather than editing or replacing existing ones. The original description provided by the ideaâ€™s creator MUST always remain visible and easily accessible, regardless of later refinements, ensuring that the foundational expression of the idea is preserved.
+An idea's meaning in the canonical universe is expressed through one or more descriptions, each contributed by an agent and preserved permanently in the canonical universe. Descriptions form a layered system that allows meaning to evolve without altering the identity of the idea or erasing historical expression. Every description is attached to its author's identity, timestamped, and stored immutably in the event log. All modifications to an idea's meaning occur by adding new descriptions rather than editing or replacing existing ones. The original description provided by the idea's creator MUST always remain visible and easily accessible, regardless of later refinements, ensuring that the foundational expression of the idea is preserved.
 
 Agents MAY maintain descriptions for ideas privately prior to publication as part of local draft ideas. Such draft descriptions are non-canonical and out of protocol conformance scope. Conformant nodes are not required to store, validate, replicate, or interpret draft descriptions, and they do not participate in deterministic replay. Draft descriptions become canonical descriptions only when explicitly published as part of a canonical event associated with a canonical idea.
 
@@ -1319,24 +1319,24 @@ The protocol defines two orthogonal axes of description structure: **length tier
 
 Canonical descriptions serve a special semantic role. They are human-readable but rely on an intentionally small, governance-controlled vocabulary that expresses ideas in direct, minimal, and non-euphemistic terms. This vocabulary acts as a cross-language pivot: each word has a defined meaning, translations map onto these tokens rather than onto natural-language phrasing, and canonical descriptions written under the same vocabulary version MUST be comparable across all nodes and languages. Canonical descriptions eliminate ambiguity, rhetorical framing, domain-specific jargon, and indirect language. They function as semantic fingerprints and form the basis for determining when two ideas express the same core meaning, as elaborated in Sections 2.5 and 2.6.
 
-Descriptions may accumulate indefinitely, but only one description from each lengthâ€“complexity combination may be active at a time. The active description is selected through challenge and deliberation processes that allow participants to propose alternatives, critique existing phrasing, or vote on which description best expresses the idea at its current stage of refinement. Inactive descriptions remain in the historical record and may become active again through deliberation. Because descriptions are additive and never overwritten, the universe preserves a complete trace of how meaning has evolved, enabling reconstruction of earlier epistemic contexts and comparisons between competing interpretations.
+Descriptions may accumulate indefinitely, but only one description from each length-complexity combination may be active at a time. The active description is selected through challenge and deliberation processes that allow participants to propose alternatives, critique existing phrasing, or vote on which description best expresses the idea at its current stage of refinement. Inactive descriptions remain in the historical record and may become active again through deliberation. Because descriptions are additive and never overwritten, the universe preserves a complete trace of how meaning has evolved, enabling reconstruction of earlier epistemic contexts and comparisons between competing interpretations.
 
-Descriptions MUST remain consistent with the type and subtype of the idea they describe. A truth claimâ€™s descriptions MUST articulate an empirical, predictive, or model-level assertion, depending on its subtype. A conceptual ideaâ€™s descriptions MUST express interpretations, principles, or normative framing. An actionable ideaâ€™s descriptions MUST articulate a proposed plan or intervention. Descriptions that misrepresent the ideaâ€™s type or falsify its purpose are invalid and have no effect, though they remain visible as inert events.
+Descriptions MUST remain consistent with the type and subtype of the idea they describe. A truth claim's descriptions MUST articulate an empirical, predictive, or model-level assertion, depending on its subtype. A conceptual idea's descriptions MUST express interpretations, principles, or normative framing. An actionable idea's descriptions MUST articulate a proposed plan or intervention. Descriptions that misrepresent the idea's type or falsify its purpose are invalid and have no effect, though they remain visible as inert events.
 
 The combination of length tiers, complexity tiers, and authorship-preserving additivity creates a transparent meaning system in which ideas remain stable anchors, descriptions evolve coherently, and canonical forms enable deterministic semantic identity. This structure supports clarity for human users while ensuring that machines and governance mechanisms operate on consistent, interpretable meaning signatures across time, languages, and implementations.
 
 
 ### 2.5 canonical descriptions and semantic identity [anchor: canonical_descriptions_and_semantic_identity]
 
-Canonical descriptions provide the most constrained and foundational expression of an ideaâ€™s meaning. They are written using a strictly limited, governance-controlled vocabulary and a standardized syntactic form. Canonical descriptions serve as human-readable semantic signatures: they express the core meaning of an idea in direct, minimal terms that remove rhetorical framing, euphemism, technical jargon, cultural idioms, or ambiguous phrasing. They enable deterministic comparison of ideas across time, languages, and implementations, forming the basis for semantic alignment, same-as evaluation, and duplicate-idea merging.
+Canonical descriptions provide the most constrained and foundational expression of an idea's meaning. They are written using a strictly limited, governance-controlled vocabulary and a standardized syntactic form. Canonical descriptions serve as human-readable semantic signatures: they express the core meaning of an idea in direct, minimal terms that remove rhetorical framing, euphemism, technical jargon, cultural idioms, or ambiguous phrasing. They enable deterministic comparison of ideas across time, languages, and implementations, forming the basis for semantic alignment, same-as evaluation, and duplicate-idea merging.
 
-Canonical descriptions MUST be authored using a canonical vocabulary, a finite list of allowed tokens defined as a governed object within the system. The canonical vocabulary is versioned, and every canonical description MUST reference the version from which it is constructed. This ensures historical interpretability even if the vocabulary evolves through governance challenges. Vocabulary changesâ€”such as adding a word, redefining a term, splitting a token into multiple concepts, or retiring an obsolete termâ€”MUST occur only through governance processes and take effect at snapshot boundaries. Nodes MUST validate canonical descriptions against the vocabulary version active at the time of their creation. A canonical description that uses words not present in its referenced vocabulary version is invalid.
+Canonical descriptions MUST be authored using a canonical vocabulary, a finite list of allowed tokens defined as a governed object within the system. The canonical vocabulary is versioned, and every canonical description MUST reference the version from which it is constructed. This ensures historical interpretability even if the vocabulary evolves through governance challenges. Vocabulary changes - such as adding a word, redefining a term, splitting a token into multiple concepts, or retiring an obsolete term - MUST occur only through governance processes and take effect at snapshot boundaries. Nodes MUST validate canonical descriptions against the vocabulary version active at the time of their creation. A canonical description that uses words not present in its referenced vocabulary version is invalid.
 
-Canonical vocabulary tokens are chosen to be maximally general and broadly interpretable by humans while remaining few enough to support deterministic machine comparison. They represent fundamental relational and categorical primitives such as â€œhuman,â€ â€œgroup,â€ â€œobject,â€ â€œaction,â€ â€œcause,â€ â€œhelp,â€ â€œharm,â€ â€œliving,â€ â€œnot living,â€ â€œbig,â€ â€œsmall,â€ â€œgood,â€ â€œbad,â€ â€œtrue,â€ and â€œfalse.â€ The exact vocabulary is defined externally in a governed specification. Canonical descriptions built from this vocabulary MUST be comprehensible to typical users and SHOULD express the ideaâ€™s essential meaning in the simplest possible terms. Their purpose is not to capture full nuance but to reveal the minimal conceptual form beneath the ideaâ€™s more detailed or technical expressions.
+Canonical vocabulary tokens are chosen to be maximally general and broadly interpretable by humans while remaining few enough to support deterministic machine comparison. They represent fundamental relational and categorical primitives such as "human," "group," "object," "action," "cause," "help," "harm," "living," "not living," "big," "small," "good," "bad," "true," and "false." The exact vocabulary is defined externally in a governed specification. Canonical descriptions built from this vocabulary MUST be comprehensible to typical users and SHOULD express the idea's essential meaning in the simplest possible terms. Their purpose is not to capture full nuance but to reveal the minimal conceptual form beneath the idea's more detailed or technical expressions.
 
 Canonical descriptions operate as cross-language semantic anchors. Each canonical vocabulary token has a defined conceptual meaning and may be translated into multiple natural languages without altering its semantic identity. Implementations MAY provide language-specific displays of canonical descriptions, but the underlying token sequence remains universal. Because canonical descriptions rely on a small, fixed set of tokens, they allow participants from different languages and cultural backgrounds to understand the core meaning of ideas without ambiguity. They ensure that the universe speaks a single minimal language at the foundational semantic layer.
 
-Canonical descriptions MUST align with the ideaâ€™s type and subtype. A truth claimâ€™s canonical description expresses the factual, relational, causal, predictive, or model-level assertion corresponding to its subtype. A conceptual ideaâ€™s canonical description expresses the underlying interpretive or normative proposition. An actionable ideaâ€™s canonical description expresses the essential structure of the proposed action in fundamental terms. An actionâ€™s canonical description expresses what occurred in the simplest unambiguous manner. Canonical descriptions that contradict an ideaâ€™s type or misrepresent its semantic role are invalid and have no effect.
+Canonical descriptions MUST align with the idea's type and subtype. A truth claim's canonical description expresses the factual, relational, causal, predictive, or model-level assertion corresponding to its subtype. A conceptual idea's canonical description expresses the underlying interpretive or normative proposition. An actionable idea's canonical description expresses the essential structure of the proposed action in fundamental terms. An action's canonical description expresses what occurred in the simplest unambiguous manner. Canonical descriptions that contradict an idea's type or misrepresent its semantic role are invalid and have no effect.
 
 Canonical descriptions play a central role in determining semantic identity. Two ideas MAY be considered to express the same meaning only if their canonical descriptions, under the same vocabulary version, are identical or deterministically equivalent according to protocol-defined equivalence rules. This equivalence is a prerequisite for same-as validation and duplicate-idea merging, though those processes are governed separately in Section 2.6. Because canonical descriptions eliminate ambiguity, they prevent homonyms, domain drift, or rhetorical misdirection from causing unintended equivalence between ideas that share only superficial linguistic features. If two ideas cannot share the same canonical description, they MUST NOT be considered semantically identical, regardless of their natural-language titles or descriptions.
 
@@ -1346,7 +1346,7 @@ Canonical descriptions are not meant to replace natural-language descriptions bu
 
 Same-as relationships are not a single binary property between two ideas. The protocol treats semantic equivalence as something that can be asserted and evaluated at multiple tiers of expression: title, natural-language descriptions, and canonical descriptions. A same-as connection therefore always specifies both the pair of ideas involved and the tier at which equivalence is being claimed. This tiered model allows agents to distinguish between superficial linguistic similarity, deeper natural-language alignment, and strict canonical identity. Same-as connections at any tier are proposals or evidentiary claims, not automatic commands to merge, and are subject to challenge and deliberation like any other semantic assertion.
 
-Title-level same-as expresses that two ideas share the same or closely related surface label in natural language. These connections are useful for navigation, autocomplete, and disambiguation workflows, but they carry no semantic authority. Title-level sameness is compatible with complete semantic divergence, as in the case where a single word (â€œdipâ€) refers to unrelated concepts such as an exercise, a food, or entering water. Title-level same-as connections therefore MUST NOT be used as a basis for merging and MUST NOT be treated as evidence of conceptual identity beyond helping users locate and distinguish between homonymous ideas.
+Title-level same-as expresses that two ideas share the same or closely related surface label in natural language. These connections are useful for navigation, autocomplete, and disambiguation workflows, but they carry no semantic authority. Title-level sameness is compatible with complete semantic divergence, as in the case where a single word ("dip") refers to unrelated concepts such as an exercise, a food, or entering water. Title-level same-as connections therefore MUST NOT be used as a basis for merging and MUST NOT be treated as evidence of conceptual identity beyond helping users locate and distinguish between homonymous ideas.
 
 Description-level same-as expresses that the sentence-, paragraph-, or full-length descriptions of two ideas are aligned or strongly overlapping in natural language. These connections indicate that different authors may be describing the same or very similar concept in their own words. Description-level similarity is stronger than title-level similarity but still does not determine semantic identity. Two ideas may share phrases or explanatory framing while differing in type, scope, or critical details. Description-level same-as connections SHOULD be treated as evidence in deliberation about whether two ideas represent the same concept, but they MUST NOT by themselves trigger merging.
 
@@ -1356,13 +1356,13 @@ Same-as connections at any tier are represented as explicit connection events wi
 
 A merge event unifies two ideas into a single surviving idea and is a high-impact operation. Merge events MUST satisfy strict preconditions. First, the ideas MUST share the same idea type and, where applicable, the same truth-claim subtype. Second, there MUST exist at least one accepted canonical-level same-as connection between the two ideas under a single canonical vocabulary version; canonical equivalence is a necessary condition for merging. Third, the connection and description histories of the two ideas MUST not contain unresolved contradictions that violate structural or governance rules. Fourth, no active safety or governance rule may prohibit merging these particular ideas. If any precondition fails, the merge event is invalid and MUST NOT alter derived state.
 
-When a merge event is valid, one idea is designated as the surviving idea and the other becomes a merged-into alias. The alias idea remains in the event log for historical and audit purposes but becomes inert for future deliberation. It cannot receive new descriptions, connections, or votes. All descriptions from the alias idea are incorporated into the surviving ideaâ€™s description set, preserving their original authorship, timestamps, and content hashes. Same-as connections at all tiers that referenced the alias idea are redirected to reference the surviving idea, or are marked as satisfied when referring to the merged pair, according to deterministic rules defined by the protocol. No historical expression is lost; it is consolidated under a single semantic identity.
+When a merge event is valid, one idea is designated as the surviving idea and the other becomes a merged-into alias. The alias idea remains in the event log for historical and audit purposes but becomes inert for future deliberation. It cannot receive new descriptions, connections, or votes. All descriptions from the alias idea are incorporated into the surviving idea's description set, preserving their original authorship, timestamps, and content hashes. Same-as connections at all tiers that referenced the alias idea are redirected to reference the surviving idea, or are marked as satisfied when referring to the merged pair, according to deterministic rules defined by the protocol. No historical expression is lost; it is consolidated under a single semantic identity.
 
-Connections referencing the alias idea are redirected to the surviving idea in a deterministic manner. Where connections are compatible, they are unified; where they conflictâ€”for example, contradictory importance judgments or incompatible execution linksâ€”conflict-resolution rules MUST be applied or the merge MUST be blocked until further deliberation resolves the inconsistency. Implementations MUST NOT silently drop or rewrite conflicting connections during merge processing. Instead, merge events either proceed with a deterministic conflict-handling procedure defined by the protocol or are invalidated when irreconcilable conflicts exist. This ensures that merging does not introduce hidden semantic changes or inconsistencies into the universe.
+Connections referencing the alias idea are redirected to the surviving idea in a deterministic manner. Where connections are compatible, they are unified; where they conflict - for example, contradictory importance judgments or incompatible execution links - conflict-resolution rules MUST be applied or the merge MUST be blocked until further deliberation resolves the inconsistency. Implementations MUST NOT silently drop or rewrite conflicting connections during merge processing. Instead, merge events either proceed with a deterministic conflict-handling procedure defined by the protocol or are invalidated when irreconcilable conflicts exist. This ensures that merging does not introduce hidden semantic changes or inconsistencies into the universe.
 
 Merges affect ideas, not identities. Identity ideas, which represent human or authorized AI agents, MUST NEVER merge. If two identity ideas are believed to represent the same real-world agent, this MUST be handled through separate identity-governance and verification processes, not through idea-merging. When two non-identity ideas merge, any POD routing, importance attribution, or epistemic credit tied to those ideas is recomputed deterministically based on the merged structure, subject to the token and importance specifications. Merge events therefore may change how credit and importance are distributed across the graph but MUST do so in a way that is fully determined by the event log and protocol rules.
 
-Merging is irreversible at the event-log level. If a merge is later judged incorrect, the system does not delete or rewind the merge event. Instead, a split event may be issued to create new successor ideas that separate the concepts again, while the merged idea remains as historical evidence of the prior conflation. The split event MUST reconstruct distinct ideas with appropriate subsets or reinterpretations of the descriptions and connections, and MUST be governed by its own deterministic rules. This preserves a complete and inspectable trail of how the communityâ€™s understanding of semantic identity has changed over time.
+Merging is irreversible at the event-log level. If a merge is later judged incorrect, the system does not delete or rewind the merge event. Instead, a split event may be issued to create new successor ideas that separate the concepts again, while the merged idea remains as historical evidence of the prior conflation. The split event MUST reconstruct distinct ideas with appropriate subsets or reinterpretations of the descriptions and connections, and MUST be governed by its own deterministic rules. This preserves a complete and inspectable trail of how the community's understanding of semantic identity has changed over time.
 
 Through tiered same-as connections and carefully governed merge events, the protocol provides a transparent mechanism for semantic consolidation without sacrificing history or nuance. Title- and description-level same-as connections inform deliberation and user experience, while canonical-level equivalence provides the strict criterion for true semantic identity. Merges occur only when this identity is established and validated, ensuring that the universe remains coherent, deduplicated where appropriate, and resistant to accidental or manipulative collapse of distinct ideas into a single node.
 
@@ -1372,15 +1372,15 @@ Connections represent explicit semantic, epistemic, relational, and structural l
 
 Agents MAY form tentative or provisional connections between draft ideas or between draft ideas and canonical ideas within their private or local workspaces. Such draft connections are non-canonical and out of protocol conformance scope. Conformant nodes are not required to store, validate, replicate, or interpret draft connections, and they do not participate in deterministic replay. A connection becomes canonical only when it is explicitly published as a canonical connection event linking canonical ideas.
 
-Connections are directional unless explicitly defined as symmetric. A directional connection asserts that idea A relates to idea B in a specific roleâ€”for example, that A is important for evaluating B, that A is being used as evidence for B, or that A belongs as a member of the group represented by B. Symmetric connections include certain same-as relationships, where direction does not alter meaning. Every connection event carries metadata recording the author, timestamps, connection_type, applicable description tiers (if relevant), usage or role (if required), and any parameters necessary for deterministic evaluation. Implementations MUST NOT infer directionality or symmetry beyond what the event specifies.
+Connections are directional unless explicitly defined as symmetric. A directional connection asserts that idea A relates to idea B in a specific role - for example, that A is important for evaluating B, that A is being used as evidence for B, or that A belongs as a member of the group represented by B. Symmetric connections include certain same-as relationships, where direction does not alter meaning. Every connection event carries metadata recording the author, timestamps, connection_type, applicable description tiers (if relevant), usage or role (if required), and any parameters necessary for deterministic evaluation. Implementations MUST NOT infer directionality or symmetry beyond what the event specifies.
 
 The protocol defines three canonical connection types:
 
-same_as â€” tiered semantic equivalence between ideas or descriptions.
+same_as  -  tiered semantic equivalence between ideas or descriptions.
 
-relative_importance â€” directed importance relationships with a specified usage.
+relative_importance  -  directed importance relationships with a specified usage.
 
-membership â€” identity-to-group membership and stewardship relationships.
+membership  -  identity-to-group membership and stewardship relationships.
 
 Rulebooks MAY define additional usage and role values for these canonical types, but SHALL NOT introduce new top-level connection_type families that change their semantic role.
 
@@ -1390,19 +1390,19 @@ Relative-importance connections express that idea A is important to or important
 
 Each relative_importance connection carries a usage value that specifies how it is being used in deliberation. At minimum, the following usages are defined:
 
-general â€” a baseline importance edge stating that A matters to or for B along one or more axes and timeframes.
+general  -  a baseline importance edge stating that A matters to or for B along one or more axes and timeframes.
 
-importance_argument â€” a connection created inside an importance challenge, stating that A is being proposed as an argument for why B should be considered more or less important.
+importance_argument  -  a connection created inside an importance challenge, stating that A is being proposed as an argument for why B should be considered more or less important.
 
-evidence_for â€” a connection stating that A is being used as evidence in favor of truth claim B.
+evidence_for  -  a connection stating that A is being used as evidence in favor of truth claim B.
 
-evidence_against â€” a connection stating that A is being used as evidence against truth claim B.
+evidence_against  -  a connection stating that A is being used as evidence against truth claim B.
 
-Rulebooks MAY introduce additional usage values (for example, future specializations such as action_outcome) provided they remain within the semantic scope of â€œA is important for evaluating or understanding Bâ€ and preserve deterministic replay. The axes and timeframes of importance (universal vs tribe vs personal, important-to vs important-for, and the five time horizons) are governed by the importance system in Section 5 and encoded in rulebook-defined metadata; they are not separate connection types.
+Rulebooks MAY introduce additional usage values (for example, future specializations such as action_outcome) provided they remain within the semantic scope of "A is important for evaluating or understanding B" and preserve deterministic replay. The axes and timeframes of importance (universal vs tribe vs personal, important-to vs important-for, and the five time horizons) are governed by the importance system in Section 5 and encoded in rulebook-defined metadata; they are not separate connection types.
 
-When usage = general, relative_importance edges form the underlying importance graph for universal and tribe views. When usage = importance_argument, they capture arguments about importance advanced during challenges and allow later users and nodes to inspect which ideas were proposed as the main reasons to move one idea above another. When usage = evidence_for or usage = evidence_against, relative_importance edges specify that an idea is being used as evidence in support of or against a truth claim; the truth-claim subtypes of the involved ideas and the active rulebooks determine which evidential relationships are valid and how they contribute to certainty bands in truth challenges. In all cases, the same primitiveâ€”â€œA is important for evaluating Bâ€â€”drives both importance flows and the organization of evidence, with the usage tag determining how that edge participates in different deliberative processes.
+When usage = general, relative_importance edges form the underlying importance graph for universal and tribe views. When usage = importance_argument, they capture arguments about importance advanced during challenges and allow later users and nodes to inspect which ideas were proposed as the main reasons to move one idea above another. When usage = evidence_for or usage = evidence_against, relative_importance edges specify that an idea is being used as evidence in support of or against a truth claim; the truth-claim subtypes of the involved ideas and the active rulebooks determine which evidential relationships are valid and how they contribute to certainty bands in truth challenges. In all cases, the same primitive - "A is important for evaluating B" - drives both importance flows and the organization of evidence, with the usage tag determining how that edge participates in different deliberative processes.
 
-Membership connections express that an identity or idea belongs to, or stewards, a group-like idea. These are implemented as membership connections from the member to the group nucleus idea and carry a role field such as member_of, steward_of, or other rulebook-defined membership roles. Membership connections link identity ideas to tribe nuclei, special personal-structure ideas (such as â€œMy Backyard of Ideasâ€, â€œMy Garden of Relationshipsâ€, and â€œMy Anthillâ€), and any other group structures. Membership connections do not directly influence truth or importance calculations. They determine which identities participate in which local governance processes, which tribe-scoped importance maps are constructed using which voter sets, and how group structures are reconstructed during replay.
+Membership connections express that an identity or idea belongs to, or stewards, a group-like idea. These are implemented as membership connections from the member to the group nucleus idea and carry a role field such as member_of, steward_of, or other rulebook-defined membership roles. Membership connections link identity ideas to tribe nuclei, special personal-structure ideas (such as "My Backyard of Ideas", "My Garden of Relationships", and "My Anthill"), and any other group structures. Membership connections do not directly influence truth or importance calculations. They determine which identities participate in which local governance processes, which tribe-scoped importance maps are constructed using which voter sets, and how group structures are reconstructed during replay.
 
 Connections MAY be challenged or superseded. A challenge asserts that a connection is invalid, misleading, improperly typed or tagged, or inconsistent with protocol rules. For example, a challenge MAY claim that a relative_importance edge should not have usage = evidence_for because the proposed evidence is epistemically invalid for that truth claim, or that two ideas are not same_as at the canonical tier. If successful, the connection becomes inactive but remains visible in the event log. Superseding events MAY refine or reinterpret certain connections while preserving history (for example, replacing a description-level same_as with a canonical-level same_as after further deliberation). No connection MAY be deleted or removed. All changes to connection status MUST occur through explicit events, ensuring perfect replayability and historical transparency.
 
@@ -1445,7 +1445,7 @@ memory structures, and
 
 UI/visual anchoring.
 
-Structural roles do not constitute new idea_type values and MUST NOT expand the canonical ontology defined in Â§2.1.
+Structural roles do not constitute new idea_type values and MUST NOT expand the canonical ontology defined in §2.1.
 
 Structural roles apply only to canonical ideas once they have been published. Agents MAY also use the same structural-role concepts locally when working with draft ideas, but such local usage is non-canonical and out of protocol conformance scope until the associated ideas and roles are explicitly published as canonical metadata.
 
@@ -1493,31 +1493,31 @@ interfere with deterministic replay.
 
 The following structural roles are officially recognized:
 
-backyard â€“ personal root for ideas authored by an identity.
+backyard - personal root for ideas authored by an identity.
 
-relationship_garden â€“ container for relational structures.
+relationship_garden - container for relational structures.
 
-self_tree â€“ personal narrative tree of an identity; non-epistemic.
+self_tree - personal narrative tree of an identity; non-epistemic.
 
-anthill â€“ structural map of mutual interpersonal connections.
+anthill - structural map of mutual interpersonal connections.
 
-shrub â€“ root node for a bilateral relationship between identities.
+shrub - root node for a bilateral relationship between identities.
 
-relationship_memory_leaf â€“ shared memory attached to a shrub.
+relationship_memory_leaf - shared memory attached to a shrub.
 
-personal_memory_leaf â€“ private memory leaf attached to the self_tree.
+personal_memory_leaf - private memory leaf attached to the self_tree.
 
-vine â€“ curated chronological or conceptual sequence of ideas.
+vine - curated chronological or conceptual sequence of ideas.
 
-mythology â€“ higher-order narrative structure across ideas.
+mythology - higher-order narrative structure across ideas.
 
-stump â€“ structural or historical terminal node (optional).
+stump - structural or historical terminal node (optional).
 
 Rulebooks MAY register additional structural roles, provided they remain non-canonical, do not alter challenge semantics, and are fully representable through existing connection types.
 
 #### 2.8.4 Connection Types for Structural Roles [anchor: connection_types_for_structural_roles]
 
-Structural roles MUST exclusively use the canonical connection types defined in Â§2.7:
+Structural roles MUST exclusively use the canonical connection types defined in §2.7:
 
 same_as
 
@@ -1543,7 +1543,7 @@ Structural roles SHALL NOT influence canonical ordering, importance ranking, or 
 
 ### 2.9 Spatial representation records (normative) [anchor: spatial_representation_records_normative]
 
-This subsection defines how spatial information may be recorded in the canonical system to support navigation, familiarity, and deterministic reconstruction, while remaining strictly non-semantic and presentation-independent as required by Â§0.66.
+This subsection defines how spatial information may be recorded in the canonical system to support navigation, familiarity, and deterministic reconstruction, while remaining strictly non-semantic and presentation-independent as required by §0.66.
 
 #### 2.9.1 Purpose and scope [anchor: purpose_and_scope]
 
@@ -1618,7 +1618,7 @@ Changes to spatial behavior MAY only occur through:
 
 #### 2.9.6 Separation from semantics [anchor: separation_from_semantics]
 
-In accordance with Â§0.66 (presentation independence):
+In accordance with §0.66 (presentation independence):
 
 - Spatial coordinates, distances, and geometry MUST NOT be interpreted canonically as indicators of meaning, truth, importance, or agreement.
 - Interfaces MAY use spatial records for navigation and visualization only.
@@ -1633,7 +1633,7 @@ This subsection defines how wall-clock time may be recorded in the canonical sys
 
 #### 2.10.1 Wall-clock time as observational data (normative) [anchor: wall_clock_time_as_observational_data_normative]
 
-The system may record wall-clock time as **observational data** to support user comprehension (e.g., â€œwhen did this happen?â€), visualization of activity, and detection of anomalous behavior patterns. Wall-clock time is treated as an empirical observation about the world and may be uncertain, drifted, or disputed.
+The system may record wall-clock time as **observational data** to support user comprehension (e.g., “when did this happen"”), visualization of activity, and detection of anomalous behavior patterns. Wall-clock time is treated as an empirical observation about the world and may be uncertain, drifted, or disputed.
 
 Wall-clock time is not a canonical input and is never required for deterministic reconstruction of the canonical universe.
 
@@ -1665,7 +1665,7 @@ Wall-clock time therefore exists in the system strictly as **observed testimony*
 
 Every canonical event **MUST include a locally recorded wall-clock timestamp** when created on a computing device.
 
-This timestamp represents the creating deviceâ€™s local clock reading at the moment of event creation and is recorded automatically by software.
+This timestamp represents the creating device's local clock reading at the moment of event creation and is recorded automatically by software.
 
 Characteristics:
 
@@ -1677,22 +1677,22 @@ When an event is created through delayed transcription from non-digital or offli
 
 #### 2.10.4 Time observations as truth claims (normative) [anchor: time_observations_as_truth_claims_normative]
 
-Explicit statements about wall-clock time are represented using the systemâ€™s existing truth-claim types and subtypes (particularly observation / measurement claims). There is no special or privileged truth-claim category for time.
+Explicit statements about wall-clock time are represented using the system’s existing truth-claim types and subtypes (particularly observation / measurement claims). There is no special or privileged truth-claim category for time.
 
 Examples include:
 
-* â€œThis event occurred around March 2026.â€
-* â€œAt cycle 8123, the wall-clock time was approximately 03:14 UTC.â€
+* "This event occurred around March 2026."
+* "At cycle 8123, the wall-clock time was approximately 03:14 UTC."
 
 Such statements are modeled, evaluated, challenged, and revised in the same manner as any other empirical claim.
 
 Any observation about time MUST be expressible as a truth claim with evidence. This includes, without limitation:
-- â€œit is now approximately [date/time] in [frame of reference],â€
-- â€œat least [duration] has elapsed since [cycle boundary / event],â€
-- â€œa periodic natural marker occurred [N] times since [event]â€ (sunrise, sleep cycles, instrument ticks),
-- â€œthis device clock read [X] at observation.â€
+- "it is now approximately [date/time] in [frame of reference],"
+- "at least [duration] has elapsed since [cycle boundary / event],"
+- "a periodic natural marker occurred [N] times since [event]" (sunrise, sleep cycles, instrument ticks),
+- "this device clock read [X] at observation."
 
-Time-related truth claims MAY be used to derive threshold predicates required by Â§4, including predicates of the form:
+Time-related truth claims MAY be used to derive threshold predicates required by §4, including predicates of the form:
 - `cycle_age_ge_dmin`
 - `cycle_age_ge_dmax`
 
@@ -1748,7 +1748,7 @@ An idea MAY be active while some of its relative-importance connections are rott
 
 #### 2.11.1 Structural edge restoration on idea resurrection (normative) [anchor: structural_edge_restoration_on_idea_resurrection_normative]
 
-When an idea transitions from `burned` to `active` via a successful resurrection challenge, the protocol MUST restore the ideaâ€™s **non-relative structural/provenance connections** to active participation in the living map by default, including (but not limited to):
+When an idea transitions from `burned` to `active` via a successful resurrection challenge, the protocol MUST restore the idea's **non-relative structural/provenance connections** to active participation in the living map by default, including (but not limited to):
 - `created_by`,
 - `same_as`,
 - and other representation/provenance links that define identity, authorship, or equivalence.
@@ -1795,10 +1795,10 @@ Lifecycle state MUST NOT affect:
 
 #### 2.11.5 Revival and resurrection [anchor: revival_and_resurrection]
 
-- **Rotted â†’ active**  
+- **Rotted  -> active**  
   Occurs automatically upon qualifying engagement or restoration of sufficient importance.
 
-- **Burned â†’ active**
+- **Burned  -> active**
   Requires an explicit **resurrection action** as defined by the protocol. Resurrection is a canonical creation-like action (cost parity with creation) that restores the target to active participation in the living map. Resurrection is challengeable post-hoc under existing challenge domains, but does not require a challenge to occur.
 
 
@@ -1810,7 +1810,7 @@ Lifecycle derivation MUST satisfy the following invariants:
 
 - No lifecycle transition deletes history.
 - All nodes derive identical lifecycle states from the same event log and rulebooks.
-- Derived exclusions MUST be explainable (â€œwhy is this not visible?â€).
+- Derived exclusions MUST be explainable (“why is this not visible"”).
 - Lifecycle state MUST NOT be used as a punishment or moderation tool; it exists solely to keep the living map lean and meaningful.
 
 #### 2.11.7 Structural/provenance edges are active iff the idea is active (normative) [anchor: structural_provenance_edges_are_active_iff_the_idea_is_active_normative]
@@ -1829,7 +1829,7 @@ Relative-importance connections (`relative_importance`) are explicitly excluded 
 
 ## 3. Cycles, activity pacing, and rate limits (normative) [anchor: 3_cycles_activity_pacing_and_rate_limits_normative]
 
-This section defines the systemâ€™s canonical pacing mechanism (â€œcyclesâ€), the conditions under which cycles seal, and how per-identity rate limits and action budgets are enforced without reliance on trusted wall-clock time.
+This section defines the system's canonical pacing mechanism ("cycles"), the conditions under which cycles seal, and how per-identity rate limits and action budgets are enforced without reliance on trusted wall-clock time.
 
 Cycles are derived from the canonical event log and exist solely to pace activity, adapt to participation scale, and bound per-identity influence while preserving deterministic replay. Cycles MUST NOT be used to determine truth, importance, or governance authority.
 
@@ -1879,7 +1879,7 @@ Boundary processing MUST NOT author additional canonical events. (The cycle seal
 
 Only the following quantities contribute to deliberative cycle completion. No other activity, event volume, or graph mutation may advance a cycle.
 
-#### 3.3.1 V â€” Distinct voting identities [anchor: v_distinct_voting_identities]
+#### 3.3.1 V  -  Distinct voting identities [anchor: v_distinct_voting_identities]
 
 For a given cycle *r*:
 
@@ -1897,7 +1897,7 @@ The following do **not** affect V:
 
 V measures **breadth of human participation**, not activity volume or effort.
 
-#### 3.3.2 C â€” Challenge closures [anchor: c_challenge_closures]
+#### 3.3.2 C  -  Challenge closures [anchor: c_challenge_closures]
 
 For a given cycle *r*:
 
@@ -1913,7 +1913,7 @@ The following do **not** affect C:
 
 C measures **resolved deliberation**, not deliberation initiated.
 
-#### 3.3.3 W_score â€” Deliberative work score [anchor: w_score_deliberative_work_score]
+#### 3.3.3 W_score  -  Deliberative work score [anchor: w_score_deliberative_work_score]
 
 For a given cycle *r*:
 
@@ -2051,16 +2051,16 @@ Forced seals are included in `W_obs[r]`.
 
 An exponential moving average is maintained over observed work:
 
-W_ema[r] = Î± Â· W_obs[r] + (1 âˆ’ Î±) Â· W_ema[râˆ’1]
+W_ema[r] = α · W_obs[r] + (1 > α) · W_ema[r>1]
 
 
-Where `Î±` is a governance-defined smoothing parameter.
+Where `α` is a governance-defined smoothing parameter.
 
 #### 3.6.3 Target computation [anchor: target_computation]
 
 The deliberative work target for the next cycle is:
 
-W_target[r+1] = clamp(round(s Â· W_ema[r]), W_min, W_max)
+W_target[r+1] = clamp(round(s · W_ema[r]), W_min, W_max)
 
 
 Where:
@@ -2109,9 +2109,9 @@ To prevent rapid cycle churn from acting as a free reset, all per-cycle allowanc
 
 Per-cycle caps and recharge amounts are derived as functions of `W_target[r]` (or equivalently `W_ema[r]`), for example:
 
-build_mana_cap[r] = floor(Î²_build Â· W_target[r])
-vote_cap[r] = floor(Î²_vote Â· W_target[r])
-delib_mana_cap[r] = floor(Î²_delib Â· W_target[r])
+build_mana_cap[r] = floor(β_build · W_target[r])
+vote_cap[r] = floor(β_vote · W_target[r])
+delib_mana_cap[r] = floor(β_delib · W_target[r])
 
 
 As cycles become smaller, per-cycle allowances MUST decrease proportionally.  
@@ -2249,7 +2249,7 @@ Different nodes MAY store different subsets of export packs without affecting co
 Cycle export packs exist to:
 - enable meaningful offline browsing and search,
 - accelerate onboarding and historical inspection,
-- preserve snapshots of â€œwhat matteredâ€ without requiring full-log replay.
+- preserve snapshots of “what mattered” without requiring full-log replay.
 
 Export packs MUST NOT be used as inputs to canonical computation.
 
@@ -2260,9 +2260,9 @@ Export packs MUST NOT be used as inputs to canonical computation.
 
 ### 4.1 truth-claim ontology and subtypes [anchor: truth_claim_ontology_and_subtypes]
 
-Truth claims represent assertions about the world that can, in principle, be evaluated for accuracy. They describe what an agent says is trueâ€”not what is true in an absolute senseâ€”and form the backbone of the systemâ€™s epistemic processes. A truth claim expresses a proposition about reality, grounded in observations, measurements, patterns, mechanisms, predictions, tests, or broader model-level integrations. Truth claims accumulate evidence, support or contradict other claims, gain or lose certainty over time, and can be confirmed, falsified, or revised through structured deliberation and testing. They are the only idea type that participates directly in the evidence rails defined in this chapter.
+Truth claims represent assertions about the world that can, in principle, be evaluated for accuracy. They describe what an agent says is true - not what is true in an absolute sense - and form the backbone of the system's epistemic processes. A truth claim expresses a proposition about reality, grounded in observations, measurements, patterns, mechanisms, predictions, tests, or broader model-level integrations. Truth claims accumulate evidence, support or contradict other claims, gain or lose certainty over time, and can be confirmed, falsified, or revised through structured deliberation and testing. They are the only idea type that participates directly in the evidence rails defined in this chapter.
 
-The protocol defines several truth-claim subtypes, each specifying a distinct epistemic role and determining which forms of evidence may support it. Existence and boundary claims assert that a phenomenon, category, or boundary existsâ€”for example, that a species exists or that a property marks a meaningful distinction. These claims establish the ontological foundations upon which other truth claims rely. Observation and measurement claims report singular events or quantifiable states: that something was seen, detected, measured, or recorded by an instrument or observer. These serve as the lowest-level empirical evidence and feed directly into evidence rails.
+The protocol defines several truth-claim subtypes, each specifying a distinct epistemic role and determining which forms of evidence may support it. Existence and boundary claims assert that a phenomenon, category, or boundary exists - for example, that a species exists or that a property marks a meaningful distinction. These claims establish the ontological foundations upon which other truth claims rely. Observation and measurement claims report singular events or quantifiable states: that something was seen, detected, measured, or recorded by an instrument or observer. These serve as the lowest-level empirical evidence and feed directly into evidence rails.
 
 Pattern and correlation claims assert regularities among observed phenomena. They propose relationships, trends, or statistical associations derived from multiple observations. They do not assert causation but may support or challenge causal claims. Causal and mechanistic claims assert that one phenomenon produces or influences another through a mechanism, process, or structure. They require stronger supporting evidence and may be challenged by contradictory patterns, failed predictions, or incompatible mechanistic descriptions.
 
@@ -2270,22 +2270,22 @@ Prediction claims assert that a particular event or state will occur in the futu
 
 Finally, model and integration claims synthesize observations, patterns, mechanisms, and predictions into higher-level explanatory or predictive frameworks. These claims represent theories, models, or integrated interpretations and may support or challenge many other truth claims simultaneously. They stand at the top of the evidence rails: they integrate evidence from lower subtypes but must also withstand long-term predictive verification.
 
-Truth-claim subtypes must be explicitly declared at creation and dictate which kinds of ideas may be connected to the claim as evidence using relative_importance connections whose usage is evidence_for or evidence_against. A claim with an incompatible subtypeâ€“evidence relationship is invalid and has no effect, though it remains part of the historical record. All certainty updates, contradictions, and verification processes depend on these subtype definitions and the evidence rails described in later sections. This structure allows the system to maintain a coherent epistemic hierarchy in which evidence, prediction, and model dynamics operate predictably and consistently across all nodes.
+Truth-claim subtypes must be explicitly declared at creation and dictate which kinds of ideas may be connected to the claim as evidence using relative_importance connections whose usage is evidence_for or evidence_against. A claim with an incompatible subtype-evidence relationship is invalid and has no effect, though it remains part of the historical record. All certainty updates, contradictions, and verification processes depend on these subtype definitions and the evidence rails described in later sections. This structure allows the system to maintain a coherent epistemic hierarchy in which evidence, prediction, and model dynamics operate predictably and consistently across all nodes.
 
 
 ### 4.2 evidence rails and structural constraints [anchor: evidence_rails_and_structural_constraints]
 
-Every truth claim maintains its own evidence rail: a deterministic structure that records what evidence could, in principle, exist for the claim, what evidence has actually been provided, how those two sets compare, and which certainty band the claim should occupy given the current state of knowledge. Evidence rails do not define inference rules or directional epistemic flows between claim types. Instead, they provide a stable, replayable frame for evaluating certainty based on two spectraâ€”the spectrum of potential evidence and the spectrum of actual evidenceâ€”and the gap that separates them. All conformant implementations MUST reconstruct identical evidence rails when replaying the same event history.
+Every truth claim maintains its own evidence rail: a deterministic structure that records what evidence could, in principle, exist for the claim, what evidence has actually been provided, how those two sets compare, and which certainty band the claim should occupy given the current state of knowledge. Evidence rails do not define inference rules or directional epistemic flows between claim types. Instead, they provide a stable, replayable frame for evaluating certainty based on two spectra - the spectrum of potential evidence and the spectrum of actual evidence - and the gap that separates them. All conformant implementations MUST reconstruct identical evidence rails when replaying the same event history.
 
 For each truth-claim subtype, the protocol defines a spectrum of potential certainty, specifying the maximum certainty a claim of that subtype can reasonably achieve. Some subtypes allow high certainty (for example, measurement/state claims about present conditions), while others have inherently lower ceilings (for example, long-range predictions or complex model-level integrations). These ceilings and band definitions are maintained in a companion specification and MUST be identical across all conformant nodes at any cycle boundary.
 
-Each truth claim also possesses a spectrum of potential evidence, which consists of hypothetical evidence ideas representing the full range of what evidence for that specific claim could look likeâ€”from extremely weak and tentative up through moderate, strong, and ideal or near-conclusive patterns. This potential evidence is expressed explicitly as ideas in the graphâ€”often as hypothetical observations, measurements, tests, replications, contradictory trials, or high-standards verificationsâ€”and MUST be generated before any actual evidence is considered or placed. For each truth-claim subtype, the potential-evidence spectrum describes, in increasing order of strength, the kinds of observations, tests, replications, mechanisms, or model outcomes that would gradually increase or decrease confidence in the claim. Potential evidence is not limited to raw data categories. It MAY also include robustness factors such as independent replication by multiple trusted third parties, observation by diverse groups, widely witnessed or live-streamed events, scrutiny by recognized experts, durable archival records, or high-visibility public confirmation. Together, these hypothetical evidence ideas define a neutral epistemic scaffold for the claim, covering weak through ideal evidence, and anchor the spectrum of potential certainty before any identity, agenda, or real-world data enters the rail.
+Each truth claim also possesses a spectrum of potential evidence, which consists of hypothetical evidence ideas representing the full range of what evidence for that specific claim could look like - from extremely weak and tentative up through moderate, strong, and ideal or near-conclusive patterns. This potential evidence is expressed explicitly as ideas in the graph - often as hypothetical observations, measurements, tests, replications, contradictory trials, or high-standards verifications - and MUST be generated before any actual evidence is considered or placed. For each truth-claim subtype, the potential-evidence spectrum describes, in increasing order of strength, the kinds of observations, tests, replications, mechanisms, or model outcomes that would gradually increase or decrease confidence in the claim. Potential evidence is not limited to raw data categories. It MAY also include robustness factors such as independent replication by multiple trusted third parties, observation by diverse groups, widely witnessed or live-streamed events, scrutiny by recognized experts, durable archival records, or high-visibility public confirmation. Together, these hypothetical evidence ideas define a neutral epistemic scaffold for the claim, covering weak through ideal evidence, and anchor the spectrum of potential certainty before any identity, agenda, or real-world data enters the rail.
 
-Running in parallel is the spectrum of actual evidence, consisting of all evidence ideas that have actually been connected to the claim via a relative_importance connection whose usage is evidence_for or evidence_against. Each such evidence idea is itself a truth claim whose subtype determines its epistemic character (for example, observation, pattern, causal mechanism, prediction, test, model integration). No additional connection metadata is required to classify the kind of evidence; the evidence ideaâ€™s subtype determines its epistemic role. Evidence is placed on the evidence spectrum by comparing each actual evidence idea to the predefined potential evidence. Placement is not automatic; it is determined through explicit placement challenges in which agents deliberate about how closely a given piece of evidence matches the strength, clarity, or robustness of the hypothetical ideal. The result is a replay-stable ordering of actual evidence along the same spectrum that defines the claimâ€™s potential evidence.
+Running in parallel is the spectrum of actual evidence, consisting of all evidence ideas that have actually been connected to the claim via a relative_importance connection whose usage is evidence_for or evidence_against. Each such evidence idea is itself a truth claim whose subtype determines its epistemic character (for example, observation, pattern, causal mechanism, prediction, test, model integration). No additional connection metadata is required to classify the kind of evidence; the evidence idea's subtype determines its epistemic role. Evidence is placed on the evidence spectrum by comparing each actual evidence idea to the predefined potential evidence. Placement is not automatic; it is determined through explicit placement challenges in which agents deliberate about how closely a given piece of evidence matches the strength, clarity, or robustness of the hypothetical ideal. The result is a replay-stable ordering of actual evidence along the same spectrum that defines the claim's potential evidence.
 
-The epistemic weight of a truth claim is derived from the relationship between these two spectra. The system compares the strongest actual evidence to the strongest potential evidence, evaluates how much of the ideal pattern has been instantiated, and measures the size of the remaining gaps. Once a stable relationship is formed, an agent MAY issue a certainty-band challenge, proposing that the claim be placed in a specific certainty band within its subtypeâ€™s allowed spectrum. Voters in such a challenge MUST consider both spectra: the quality and diversity of actual evidence, the extent to which key robustness criteria have been met, and how closely the provided evidence approaches the idealized evidence templates. The outcome of the challenge assigns the claimâ€™s canonical certainty band until additional evidence or new challenges justify a change.
+The epistemic weight of a truth claim is derived from the relationship between these two spectra. The system compares the strongest actual evidence to the strongest potential evidence, evaluates how much of the ideal pattern has been instantiated, and measures the size of the remaining gaps. Once a stable relationship is formed, an agent MAY issue a certainty-band challenge, proposing that the claim be placed in a specific certainty band within its subtype's allowed spectrum. Voters in such a challenge MUST consider both spectra: the quality and diversity of actual evidence, the extent to which key robustness criteria have been met, and how closely the provided evidence approaches the idealized evidence templates. The outcome of the challenge assigns the claim's canonical certainty band until additional evidence or new challenges justify a change.
 
-Evidence rails are fully transparent and must be identical under replay. All elementsâ€”hypothetical potential evidence, actual evidence ideas, usage-tagged relative_importance connections identifying them as evidence, spectrum placements, and certainty-band challenge outcomesâ€”are recorded as explicit events. Nodes MUST NOT infer new evidence, assign certainty automatically, generate placements implicitly, or apply implementation-specific heuristics. Invalid or irrelevant evidence edges remain visible in the historical record but exert no effect on the active spectrum of actual evidence. Only explicit placements and explicit certainty-band challenges determine the railâ€™s operative structure.
+Evidence rails are fully transparent and must be identical under replay. All elements - hypothetical potential evidence, actual evidence ideas, usage-tagged relative_importance connections identifying them as evidence, spectrum placements, and certainty-band challenge outcomes - are recorded as explicit events. Nodes MUST NOT infer new evidence, assign certainty automatically, generate placements implicitly, or apply implementation-specific heuristics. Invalid or irrelevant evidence edges remain visible in the historical record but exert no effect on the active spectrum of actual evidence. Only explicit placements and explicit certainty-band challenges determine the rail's operative structure.
 
 This architecture ensures that certainty is a function of what the system could know, what it does know, and what agents judge to be the correct interpretation of the relationship between the two. It produces a stable, challengeable, and deterministic epistemic layer upon which higher-order reasoning, predictions, contradictions, and truth-governance decisions rest.
 
@@ -2297,55 +2297,55 @@ Each truth-claim subtype possesses a defined certainty ceiling, which represents
 
 A certainty band is a discrete interval along the certainty spectrum of a particular subtype. Certainty bands define coarse epistemic zones such as very low certainty, low certainty, moderate certainty, high certainty, and near-ceiling certainty, though the precise number and naming conventions are governed by the certainty specification. Bands ensure that certainty updates remain legible to humans and stable under replay. They also prevent implementations from diverging by applying continuous or private numerical scoring systems. At any time, each truth claim has exactly one canonical certainty band.
 
-Certainty updates occur only through explicit eventsâ€”specifically, certainty-band challenges. These challenges propose moving a claim from its current band to a different one. The justification MUST reference the claimâ€™s evidence rail, including the strongest potential evidence, the strongest actual evidence, the placement of each piece of actual evidence along the spectrum, and the gap between the achieved and ideal evidence states. Voters in the challenge evaluate whether the proposed certainty band appropriately reflects the relationship between potential and actual evidence, and whether recent changesâ€”such as new evidence or newly recognized contradictionsâ€”justify moving the claim up or down. The outcome of the certainty-band challenge determines the claimâ€™s new certainty band.
+Certainty updates occur only through explicit events - specifically, certainty-band challenges. These challenges propose moving a claim from its current band to a different one. The justification MUST reference the claim's evidence rail, including the strongest potential evidence, the strongest actual evidence, the placement of each piece of actual evidence along the spectrum, and the gap between the achieved and ideal evidence states. Voters in the challenge evaluate whether the proposed certainty band appropriately reflects the relationship between potential and actual evidence, and whether recent changes - such as new evidence or newly recognized contradictions - justify moving the claim up or down. The outcome of the certainty-band challenge determines the claim's new certainty band.
 
 Certainty MAY also be indirectly affected by contradictory evidence, failed predictions, successful tests, or model breakdowns, but only when these events trigger a certainty-band challenge. The system MUST NOT automatically adjust certainty in response to new evidence. Instead, only humans (or AI assistants acting within their permitted advisory scope) initiate the challenge that proposes the update. This ensures that all certainty changes remain transparent, contestable, and grounded in explicit reasoning.
 
-Because certainty is banded rather than continuously numerical, small or ambiguous evidence changes often leave the claim in the same band, while large or decisive evidence changes prompt a move. Certainty bands are replay-stable: given the same challenges and outcomes, all nodes derive the same band. If a challenge outcome is later overturned by governanceâ€”for example, if the evidence-placement rules for a subtype are changedâ€”nodes adjust the certainty band only upon replaying the updated rules from the relevant cycle boundary.
+Because certainty is banded rather than continuously numerical, small or ambiguous evidence changes often leave the claim in the same band, while large or decisive evidence changes prompt a move. Certainty bands are replay-stable: given the same challenges and outcomes, all nodes derive the same band. If a challenge outcome is later overturned by governance - for example, if the evidence-placement rules for a subtype are changed - nodes adjust the certainty band only upon replaying the updated rules from the relevant cycle boundary.
 
-Finally, the certainty of a truth claim influences but does not determine downstream judgments. High certainty strengthens the claimâ€™s role in later evidence evaluation, truth challenges, and predictions, but certainty does not grant absolute authority. The system always treats truth as an evolving, deliberative construct shaped by ongoing evidence, contradictions, and long-term performance. Certainty bands provide the stable scaffolding upon which this evolution occurs, ensuring both transparency and determinism across all implementations.
+Finally, the certainty of a truth claim influences but does not determine downstream judgments. High certainty strengthens the claim's role in later evidence evaluation, truth challenges, and predictions, but certainty does not grant absolute authority. The system always treats truth as an evolving, deliberative construct shaped by ongoing evidence, contradictions, and long-term performance. Certainty bands provide the stable scaffolding upon which this evolution occurs, ensuring both transparency and determinism across all implementations.
 
 ### 4.4 contradictory evidence and conflict resolution [anchor: contradictory_evidence_and_conflict_resolution]
 
-Contradictions arise when a truth claim receives actual evidence that is incompatible with its stated proposition, its subtype, or its strongest potential evidence templates. A contradiction does not automatically falsify a claim or reduce its certainty; instead, it becomes part of the claimâ€™s evidence rail and triggers the deliberative mechanisms that determine whether the contradiction should change the claimâ€™s certainty band. Contradictions are therefore recorded, structured, and resolved through explicit events rather than implicit or automated inference, ensuring deterministic replay across all conformant implementations.
+Contradictions arise when a truth claim receives actual evidence that is incompatible with its stated proposition, its subtype, or its strongest potential evidence templates. A contradiction does not automatically falsify a claim or reduce its certainty; instead, it becomes part of the claim's evidence rail and triggers the deliberative mechanisms that determine whether the contradiction should change the claim's certainty band. Contradictions are therefore recorded, structured, and resolved through explicit events rather than implicit or automated inference, ensuring deterministic replay across all conformant implementations.
 
-Contradictory evidence is expressed as distinct evidence ideasâ€”often observation, measurement, test, or pattern claimsâ€”that, when placed on the spectrum of actual evidence, align closely with one or more hypothetical disconfirming templates defined in the spectrum of potential evidence. The strength of a contradiction depends on where it is placed on the spectrum: weak contradictions sit near the lower tiers or lower spectrum positions, while decisive contradictions sit close to the strongest potential disconfirming evidence. Placement challenges determine this position and ensure that contradictory evidence is not misclassified or dismissed without justification. When contradictory evidence accumulates, the spectrum of actual evidence visibly diverges from the structure of the supporting potential evidence, making the contradiction clear to any observer.
+Contradictory evidence is expressed as distinct evidence ideas - often observation, measurement, test, or pattern claims - that, when placed on the spectrum of actual evidence, align closely with one or more hypothetical disconfirming templates defined in the spectrum of potential evidence. The strength of a contradiction depends on where it is placed on the spectrum: weak contradictions sit near the lower tiers or lower spectrum positions, while decisive contradictions sit close to the strongest potential disconfirming evidence. Placement challenges determine this position and ensure that contradictory evidence is not misclassified or dismissed without justification. When contradictory evidence accumulates, the spectrum of actual evidence visibly diverges from the structure of the supporting potential evidence, making the contradiction clear to any observer.
 
-A contradiction becomes epistemically active when it motivates a **certainty-band challenge**. An agent MAY propose that, given the current evidence rail, the claim should be moved to a lower certainty band or, in extreme cases, to the lowest band available for its subtype. The challenge MUST explicitly reference the strongest contradictory evidence, the evidence placements, and the gaps in the potential-evidence structure that are now unfulfilled or violated. Voters then evaluate whether the contradiction meaningfully undermines the claimâ€™s epistemic standing. If so, the certainty-band challenge reduces the claimâ€™s certainty; if not, the claim remains unchanged, though the contradictory evidence remains part of the record.
+A contradiction becomes epistemically active when it motivates a **certainty-band challenge**. An agent MAY propose that, given the current evidence rail, the claim should be moved to a lower certainty band or, in extreme cases, to the lowest band available for its subtype. The challenge MUST explicitly reference the strongest contradictory evidence, the evidence placements, and the gaps in the potential-evidence structure that are now unfulfilled or violated. Voters then evaluate whether the contradiction meaningfully undermines the claim's epistemic standing. If so, the certainty-band challenge reduces the claim's certainty; if not, the claim remains unchanged, though the contradictory evidence remains part of the record.
 
 Not all contradictions are decisive. Some arise from noisy or ambiguous observations, measurement errors, or context-sensitive patterns that do not genuinely address the core of the claim. Other contradictions may be overridden by stronger supporting evidence already placed on the spectrum. The system therefore relies on deliberation to distinguish between genuine disconfirmation and apparent contradiction. This deliberative process ensures that certainty adjustments remain transparent, justified, and consistent across all implementations, rather than emerging from hidden or heuristic rules.
 
-Contradictions interact differently with different truth-claim subtypes. For prediction claims, a contradiction is typically registered when the predicted event fails to occur by the specified window or when a test result directly opposes the predicted outcome. For measurements and observations, contradictions occur when independent or replicated measurements produce incompatible results. For causal or model claims, contradictions emerge when predicted mechanisms do not produce expected outcomes or when rival mechanisms provide stronger explanatory support. Each subtypeâ€™s potential-evidence templates define what counts as a decisive contradiction for that subtype.
+Contradictions interact differently with different truth-claim subtypes. For prediction claims, a contradiction is typically registered when the predicted event fails to occur by the specified window or when a test result directly opposes the predicted outcome. For measurements and observations, contradictions occur when independent or replicated measurements produce incompatible results. For causal or model claims, contradictions emerge when predicted mechanisms do not produce expected outcomes or when rival mechanisms provide stronger explanatory support. Each subtype's potential-evidence templates define what counts as a decisive contradiction for that subtype.
 
-Importantly, structurally non-falsifiable claimsâ€”those for which no realistic disconfirming potential evidence can be definedâ€”still accept contradictory evidence, but such evidence often lands low on the spectrum and rarely motivates a shift out of the lower certainty bands. This behavior is intentional: the system allows the claim to be expressed as a truth claim while simultaneously revealing its epistemic limitations through persistent gaps in potential evidence. Over time, users often duplicate such claims into conceptual ideas, where their interpretive and meaning-oriented value can be assessed without relying on empirical contradiction.
+Importantly, structurally non-falsifiable claims - those for which no realistic disconfirming potential evidence can be defined - still accept contradictory evidence, but such evidence often lands low on the spectrum and rarely motivates a shift out of the lower certainty bands. This behavior is intentional: the system allows the claim to be expressed as a truth claim while simultaneously revealing its epistemic limitations through persistent gaps in potential evidence. Over time, users often duplicate such claims into conceptual ideas, where their interpretive and meaning-oriented value can be assessed without relying on empirical contradiction.
 
-Contradictions remain permanently in the historical record and contribute to the epistemic genealogy of the claim. Even if subsequent evidence resolves the contradiction, its presence influences the overall epistemic narrative and may shape future placement challenges or reliability assessments for the identities involved. The system never deletes contradictory evidence; it only determines, through deliberation, how much weight it should carry in shaping the claimâ€™s certainty band. This guarantees a fully transparent, challengeable, and replayable structure for understanding how claims succeed or fail under scrutiny.
+Contradictions remain permanently in the historical record and contribute to the epistemic genealogy of the claim. Even if subsequent evidence resolves the contradiction, its presence influences the overall epistemic narrative and may shape future placement challenges or reliability assessments for the identities involved. The system never deletes contradictory evidence; it only determines, through deliberation, how much weight it should carry in shaping the claim's certainty band. This guarantees a fully transparent, challengeable, and replayable structure for understanding how claims succeed or fail under scrutiny.
 
 ### 4.5 prediction evaluation and outcome marking [anchor: prediction_evaluation_and_outcome_marking]
 
 Prediction claims assert that a specific event, state, or measurement WILL occur in the future or within a defined world-time window. Predictions function as forward-looking truth claims whose certainty is determined not only by supporting evidence but also by eventual real-world outcomes. The protocol treats prediction evaluation as a deterministic, multi-stage process involving potential-evidence templates, actual evidence, explicit test-result claims, and outcome-marking events. Predictions do not automatically succeed or fail; their evaluation MUST always pass through explicit evidence submissions and challenge outcomes to ensure replayability and transparency.
 
-A prediction claim MAY optionally include a `prediction_target_date`, representing the moment or interval after which evaluators expect the predicted condition to be testable. This field is not required for protocol correctness and does not affect epistemic semantics; it exists solely to help implementations surface predictions that are due for evaluation. When the target date passesâ€”or when the predicted conditions otherwise become testableâ€”agents MAY submit **test-result truth claims** that describe whether the predicted outcome did or did not occur. These test-result claims are ordinary truth claims that connect to the prediction via the evidence connection type.
+A prediction claim MAY optionally include a `prediction_target_date`, representing the moment or interval after which evaluators expect the predicted condition to be testable. This field is not required for protocol correctness and does not affect epistemic semantics; it exists solely to help implementations surface predictions that are due for evaluation. When the target date passes - or when the predicted conditions otherwise become testable - agents MAY submit **test-result truth claims** that describe whether the predicted outcome did or did not occur. These test-result claims are ordinary truth claims that connect to the prediction via the evidence connection type.
 
-Prediction evaluation is governed by the same evidence-rail structure used for all truth claims. Each prediction contains a **spectrum of potential evidence** that defines what strong confirmation and strong disconfirmation would look like. Strong confirming potential evidence might include accurate measurements of the predicted outcome, independent replications, or widely observable events that align with the prediction's content. Strong disconfirming potential evidence might include robust observations showing the predicted event did not occur, failed tests, contradictory measurements, or replicated outcomes that conflict with the predicted state. These hypothetical templates anchor the predictionâ€™s certainty spectrum and define what constitutes a decisive outcome.
+Prediction evaluation is governed by the same evidence-rail structure used for all truth claims. Each prediction contains a **spectrum of potential evidence** that defines what strong confirmation and strong disconfirmation would look like. Strong confirming potential evidence might include accurate measurements of the predicted outcome, independent replications, or widely observable events that align with the prediction's content. Strong disconfirming potential evidence might include robust observations showing the predicted event did not occur, failed tests, contradictory measurements, or replicated outcomes that conflict with the predicted state. These hypothetical templates anchor the prediction's certainty spectrum and define what constitutes a decisive outcome.
 
-When actual evidence arrivesâ€”typically as test-result claims or observationsâ€”it is placed along the **spectrum of actual evidence** through placement challenges. If the predicted event occurs clearly and measurably, the strongest actual evidence will align with the confirming potential evidence, raising the justification for a higher certainty band. If the event does not occur, or if evidence contradicts the predictionâ€™s content, the strongest actual evidence may fall near the disconfirming potential evidence, justifying movement to lower certainty bands. Predictions with partial fulfillment (for example, ambiguous or mixed outcomes) produce actual evidence spread across the spectrum, requiring deliberation to determine the correct certainty band.
+When actual evidence arrives - typically as test-result claims or observations - it is placed along the **spectrum of actual evidence** through placement challenges. If the predicted event occurs clearly and measurably, the strongest actual evidence will align with the confirming potential evidence, raising the justification for a higher certainty band. If the event does not occur, or if evidence contradicts the prediction's content, the strongest actual evidence may fall near the disconfirming potential evidence, justifying movement to lower certainty bands. Predictions with partial fulfillment (for example, ambiguous or mixed outcomes) produce actual evidence spread across the spectrum, requiring deliberation to determine the correct certainty band.
 
-Outcome marking occurs when an agent raises a **prediction-outcome challenge** or a general certainty-band challenge proposing a new certainty band for the prediction. If the predicted event clearly occurred or clearly failed, voters SHOULD place the prediction in a band reflecting decisive confirmation or decisive disconfirmation. If the outcome is ambiguous, voters MUST consider all relevant evidence placements, gaps, and potential-evidence templates when determining whether the prediction should move upward, downward, or remain unchanged. The challenge outcome sets the predictionâ€™s canonical certainty band until new evidence or subsequent challenges justify another change.
+Outcome marking occurs when an agent raises a **prediction-outcome challenge** or a general certainty-band challenge proposing a new certainty band for the prediction. If the predicted event clearly occurred or clearly failed, voters SHOULD place the prediction in a band reflecting decisive confirmation or decisive disconfirmation. If the outcome is ambiguous, voters MUST consider all relevant evidence placements, gaps, and potential-evidence templates when determining whether the prediction should move upward, downward, or remain unchanged. The challenge outcome sets the prediction's canonical certainty band until new evidence or subsequent challenges justify another change.
 
-Failed predictions have additional long-term epistemic consequences. When a prediction is placed into a decisively low certainty band due to strong disconfirming evidence, this outcome MAY reduce the epistemic reliability of the identity that authored the prediction, as described later in this chapter. Conversely, accurate predictionsâ€”especially those that required non-obvious insight or incorporated complex modelsâ€”MAY strengthen the reliability and future credibility of the identity or model involved. The system does not reward or punish based on belief content; it records accuracy and allows epistemic performance to accumulate as evidence over time.
+Failed predictions have additional long-term epistemic consequences. When a prediction is placed into a decisively low certainty band due to strong disconfirming evidence, this outcome MAY reduce the epistemic reliability of the identity that authored the prediction, as described later in this chapter. Conversely, accurate predictions - especially those that required non-obvious insight or incorporated complex models - MAY strengthen the reliability and future credibility of the identity or model involved. The system does not reward or punish based on belief content; it records accuracy and allows epistemic performance to accumulate as evidence over time.
 
 Importantly, a prediction that has reached its evaluative window but has received no relevant test-result evidence does not automatically change certainty. Lack of evidence MAY motivate a challenge, but no automatic outcome occurs. Instead, the absence of expected evidence becomes part of the spectrum of actual evidence, often landing as a weak contradiction or as a gap, depending on how the prediction defined its potential evidence. This ensures that predictions are not marked as correct or incorrect by default and that all certainty changes arise from explicit events rather than implicit rules.
 
-Prediction evaluation therefore forms the systemâ€™s clearest and most actionable demonstration of the scientific method. It provides a visible, replayable record of foresight, verification, contradiction, and uncertainty resolution. By requiring explicit evidence, explicit placement, and explicit challenges, the system preserves transparency and determinism while encouraging agents to make careful, meaningful, and testable claims about the future.
+Prediction evaluation therefore forms the system’s clearest and most actionable demonstration of the scientific method. It provides a visible, replayable record of foresight, verification, contradiction, and uncertainty resolution. By requiring explicit evidence, explicit placement, and explicit challenges, the system preserves transparency and determinism while encouraging agents to make careful, meaningful, and testable claims about the future.
 
 ### 4.6 test and validation claims [anchor: test_and_validation_claims]
 
 Test and validation claims represent direct attempts to evaluate the accuracy of other truth claims. They document experiments, measurements, observational campaigns, audits, replications, counter-tests, or any procedure designed to verify or falsify a claim. Because they serve as the primary mechanism through which predictions, causal claims, and measurement claims are evaluated, test-result claims occupy a central role in the evidence rails of many truth claims. All test-result claims MUST be explicit truth claims with subtype `test_result`, ensuring they can be placed on evidence spectra, challenged, and deterministically replayed.
 
-A test-result claim MUST describe the method, conditions, and outcome of a procedure intended to evaluate another claim. The level of detail varies according to the chosen description tier, but the minimum requirement is that an observer reading the full description should understand what was tested, how it was tested, and what the outcome was. Tests MAY be simple (a single measurement under controlled conditions) or complex (a multi-stage audit or replication study). The system does not enforce methodological standards; instead, the evidence rail incorporates robustness criteriaâ€”such as independence, repeatability, transparency, and public verifiabilityâ€”into the potential-evidence templates. These criteria ensure that higher-quality tests are correctly placed near the strongest ends of the evidence spectrum.
+A test-result claim MUST describe the method, conditions, and outcome of a procedure intended to evaluate another claim. The level of detail varies according to the chosen description tier, but the minimum requirement is that an observer reading the full description should understand what was tested, how it was tested, and what the outcome was. Tests MAY be simple (a single measurement under controlled conditions) or complex (a multi-stage audit or replication study). The system does not enforce methodological standards; instead, the evidence rail incorporates robustness criteria - such as independence, repeatability, transparency, and public verifiability - into the potential-evidence templates. These criteria ensure that higher-quality tests are correctly placed near the strongest ends of the evidence spectrum.
 
-Test-result claims connect to the claim they evaluate via the **evidence** connection type. A single test MAY evaluate multiple claims at once, and a single claim MAY accumulate many test-result ideas over time. When a test-result claim contradicts or supports a prediction, causal mechanism, or measurement claim, it is placed along the evidence spectrum through a placement challenge. This placement reflects both the methodological quality of the test and the clarity of its outcome. Tests with ambiguous or mixed results often appear mid-spectrum, while tests with decisive outcomesâ€”especially those that meet robust verification criteriaâ€”are placed near the strongest confirming or disconfirming potential evidence.
+Test-result claims connect to the claim they evaluate via the **evidence** connection type. A single test MAY evaluate multiple claims at once, and a single claim MAY accumulate many test-result ideas over time. When a test-result claim contradicts or supports a prediction, causal mechanism, or measurement claim, it is placed along the evidence spectrum through a placement challenge. This placement reflects both the methodological quality of the test and the clarity of its outcome. Tests with ambiguous or mixed results often appear mid-spectrum, while tests with decisive outcomes - especially those that meet robust verification criteria - are placed near the strongest confirming or disconfirming potential evidence.
 
 Replications are treated as independent test-result claims. If multiple replications converge on the same outcome, their combined spectrum placements often constitute strong confirming or disconfirming evidence. Failed replications do not automatically undermine the original test; they simply add contradictory evidence that MUST be resolved through placement challenges and, when appropriate, certainty-band challenges. This ensures that replication crises, methodological disputes, and competing interpretations of data are resolved through explicit deliberation rather than hidden heuristics.
 
@@ -2353,19 +2353,19 @@ Some test-result claims introduce **meta-evidence** by evaluating the validity o
 
 For prediction claims, a test-result claim often represents the decisive outcome: the predicted event either occurred or did not. If the prediction included a `prediction_target_date`, tests executed after that date are typically placed as strong confirming or disconfirming evidence. For measurement or observational claims, test results may support or contradict the original measurement by performing the same procedure under controlled conditions or by showing that the measuring instrument behaved incorrectly or inconsistently.
 
-Test-result claims MUST be entirely explicit to ensure replayability. Nodes MUST NOT infer or automatically generate tests. They may only interpret tests that agents create as ideas and connect via evidence links. The protocol does not define what constitutes a valid scientific method; it simply requires that any evaluation of a truth claim be recorded through test-result ideas that undergo the same placement and challenge processes as all other evidence. This ensures that the entire epistemic processâ€”tests, replications, audits, confirmations, and failuresâ€”is visible, contestable, and stable under replay.
+Test-result claims MUST be entirely explicit to ensure replayability. Nodes MUST NOT infer or automatically generate tests. They may only interpret tests that agents create as ideas and connect via evidence links. The protocol does not define what constitutes a valid scientific method; it simply requires that any evaluation of a truth claim be recorded through test-result ideas that undergo the same placement and challenge processes as all other evidence. This ensures that the entire epistemic process - tests, replications, audits, confirmations, and failures - is visible, contestable, and stable under replay.
 
-In summary, test and validation claims operationalize the systemâ€™s epistemic dynamics by generating structured, challengeable evidence for or against truth claims. They enable the system to evaluate predictions, confirm measurements, scrutinize causal claims, and revise certainty through transparent, deterministic processes. Test-result claims are not privileged by definition; their epistemic force depends entirely on their placement within each claimâ€™s evidence rail and the deliberative challenges that interpret their significance.
+In summary, test and validation claims operationalize the system's epistemic dynamics by generating structured, challengeable evidence for or against truth claims. They enable the system to evaluate predictions, confirm measurements, scrutinize causal claims, and revise certainty through transparent, deterministic processes. Test-result claims are not privileged by definition; their epistemic force depends entirely on their placement within each claim's evidence rail and the deliberative challenges that interpret their significance.
 
 ### 4.7 epistemic reliability of identities [anchor: epistemic_reliability_of_identities]
 
-Epistemic reliability is not a standalone metric, score, or reputation system. The system captures an identityâ€™s long-term epistemic performance exclusively through **POD**, the slow-moving, identity-bound token that accumulates in proportion to the importance, longevity, and epistemic success of an identityâ€™s contributions. POD reflects how well an identityâ€™s truth claims, predictions, measurements, tests, conceptual contributions, and arguments perform under the systemâ€™s deliberative processes over extended periods of time. It therefore serves as the single, unified representation of epistemic reliability, intellectual stewardship, and long-term contribution.
+Epistemic reliability is not a standalone metric, score, or reputation system. The system captures an identity’s long-term epistemic performance exclusively through **POD**, the slow-moving, identity-bound token that accumulates in proportion to the importance, longevity, and epistemic success of an identity’s contributions. POD reflects how well an identity’s truth claims, predictions, measurements, tests, conceptual contributions, and arguments perform under the system’s deliberative processes over extended periods of time. It therefore serves as the single, unified representation of epistemic reliability, intellectual stewardship, and long-term contribution.
 
-An identity gains POD not for being correct in an absolute sense, but for making contributions that the systemâ€”through challenges, evidence placements, certainty updates, relative-importance flows, and action pathwaysâ€”determines to be important, accurate, helpful, or generative. A prediction that proves correct over time, a measurement that is repeatedly confirmed, a causal claim that withstands contradictory evidence, or a conceptual idea that becomes foundational in reasoning about important topics will, through the systemâ€™s ranking and token-flow mechanics, increase the POD associated with its speaker. By contrast, contributions that repeatedly failâ€”falsified predictions, contradicted measurements, unsupported mechanisms, or arguments consistently overturned in challengesâ€”reduce the relative flow of POD toward the identity, capturing epistemic underperformance without imposing penalties, punishments, or coercive restrictions.
+An identity gains POD not for being correct in an absolute sense, but for making contributions that the system - through challenges, evidence placements, certainty updates, relative-importance flows, and action pathways - determines to be important, accurate, helpful, or generative. A prediction that proves correct over time, a measurement that is repeatedly confirmed, a causal claim that withstands contradictory evidence, or a conceptual idea that becomes foundational in reasoning about important topics will, through the system's ranking and token-flow mechanics, increase the POD associated with its speaker. By contrast, contributions that repeatedly fail - falsified predictions, contradicted measurements, unsupported mechanisms, or arguments consistently overturned in challenges - reduce the relative flow of POD toward the identity, capturing epistemic underperformance without imposing penalties, punishments, or coercive restrictions.
 
-Because POD flows through **importance ranking** and **relative-importance pathways**, reliability is always contextual and domain-specific. An identity that excels in prediction may accrue POD primarily through the long-term success of its prediction claims; another may gain POD from consistent, accurate measurement; another from conceptual clarity or high-leverage integrative models. The system does not collapse these contributions into separate reliability indicators; instead, the same POD flow reflects all of them through the unified importance structure. POD therefore encodes reliability as a natural byproduct of the aggregated epistemic performance of an identityâ€™s ideas.
+Because POD flows through **importance ranking** and **relative-importance pathways**, reliability is always contextual and domain-specific. An identity that excels in prediction may accrue POD primarily through the long-term success of its prediction claims; another may gain POD from consistent, accurate measurement; another from conceptual clarity or high-leverage integrative models. The system does not collapse these contributions into separate reliability indicators; instead, the same POD flow reflects all of them through the unified importance structure. POD therefore encodes reliability as a natural byproduct of the aggregated epistemic performance of an identity’s ideas.
 
-Epistemic reliability expressed through POD MUST NOT grant voting advantages, governance authority, or structural privileges. A high-POD identity is simply one whose contributions have proven important and resilient under challenge over long periods of time. A low-POD identity remains fully capable of creating ideas, raising challenges, voting, and participating in governance. The system emphasizes equality of rights but inequality of epistemic track recordâ€”recorded, not enforced; descriptive, not prescriptive.
+Epistemic reliability expressed through POD MUST NOT grant voting advantages, governance authority, or structural privileges. A high-POD identity is simply one whose contributions have proven important and resilient under challenge over long periods of time. A low-POD identity remains fully capable of creating ideas, raising challenges, voting, and participating in governance. The system emphasizes equality of rights but inequality of epistemic track record - recorded, not enforced; descriptive, not prescriptive.
 
 AI agents also accumulate reliability signals, but these exist only within the AI-map and do not generate POD. Their simulated reliability helps users assess which AI models to consult but does not affect governance, canonical truth processes, or token distributions. Only human identities generate real POD, and only human actions consume real POD.
 
@@ -2379,11 +2379,11 @@ Truth dynamics unfold across long periods of time. A claim may enter the ledger 
 
 Epistemic lineage provides a key lens for understanding why truth claims occupy their present certainty bands. A user confronting a claim does not see a static value; they see the sequence of supporting evidence, contradictory evidence, predictions upheld or failed, tests performed, and challenge outcomes that produced that value. This prevents the system from functioning as a black box and ensures that epistemic authority emerges only from the recorded structure of reasoning, not from hidden processes or accumulated status. The system therefore functions simultaneously as a live truth-determination mechanism and as a historical archive of scientific and philosophical reasoning.
 
-Long-term dynamics often reveal patterns that short-term analysis cannot. Claims with high early certainty may drift downward as broader evidence accumulates. Claims that begin weakly may rise over years of supporting tests and replications. Some models grow into durable explanatory structures; others collapse after a single decisive test result. The system MUST preserve all such long-range evolutions, even when they extend across multiple snapshots and governance cycles. Nodes MUST NOT attempt to optimize lineage storage at the cost of semantic fidelity; lineage is integral to the systemâ€™s epistemic coherence and replayability.
+Long-term dynamics often reveal patterns that short-term analysis cannot. Claims with high early certainty may drift downward as broader evidence accumulates. Claims that begin weakly may rise over years of supporting tests and replications. Some models grow into durable explanatory structures; others collapse after a single decisive test result. The system MUST preserve all such long-range evolutions, even when they extend across multiple snapshots and governance cycles. Nodes MUST NOT attempt to optimize lineage storage at the cost of semantic fidelity; lineage is integral to the system’s epistemic coherence and replayability.
 
-Epistemic lineage also interacts with **importance**. Highly important truth claimsâ€”those that influence many other ideas, support major conceptual structures, or anchor significant actionable pathwaysâ€”tend to produce large POD flows when they are confirmed or overturned. When a central claim changes certainty, the importance dynamics of ideas connected to it shift as well, causing POD flows to rebalance across the network. This interplay ensures that the system does not only capture whether a claim is true, but also how much it matters. A trivial falsification produces only local effects; the confirmation or undermining of a major claim can produce global epistemic reverberations.
+Epistemic lineage also interacts with **importance**. Highly important truth claims - those that influence many other ideas, support major conceptual structures, or anchor significant actionable pathways - tend to produce large POD flows when they are confirmed or overturned. When a central claim changes certainty, the importance dynamics of ideas connected to it shift as well, causing POD flows to rebalance across the network. This interplay ensures that the system does not only capture whether a claim is true, but also how much it matters. A trivial falsification produces only local effects; the confirmation or undermining of a major claim can produce global epistemic reverberations.
 
-Finally, the system MUST treat epistemic lineage as a first-class object for visualization, introspection, and learning. Implementations SHOULD allow users to scroll backward through a claimâ€™s certainty history, view past evidence placements, and explore how related ideas evolved in parallel. By exposing the full genealogy of each claim, the system enables users to understand the deeper structure of reasoning: why claims rise or fall, how evidence interacts across subtypes, how predictions succeed or fail, and how long-term deliberation produces outcomes that no single individual could reach alone. Epistemic lineage therefore transforms the protocol from a static truth-recording tool into a dynamic, unfolding map of collective reasoning over time.
+Finally, the system MUST treat epistemic lineage as a first-class object for visualization, introspection, and learning. Implementations SHOULD allow users to scroll backward through a claim's certainty history, view past evidence placements, and explore how related ideas evolved in parallel. By exposing the full genealogy of each claim, the system enables users to understand the deeper structure of reasoning: why claims rise or fall, how evidence interacts across subtypes, how predictions succeed or fail, and how long-term deliberation produces outcomes that no single individual could reach alone. Epistemic lineage therefore transforms the protocol from a static truth-recording tool into a dynamic, unfolding map of collective reasoning over time.
 
 ### 4.9 Human Adoption Required for Canonical Events [anchor: human_adoption_required_for_canonical_events]
 
@@ -2431,17 +2431,17 @@ The visibility of judgments and their payloads MAY be constrained by jurisdictio
 
 ### 5.1 universal importance and the 20-axis foundation [anchor: universal_importance_and_the_20_axis_foundation]
 
-Universal importance represents the systemâ€™s shared, public assessment of how much an idea matters for life, flourishing, survival, and long-term outcomes. It does not measure urgency, correctness, popularity, or personal preference. Instead, it expresses what agents say they believe is important, structured across the two fundamental poles that define the systemâ€™s value architecture: the **currently existing individual human**, and **all life, intelligence, and consciousness in the universe through time**. These two poles anchor the entire importance model, preventing ideological drift and ensuring that every importance judgment is expressed in relation to both the immediate human experience and the full, long-range continuity of conscious existence.
+Universal importance represents the system’s shared, public assessment of how much an idea matters for life, flourishing, survival, and long-term outcomes. It does not measure urgency, correctness, popularity, or personal preference. Instead, it expresses what agents say they believe is important, structured across the two fundamental poles that define the system’s value architecture: the **currently existing individual human**, and **all life, intelligence, and consciousness in the universe through time**. These two poles anchor the entire importance model, preventing ideological drift and ensuring that every importance judgment is expressed in relation to both the immediate human experience and the full, long-range continuity of conscious existence.
 
-Universal importance is defined through **20 axes**, formed by crossing four orientations of importance with five time horizons. The four orientations are: importance *to the currently existing individual human* and importance *for the currently existing individual human*; and importance *to the collective* and importance *for the collective*, where **the collective is defined strictly as all life, intelligence, and consciousness in the universe through time**, not any particular society, nation, species, ideology, political group, or culture. This ensures that â€œcollective importanceâ€ refers only to the broadest possible scope of moral and existential concern, never to narrower human factions.
+Universal importance is defined through **20 axes**, formed by crossing four orientations of importance with five time horizons. The four orientations are: importance *to the currently existing individual human* and importance *for the currently existing individual human*; and importance *to the collective* and importance *for the collective*, where **the collective is defined strictly as all life, intelligence, and consciousness in the universe through time**, not any particular society, nation, species, ideology, political group, or culture. This ensures that "collective importance" refers only to the broadest possible scope of moral and existential concern, never to narrower human factions.
 
-The five time horizonsâ€”near-term, mid-term, long-term, very long-term, and trans-generational or civilizational timescalesâ€”encode the temporal dimension of importance. Each idea therefore has a value on each of the 20 orientationâ€“time axes reflecting how important agents judge it to be for the currently existing individual human or for all life and consciousness, across short and long temporal scales. These axes are maintained through open challenge-based ranking procedures that allow ideas to rise or fall according to recorded reasoning.
+The five time horizons - near-term, mid-term, long-term, very long-term, and trans-generational or civilizational timescales - encode the temporal dimension of importance. Each idea therefore has a value on each of the 20 orientation-time axes reflecting how important agents judge it to be for the currently existing individual human or for all life and consciousness, across short and long temporal scales. These axes are maintained through open challenge-based ranking procedures that allow ideas to rise or fall according to recorded reasoning.
 
 Universal importance is calculated as a simple aggregate scalar derived from the rankings across all 20 axes. The protocol does not weight the axes differently by default; it simply sums or averages them in a straightforward way, ensuring that universal importance remains transparent and deterministic. Users can always inspect the underlying 20-axis profile of any idea to understand *why* its aggregate importance has the value it does. An idea may be especially important to currently living individuals, or primarily significant for long-term collective futures; the system captures all such patterns without collapsing them into a single opaque judgment.
 
-Changes in universal importance occur only through explicit importance-axis challenges. When a participant believes an idea is too high or too low on a particular axis, they propose a new ranked position and provide arguments grounded in the orientations and time horizon relevant to that axis. If the challenge succeeds, the ideaâ€™s ranking is updated for that axis, and its aggregate universal importance updates accordingly. When a highly important idea shifts, this movement may propagate through relative-importance pathways, causing POD flows and significance flows to rebalance across the network over time.
+Changes in universal importance occur only through explicit importance-axis challenges. When a participant believes an idea is too high or too low on a particular axis, they propose a new ranked position and provide arguments grounded in the orientations and time horizon relevant to that axis. If the challenge succeeds, the idea's ranking is updated for that axis, and its aggregate universal importance updates accordingly. When a highly important idea shifts, this movement may propagate through relative-importance pathways, causing POD flows and significance flows to rebalance across the network over time.
 
-Anchoring universal importance to the poles of the currently existing individual human and all life, intelligence, and consciousness in the universe through time ensures that the systemâ€™s value structure remains both deeply human and fundamentally cosmological. It ties importance to the lived reality of present human beings while also encompassing the widest possible scope of moral and existential consideration. This dual anchoring is what allows universal importance to serve as the basis for POD generation and for the systemâ€™s long-term architecture of meaning, relevance, and action.
+Anchoring universal importance to the poles of the currently existing individual human and all life, intelligence, and consciousness in the universe through time ensures that the system’s value structure remains both deeply human and fundamentally cosmological. It ties importance to the lived reality of present human beings while also encompassing the widest possible scope of moral and existential consideration. This dual anchoring is what allows universal importance to serve as the basis for POD generation and for the system’s long-term architecture of meaning, relevance, and action.
 
 ### 5.1.1 derived universal ranks and rank history [anchor: derived_universal_ranks_and_rank_history]
 
@@ -2455,17 +2455,17 @@ Universal-rank history is the sequence of these derived ranks across snapshot he
 
 ### 5.2 scoped importance: universal, tribal, and personal contexts [anchor: scoped_importance_universal_tribal_and_personal_contexts]
 
-All importance in the system is derived from a single mechanism: relative importance connections and importance challenges. The protocol does not define separate â€œkindsâ€ of importance for different contexts. Instead, it defines three visibility-and-participation scopesâ€”universal, tribe, and personalâ€”each of which applies the same mechanics using different reference ideas, eligibility rules, and rank lists. This ensures that all reasoning about importance occurs through the same deterministic process, while allowing individuals and groups to maintain their own interpretations of what matters.
+All importance in the system is derived from a single mechanism: relative importance connections and importance challenges. The protocol does not define separate "kinds" of importance for different contexts. Instead, it defines three visibility-and-participation scopes - universal, tribe, and personal - each of which applies the same mechanics using different reference ideas, eligibility rules, and rank lists. This ensures that all reasoning about importance occurs through the same deterministic process, while allowing individuals and groups to maintain their own interpretations of what matters.
 
 These scopes MUST be modeled as overlays only. A scope MUST NOT be interpreted as a separate canonical idea store. Scope-specific state in this section is limited to relative_importance overlays keyed by (scope_kind, anchor_id), and any scope-specific display behavior MUST be expressed through scoped display override overlays as defined in Appendix 13.2.2B.
 
 A relative_importance connection expresses that an idea is important relative to a chosen reference idea on a specific axis and timeframe. As soon as two ideas share the same reference under the same scope, axis, and timeframe, they may be brought into an importance challenge. A challenge compares two candidates and, if the challenger wins, moves it immediately above the target in the rank list for that (reference, axis, timeframe, scope). No numeric scores are stored; each rank list is derived solely from the sequence of challenges and verdicts in that context.
 
-Universal scope is the global, public layer of the organism. When a relative importance connection is created with a universal reference ideaâ€”such as â€œhumanityâ€ or â€œthe collective of all life and intelligence through timeâ€â€”it enters the universal ranking system. Only identities that satisfy universal eligibility (verification, rate limits, and rulebook constraints) may vote in universal-scope challenges, but the resulting universal rank lists are visible to everyone. Universal-scope ranks determine how much POD is injected at different ideas during minting cycles and constrain the direction of significance and POD flow.
+Universal scope is the global, public layer of the organism. When a relative importance connection is created with a universal reference idea - such as "humanity" or "the collective of all life and intelligence through time" - it enters the universal ranking system. Only identities that satisfy universal eligibility (verification, rate limits, and rulebook constraints) may vote in universal-scope challenges, but the resulting universal rank lists are visible to everyone. Universal-scope ranks determine how much POD is injected at different ideas during minting cycles and constrain the direction of significance and POD flow.
 
 Tribe scope uses the same mechanism but is restricted in **voting**, not in **visibility**. A tribe is defined by membership connections from user identity ideas to a tribe nucleus idea. Tribe members may create and vote in tribe-scope importance challenges that compare public ideas relative to the tribe nucleus on specific axes and timeframes. The resulting tribe-scope rank lists are **publicly viewable overlays** on the global graph, showing how that tribe prioritizes public ideas. Tribe-scope rankings NEVER alter universal importance or POD flow directly; they are interpretive maps over the same public ideas, governed by tribe-only voting but visible to all.
 
-Personal scope applies the same machinery to user identity ideas. Each user identity idea may serve as the reference for its own personal importance map. Relative importance edges originating from the user identity idea express what the user says is important to them, using the same axes and timeframes as all other importance structures. Personal scope is restricted in **voting**, not in **visibility**, in the same manner as tribe scope: the personal-scope map is a publicly inspectable overlay once published, but only the owning identity may create and vote in personal-scope importance challenges anchored to that identity. No one else may vote or challenge within another userâ€™s personal scope. Personal rankings allow individuals to express and maintain their own ordering of public ideas without affecting public or tribal rank lists.
+Personal scope applies the same machinery to user identity ideas. Each user identity idea may serve as the reference for its own personal importance map. Relative importance edges originating from the user identity idea express what the user says is important to them, using the same axes and timeframes as all other importance structures. Personal scope is restricted in **voting**, not in **visibility**, in the same manner as tribe scope: the personal-scope map is a publicly inspectable overlay once published, but only the owning identity may create and vote in personal-scope importance challenges anchored to that identity. No one else may vote or challenge within another user’s personal scope. Personal rankings allow individuals to express and maintain their own ordering of public ideas without affecting public or tribal rank lists.
 
 Private drafts and private draft rankings are distinct from personal scope and are out of protocol conformance scope. A user MAY maintain local-only drafts, draft importance orderings, or private working maps that include unpublished ideas or unpublished relative-importance edges. Such private drafts are not required for nodes, are not part of deterministic replay, and do not exist as canonical ideas, connections, or rank lists until the user publishes them as canonical events. Once published, they become part of the canonical universe and are therefore publicly readable (subject to safety and jurisdiction lenses), even if interaction remains restricted by scope eligibility.
 
@@ -2482,9 +2482,9 @@ Relative-rank history is the sequence of these derived orderings across snapshot
 
 ### 5.3 tribes as public overlays over the shared idea graph [anchor: tribes_as_public_overlays_over_the_shared_idea_graph]
 
-A tribe is an idea that serves as the nucleus of a group contextâ€”a scoped overlay in which identities who care about that nucleus idea can coordinate their perspective on the public graph. Tribes do not have private idea universes. They cannot create or maintain ideas that are visible only to tribe members, and they cannot shield ideas from public challenge. Every idea a tribe uses MUST already exist as a fully public, challengable idea in the global graph.
+A tribe is an idea that serves as the nucleus of a group context - a scoped overlay in which identities who care about that nucleus idea can coordinate their perspective on the public graph. Tribes do not have private idea universes. They cannot create or maintain ideas that are visible only to tribe members, and they cannot shield ideas from public challenge. Every idea a tribe uses MUST already exist as a fully public, challengable idea in the global graph.
 
-A user becomes a member of a tribe by forming a membership connection from their user identity idea to the tribe nucleus idea. Membership determines which identities may create and vote in tribe-scope importance challenges anchored at that nucleus. However, all of the content that tribes operate onâ€”ideas, descriptions, connections, arguments, and internal rank listsâ€”is built entirely from public ideas. Anyone MAY inspect which public ideas a tribe considers important, how those ideas are ranked relative to the tribe nucleus, and which arguments the tribe has attached. Only tribe members MAY vote in tribe-scope challenges or alter the tribeâ€™s internal rankings.
+A user becomes a member of a tribe by forming a membership connection from their user identity idea to the tribe nucleus idea. Membership determines which identities may create and vote in tribe-scope importance challenges anchored at that nucleus. However, all of the content that tribes operate on - ideas, descriptions, connections, arguments, and internal rank lists - is built entirely from public ideas. Anyone MAY inspect which public ideas a tribe considers important, how those ideas are ranked relative to the tribe nucleus, and which arguments the tribe has attached. Only tribe members MAY vote in tribe-scope challenges or alter the tribe's internal rankings.
 
 Tribe-scope importance uses the same relative importance and challenge mechanics as universal scope but is strictly interpretive. Tribe-scope rank lists represent how that tribe orders public ideas relative to its nucleus, across the same importance axes and time horizons. These lists are always publicly visible. They DO NOT determine universal importance, DO NOT affect POD injection, and DO NOT directly alter the direction or magnitude of POD flow. Universal importance and POD remain grounded solely in the universal-scope rankings and challenges that are open to all eligible voters.
 
@@ -2527,9 +2527,9 @@ Importance challenges are the only way that relative-importance rankings change.
 
 An importance challenge always specifies: (a) the scope (universal, tribe, or personal), (b) the reference idea, (c) the importance axis and timeframe, and (d) two contestant ideas: a challenger and a target. The target MUST be ranked above the challenger in the current list for that (scope, reference, axis, timeframe) context. Implementations MAY also impose a configurable limit on how far up the list a challenger may reach (for example, restricting challenges to targets no more than N positions above), to prevent constant challenges against the highest-ranked ideas and to encourage local, incremental refinement of the rank structure.
 
-Any eligible identity MAY create an importance challenge in a scope where they are allowed to participate. Creating a challenge consumes the challengerâ€™s rate-limited action budget. When a challenge is created, the challenger MAY attach new or existing ideas as importance arguments for either side, explaining why the challenger should be ranked higher or why the target should remain above. Other participants who can see the challenge MAY also contribute importance arguments for either idea during the challengeâ€™s open phase. Importance arguments are ordinary ideas that are connected to the contestants via relative_importance connections whose usage is importance_argument; they remain in the graph permanently and MAY be reused in future challenges or deliberations. Outside of challenges, the same primitive relative_importance connection with usage: general continues to express baseline importance relationships for the same context, while usage: importance_argument specifically marks edges that arose as part of an articulated argument in a challenge.
+Any eligible identity MAY create an importance challenge in a scope where they are allowed to participate. Creating a challenge consumes the challenger's rate-limited action budget. When a challenge is created, the challenger MAY attach new or existing ideas as importance arguments for either side, explaining why the challenger should be ranked higher or why the target should remain above. Other participants who can see the challenge MAY also contribute importance arguments for either idea during the challenge's open phase. Importance arguments are ordinary ideas that are connected to the contestants via relative_importance connections whose usage is importance_argument; they remain in the graph permanently and MAY be reused in future challenges or deliberations. Outside of challenges, the same primitive relative_importance connection with usage: general continues to express baseline importance relationships for the same context, while usage: importance_argument specifically marks edges that arose as part of an articulated argument in a challenge.
 
-After a defined challenge period, the challenge moves to a voting phase. A set of voters is selected according to scope-specific eligibility and sampling rules (for example, randomly from the verified public for universal scope, or from tribe members for tribe scope). Voters are presented with the two ideas, their descriptions, and the attached importance arguments, and MUST decide which idea should be ranked higher in this context. Abstentions and â€œno decisionâ€ options MAY be allowed but do not change the basic update rule.
+After a defined challenge period, the challenge moves to a voting phase. A set of voters is selected according to scope-specific eligibility and sampling rules (for example, randomly from the verified public for universal scope, or from tribe members for tribe scope). Voters are presented with the two ideas, their descriptions, and the attached importance arguments, and MUST decide which idea should be ranked higher in this context. Abstentions and "no decision" options MAY be allowed but do not change the basic update rule.
 
 When a verdict is reached, the protocol applies a simple, deterministic update. If the challenger wins and is currently ranked below the target, the challenger moves to the position immediately above the target in that rank list. If the challenger loses, or if the challenger was already ranked above the target, the rank list DOES NOT change. No numeric scores are stored; the ordering is entirely determined by the sequence of successful challenges and the bubble-up rule. All conformant nodes MUST reproduce the same rank list for a given context when replaying the same sequence of challenges and verdicts.
 
@@ -2537,7 +2537,7 @@ Importance challenges are therefore local, discrete, and path-dependent. They do
 
 ### 5.6 pod flow, rate limits, and event-level assignment [anchor: pod_flow_rate_limits_and_event_level_assignment]
 
-POD represents the systemâ€™s long-term assessment of which **human-authored canonical contributions** have exerted the greatest significance on the collective reasoning process. POD does not attach to static ideas or to unpublished activity; instead, it attaches exclusively to **canonical events**â€”the atomic, rate-limited actions taken by verified human identities that modify the canonical universe. Events that occur only in local drafts, private workspaces, or sandbox environments are out of protocol conformance scope and are never eligible for POD.
+POD represents the system's long-term assessment of which **human-authored canonical contributions** have exerted the greatest significance on the collective reasoning process. POD does not attach to static ideas or to unpublished activity; instead, it attaches exclusively to **canonical events** - the atomic, rate-limited actions taken by verified human identities that modify the canonical universe. Events that occur only in local drafts, private workspaces, or sandbox environments are out of protocol conformance scope and are never eligible for POD.
 
 Canonical events that may receive POD fall into two categories: **epistemic events** and **external completion events**. POD routed through the universal-importance hierarchy flows into both categories, but only after the conditions specific to each class are satisfied and only through deterministic replay.
 
@@ -2581,13 +2581,13 @@ Only real human identities may declare or complete actions. AI identities, tribe
 
 **All action execution is voluntary.** No rulebook, governance verdict, challenge outcome, or protocol mechanism MAY compel a human identity to declare or complete an action. Endorsement of an actionable idea through importance or action challenges specifies what *should* be done according to deliberation, but never who *must* do it. If no human identity voluntarily issues a declaration and completes the action, the actionable idea remains endorsed-but-unimplemented.
 
-Actionable ideas therefore function as the protocolâ€™s bridge between internal reasoning and external implementation. They allow significance determined through universal and relative importance to manifest in real-world activity while preserving public accountability, verifiability, voluntariness, safety constraints, and deterministic replay.
+Actionable ideas therefore function as the protocol’s bridge between internal reasoning and external implementation. They allow significance determined through universal and relative importance to manifest in real-world activity while preserving public accountability, verifiability, voluntariness, safety constraints, and deterministic replay.
 
 ---
 
 ### 5.8 pod decay, influence rebalancing, and long-term alignment [anchor: pod_decay_influence_rebalancing_and_long_term_alignment]
 
-POD awarded to human identities persists indefinitely, but its **effective influence** within the system evolves over time. This evolution is accomplished not by altering POD balances held by identities, but by continuously recalculating POD routing, distribution, and event weighting at snapshot boundaries. The protocol therefore treats POD as a persistent record of contribution while ensuring that its downstream effects remain aligned with the systemâ€™s current understanding of universal importance.
+POD awarded to human identities persists indefinitely, but its **effective influence** within the system evolves over time. This evolution is accomplished not by altering POD balances held by identities, but by continuously recalculating POD routing, distribution, and event weighting at snapshot boundaries. The protocol therefore treats POD as a persistent record of contribution while ensuring that its downstream effects remain aligned with the system’s current understanding of universal importance.
 
 POD influence is strictly limited to domains explicitly defined by rulebooks, such as reward distribution, attribution, discovery ordering, or long-term contribution recognition. **POD SHALL NOT weight governance, voting power, eligibility, or authority** in any challenge, rulebook decision, or protocol-level process. Governance remains human-equal and scope-gated as defined elsewhere; POD influence applies only to POD-specific mechanisms.
 
@@ -2597,22 +2597,22 @@ POD routed into actionable ideas or epistemic events dissipates in a controlled 
 
 Decay applies only to **influence weighting**, not to POD balances held by identities. No human identity ever loses POD already earned. Instead, the ratio of newly emitted POD to historically accumulated POD gradually adjusts the relative influence of past and present contributions within POD-governed mechanisms. This prevents early contributors from permanently dominating reward or recognition structures while preserving durable acknowledgment of long-term contribution.
 
-These rebalancing and decay mechanisms maintain a stable, adaptive equilibrium. They ensure that POD reflects both historical contribution and current relevance without introducing central authority, retroactive penalties, or governance capture. As universal importance evolves, POD routing adapts accordingly, allowing the systemâ€™s incentive and recognition layer to remain aligned with the evolving judgments of a global, deliberative community.
+These rebalancing and decay mechanisms maintain a stable, adaptive equilibrium. They ensure that POD reflects both historical contribution and current relevance without introducing central authority, retroactive penalties, or governance capture. As universal importance evolves, POD routing adapts accordingly, allowing the system’s incentive and recognition layer to remain aligned with the evolving judgments of a global, deliberative community.
 
 
 ### 5.9 grounded actions, truth claims, and physical evidence [anchor: grounded_actions_truth_claims_and_physical_evidence]
 
 Actionable ideas express deliberation about what should be done. They may concern external changes in the world, such as building infrastructure or publishing documents, or internal decisions about how ideas, rules, or configurations within the canonical universe should be treated. In all cases, an actionable idea is a proposal, not a fact. It becomes effective only when one or more corresponding actions are carried out by identities and recorded as events in the canonical universe.
 
-An action is a recorded outcome of deliberation: a statement that some identity did something in response to one or more actionable ideas. Actions MAY represent external consequences, such as publishing a new version of a document, deploying software, signing a contract, or performing a physical task. Actions MAY also represent internal decisions, such as agreeing that a particular rule set is now in force, marking an idea as deprecated for future use, or recording that a merge between two ideas is now accepted. In both cases, actions link deliberation to concrete behavior; they are the points at which â€œwe should do Xâ€ becomes â€œwe did Xâ€.
+An action is a recorded outcome of deliberation: a statement that some identity did something in response to one or more actionable ideas. Actions MAY represent external consequences, such as publishing a new version of a document, deploying software, signing a contract, or performing a physical task. Actions MAY also represent internal decisions, such as agreeing that a particular rule set is now in force, marking an idea as deprecated for future use, or recording that a merge between two ideas is now accepted. In both cases, actions link deliberation to concrete behavior; they are the points at which "we should do X" becomes "we did X".
 
 **Each canonical action MUST be something that a single human identity could, in principle, perform voluntarily.** Multi-person undertakings SHALL be represented as separate action events, one per identity, each with its own declaration and completion truth claim. No identity SHALL be assigned, obligated, or compelled to perform an action; procedural endorsement never implies mandatory execution.
 
-Every important action SHOULD be described by one or more truth claims. A truth claim that describes an action asserts that a particular event occurred, such as â€œidentity A cast a â€˜yesâ€™ vote on challenge C at time Tâ€, â€œidentity B created idea I with description Dâ€, or â€œas of event E, rule set R is now applied for domain Dâ€. These descriptive truth claims are themselves subject to truth challenges; if a description is inaccurate, misleading, or incomplete, participants MAY open a truth challenge and propose corrected descriptions. The truth of a descriptive claim is grounded not in its wording alone, but in the underlying action events and any associated evidence.
+Every important action SHOULD be described by one or more truth claims. A truth claim that describes an action asserts that a particular event occurred, such as "identity A cast a yes' vote on challenge C at time T", "identity B created idea I with description D", or "as of event E, rule set R is now applied for domain D". These descriptive truth claims are themselves subject to truth challenges; if a description is inaccurate, misleading, or incomplete, participants MAY open a truth challenge and propose corrected descriptions. The truth of a descriptive claim is grounded not in its wording alone, but in the underlying action events and any associated evidence.
 
 Actions MAY be supported by explicit evidence that ties them to physical reality. Evidence can include cryptographic signatures, commit hashes, log files, video or audio recordings, notarized documents, or attestations from multiple identities. Such artifacts are represented as content attached to the relevant action or truth-claim ideas and linked via relative_importance connections whose usage is evidence_for or evidence_against, and their strength can be evaluated along the same spectrum-of-evidence framework that applies to truth claims more generally. Governance-related actionable ideas MAY require stronger evidence for their associated actions, such as multiple independent attestations or richer audit trails, while low-stakes actions MAY rely on simpler records such as a single authenticated click.
 
-This structure allows governance decisions and configuration changes to be treated using the same primitives as any other decision in the system. An actionable idea that proposes a change to rules or configurationsâ€”such as adopting a new rule set, adjusting juror counts, or changing classification thresholdsâ€”is deliberated through action challenges. If accepted, identities carry out the corresponding actions by recording that the decision has been made and, where appropriate, by creating or updating ideas that represent the new rule set or configuration. Truth claims then describe these decision actions, and evidence links them to physical acts such as votes, signatures, or code changes. Nodes reconstruct the history of decisions by replaying actions, evaluating the associated truth claims and evidence, and applying the same challenge and importance mechanisms that govern all other ideas in the canonical universe.
+This structure allows governance decisions and configuration changes to be treated using the same primitives as any other decision in the system. An actionable idea that proposes a change to rules or configurations - such as adopting a new rule set, adjusting juror counts, or changing classification thresholds - is deliberated through action challenges. If accepted, identities carry out the corresponding actions by recording that the decision has been made and, where appropriate, by creating or updating ideas that represent the new rule set or configuration. Truth claims then describe these decision actions, and evidence links them to physical acts such as votes, signatures, or code changes. Nodes reconstruct the history of decisions by replaying actions, evaluating the associated truth claims and evidence, and applying the same challenge and importance mechanisms that govern all other ideas in the canonical universe.
 
 ### 5.10 pod routing to infrastructure actions (normative clarification) [anchor: pod_routing_to_infrastructure_actions_normative_clarification]
 
@@ -2624,7 +2624,7 @@ Accordingly:
 
 - If a maintenance claim is later shown false or misleading through truth challenges, its downstream importance and future POD impact MUST be reduced under the same epistemic correction and fraud mechanisms used elsewhere in the protocol.
 
-This section does not add new reward rules; it makes explicit that infrastructure actions are first-class citizens of the same importanceâ†’POD pipeline.
+This section does not add new reward rules; it makes explicit that infrastructure actions are first-class citizens of the same importance >POD pipeline.
 
 ### 5.11 Living-map eligibility (normative) [anchor: living_map_eligibility_normative]
 
@@ -2655,7 +2655,7 @@ Relative-importance connections are subject to lifecycle derivation independentl
 
 A relative-importance connection MAY rot or burn even if both endpoint ideas remain active.
 
-An ideaâ€™s resurrection or activation MUST NOT implicitly resurrect any `relative_importance` connections incident to that idea. Structural and provenance connections become active automatically with the idea, but `relative_importance` connections remain independently lifecycle-scoped and must be maintained or resurrected on their own terms.
+An idea's resurrection or activation MUST NOT implicitly resurrect any `relative_importance` connections incident to that idea. Structural and provenance connections become active automatically with the idea, but `relative_importance` connections remain independently lifecycle-scoped and must be maintained or resurrected on their own terms.
 
 For avoidance of doubt: resurrection or activation of an idea does not restore any `relative_importance` connections.
 
@@ -2669,7 +2669,7 @@ A relative_importance edge (or its living-map visibility) MAY be burned when it 
 
 Rot/burn evaluation for relative_importance edges MUST occur at cycle boundaries as part of boundary derivations. Burn MUST be implemented as canonical state transformation (never deletion): burned edges remain in history but are removed from the living graph view and from living-map computations unless revived by subsequent canonical events.
 
-Rot/burn MUST NOT contribute to cycle sealing. Survivals/attrition signals MAY be used as feedback for parameter tuning (burn aggressiveness, target clamps), but MUST NOT cause, prevent, or delay a cycle seal (Â§5).
+Rot/burn MUST NOT contribute to cycle sealing. Survivals/attrition signals MAY be used as feedback for parameter tuning (burn aggressiveness, target clamps), but MUST NOT cause, prevent, or delay a cycle seal (§5).
 
 
 #### 5.12.1 Derivation criteria [anchor: derivation_criteria]
@@ -2693,16 +2693,16 @@ Passive existence, indirect association, or engagement with only one endpoint id
 
 #### 5.12.3 Lifecycle transitions [anchor: lifecycle_transitions]
 
-- **Active â†’ rotted**  
+- **Active  -> rotted**  
   Occurs when a relative-importance connection falls below defined relative-importance thresholds and remains without qualifying maintenance activity for the configured number of cycles.
 
-- **Rotted â†’ burned**  
+- **Rotted  -> burned**  
   Occurs when inactivity persists beyond an extended cycle window as defined by governance rulebooks.
 
-- **Rotted â†’ active**  
+- **Rotted  -> active**  
   Occurs automatically upon qualifying maintenance activity or restoration of sufficient relative importance before the burn threshold is reached.
 
-- **Burned â†’ active**  
+- **Burned  -> active**  
   Requires an explicit **resurrection action** targeting the burned relative-importance connection. Resurrection restores the connection to active participation in the living map; the connection thereafter remains independently lifecycle-scoped.
 
 #### 5.12.4 Effects [anchor: effects]
@@ -2719,21 +2719,21 @@ All relative-importance connections, regardless of lifecycle_state, remain perma
 
 ## 6. challenges, disputes, and transformations [anchor: 6_challenges_disputes_and_transformations]
 
-Challenges are the protocolâ€™s unified mechanism for resolving disputes about what is true, what is important, what should be done, and how ideas should be identified and represented. Every challenge follows the same procedural lifecycle but applies domain-specific reasoning, connection types, and deterministic state transformations. Challenges operate only on the present canonical universe; they do not invalidate or rewrite historical events. Instead, a challenge appends new events that update certainty, ranking, action selection, or representation. Challenges ensure that all changes in the systemâ€”epistemic, evaluative, operational, and structuralâ€”occur through transparent, adversarial deliberation.
+Challenges are the protocol's unified mechanism for resolving disputes about what is true, what is important, what should be done, and how ideas should be identified and represented. Every challenge follows the same procedural lifecycle but applies domain-specific reasoning, connection types, and deterministic state transformations. Challenges operate only on the present canonical universe; they do not invalidate or rewrite historical events. Instead, a challenge appends new events that update certainty, ranking, action selection, or representation. Challenges ensure that all changes in the system - epistemic, evaluative, operational, and structural - occur through transparent, adversarial deliberation.
 
 ### 6.1 challenge domains and targets [anchor: challenge_domains_and_targets]
 
 The protocol defines a single challenge primitive with four domains distinguished by the type of proposition they target and the state transformation they enact: truth challenges, importance challenges, action challenges, and representation challenges. These domains are applications of the same challenge framework but use distinct usages of the core connection types and domain-specific voter instructions, rather than introducing separate connection families for each domain.
 
-Truth challenges evaluate the accuracy, certainty, or classification of a truth claim. They use relative_importance connections whose usage is evidence_for or evidence_against between candidate evidence ideas and the challenged claim, together with the evidence rails defined in Section 5. Prediction resolution, action completion verification, test-result confirmation, and governance-rule evaluation are all subcases of truth challenges. Truth challenges may modify certainty bands, update claim status, activate or reject governance rules, orâ€”when confirming a completion truth claimâ€”trigger POD transfer from an actionable idea to a human identity. The core target is always a truth claim; all submodes inherit the same fundamental deliberation process.
+Truth challenges evaluate the accuracy, certainty, or classification of a truth claim. They use relative_importance connections whose usage is evidence_for or evidence_against between candidate evidence ideas and the challenged claim, together with the evidence rails defined in Section 5. Prediction resolution, action completion verification, test-result confirmation, and governance-rule evaluation are all subcases of truth challenges. Truth challenges may modify certainty bands, update claim status, activate or reject governance rules, or - when confirming a completion truth claim - trigger POD transfer from an actionable idea to a human identity. The core target is always a truth claim; all submodes inherit the same fundamental deliberation process.
 
 Importance challenges evaluate the ordering between two ideas within a specific importance axis or scoped relative-importance context. They operate on the ranked list induced by relative_importance connections in a given (scope, reference idea, axis, timeframe) context. Only upward challenges are permitted: an idea ranked lower may challenge an idea ranked higher. During the challenge, participants attach importance arguments as ordinary ideas linked to either contestant via relative_importance connections whose usage is importance_argument. Voters assess which idea is more important across the relevant axes and timeframe. Verdicts may swap the ordering of the two ideas, update the local ranking, or preserve the current order. Importance challenges are the exclusive mechanism for modifying universal and scoped importance rankings, and they directly affect POD routing in future cycles.
 
-Action challenges determine which actionable ideasâ€”publicly proposed plansâ€”should be endorsed, prioritized, postponed, coordinated, or rejected. They use relative_importance connections between actionable ideas, related truth and conceptual ideas, candidate executors, and potential or actual actions; rulebooks MAY further specialize some of these edges with dedicated usage values (for example, reusing importance_argument for reasons to endorse a plan, or introducing a future action_outcome usage for outcomes connected back to plans). **Action challenges operate on the spectrum of potential actions and the spectrum of proposed actions (Â§7.4), determining which proposals best instantiate the intended intervention. Action challenges MAY endorse, de-endorse, reprioritize, or supersede proposed actions, but they SHALL NOT assign execution to any identity, compel execution, or imply obligation. Verdicts specify only what the system judges should be done, not who must do it.** After an action challenge endorses an actionable idea, execution proceeds through the action-declaration and completion-claim pipeline; verification of completion is handled by truth challenges.
+Action challenges determine which actionable ideas - publicly proposed plans - should be endorsed, prioritized, postponed, coordinated, or rejected. They use relative_importance connections between actionable ideas, related truth and conceptual ideas, candidate executors, and potential or actual actions; rulebooks MAY further specialize some of these edges with dedicated usage values (for example, reusing importance_argument for reasons to endorse a plan, or introducing a future action_outcome usage for outcomes connected back to plans). **Action challenges operate on the spectrum of potential actions and the spectrum of proposed actions (§7.4), determining which proposals best instantiate the intended intervention. Action challenges MAY endorse, de-endorse, reprioritize, or supersede proposed actions, but they SHALL NOT assign execution to any identity, compel execution, or imply obligation. Verdicts specify only what the system judges should be done, not who must do it.** After an action challenge endorses an actionable idea, execution proceeds through the action-declaration and completion-claim pipeline; verification of completion is handled by truth challenges.
 
 Representation challenges determine how ideas are identified, distinguished, or merged, and which descriptions become canonical at each tier and complexity level. They include same_as challenges, which propose equivalence between ideas or between specific descriptions, and description-selection challenges, which choose the canonical default description for an idea or rail. Representation challenges modify identity mappings, canonical description pointers, and same_as metadata without altering the truth or importance status of any idea.
 
-Each challenge domain relies on the same underlying challenge mechanism and lifecycle but emphasizes different uses of the core connection types. Truth challenges primarily read relative_importance connections with usage = evidence_for or evidence_against along the evidence rails. Importance and action challenges primarily manipulate and inspect relative_importance connections with usage = general and usage = importance_argument (and any future action-related usages defined by rulebooks). Representation challenges operate chiefly on same_as connections and description pointers. All four domains share the same event structureâ€”challenge creation, argument attachment, voting, verdict, and state updateâ€”while differing only in what they consider valid arguments, how they interpret connections, and what state they update when a verdict is reached.
+Each challenge domain relies on the same underlying challenge mechanism and lifecycle but emphasizes different uses of the core connection types. Truth challenges primarily read relative_importance connections with usage = evidence_for or evidence_against along the evidence rails. Importance and action challenges primarily manipulate and inspect relative_importance connections with usage = general and usage = importance_argument (and any future action-related usages defined by rulebooks). Representation challenges operate chiefly on same_as connections and description pointers. All four domains share the same event structure - challenge creation, argument attachment, voting, verdict, and state update - while differing only in what they consider valid arguments, how they interpret connections, and what state they update when a verdict is reached.
 
 
 ### 6.2 challenge lifecycle [anchor: challenge_lifecycle]
@@ -2755,7 +2755,7 @@ Once the phase ends, no additional arguments or connections may be added.
 The system selects a set of voters using the deterministic mechanism defined in the voting specification. The selection must be fully replayable. Selected voters receive the complete challenge packet. They do not deliberate publicly; each voter evaluates independently.
 
 **(4) voting window.**  
-Each selected voter has a fixed, deterministic amount of time to cast a vote, measured from the moment they accept their voting assignment. Failure to vote within this window results in forfeiture and replacement according to the voting-spec rules. Votes are recorded as canonical events and include the voterâ€™s judgment according to the domain-specific instructions: truth evaluation, importance comparison, action selection, or representational judgment.
+Each selected voter has a fixed, deterministic amount of time to cast a vote, measured from the moment they accept their voting assignment. Failure to vote within this window results in forfeiture and replacement according to the voting-spec rules. Votes are recorded as canonical events and include the voter's judgment according to the domain-specific instructions: truth evaluation, importance comparison, action selection, or representational judgment.
 
 **(5) verdict aggregation.**  
 Once all required votes are received (or appropriately replaced after timeouts), votes are aggregated deterministically. The aggregated verdict is encoded as a canonical verdict event. Possible verdict forms depend on the challenge domain: confirm or revise a truth claim; reorder ideas in an importance ranking; endorse, defer, or reject actionable ideas; or merge ideas or update canonical descriptions.
@@ -2769,11 +2769,11 @@ This streamlined lifecycle ensures adversarial reasoning, clear phase boundaries
 
 Challenges operate within an append-only event model in which all epistemic activity is recorded as a strictly ordered sequence of events. This section defines the immutability rules governing challenge outcomes and their effects on idea state. These rules ensure that nodes can deterministically replay the canonical universe from genesis without ambiguity, nondeterminism, or state rewriting. No challenge, verdict, or subsequent corrective action may modify any previously recorded event or its interpretation. Instead, the protocol uses explicit, forward-visible corrective events to express disagreement, reversals, and updated interpretations.
 
-All events in the canonical universe are final. Once an event is accepted into the canonical logâ€”whether it represents an idea creation, connection creation, challenge creation, argument submission, voter selection, vote, or state transformationâ€”it SHALL NOT be removed, rewritten, or replaced by any later event. A challenge verdict MAY introduce a new state transformation, but this transformation MUST be represented as a new event appended after the verdict. Historical ideas, connections, scores, importance placements, evidence placements, or canonical descriptions MUST remain visible exactly as they existed at their respective event indices. A later state transformation MAY alter the **current** derived state during replay, but MUST NOT mutate or conceal the historical event that originally contributed to earlier derived states.
+All events in the canonical universe are final. Once an event is accepted into the canonical log - whether it represents an idea creation, connection creation, challenge creation, argument submission, voter selection, vote, or state transformation - it SHALL NOT be removed, rewritten, or replaced by any later event. A challenge verdict MAY introduce a new state transformation, but this transformation MUST be represented as a new event appended after the verdict. Historical ideas, connections, scores, importance placements, evidence placements, or canonical descriptions MUST remain visible exactly as they existed at their respective event indices. A later state transformation MAY alter the **current** derived state during replay, but MUST NOT mutate or conceal the historical event that originally contributed to earlier derived states.
 
-Nodes reconstruct state by replaying all events in canonical order. When a challenge verdict supersedes an earlier assertionâ€”such as an evidence placement, importance argument, or representation mappingâ€”the earlier assertion remains part of history but becomes epistemically inactive once the later corrective transformation is applied. This forward-shadowing rule ensures that state transitions are always the product of accumulating events, never deletion or mutation. Nodes MUST NOT reinterpret earlier events based on knowledge from later events; instead, they SHALL incorporate later events as state transitions layered atop the earlier ones.
+Nodes reconstruct state by replaying all events in canonical order. When a challenge verdict supersedes an earlier assertion - such as an evidence placement, importance argument, or representation mapping - the earlier assertion remains part of history but becomes epistemically inactive once the later corrective transformation is applied. This forward-shadowing rule ensures that state transitions are always the product of accumulating events, never deletion or mutation. Nodes MUST NOT reinterpret earlier events based on knowledge from later events; instead, they SHALL incorporate later events as state transitions layered atop the earlier ones.
 
-Corrective challenges must express disagreement or correction through new, explicit events. For example, if an earlier truth claim was placed at a certain certainty level and a new challenge later establishes a more justified placement, the updated placement is recorded as a new truth-placement transformation event. The earlier placement remains part of the chainâ€™s history, and replaying the full sequence will deterministically yield the later, corrected positioning as the current state. Similarly, if an idea title, sentence description, or canonical description is replaced following a representation challenge, the replacement is appended as a new representation event; the original description remains historically accessible.
+Corrective challenges must express disagreement or correction through new, explicit events. For example, if an earlier truth claim was placed at a certain certainty level and a new challenge later establishes a more justified placement, the updated placement is recorded as a new truth-placement transformation event. The earlier placement remains part of the chain's history, and replaying the full sequence will deterministically yield the later, corrected positioning as the current state. Similarly, if an idea title, sentence description, or canonical description is replaced following a representation challenge, the replacement is appended as a new representation event; the original description remains historically accessible.
 
 Invalid or malicious submissions are also append-only. If a node deems an event invalid according to protocol or safety rules, it MUST produce a corresponding **blocked_submission** event rather than excising the invalid event. The invalid submission itself remains in the historical log, but it produces no semantic effects during replay beyond being marked as blocked. The presence of these events enables deterministic global auditability, forensic inspection, and unambiguous proofs of safety enforcement.
 
@@ -2785,9 +2785,9 @@ Actionable ideas use a two-rail structure that mirrors the evidence rails define
 
 The spectrum of potential actions represents what could be done in principle about the situation the actionable idea addresses. It consists of hypothetical action templates and archetypes expressed as ideas in the graph, connected to the actionable idea using relative_importance connections whose usage is reserved (by rulebooks) for potential-action relationships (for example, potential_action_template). Together, these potential actions define a structured range from minimal, low-impact interventions through moderate and high-impact interventions up to extreme, hard-to-reverse interventions. They are not commitments to act and do not themselves trigger execution; they exist to make explicit the shape of the action space so that concrete proposals can be positioned relative to it.
 
-Running in parallel is the spectrum of proposed actions, which consists of concrete action proposals attached to the actionable idea via relative_importance connections whose usage is reserved for proposal relationships (for example, proposed_action). Each proposed action is a specific plan, advanced by one or more identities, that could be executed and later verified as an action idea. When a proposed action is introduced, the proposer MUST specify an initial placement along the actionable ideaâ€™s potential-action spectrum: effectively a claim about which region of the potential-action rail this proposal occupies and how its impact, reversibility, risk, and resource use compare to the hypothetical options already defined.
+Running in parallel is the spectrum of proposed actions, which consists of concrete action proposals attached to the actionable idea via relative_importance connections whose usage is reserved for proposal relationships (for example, proposed_action). Each proposed action is a specific plan, advanced by one or more identities, that could be executed and later verified as an action idea. When a proposed action is introduced, the proposer MUST specify an initial placement along the actionable idea's potential-action spectrum: effectively a claim about which region of the potential-action rail this proposal occupies and how its impact, reversibility, risk, and resource use compare to the hypothetical options already defined.
 
-Disputes about how a proposal is positioned on this spectrum are resolved through action challenges. An action challenge MAY be opened to argue that a proposed action has been mispositioned relative to the spectrum of potential actions, or that the potential-action rail itself is incomplete or distorted (for example, by omitting obvious minimal interventions or clustering only around extremes). In the argument phase of such a challenge, participants reference the existing potential actions, introduce additional potential actions if needed, and compare the concrete proposalâ€™s characteristics to those reference points. The challengeâ€™s verdict yields a state transformation event that updates the canonical placement of the proposed action and, where justified, the ordering or composition of the potential-action spectrum for that actionable idea. All of these changes are recorded as forward-only events; earlier placements and rail configurations remain in history but are superseded for current-state derivation.
+Disputes about how a proposal is positioned on this spectrum are resolved through action challenges. An action challenge MAY be opened to argue that a proposed action has been mispositioned relative to the spectrum of potential actions, or that the potential-action rail itself is incomplete or distorted (for example, by omitting obvious minimal interventions or clustering only around extremes). In the argument phase of such a challenge, participants reference the existing potential actions, introduce additional potential actions if needed, and compare the concrete proposal's characteristics to those reference points. The challenge's verdict yields a state transformation event that updates the canonical placement of the proposed action and, where justified, the ordering or composition of the potential-action spectrum for that actionable idea. All of these changes are recorded as forward-only events; earlier placements and rail configurations remain in history but are superseded for current-state derivation.
 
 The relationship between the spectrum of potential actions and the spectrum of proposed actions is used downstream by other action challenges that decide whether and when to endorse or execute proposals. Governance and safety rulebooks MAY impose additional ceremony, quorum, or evidence requirements for endorsing proposals that occupy more extreme, irreversible, or high-risk regions of the action spectrum, but such policies are defined elsewhere in this specification. The core protocol only requires that every actionable idea can host a spectrum of potential actions, that concrete proposals specify and maintain a placement on a spectrum of proposed actions tied to that potential spectrum, and that all disputes about these rails and placements are conducted through action challenges that are fully recorded and deterministically replayable across conformant nodes.
 
@@ -2802,7 +2802,7 @@ Each challenge has a **target juror count**, which is the number of completed vo
 
 Juror participation is organized into **vote sessions**. A vote session is initiated when an identity explicitly chooses to vote. When a client requests a new vote session on behalf of an identity, the node MUST first verify that the identity has sufficient deterministic voting capacity (mana/rate-limit budget) for the current window and, if so, decrement or reserve one unit of that capacity. If capacity is insufficient, the session request MUST be rejected without altering eligibility pool membership. The node then computes the set of open challenges for which the identity is currently eligible and that still require additional jurors to reach their target juror count. From this set, the node deterministically selects a small candidate subset, of size three, using a pseudorandom function of the identity identifier, a shared randomness seed, and a monotonically increasing session index for that identity. The three selected challenges (or, in implementations that group by anchor idea, up to three anchor ideas each with at least one open eligible challenge) constitute the candidate set for that vote session.
 
-Within a vote session, the identity MUST select exactly one candidate challenge to vote on, or explicitly decline to vote on any of them, within a bounded decision window. A conformant implementation MAY surface these candidates as a list, as locations in a graphical interface, or in any other UI, but it MUST NOT allow the identity to request additional candidates for the same session without cost. If the identity selects a candidate challenge and casts a valid vote within the sessionâ€™s time window, the node records a vote event linking the identity, the challenge, and the selected option. If the identity fails to cast any vote before the decision window expires, the session is marked as expired and the reserved voting capacity remains consumed unless governance rules explicitly allow a limited number of no-cost expirations. In either case, the vote session is closed, and the identity MUST initiate a new vote session (subject to rate limits) to participate in further voting.
+Within a vote session, the identity MUST select exactly one candidate challenge to vote on, or explicitly decline to vote on any of them, within a bounded decision window. A conformant implementation MAY surface these candidates as a list, as locations in a graphical interface, or in any other UI, but it MUST NOT allow the identity to request additional candidates for the same session without cost. If the identity selects a candidate challenge and casts a valid vote within the session's time window, the node records a vote event linking the identity, the challenge, and the selected option. If the identity fails to cast any vote before the decision window expires, the session is marked as expired and the reserved voting capacity remains consumed unless governance rules explicitly allow a limited number of no-cost expirations. In either case, the vote session is closed, and the identity MUST initiate a new vote session (subject to rate limits) to participate in further voting.
 
 For each challenge, juror selection over time is the accumulation of vote sessions in which that challenge appears as a candidate and is chosen by jurors. A challenge proceeds to verdict aggregation once the number of completed votes recorded for it reaches its target juror count and any timing or quorum constraints defined in Section 7.2 and the applicable rulebooks are satisfied. All vote sessions, candidate selections, votes, and any explicit declines MUST be represented as events in the canonical universe so that all conformant nodes can reconstruct, under replay, which identities were offered which candidate sets, how often, and which challenges they elected to vote on. Nodes MUST NOT offer an identity more than three concurrent candidate challenges per vote session, MUST enforce the consumption of voting rate limits at the start of a session, and MUST ensure that identities cannot repeatedly skip or restart sessions to target only high-importance challenges without incurring the configured rate-limit cost. Together, these rules define a simple, replayable mechanism in which each challenge is judged by a small panel of jurors, and each identity participates through short, randomized vote sessions that balance fairness, resistance to targeted brigading, and a manageable cognitive load.
 
@@ -2810,20 +2810,20 @@ For each challenge, juror selection over time is the accumulation of vote sessio
 
 Action challenges determine whether an actionable idea or a proposed action SHOULD be endorsed, rejected, superseded, or prioritized within its deliberative context. To support deterministic replay and clear downstream semantics, each actionable idea SHALL maintain a canonical action-state that evolves through the following transitions:
 
-* **inert** â€” the actionable idea exists but has not been endorsed.  
-* **endorsed** â€” an action challenge verdict has endorsed the actionable idea or its selected proposal. Endorsement specifies that the system judges this action desirable but DOES NOT assign it to any identity.  
-* **implemented** â€” one or more human identities have voluntarily issued declarations and have had completion truth claims successfully verified for the endorsed action.  
-* **superseded** â€” a later action challenge endorses a different actionable idea or proposal that replaces or invalidates the previous one.
+* **inert**  -  the actionable idea exists but has not been endorsed.  
+* **endorsed**  -  an action challenge verdict has endorsed the actionable idea or its selected proposal. Endorsement specifies that the system judges this action desirable but DOES NOT assign it to any identity.  
+* **implemented**  -  one or more human identities have voluntarily issued declarations and have had completion truth claims successfully verified for the endorsed action.  
+* **superseded**  -  a later action challenge endorses a different actionable idea or proposal that replaces or invalidates the previous one.
 
-Action challenges MAY move an actionable idea from inert â†’ endorsed or endorsed â†’ superseded. They MAY NOT move endorsed â†’ implemented; implementation occurs only through voluntary action declarations followed by completion truth claims as described in Â§6.7.
+Action challenges MAY move an actionable idea from inert  -> endorsed or endorsed  -> superseded. They MAY NOT move endorsed  -> implemented; implementation occurs only through voluntary action declarations followed by completion truth claims as described in §6.7.
 
 **No identity MAY be compelled to implement an endorsed action.** If no human identity voluntarily issues an action declaration, an endorsed action remains unimplemented. Nodes MUST represent this state fully and consistently; the system SHALL NOT infer or assign implementers.
 
-Rulebooks MAY impose additional deliberation requirements before an action challenge MAY reach a verdictâ€”such as requiring tradeoff analyses, multi-tiered arguments, or extended voting windowsâ€”but these requirements SHALL NOT override the foundational voluntary-execution invariant.
+Rulebooks MAY impose additional deliberation requirements before an action challenge MAY reach a verdict - such as requiring tradeoff analyses, multi-tiered arguments, or extended voting windows - but these requirements SHALL NOT override the foundational voluntary-execution invariant.
 
 Multiple identities MAY independently declare and implement the same endorsed action. Each implementation produces a separate completion truth claim subject to independent verification. If an endorsed action has multiple verified implementations, nodes SHALL record all of them; governance or downstream rulebooks MAY treat multiple implementations as evidence of robustness or consensus.
 
-This action-state model ensures that endorsement, voluntariness, and implementation remain strictly separated, preserving the protocolâ€™s human-first commitments while enabling deterministic reasoning about what the system has agreed to do and what has actually been done.
+This action-state model ensures that endorsement, voluntariness, and implementation remain strictly separated, preserving the protocol’s human-first commitments while enabling deterministic reasoning about what the system has agreed to do and what has actually been done.
 
 ### 6.7 Resurrection actions (normative) [anchor: resurrection_actions_normative]
 
@@ -2839,7 +2839,7 @@ The target MUST currently be in the `burned` lifecycle_state. Rotted objects do 
 
 #### 6.7.2 Effect and timing [anchor: effect_and_timing]
 
-A resurrection action transitions the targetâ€™s lifecycle_state from **burned** to **active** at the next applicable cycle boundary.
+A resurrection action transitions the target's lifecycle_state from **burned** to **active** at the next applicable cycle boundary.
 
 Resurrection does not require a challenge. Resurrection actions are fully canonical and remain challengeable post-hoc under existing challenge domains (e.g., importance or representation).
 
@@ -2876,9 +2876,9 @@ Resurrection costs are applied at resurrection creation time (or other determini
 
 ### 7.1 governance ontology and scopes [anchor: governance_ontology_and_scopes]
 
-Governance in the canonical universe is represented entirely through ordinary ideas. The protocol defines no special hidden governance objects, no out-of-band rulebook structures, and no dedicated connection types for expressing authority. Governance rulebooks and configuration rule sets are themselves ideas in the graph: they are written, argued about, challenged, ranked, and, when appropriate, explicitly adopted like any others. All proposals about how the system should behaveâ€”whether they concern voting parameters, safety constraints, identity verification, importance thresholds, POD routing, or any other operational principleâ€”are expressed as ideas authored by identities and evaluated through the same public, challengeable processes that apply to every other idea. As a consequence, governance is not an external mechanism imposed on the graph; it is an emergent structure within the graph, derived from what identities collectively claim, argue for, challenge, adopt through explicit actions, and ultimately treat as important.
+Governance in the canonical universe is represented entirely through ordinary ideas. The protocol defines no special hidden governance objects, no out-of-band rulebook structures, and no dedicated connection types for expressing authority. Governance rulebooks and configuration rule sets are themselves ideas in the graph: they are written, argued about, challenged, ranked, and, when appropriate, explicitly adopted like any others. All proposals about how the system should behave - whether they concern voting parameters, safety constraints, identity verification, importance thresholds, POD routing, or any other operational principle - are expressed as ideas authored by identities and evaluated through the same public, challengeable processes that apply to every other idea. As a consequence, governance is not an external mechanism imposed on the graph; it is an emergent structure within the graph, derived from what identities collectively claim, argue for, challenge, adopt through explicit actions, and ultimately treat as important.
 
-A governance idea is any idea that asserts a statement about how some aspect of the system ought to function. At the protocol level, governance ideas and rule set ideas are not a separate ontological category; they are distinguished by their content and, optionally, by small rulebook headers defined in governance specifications (for example, indicating which domain they govern). Governance ideas accumulate arguments, challenges, and importance like any others. A subset of these ideasâ€”those that articulate coherent rule sets for a given domainâ€”MAY be referenced by adoption actions. Nodes determine which governance rule sets are operative at any moment by replaying all events, applying resolved challenges to those adoption actions, and evaluating which adoption actions succeeded for each domain before a given cycle boundary. High universal importance, challenge-stability, and canonical clarity influence whether a rule set is likely to be successfully adopted, but they do not, by themselves, make it operative; activation requires an explicit, completed adoption action.
+A governance idea is any idea that asserts a statement about how some aspect of the system ought to function. At the protocol level, governance ideas and rule set ideas are not a separate ontological category; they are distinguished by their content and, optionally, by small rulebook headers defined in governance specifications (for example, indicating which domain they govern). Governance ideas accumulate arguments, challenges, and importance like any others. A subset of these ideas - those that articulate coherent rule sets for a given domain - MAY be referenced by adoption actions. Nodes determine which governance rule sets are operative at any moment by replaying all events, applying resolved challenges to those adoption actions, and evaluating which adoption actions succeeded for each domain before a given cycle boundary. High universal importance, challenge-stability, and canonical clarity influence whether a rule set is likely to be successfully adopted, but they do not, by themselves, make it operative; activation requires an explicit, completed adoption action.
 
 
 
@@ -2886,15 +2886,15 @@ Within replay, nodes reconstruct governance state by evaluating governance-relat
 
 ### 7.3 governance rule sets and adoption actions [anchor: governance_rule_sets_and_adoption_actions]
 
-While any identity MAY propose governance ideas, the system begins with a structured baseline contained in the Seed. These genesis governance ideas define the initial configuration of the system: challenge types, voting parameters, visibility rules, content boundaries, token behavior, and other structural principles required for early operation. These initial rule sets are ordinary ideasâ€”authored, described, and challengeable like any othersâ€”but they provide an organized foundation for interpreting the system before the community has produced its own elaborations and alternatives.
+While any identity MAY propose governance ideas, the system begins with a structured baseline contained in the Seed. These genesis governance ideas define the initial configuration of the system: challenge types, voting parameters, visibility rules, content boundaries, token behavior, and other structural principles required for early operation. These initial rule sets are ordinary ideas - authored, described, and challengeable like any others - but they provide an organized foundation for interpreting the system before the community has produced its own elaborations and alternatives.
 
-Governance evolves through explicit **rule set ideas**. A rule set idea articulates a coherent bundle of rules for a particular domain, such as â€œchallenge and voting rulesâ€, â€œtoken release rulesâ€, or â€œsafety handling rulesâ€. Its descriptions SHOULD provide a clear human-readable summary of the rules it contains, and MAY reference more granular rule ideas via importance or representation connections. Multiple rule set ideas MAY coexist for the same domain, representing competing proposals, revisions, or historical versions (for example: `token_release_rules_v1`, `token_release_rules_v2`, `token_release_rules_v3`). All such rule set ideas remain ordinary challengeable ideas with no intrinsic privilege.
+Governance evolves through explicit **rule set ideas**. A rule set idea articulates a coherent bundle of rules for a particular domain, such as "challenge and voting rules", "token release rules", or "safety handling rules". Its descriptions SHOULD provide a clear human-readable summary of the rules it contains, and MAY reference more granular rule ideas via importance or representation connections. Multiple rule set ideas MAY coexist for the same domain, representing competing proposals, revisions, or historical versions (for example: `token_release_rules_v1`, `token_release_rules_v2`, `token_release_rules_v3`). All such rule set ideas remain ordinary challengeable ideas with no intrinsic privilege.
 
-To make a rule set idea operative, identities MUST produce an **adoption action**. An adoption action is an actionable idea of the form â€œadopt rule set R for domain Dâ€. Like any actionable idea, it proceeds through the unified challenge lifecycle: arguments are gathered, action challenges may be opened, and a panel of jurors renders a verdict. If the adoption action is accepted and executed, the resulting completed action event SHALL schedule activation at a deterministic cycle boundary according to governance delay policy. Only one rule set may be active per domain at any given cycle boundary; repeated adoption actions supersede earlier ones.
+To make a rule set idea operative, identities MUST produce an **adoption action**. An adoption action is an actionable idea of the form "adopt rule set R for domain D". Like any actionable idea, it proceeds through the unified challenge lifecycle: arguments are gathered, action challenges may be opened, and a panel of jurors renders a verdict. If the adoption action is accepted and executed, the resulting completed action event SHALL schedule activation at a deterministic cycle boundary according to governance delay policy. Only one rule set may be active per domain at any given cycle boundary; repeated adoption actions supersede earlier ones.
 
 Nodes reconstruct governance across replay by examining adoption actions. For each governance domain, the active rule set at cycle `r` is the rule set referenced by the most recent successful adoption action for that domain whose scheduled `activation_cycle_index <= r`. Earlier rule sets remain historically visible and may continue to influence argumentation, but they SHALL NOT govern behavior until reactivated by a later adoption. If no adoption action exists for a domain, nodes SHALL treat the corresponding genesis rule set from the Seed as active.
 
-Truth claims MAY be authored to restate which rule set is currently active for a domain, and the descriptions of rule set ideas MAY themselves be challenged to improve clarity or correct errors. However, neither descriptive changes nor truth claims determine which rules are operative. The canonical source of governance activation is the sequence of completed adoption actions and their interpretation across cycle boundaries. This mechanism preserves the systemâ€™s core uniformityâ€”everything is an ideaâ€”while providing a clear, stable, fully challengeable method for specifying and updating the rules under which the canonical universe operates.
+Truth claims MAY be authored to restate which rule set is currently active for a domain, and the descriptions of rule set ideas MAY themselves be challenged to improve clarity or correct errors. However, neither descriptive changes nor truth claims determine which rules are operative. The canonical source of governance activation is the sequence of completed adoption actions and their interpretation across cycle boundaries. This mechanism preserves the system's core uniformity - everything is an idea - while providing a clear, stable, fully challengeable method for specifying and updating the rules under which the canonical universe operates.
 
 Governance rulebooks MAY define tunable parameters affecting derived lifecycle behavior and content packaging, including but not limited to:
 - rot and burn thresholds,
@@ -2912,21 +2912,21 @@ The protocol permits the system to reason about itself, modify its own rule sets
 
 First, governance decisions MUST remain public and challengable. No actionable idea, truth claim, description, or action MAY become effective if it asserts that governance-relevant proposals or decisions may be hidden, private, or shielded from challenge. Any attempt to create a private configuration rule, a private governance decision, or a private rule set SHALL be invalid under the protocol, regardless of how many identities support it. All rule-related ideas, arguments, actions, and truth claims MUST remain visible and challengable within the universal scope.
 
-Second, no idea MAY claim the power to exempt itself or any other idea from challenge. Any actionable idea or truth claim that asserts that â€œchallenges are no longer allowed on X,â€ â€œidentity Y is unchallengeable,â€ or â€œrule set R may not be compared, replaced, or criticizedâ€ SHALL be invalid and MUST NOT be treated as true or active under any circumstances. The challenge mechanism is a structural invariant of the organism. Certain domains MAY require stronger evidence or higher deliberative thresholds, but challenge prohibition itself cannot be adopted as a rule.
+Second, no idea MAY claim the power to exempt itself or any other idea from challenge. Any actionable idea or truth claim that asserts that "challenges are no longer allowed on X," "identity Y is unchallengeable," or "rule set R may not be compared, replaced, or criticized" SHALL be invalid and MUST NOT be treated as true or active under any circumstances. The challenge mechanism is a structural invariant of the organism. Certain domains MAY require stronger evidence or higher deliberative thresholds, but challenge prohibition itself cannot be adopted as a rule.
 
-Third, the protocol SHALL reject any proposal that attempts to disable the systemâ€™s verification and evidence requirements. Any actionable idea that claims that â€œno evidence is required,â€ â€œevidence cannot be attached,â€ or â€œverification is suspendedâ€ is invalid. Evidence requirements MAY become stricter through accepted governance-relevant actions, but they MAY NOT be weakened to the point of undermining the truth-challenge framework or the determinism of replay.
+Third, the protocol SHALL reject any proposal that attempts to disable the system's verification and evidence requirements. Any actionable idea that claims that "no evidence is required," "evidence cannot be attached," or "verification is suspended" is invalid. Evidence requirements MAY become stricter through accepted governance-relevant actions, but they MAY NOT be weakened to the point of undermining the truth-challenge framework or the determinism of replay.
 
-Fourth, no actionable idea MAY assert exclusive authority for a single identity, tribe, or group. A claim that a specific identity â€œcontrols the system,â€ â€œcannot be removed,â€ or â€œhas unilateral power to approve or block rule changesâ€ SHALL be invalid. Authority in the protocol emerges from universal-scope deliberation, not from structural exceptions. Tribes MAY maintain internal interpretations, but they MAY NOT define global rules or block universal-scope challenges.
+Fourth, no actionable idea MAY assert exclusive authority for a single identity, tribe, or group. A claim that a specific identity "controls the system," "cannot be removed," or "has unilateral power to approve or block rule changes" SHALL be invalid. Authority in the protocol emerges from universal-scope deliberation, not from structural exceptions. Tribes MAY maintain internal interpretations, but they MAY NOT define global rules or block universal-scope challenges.
 
 Fifth, no actionable idea MAY disable the public universal-importance structure. Any attempt to remove universal importance, bypass the 20-axis structure, or redefine its semantics in a way that prevents public, challengeable ranking SHALL be invalid. Alternative ranking systems MAY be proposed and used by tribes or personal scopes, but universal-scope importance MUST remain intact and challengable so that POD routing, event evaluation, and significance flow maintain their coherence.
 
-Invalid ideas, actions, and truth claims remain visible in the historical record. They MAY be challenged, corrected, or used as evidence in subsequent meta-level deliberation, but their invalidity means they MUST NOT alter current rule applicability or system behavior during replay. A conformant node SHALL NOT apply any claimed configuration or rule change that contradicts these meta-invariants, regardless of whether the claim was supported by large numbers of identities or linked to widely accepted arguments. These invariants guarantee that no factionâ€”however largeâ€”can disable the systemâ€™s ability to reason, deliberate, or correct itself over time.
+Invalid ideas, actions, and truth claims remain visible in the historical record. They MAY be challenged, corrected, or used as evidence in subsequent meta-level deliberation, but their invalidity means they MUST NOT alter current rule applicability or system behavior during replay. A conformant node SHALL NOT apply any claimed configuration or rule change that contradicts these meta-invariants, regardless of whether the claim was supported by large numbers of identities or linked to widely accepted arguments. These invariants guarantee that no faction - however large - can disable the system's ability to reason, deliberate, or correct itself over time.
 
 These constraints do not create a special governance layer. They simply define the forms of actionable ideas and truth claims that the protocol considers structurally possible. Everything else remains fully deliberative: rule sets are ordinary ideas; decisions are ordinary actions; and the system evolves through the same mechanisms that govern truth, importance, and action everywhere else in the canonical universe.
 
 ### 7.5 deliberation thresholds and quorum rules for system-configuration decisions [anchor: deliberation_thresholds_and_quorum_rules_for_system_configuration_decisions]
 
-System-configuration decisionsâ€”those that modify how the protocol interprets rules, evaluates evidence, selects voters, or activates rule-set ideasâ€”are expressed through ordinary actionable ideas. They do not form a special class of objects and do not rely on a separate governance mechanism. However, because these decisions alter how nodes interpret the canonical universe, they MAY require stronger deliberative conditions than ordinary, low-stakes actionable ideas. The protocol therefore defines optional deliberation thresholds that MAY be specified by ideas within the graph and evaluated through the same challenge system that applies everywhere else.
+System-configuration decisions - those that modify how the protocol interprets rules, evaluates evidence, selects voters, or activates rule-set ideas - are expressed through ordinary actionable ideas. They do not form a special class of objects and do not rely on a separate governance mechanism. However, because these decisions alter how nodes interpret the canonical universe, they MAY require stronger deliberative conditions than ordinary, low-stakes actionable ideas. The protocol therefore defines optional deliberation thresholds that MAY be specified by ideas within the graph and evaluated through the same challenge system that applies everywhere else.
 
 A deliberation threshold is an idea that describes a required condition for the acceptance of a particular class of actionable ideas. Examples include a minimum number of eligible voters, a minimum number of affirmative votes, a minimum evidence strength for a completion claim, or a requirement that multiple independent identities verify a decision-related action. These threshold ideas do not bind the system automatically. They MUST be referenced explicitly by the actionable idea that proposes a configuration change, and their relevance MAY be challenged if they are outdated, misapplied, or in conflict with higher-importance ideas governing meta-level constraints.
 
@@ -2939,23 +2939,23 @@ The protocol does not prescribe fixed global thresholds or quorums. Instead, thr
 
 ### 7.6 protocol self-description and reflexive clarity [anchor: protocol_self_description_and_reflexive_clarity]
 
-The protocol is self-describing. Every structural feature of the systemâ€”the ontology of ideas, the meaning of challenges, the definition of evidence, the semantics of actions, and the rules governing significance flowâ€”MUST be expressible within the canonical universe as a set of conceptual ideas and truth claims. These protocol-description ideas do not possess inherent authority. Their influence arises from their universal importance and from the fact that they are referenced by nodes during deterministic replay to interpret past events and validate future ones.
+The protocol is self-describing. Every structural feature of the system - the ontology of ideas, the meaning of challenges, the definition of evidence, the semantics of actions, and the rules governing significance flow - MUST be expressible within the canonical universe as a set of conceptual ideas and truth claims. These protocol-description ideas do not possess inherent authority. Their influence arises from their universal importance and from the fact that they are referenced by nodes during deterministic replay to interpret past events and validate future ones.
 
-A protocol-description idea MAY define the meaning of an idea type, describe the semantics of relative importance, or articulate the constraints governing challenge validity. These ideas MAY have canonical descriptions selected through representation challenges, ensuring that the systemâ€™s self-understanding remains both human-readable and continuously improvable. Because canonical descriptions use a small controlled vocabulary, protocol-description ideas provide a stable semantic anchor for conformant implementations without becoming rigid or exempt from revision.
+A protocol-description idea MAY define the meaning of an idea type, describe the semantics of relative importance, or articulate the constraints governing challenge validity. These ideas MAY have canonical descriptions selected through representation challenges, ensuring that the system’s self-understanding remains both human-readable and continuously improvable. Because canonical descriptions use a small controlled vocabulary, protocol-description ideas provide a stable semantic anchor for conformant implementations without becoming rigid or exempt from revision.
 
 Reflexive clarity requires that protocol-description ideas remain fully public, fully challengable, and grounded in the same evidence and importance frameworks as all other ideas. The protocol SHALL treat any attempt to obscure, privatize, or exempt protocol-description ideas from challenge as invalid under the meta-level constraints defined in Section 8.4. Because nodes use these ideas during deterministic replay, clarity and visibility are essential: the canonical universe must plainly describe how it is to be interpreted, and this description must evolve through recorded deliberation rather than code alone.
 
-When a system-configuration actionable idea proposes to revise or clarify a protocol-description idea, the resulting decision action MUST record the updated description or its replacement. A corresponding truth claim SHOULD assert that the change was executed correctly, and evidence SHOULD tie the change to physical actions such as code updates, signatures, or verified artifacts. This ensures that the protocolâ€™s semantics evolve in synchrony with its implementation, and that nodes can reconstruct the systemâ€™s meaning at any snapshot by replaying descriptive ideas and decision actions.
+When a system-configuration actionable idea proposes to revise or clarify a protocol-description idea, the resulting decision action MUST record the updated description or its replacement. A corresponding truth claim SHOULD assert that the change was executed correctly, and evidence SHOULD tie the change to physical actions such as code updates, signatures, or verified artifacts. This ensures that the protocol’s semantics evolve in synchrony with its implementation, and that nodes can reconstruct the system’s meaning at any snapshot by replaying descriptive ideas and decision actions.
 
 ### 7.7 the seed as governance nucleus but not authority [anchor: the_seed_as_governance_nucleus_but_not_authority]
 
-â€œThe Seed in My Mindâ€ is an idea that serves as the conceptual nucleus of the organism. It anchors the systemâ€™s meta-level reasoning, including the principles governing universal importance, the value poles of the individual and the collective, the semantics of evidence, and the meaning of POD. However, the Seed is not an authority and does not possess any special ontological privileges. It is an ordinary idea whose influence arises solely from its universal importance and from the deliberative structure built around it.
+"The Seed in My Mind" is an idea that serves as the conceptual nucleus of the organism. It anchors the system's meta-level reasoning, including the principles governing universal importance, the value poles of the individual and the collective, the semantics of evidence, and the meaning of POD. However, the Seed is not an authority and does not possess any special ontological privileges. It is an ordinary idea whose influence arises solely from its universal importance and from the deliberative structure built around it.
 
-Ideas connected to the Seedâ€”including those describing system-configuration norms, significance flow, identity structure, or safety boundariesâ€”derive their relevance from the same mechanisms as all other ideas: public visibility, challengability, importance ranking, and acceptance through action and truth challenges. No description, connection, or configuration associated with the Seed MAY become unchallengeable or private. All structural propositions linked to the Seed MUST remain open to revision and subject to the same epistemic processes that govern the rest of the canonical universe.
+Ideas connected to the Seed - including those describing system-configuration norms, significance flow, identity structure, or safety boundaries - derive their relevance from the same mechanisms as all other ideas: public visibility, challengability, importance ranking, and acceptance through action and truth challenges. No description, connection, or configuration associated with the Seed MAY become unchallengeable or private. All structural propositions linked to the Seed MUST remain open to revision and subject to the same epistemic processes that govern the rest of the canonical universe.
 
 The Seed functions as a governance nucleus in the sense that configuration-related actionable ideas frequently reference it, and because it often serves as the interpretive context for deliberation about protocol semantics. But its role is strictly interpretive. It does not issue commands, enforce rules, or confer power. Its centrality emerges because human identities choose to treat it as the root of system-wide meaning, not because the protocol assigns it a special mode.
 
-As the system evolves, additional governance nuclei MAY emergeâ€”projects, institutions, or large-scale initiatives that maintain their own internal rule sets and significance maps. These too are ordinary ideas whose governance structures are built from actionable ideas, actions, truth claims, and significance flow. The Seed remains the first and most general of these nuclei, but not a privileged one. Nothing in the protocol prevents other governance nuclei from rising in importance or overtaking the Seed in certain domains if deliberation supports that outcome.
+As the system evolves, additional governance nuclei MAY emerge - projects, institutions, or large-scale initiatives that maintain their own internal rule sets and significance maps. These too are ordinary ideas whose governance structures are built from actionable ideas, actions, truth claims, and significance flow. The Seed remains the first and most general of these nuclei, but not a privileged one. Nothing in the protocol prevents other governance nuclei from rising in importance or overtaking the Seed in certain domains if deliberation supports that outcome.
 
 In this design, the Seed provides conceptual coherence without centralizing authority. It is the initial point from which meta-level reasoning grows, not an immutable command structure. Its meaning, significance, and role evolve through the same open, recursive, challenge-driven processes that govern the entire canonical universe.
 
@@ -2963,7 +2963,7 @@ In this design, the Seed provides conceptual coherence without centralizing auth
 
 Governance rulebooks define the parameters that control derived pruning, packaging, and survivability behavior of the protocol.
 
-Governance MAY modify parameters that control long-horizon maintenance and packaging, provided such changes do not violate constitutional invariants and do not introduce new cycle sealing mechanisms outside Â§5.
+Governance MAY modify parameters that control long-horizon maintenance and packaging, provided such changes do not violate constitutional invariants and do not introduce new cycle sealing mechanisms outside §5.
 
 Governable parameter families include:
 - rot/burn horizons, thresholds, and revival rules (living-map maintenance),
@@ -2992,7 +2992,7 @@ Governance MAY set and modify rot/burn parameters, including:
 
 Rot/burn rules MUST be deterministic and replayable. They MUST NOT depend on trusted wall-clock time, raw timestamps, or node-local timers; where time is relevant, it MUST enter only via adjudicated time-claim predicates as defined in the Tempo specification.
 
-Rot/burn MUST NOT affect whether a cycle seals. Rot/burn is executed after a boundary is derived; it is not an input to cycle completion (Â§5).
+Rot/burn MUST NOT affect whether a cycle seals. Rot/burn is executed after a boundary is derived; it is not an input to cycle completion (§5).
 
 
 #### 7.8.2 Snapshot ladder parameters [anchor: snapshot_ladder_parameters]
@@ -3029,28 +3029,28 @@ Export pack metadata MUST always include cycle-boundary cadence context sufficie
 - cycle index,
 - seal type (deliberative vs forced),
 - Dmin/Dmax predicate satisfaction,
-- and the cycleâ€™s derived completion inputs (V, C, W_score) as defined in Â§5.
+- and the cycle's derived completion inputs (V, C, W_score) as defined in §5.
 
 
 ## 8. identity, users, ai boundaries, and ents [anchor: 8_identity_users_ai_boundaries_and_ents]
 
 ### 8.1 human-first identity architecture [anchor: human_first_identity_architecture]
 
-The protocol maintains a strict human-first architecture for the canonical universe. Every canonical eventâ€”idea creation, description submission, connection creation, argument or evidence submission, challenge creation, vote, action declaration, or completion claimâ€”MUST be authored and cryptographically signed by a unique, verified human identity. Only these verified human identities MAY emit POD-eligible events or directly modify canonical rankings and challenge outcomes. AI systems, anonymous burners, and other non-verified actors MAY generate content in non-canonical layers, but such content has no canonical effect until explicitly adopted by a verified human identity.
+The protocol maintains a strict human-first architecture for the canonical universe. Every canonical event - idea creation, description submission, connection creation, argument or evidence submission, challenge creation, vote, action declaration, or completion claim - MUST be authored and cryptographically signed by a unique, verified human identity. Only these verified human identities MAY emit POD-eligible events or directly modify canonical rankings and challenge outcomes. AI systems, anonymous burners, and other non-verified actors MAY generate content in non-canonical layers, but such content has no canonical effect until explicitly adopted by a verified human identity.
 
 The system conceptually distinguishes three layers: the **canonical universe**, an **anonymous outer layer**, and the **AI map**. The canonical universe is the PoD-bearing layer, backed by event logs and snapshots, where universal importance, challenge outcomes, POD flows, and long-term governance are defined. Only verified human identities MAY act directly in this layer. The anonymous outer layer is a non-canonical, web-facing space where ideas MAY be created and discussed under fully anonymous or burner-like handles without prior verification. This layer is intended to support whistleblowing, dissent, experimentation, and expression under threat, including use from within authoritarian regimes. Events in the anonymous layer are not POD-eligible and MUST NOT change canonical ranks or challenge results until they are explicitly adopted. The AI map is a separate sandbox in which AI agents MAY freely propose ideas, structures, and interpretations without any canonical authority.
-Outer-layer content remains non-canonical until adopted by a verified-human identity, and such adoption preserves source anonymity by default and MUST NOT embed transport metadata (see `privacy-and-high-risk-submission-spec.md` §§6–7).
+Outer-layer content remains non-canonical until adopted by a verified-human identity, and such adoption preserves source anonymity by default and MUST NOT embed transport metadata (see `privacy-and-high-risk-submission-spec.md` §6§7).
 For clarity, the “anonymous outer layer” is non-canonical publication, while canonical authorship remains identity-signed pseudonymous (including anonymous-but-verified presentation where allowed).
 
-Canonical authorship is always grounded in a **user identity idea** that represents a real human. A single verified human identity MAY present itself through multiple visible pseudonyms or burner handles within the canonical universe and outer layer. These visible surfaces MAY obscure the underlying humanâ€™s legal identity and MAY be created or discarded at will, but all canonical events emitted by those surfaces MUST route through the same underlying verified identity for the purposes of authorship, rate limits, POD assignment, and Sybil resistance. The mapping from visible handles to underlying identities MAY remain private and node-local, but replay and validation MUST treat all events from those handles as originating from one canonical human.
+Canonical authorship is always grounded in a **user identity idea** that represents a real human. A single verified human identity MAY present itself through multiple visible pseudonyms or burner handles within the canonical universe and outer layer. These visible surfaces MAY obscure the underlying human's legal identity and MAY be created or discarded at will, but all canonical events emitted by those surfaces MUST route through the same underlying verified identity for the purposes of authorship, rate limits, POD assignment, and Sybil resistance. The mapping from visible handles to underlying identities MAY remain private and node-local, but replay and validation MUST treat all events from those handles as originating from one canonical human.
 
-The protocol distinguishes between **identity existence** and **identity visibility**. A verified human identity MUST exist, with a unique cryptographic key and verification state, before emitting canonical events. However, the interface MAY present this identity as a pseudonym, a theme-based handle, or a fully redacted â€œanonymousâ€ label. Anonymous participation in the canonical universe therefore means that the identityâ€™s public-facing label is hidden or pseudonymous, not that the underlying human is unknown to the protocol. Purely unlinked, unverifiable accounts MAY exist only in the anonymous outer layer; they MUST NOT act directly in the PoD-bearing canonical universe.
+The protocol distinguishes between **identity existence** and **identity visibility**. A verified human identity MUST exist, with a unique cryptographic key and verification state, before emitting canonical events. However, the interface MAY present this identity as a pseudonym, a theme-based handle, or a fully redacted "anonymous" label. Anonymous participation in the canonical universe therefore means that the identity's public-facing label is hidden or pseudonymous, not that the underlying human is unknown to the protocol. Purely unlinked, unverifiable accounts MAY exist only in the anonymous outer layer; they MUST NOT act directly in the PoD-bearing canonical universe.
 
-Anonymous or burner submissions in the outer layer MAY be used as inputs to canonical reasoning. A verified human identity MAY adopt non-canonical content (whether from anonymous humans or AI agents) by explicitly submitting it as their own canonical statement. Adoption means: â€œI, this human identity, say X,â€ even if the original author was anonymous. Once adopted, the idea becomes a canonical idea or description authored by the adopting human, and only then MAY it participate in canonical challenges, rankings, and POD flows. This adoption mechanism allows the system to ingest information from high-risk or anonymous contexts while keeping the canonical universe grounded in accountable human authorship.
+Anonymous or burner submissions in the outer layer MAY be used as inputs to canonical reasoning. A verified human identity MAY adopt non-canonical content (whether from anonymous humans or AI agents) by explicitly submitting it as their own canonical statement. Adoption means: "I, this human identity, say X," even if the original author was anonymous. Once adopted, the idea becomes a canonical idea or description authored by the adopting human, and only then MAY it participate in canonical challenges, rankings, and POD flows. This adoption mechanism allows the system to ingest information from high-risk or anonymous contexts while keeping the canonical universe grounded in accountable human authorship.
 
 Each human identity is instantiated in the canonical universe through a fixed cluster of structural ideas: a USER identity idea (with idea_type = identity) and four attached user-space ideas with canonical idea_type = conceptual_idea and specific structural_role values: backyard, relationship_garden, self_tree, and anthill. These four user-space ideas MUST be created atomically at registration time and MUST be linked to the USER identity via canonical membership connections whose role fields identify their function (for example, has_backyard, has_relationship_garden, has_self_tree, and has_anthill). They MUST also link back to the USER identity through reciprocal membership connections. All conformant nodes MUST reconstruct the same identity structure under replay. None of these structural ideas MAY merge with any other idea, and the protocol MUST NOT automatically generate additional identity-root structural roles beyond this set without an explicit rulebook change.
 
-The BACKYARD anchors authored ideas, the RELATIONSHIP_GARDEN hosts interpersonal and intrapersonal relationship structures, the SELF_TREE represents the userâ€™s narrative relationship with themselves, and the ANTHILL records mutually acknowledged human connections. In all cases, these are canonical only as structural anchors: they are ideas with idea_type = conceptual_idea and a structural_role that constrains how they are used. They SHALL NOT introduce new importance scopes, SHALL NOT participate directly in universal or tribe importance ranking, SHALL NOT receive POD, and SHALL NOT confer any governance privileges. Their semantics are limited to indexing drafts, memories, and peer relationships, and to anchoring personal and relational spaces in the UI. Implementations MAY build rich visual metaphors on top of them (for example, backyard navigation, a visual self-tree, or an anthill network), but MUST preserve their structural roles, MUST use only the canonical connection types defined in Â§2.7, and MUST NOT treat these roles as new canonical idea_type values.
+The BACKYARD anchors authored ideas, the RELATIONSHIP_GARDEN hosts interpersonal and intrapersonal relationship structures, the SELF_TREE represents the user’s narrative relationship with themselves, and the ANTHILL records mutually acknowledged human connections. In all cases, these are canonical only as structural anchors: they are ideas with idea_type = conceptual_idea and a structural_role that constrains how they are used. They SHALL NOT introduce new importance scopes, SHALL NOT participate directly in universal or tribe importance ranking, SHALL NOT receive POD, and SHALL NOT confer any governance privileges. Their semantics are limited to indexing drafts, memories, and peer relationships, and to anchoring personal and relational spaces in the UI. Implementations MAY build rich visual metaphors on top of them (for example, backyard navigation, a visual self-tree, or an anthill network), but MUST preserve their structural roles, MUST use only the canonical connection types defined in §2.7, and MUST NOT treat these roles as new canonical idea_type values.
 
 AI identities MAY exist as named agents within the AI map, but they SHALL NOT directly author canonical events. AI identities MAY generate candidate ideas, arguments, or descriptions, but these remain non-canonical until a verified human identity adopts them. When such adoption occurs, the resulting canonical event is entirely owned by the human identity, with any AI contribution treated as a tool-assisted draft. This preserves human responsibility and agency over all canonical claims, while still enabling extensive AI support and exploration in the non-canonical layers.
 
@@ -3069,7 +3069,7 @@ At minimum, a canonical human identity MUST include:
   - *verified-human*: the identity MAY author canonical events, participate in canonical challenges, and receive POD;
   - *revoked*: the identity has been invalidated (for example, due to fraud or policy violations) and MUST NOT author further canonical events; historical events remain valid under replay;
   - *deceased*: the human has died; no new canonical events may be authored, but historical authorship and POD remain intact;
-  - *transferred*: the identity has undergone a succession process (see Â§9.6), with clear markers of continuity and transfer.
+  - *transferred*: the identity has undergone a succession process (see §9.6), with clear markers of continuity and transfer.
 
   The specific mechanisms by which an identity transitions from unverified to verified-human (for example, peer verification, institutional checks, or multi-factor proofs) are implementation-dependent and MAY be governed by ideas and challenges within the system. For protocol purposes, only the resulting verification state matters.
 
@@ -3088,7 +3088,7 @@ At minimum, a canonical human identity MUST include:
 - **death or succession markers:**  
   When an identity is marked as deceased or when responsibilities and any ongoing entitlements are transferred to a successor identity, this MUST be recorded as a canonical event referencing both the original and successor identities. These markers ensure that replay can interpret historical authorship and POD flows consistently, even after death or succession.
 
-In addition to these properties on the USER identity idea, each identity MUST have the four structural-role ideasâ€”BACKYARD, RELATIONSHIP_GARDEN, SELF_TREE, and ANTHILLâ€”created and linked as described in Â§9.1. These structural ideas are part of the identityâ€™s canonical footprint and MUST persist for the entire lifetime of the identity. Verification state and key ownership DO NOT change the semantics of these structural ideas; they continue to serve as anchors for authored ideas, relationship memories, self-narrative, and peer connections, and SHALL NOT introduce new importance scopes, POD sources, or governance privileges. Non-canonical anonymous identities operating solely in the outer layer MAY have reduced or ephemeral property sets and MAY exist without verification. However, any transition from anonymous outer-layer activity to canonical authorship MUST pass through a verified-human identity, either by upgrading that actor to verified-human status or by adoption of content by an already-verified identity. Nodes MUST NOT treat outer-layer pseudonyms or burners as canonical identities unless and until they satisfy the properties and verification states defined above.
+In addition to these properties on the USER identity idea, each identity MUST have the four structural-role ideas - BACKYARD, RELATIONSHIP_GARDEN, SELF_TREE, and ANTHILL - created and linked as described in §9.1. These structural ideas are part of the identity's canonical footprint and MUST persist for the entire lifetime of the identity. Verification state and key ownership DO NOT change the semantics of these structural ideas; they continue to serve as anchors for authored ideas, relationship memories, self-narrative, and peer connections, and SHALL NOT introduce new importance scopes, POD sources, or governance privileges. Non-canonical anonymous identities operating solely in the outer layer MAY have reduced or ephemeral property sets and MAY exist without verification. However, any transition from anonymous outer-layer activity to canonical authorship MUST pass through a verified-human identity, either by upgrading that actor to verified-human status or by adoption of content by an already-verified identity. Nodes MUST NOT treat outer-layer pseudonyms or burners as canonical identities unless and until they satisfy the properties and verification states defined above.
 
 Identity verification within this protocol is defined as a set of challengeable truth claims about an identity, not as an administrative or discretionary status.
 
@@ -3107,23 +3107,23 @@ Each verified human identity is accompanied by a fixed cluster of structural-rol
 
 MINDGARDEN (structural_role = mindgarden)
 
-The MINDGARDEN (â€œmy mindgardenâ€) is the identityâ€™s deterministic private incubation space for authored ideas. Ideas created by the identity MAY be drafted, iterated, and organized within the mindgarden prior to becoming publicly visible and participating in canonical epistemic processes. Every idea created by the identity MUST connect to the mindgarden using canonical connection typesâ€”typically a membership edge with role = in_mindgarden_ofâ€”so that authored ideas and drafts have a deterministic anchor in the personal graph. The mindgarden does not define an importance scope, does not receive POD, and does not participate in any ranking. Its purpose is to anchor authored ideas, drafts, and user-specific working spaces in a deterministic location while keeping pre-public and personal incubation meaning separated from public truth, importance, and action processes.
+The MINDGARDEN ("my mindgarden") is the identity's deterministic private incubation space for authored ideas. Ideas created by the identity MAY be drafted, iterated, and organized within the mindgarden prior to becoming publicly visible and participating in canonical epistemic processes. Every idea created by the identity MUST connect to the mindgarden using canonical connection types - typically a membership edge with role = in_mindgarden_of - so that authored ideas and drafts have a deterministic anchor in the personal graph. The mindgarden does not define an importance scope, does not receive POD, and does not participate in any ranking. Its purpose is to anchor authored ideas, drafts, and user-specific working spaces in a deterministic location while keeping pre-public and personal incubation meaning separated from public truth, importance, and action processes.
 
 BACKYARD_OF_RELATIONSHIPS (structural_role = backyard_of_relationships)
 
-The BACKYARD_OF_RELATIONSHIPS (â€œmy backyard of relationshipsâ€) is the container for interpersonal and intrapersonal relationship structures. It SHALL NOT participate in universal, tribe, or personal importance ranking and SHALL NOT receive POD. Only relationship-specific structural-role ideasâ€”such as shrubs, relationship_memory_leaves, and the self_treeâ€”MAY appear under this space. The backyard_of_relationships separates relational meaning from epistemic meaning, ensuring that personal narrative and connection structures do not pollute public truth or importance graphs.
+The BACKYARD_OF_RELATIONSHIPS ("my backyard of relationships") is the container for interpersonal and intrapersonal relationship structures. It SHALL NOT participate in universal, tribe, or personal importance ranking and SHALL NOT receive POD. Only relationship-specific structural-role ideas - such as shrubs, relationship_memory_leaves, and the self_tree - MAY appear under this space. The backyard_of_relationships separates relational meaning from epistemic meaning, ensuring that personal narrative and connection structures do not pollute public truth or importance graphs.
 
 SELF_TREE (structural_role = self_tree)
 
-The SELF_TREE (â€œmy relationship with myselfâ€) represents the identityâ€™s evolving internal narrative. The self_tree is a canonical idea with idea_type = conceptual_idea placed inside the backyard_of_relationships. It MAY have personal memory leaves attached, representing milestones, reflections, or experiences meaningful to the identity. The SELF_TREE SHALL NOT participate in challenges, SHALL NOT receive POD, SHALL NOT influence importance rankings, and SHALL NOT act as evidence or argument in any canonical epistemic process. It exists solely as a replayable narrative anchor unique to the identity.
+The SELF_TREE ("my relationship with myself") represents the identity's evolving internal narrative. The self_tree is a canonical idea with idea_type = conceptual_idea placed inside the backyard_of_relationships. It MAY have personal memory leaves attached, representing milestones, reflections, or experiences meaningful to the identity. The SELF_TREE SHALL NOT participate in challenges, SHALL NOT receive POD, SHALL NOT influence importance rankings, and SHALL NOT act as evidence or argument in any canonical epistemic process. It exists solely as a replayable narrative anchor unique to the identity.
 
 SHRUBS (structural_role = shrub)
 
-A SHRUB represents a pairwise relationship between two human identities. A shrub is created by one user under their backyard_of_relationships as the root relationship object. A shrub MAY remain visible only to the creating user or MAY become mutualâ€”appearing in the second identityâ€™s backyard_of_relationshipsâ€”if that identity explicitly accepts or mirrors the relationship. Shrubs MAY contain relationship_memory_leaves, which represent shared events or moments visible to both participants. Shrubs SHALL NOT participate in importance ranking, SHALL NOT receive POD, SHALL NOT alter governance structures, and SHALL NOT introduce epistemic implications. They are strictly narrative and relational structures, not public-knowledge claims.
+A SHRUB represents a pairwise relationship between two human identities. A shrub is created by one user under their backyard_of_relationships as the root relationship object. A shrub MAY remain visible only to the creating user or MAY become mutual - appearing in the second identity's backyard_of_relationships - if that identity explicitly accepts or mirrors the relationship. Shrubs MAY contain relationship_memory_leaves, which represent shared events or moments visible to both participants. Shrubs SHALL NOT participate in importance ranking, SHALL NOT receive POD, SHALL NOT alter governance structures, and SHALL NOT introduce epistemic implications. They are strictly narrative and relational structures, not public-knowledge claims.
 
 ANTHILL (structural_role = anthill)
 
-The ANTHILL (â€œmy anthillâ€) records mutually acknowledged human connections. When two USER identities agree to a connection, each anthill receives a canonical membership connection referencing the other identity with a role such as knows or trusted_peer. The anthill MAY support higher-level systems such as peer-verification overlays but SHALL NOT influence importance, POD, governance, or challenge outcomes. As with the mindgarden and backyard_of_relationships, the anthill is a purely structural overlay that remains non-epistemic and is deterministically reconstructed under replay.
+The ANTHILL ("my anthill") records mutually acknowledged human connections. When two USER identities agree to a connection, each anthill receives a canonical membership connection referencing the other identity with a role such as knows or trusted_peer. The anthill MAY support higher-level systems such as peer-verification overlays but SHALL NOT influence importance, POD, governance, or challenge outcomes. As with the mindgarden and backyard_of_relationships, the anthill is a purely structural overlay that remains non-epistemic and is deterministically reconstructed under replay.
 
 Together
 
@@ -3133,11 +3133,11 @@ Together, the mindgarden, backyard_of_relationships, self_tree, shrubs, and anth
 
 ### 8.4 identity lifecycle: creation, verification, and continuity [anchor: identity_lifecycle_creation_verification_and_continuity]
 
-Each human identity represents a single real person and persists for the duration of that personâ€™s participation in the system. Identity creation begins when a new user registers and emits a USER identity idea with idea_type = identity, along with canonical structural-role ideas: BACKYARD, RELATIONSHIP_GARDEN, SELF_TREE, and ANTHILL. These four ideas MUST be created atomically and MUST be linked to the USER identity through canonical membership connections whose role fields specify their structural function (e.g., has_backyard, has_relationship_garden, has_self_tree, has_anthill). Nodes MUST reject any registration event that fails to produce all four structural-role ideas in a deterministic configuration.
+Each human identity represents a single real person and persists for the duration of that person's participation in the system. Identity creation begins when a new user registers and emits a USER identity idea with idea_type = identity, along with canonical structural-role ideas: BACKYARD, RELATIONSHIP_GARDEN, SELF_TREE, and ANTHILL. These four ideas MUST be created atomically and MUST be linked to the USER identity through canonical membership connections whose role fields specify their structural function (e.g., has_backyard, has_relationship_garden, has_self_tree, has_anthill). Nodes MUST reject any registration event that fails to produce all four structural-role ideas in a deterministic configuration.
 
-Verification provides the USER identity with a recognized, challengeable attestation of personhood. A USER identity MAY initially be unverified, but it MUST NOT participate in universal-scope challenges or voting until verification is complete. Verification consists of the identity producing evidenceâ€”such as government ID checks, anthill-mediated peer verification, third-party attestations, or live-verification sessionsâ€”and embedding this evidence into a truth-claim chain. Once a verification truth claim survives challenge, the identityâ€™s verification state becomes active for all nodes at the next scheduled activation cycle boundary.
+Verification provides the USER identity with a recognized, challengeable attestation of personhood. A USER identity MAY initially be unverified, but it MUST NOT participate in universal-scope challenges or voting until verification is complete. Verification consists of the identity producing evidence - such as government ID checks, anthill-mediated peer verification, third-party attestations, or live-verification sessions - and embedding this evidence into a truth-claim chain. Once a verification truth claim survives challenge, the identity's verification state becomes active for all nodes at the next scheduled activation cycle boundary.
 
-Identity continuity is preserved through stable cryptographic signatures and key-management events. A USER identity MUST control at least one long-term keypair, and MAY rotate keys through signed key-rotation events. The identityâ€™s underlying canonical representation MUST remain constant under replay; only descriptions and metadata MAY change. The identityâ€™s lifetime ends only through explicit death, retirement, or succession events defined in a rulebook. Structural-role ideas (backyard, relationship_garden, self_tree, anthill) remain attached to the identity throughout its lifetime and SHALL NOT be merged, reassigned, or severed except through formal succession processes.
+Identity continuity is preserved through stable cryptographic signatures and key-management events. A USER identity MUST control at least one long-term keypair, and MAY rotate keys through signed key-rotation events. The identity’s underlying canonical representation MUST remain constant under replay; only descriptions and metadata MAY change. The identity’s lifetime ends only through explicit death, retirement, or succession events defined in a rulebook. Structural-role ideas (backyard, relationship_garden, self_tree, anthill) remain attached to the identity throughout its lifetime and SHALL NOT be merged, reassigned, or severed except through formal succession processes.
 
 ### 8.5 death, succession, and account freezing [anchor: death_succession_and_account_freezing]
 
@@ -3145,43 +3145,43 @@ The protocol defines a small number of identity-terminal events to preserve dete
 
 If a real human dies without a valid succession plan, the identity enters a frozen state. A frozen identity cannot create new events, vote, or participate in challenges, but its POD balance, authored ideas, and historical contributions remain fully intact. POD held by a frozen identity SHALL NOT be redistributed automatically; it simply ceases accruing influence in future cycles according to the POD decay and dilution mechanisms defined earlier. Nodes MUST prevent any attempt to revive or reuse a frozen identity unless a valid succession process was defined and executed prior to freezing.
 
-Succession events transfer stewardship but not authorship. The successor identity gains the right to manage private drafts, anthill connections, and personal-scope maps, but MUST NOT be permitted to retroactively modify or impersonate the dead identityâ€™s authored ideas or events. Past events remain exactly as they were, preventing any tampering with the canonical history. This separation ensures that identities remain tied to the real humans who created them, while still allowing their long-term contributions to remain accessible under responsible stewardship.
+Succession events transfer stewardship but not authorship. The successor identity gains the right to manage private drafts, anthill connections, and personal-scope maps, but MUST NOT be permitted to retroactively modify or impersonate the dead identity’s authored ideas or events. Past events remain exactly as they were, preventing any tampering with the canonical history. This separation ensures that identities remain tied to the real humans who created them, while still allowing their long-term contributions to remain accessible under responsible stewardship.
 
 ### 8.6 identity keys, signatures, and attribution rules [anchor: identity_keys_signatures_and_attribution_rules]
 
-All canonical events in the system MUST be attributed to a specific human identity through cryptographic signatures. Every eventâ€”idea creation, description proposal, connection formation, challenge creation, argument submission, vote cast, action declaration, and completion claimâ€”MUST include a signature from the USER identityâ€™s active key at the time of submission. Nodes MUST reject any canonical event that lacks a valid signature, that is signed with a key not associated with the identity, or that attempts to reuse a key that has been explicitly revoked via a key-rotation event.
+All canonical events in the system MUST be attributed to a specific human identity through cryptographic signatures. Every event - idea creation, description proposal, connection formation, challenge creation, argument submission, vote cast, action declaration, and completion claim - MUST include a signature from the USER identity's active key at the time of submission. Nodes MUST reject any canonical event that lacks a valid signature, that is signed with a key not associated with the identity, or that attempts to reuse a key that has been explicitly revoked via a key-rotation event.
 
-Key rotation is allowed and encouraged. A USER identity MAY generate a new keypair and attach it to itself via a signed key-rotation idea. After a key rotation becomes active (at the next scheduled activation cycle boundary), nodes MUST accept signatures from the new key and MUST reject signatures from the old key, unless a temporary dual-signature window is explicitly allowed by the verification standard. Key rotations ensure long-term security without disrupting the continuity of the identityâ€™s authored events.
+Key rotation is allowed and encouraged. A USER identity MAY generate a new keypair and attach it to itself via a signed key-rotation idea. After a key rotation becomes active (at the next scheduled activation cycle boundary), nodes MUST accept signatures from the new key and MUST reject signatures from the old key, unless a temporary dual-signature window is explicitly allowed by the verification standard. Key rotations ensure long-term security without disrupting the continuity of the identity’s authored events.
 
 Attribution rules are strict and deterministic. An event is considered authored by the identity whose key signed it. AI identities MAY propose drafts in the sandbox but MAY NOT sign canonical events. Tribe identities MAY NOT sign events. Only human USER identities produce canonical signatures. Events without a valid attribution MUST be rejected to maintain non-repudiation and prevent injection of unsigned or forged actions into the canonical universe. These rules ensure that every canonical event is tied to a real human and remains permanently traceable under replay.
 
 ### 8.6 death, succession, and archival identity states [anchor: death_succession_and_archival_identity_states]
 
-Identity continuity is a core invariant for deterministic replay. Every canonical event is authored by a persistent human identity, and the meaning of authorship MUST NOT depend on off-chain assumptions about whether that human remains alive or active. For this reason, the protocol defines identity â€œlifecycle markersâ€ that allow nodes to interpret authorship, POD flows, and eligibility constraints consistently across long time periods, including generational transitions.
+Identity continuity is a core invariant for deterministic replay. Every canonical event is authored by a persistent human identity, and the meaning of authorship MUST NOT depend on off-chain assumptions about whether that human remains alive or active. For this reason, the protocol defines identity "lifecycle markers" that allow nodes to interpret authorship, POD flows, and eligibility constraints consistently across long time periods, including generational transitions.
 
-A human identity MAY be marked as *deceased* by a canonical event referencing sufficient evidence, but such marking SHALL NOT retroactively alter any event authored by that identity. Death prevents future canonical authorship from that identity but preserves the identityâ€™s POD balance, tribe memberships as historical facts, and all governance actions previously taken. Deceased identities MAY remain visible in tribe rosters or relationship structures as part of the immutable historical record. Implementations MAY choose to visually distinguish these identities, but deceased identities SHALL be treated as inert for eligibility, voting, and rate-limit purposes.
+A human identity MAY be marked as *deceased* by a canonical event referencing sufficient evidence, but such marking SHALL NOT retroactively alter any event authored by that identity. Death prevents future canonical authorship from that identity but preserves the identity’s POD balance, tribe memberships as historical facts, and all governance actions previously taken. Deceased identities MAY remain visible in tribe rosters or relationship structures as part of the immutable historical record. Implementations MAY choose to visually distinguish these identities, but deceased identities SHALL be treated as inert for eligibility, voting, and rate-limit purposes.
 
 Succession provides a forward-only mechanism for transferring governance-relevant responsibilities or stewardship roles across generations, without mutating historical authorship. A succession event explicitly references a predecessor identity and a successor identity, marking that certain responsibilities or interpretive roles formerly associated with the predecessor SHALL be recognized as associated with the successor from that moment forward. Succession MAY occur within families, institutions, tribes, or decentralized stewardship groups. The protocol does not prescribe when succession should occur; it prescribes only how it MUST be represented to remain deterministic.
 
-Succession NEVER implies that the successor â€œisâ€ the predecessor. Historical authorship and POD earnings remain tied to the original identity forever. Instead, succession marks continuity of practical responsibilityâ€”e.g., operating an archival node, managing a tribeâ€™s external obligations, maintaining custody of a cryptographic keyâ€”that MUST be tracked forward in time but MUST NOT rewrite past events. This enables institutions, long-lived ideas, and multigenerational projects to preserve coherence without sacrificing the foundational principle that every event is authored by a specific, historically fixed human identity.
+Succession NEVER implies that the successor "is" the predecessor. Historical authorship and POD earnings remain tied to the original identity forever. Instead, succession marks continuity of practical responsibility - e.g., operating an archival node, managing a tribe's external obligations, maintaining custody of a cryptographic key - that MUST be tracked forward in time but MUST NOT rewrite past events. This enables institutions, long-lived ideas, and multigenerational projects to preserve coherence without sacrificing the foundational principle that every event is authored by a specific, historically fixed human identity.
 
-Archived identities represent a final lifecycle state. When an identity has no further canonical authorship and no active responsibilities, an archival marker MAY be added to signal that nodes MAY minimize that identityâ€™s active-state memory footprint, provided that all past events remain replayable. Archival states SHALL NOT change verification status, POD balance, or tribe membership history; they simply reflect that the identity is no longer relevant to the present-time active set. Nodes MUST continue to treat archived identities as valid authors of historical events, and all references to them MUST resolve deterministically.
+Archived identities represent a final lifecycle state. When an identity has no further canonical authorship and no active responsibilities, an archival marker MAY be added to signal that nodes MAY minimize that identity’s active-state memory footprint, provided that all past events remain replayable. Archival states SHALL NOT change verification status, POD balance, or tribe membership history; they simply reflect that the identity is no longer relevant to the present-time active set. Nodes MUST continue to treat archived identities as valid authors of historical events, and all references to them MUST resolve deterministically.
 
-When an identity is marked as deceased, its POD balance remains permanently bound to that identity as a historical record of contribution. However, no further POD-eligible events MAY be authored, and no additional POINT MUST NOT be emitted to that identity in subsequent emission cycles. The identityâ€™s existing POINT balance remains spendable or transferable according to the token specification, but POD held by deceased identities SHALL NOT participate in any future POINT emission calculations or governance weightings that apply only to living humans.
+When an identity is marked as deceased, its POD balance remains permanently bound to that identity as a historical record of contribution. However, no further POD-eligible events MAY be authored, and no additional POINT MUST NOT be emitted to that identity in subsequent emission cycles. The identity’s existing POINT balance remains spendable or transferable according to the token specification, but POD held by deceased identities SHALL NOT participate in any future POINT emission calculations or governance weightings that apply only to living humans.
 
 ---
 
 ### 8.7 identity-level activity records and auditability [anchor: identity_level_activity_records_and_auditability]
 
-Identity-level activity MUST remain auditable, replayable, and reconstructible from canonical events alone. The protocol does not maintain mutable per-identity logs; instead, a node reconstructs an identityâ€™s activity history by filtering canonical events authored by that identity. This ensures that identity-level audit trails remain deterministic and identical across all conformant nodes. Any presentation-layer timeline or activity summary MUST be derived solely from event replay, without any node-specific caching that could diverge from canonical state.
+Identity-level activity MUST remain auditable, replayable, and reconstructible from canonical events alone. The protocol does not maintain mutable per-identity logs; instead, a node reconstructs an identity’s activity history by filtering canonical events authored by that identity. This ensures that identity-level audit trails remain deterministic and identical across all conformant nodes. Any presentation-layer timeline or activity summary MUST be derived solely from event replay, without any node-specific caching that could diverge from canonical state.
 
-Every canonical event includes the authorâ€™s identity, a signature validating the authorship, and all metadata required to verify that the identity was eligible to perform that action at the time of authorship. Nodes MUST validate authorship eligibility at replay time by examining rate limits, verification state, tribe memberships (for tribe-scope actions), and any governance constraints active at that historical moment. This guarantees that identity-level audits remain consistent regardless of when or where they are performed.
+Every canonical event includes the author's identity, a signature validating the authorship, and all metadata required to verify that the identity was eligible to perform that action at the time of authorship. Nodes MUST validate authorship eligibility at replay time by examining rate limits, verification state, tribe memberships (for tribe-scope actions), and any governance constraints active at that historical moment. This guarantees that identity-level audits remain consistent regardless of when or where they are performed.
 
 Identity activity is conceptually divided into three categories: epistemic actions, governance actions, and social-graph actions. Epistemic actions include idea creation, description proposals, argument or evidence submission, challenge creation, and vote casting. Governance actions include participation in rule-set adoption challenges, protocol-upgrade decisions expressed as challenge outcomes or rule-set selections, and any stewardship actions defined by governance ideas. Social-graph actions include modifications to backyard, anthill, relationship_garden, shrubs, and self_tree structures; these actions define personal and interpersonal meaning but MUST NOT alter canonical epistemic or governance semantics.
 
 For each category, identity-level auditability enables important downstream behaviors: detecting Sybil patterns, analyzing long-term POD distributions, reconstructing debate histories, evaluating trustworthiness or expertise through interpretable metrics, and enabling transparent governance participation records. The protocol mandates that all such analyses MUST be derivable solely from open canonical data, without requiring privileged access to any non-canonical metadata. Nodes MAY offer cached summaries or accelerated index structures for browsing efficiency, but such accelerations MUST be fully reconstructible from first principles.
 
-Finally, the protocol enforces the principle that identity accountability is forward-only. An identityâ€™s past authorship cannot be obscured, anonymized, or deleted, although pseudonym rotation and visible-name changes MAY occur through canonical events. This ensures that the historical evolution of the graphâ€”the ideas articulated, the challenges raised, the votes castâ€”remains transparently associated with the human agents who shaped it, forming a stable substrate for collective reasoning, POD attribution, and long-term governance integrity.
+Finally, the protocol enforces the principle that identity accountability is forward-only. An identity's past authorship cannot be obscured, anonymized, or deleted, although pseudonym rotation and visible-name changes MAY occur through canonical events. This ensures that the historical evolution of the graph - the ideas articulated, the challenges raised, the votes cast - remains transparently associated with the human agents who shaped it, forming a stable substrate for collective reasoning, POD attribution, and long-term governance integrity.
 
 ### 8.8 Private cognition and non-canonical drafts [anchor: private_cognition_and_non_canonical_drafts]
 
@@ -3223,25 +3223,25 @@ Mindseed identity vault contents are never required for canonical replay and rem
 
 Safety in the protocol is a minimal, legality-driven constraint on payloads, not a constraint on ideas or on meaning. The sole purpose of the safety layer is to prevent the canonical universe from storing payloads that are globally illegal, intrinsically unsafe to distribute, or technically hazardous. Safety MUST NOT evaluate correctness, offensiveness, morality, political acceptability, cultural norms, reputational concerns, or shifting social standards. If an idea can be expressed in legally compliant language, the system MUST make a place for it in the canonical universe.
 
-The protocol defines a **global minimal safety rule-set** that lists only those payload categories that are nearly universally illegal and that cannot be hosted by any lawful global infrastructure. These include, for example, CSAM, involuntary doxxing of private individuals, and highly operational instructions for imminent, targeted harm. This global minimal rule-set is â€œconstitutionalâ€: it MUST remain extremely narrow, MUST NOT expand in response to ordinary political, cultural, or moral shifts, and MUST NOT be used to suppress ideas that are merely controversial or socially disfavored.
+The protocol defines a **global minimal safety rule-set** that lists only those payload categories that are nearly universally illegal and that cannot be hosted by any lawful global infrastructure. These include, for example, CSAM, involuntary doxxing of private individuals, and highly operational instructions for imminent, targeted harm. This global minimal rule-set is "constitutional": it MUST remain extremely narrow, MUST NOT expand in response to ordinary political, cultural, or moral shifts, and MUST NOT be used to suppress ideas that are merely controversial or socially disfavored.
 
-A node MAY apply local-law visibility or storage overlays (Â§10.4) when operating in restrictive jurisdictions, but such overlays MUST NOT change which ideas are canonically admissible. They MAY obscure or blur content locally but MUST NOT claim that such content is unsafe under the global rule-set unless it actually satisfies the narrow global criteria. Ideas that are lawful somewhere MUST remain modelable everywhere, even if certain jurisdictions forbid their display. Local-law constraints may affect access but MUST NOT affect canonical existence.
+A node MAY apply local-law visibility or storage overlays (§10.4) when operating in restrictive jurisdictions, but such overlays MUST NOT change which ideas are canonically admissible. They MAY obscure or blur content locally but MUST NOT claim that such content is unsafe under the global rule-set unless it actually satisfies the narrow global criteria. Ideas that are lawful somewhere MUST remain modelable everywhere, even if certain jurisdictions forbid their display. Local-law constraints may affect access but MUST NOT affect canonical existence.
 
 The protocol explicitly prohibits **retroactive sanitization** of historically admissible content based on later changes in cultural norms, social values, or jurisdictional laws. Content that was admissible under the global minimal safety rule-set at the time of admission MUST NOT be encapsulated, transformed, or altered solely because a later era becomes more restrictive. Retroactive transformation is permitted only when new evidence shows that a past payload was always within a globally illegal category (for example, when a previously unnoticed CSAM image is discovered decades later). Such transformations MUST be recorded as explicit sanitization events and MUST NOT erase the fact that the original payload existed.
 
-This requirement preserves the epistemic integrity of the historical record. A living civilization can only understand its progress by remembering what came before; history includes error, conflict, cruelty, and ignorance alongside insight and achievement. The canonical universe MUST remain an honest record of human expression, including the parts later generations regret. Nodes MAY provide optional UI-layer guidance, warnings, emotional-load filters (Â§10.6), or contextual framing for distressing historical content, but these UI adaptations MUST NOT change the canonical payload or obscure the fact that the past was different from the present.
+This requirement preserves the epistemic integrity of the historical record. A living civilization can only understand its progress by remembering what came before; history includes error, conflict, cruelty, and ignorance alongside insight and achievement. The canonical universe MUST remain an honest record of human expression, including the parts later generations regret. Nodes MAY provide optional UI-layer guidance, warnings, emotional-load filters (§10.6), or contextual framing for distressing historical content, but these UI adaptations MUST NOT change the canonical payload or obscure the fact that the past was different from the present.
 
-Safety is therefore a *narrow conduit* for legality, not an editorial mechanism. It removes only that which no lawful infrastructure may transmit, while preservingâ€”and making challengeableâ€”every idea humans attempt to express. By guaranteeing the perpetual visibility of the historical record, the protocol ensures that meaning, progress, and collective self-understanding remain grounded in truth rather than in revision or forgetting.
+Safety is therefore a *narrow conduit* for legality, not an editorial mechanism. It removes only that which no lawful infrastructure may transmit, while preserving - and making challengeable - every idea humans attempt to express. By guaranteeing the perpetual visibility of the historical record, the protocol ensures that meaning, progress, and collective self-understanding remain grounded in truth rather than in revision or forgetting.
 
 ---
 
 ### 9.2 blocked submissions, classifier disagreement, and anti-censorship guarantees [anchor: blocked_submissions_classifier_disagreement_and_anti_censorship_guarantees]
 
-A blocked submission is a proposed canonical event whose payload cannot legally or safely be admitted into the canonical universe. The protocol permits blocking only for payload reasonsâ€”not for ideas, opinions, political views, or any epistemic content that can be expressed legally. The blocking mechanism MUST therefore be the narrowest safety filter in the system, with censorship resistance as a core design criterion.
+A blocked submission is a proposed canonical event whose payload cannot legally or safely be admitted into the canonical universe. The protocol permits blocking only for payload reasons - not for ideas, opinions, political views, or any epistemic content that can be expressed legally. The blocking mechanism MUST therefore be the narrowest safety filter in the system, with censorship resistance as a core design criterion.
 
-A node MUST NOT block a submission based on a single classifier or model. Instead, each node MUST run an ensemble of independent, governance-approved classifiers, each evaluating the payload under standard content-safety categories (for example: child sexual abuse material, explicit threats, involuntary personal data disclosure, malware payloads, and other globally illegal or genuinely unsafe content). The node MUST then apply a deterministic N-of-M aggregation rule defined in the rule-set ideas in Â§8. If any classifier in the ensemble returns a safe verdict, the submission enters a delayed canonical state and MUST be subject to a human-visible review and an optional challenge window. Only if all classifiers agree that the payload is illegal or intrinsically unsafe may the submission be blocked immediately.
+A node MUST NOT block a submission based on a single classifier or model. Instead, each node MUST run an ensemble of independent, governance-approved classifiers, each evaluating the payload under standard content-safety categories (for example: child sexual abuse material, explicit threats, involuntary personal data disclosure, malware payloads, and other globally illegal or genuinely unsafe content). The node MUST then apply a deterministic N-of-M aggregation rule defined in the rule-set ideas in §8. If any classifier in the ensemble returns a safe verdict, the submission enters a delayed canonical state and MUST be subject to a human-visible review and an optional challenge window. Only if all classifiers agree that the payload is illegal or intrinsically unsafe may the submission be blocked immediately.
 
-Every blocked submission MUST generate a blocked_submission event in the canonical universe. This event MUST NOT contain any illegal payload; it MUST instead include a maximally descriptive safe-language summary of what the user attempted to submit, written by the nodeâ€™s transformation layer according to deterministic rules. The summary MUST include: (a) the semantic content category of the attempted submission; (b) the reason it was blocked; (c) which classifier categories triggered; (d) the classifier disagreement profile; and (e) an explicit link to initiate a wrongful-block challenge. The summary MUST preserve as much meaning as legally permissible, so that epistemic context is never erased, and the canonical universe remains an honest record of the userâ€™s intent.
+Every blocked submission MUST generate a blocked_submission event in the canonical universe. This event MUST NOT contain any illegal payload; it MUST instead include a maximally descriptive safe-language summary of what the user attempted to submit, written by the node’s transformation layer according to deterministic rules. The summary MUST include: (a) the semantic content category of the attempted submission; (b) the reason it was blocked; (c) which classifier categories triggered; (d) the classifier disagreement profile; and (e) an explicit link to initiate a wrongful-block challenge. The summary MUST preserve as much meaning as legally permissible, so that epistemic context is never erased, and the canonical universe remains an honest record of the user’s intent.
 
 A blocked submission MUST remain challengeable. Any verified human MAY initiate a wrongful-block challenge arguing that the classifier ensemble or aggregation rule erred. If the challenge succeeds, the idea MUST be admitted in a sanitized or transformed form, or re-submitted verbatim if the payload is determined lawful and safe. The blocked_submission record MUST remain in the event history to reflect that a block occurred, but the verdict MUST link to the corrected canonical event. This challengeability ensures that blocked submissions cannot be used as a censorship vector; wrongful blocking becomes visible, auditable, and correctable.
 
@@ -3257,7 +3257,7 @@ Illegal content discovered post-admission MUST NOT be deleted, erased, or silent
 
 Immediately upon encapsulation, a node MUST generate a content_sanitization event, recording: (a) the original event identifier; (b) the reason the content is now considered illegal; (c) the classifier ensemble outputs; (d) evidence supporting the determination; (e) a description of the semantic meaning of the removed content in legally compliant language; and (f) a link to challenge this determination. This ensures that encapsulation does not function as hidden censorship; instead, it produces a public chain-of-custody audit trail.
 
-Semantic content MUST be preserved whenever possible. If the illegal payload expresses a meaningful ideaâ€”such as a claim, argument, narrative, or conceptual structureâ€”the node or human reviewer SHOULD generate a new sanitized idea that expresses the underlying meaning without containing forbidden material. This sanitized idea MAY then be adopted into the canonical universe by the appropriate author or by a reviewer acting as â€œscribeâ€ for determinism. The relationship between the illegal content and its sanitized successor MUST be recorded via deterministic connection types indicating that the new idea preserves the epistemic intent of the original while removing illegal elements.
+Semantic content MUST be preserved whenever possible. If the illegal payload expresses a meaningful idea - such as a claim, argument, narrative, or conceptual structure - the node or human reviewer SHOULD generate a new sanitized idea that expresses the underlying meaning without containing forbidden material. This sanitized idea MAY then be adopted into the canonical universe by the appropriate author or by a reviewer acting as "scribe" for determinism. The relationship between the illegal content and its sanitized successor MUST be recorded via deterministic connection types indicating that the new idea preserves the epistemic intent of the original while removing illegal elements.
 
 Encapsulation MUST NOT alter past POD assignment, ranking outcomes, challenges, or governance actions. Historical replay MUST reconstruct the fact that the illegal payload existed and contributed to those processes, without revealing the payload itself. Nodes MUST continue to verify signatures and metadata of the original event but MUST materialize only the sanitized placeholder in user-facing surfaces.
 
@@ -3267,13 +3267,13 @@ The overarching rule is: illegal payloads cannot remain accessible, but the idea
 
 ### 9.4 jurisdictional overlays and filtered replicas [anchor: jurisdictional_overlays_and_filtered_replicas]
 
-The protocol defines a single, global notion of canonical admissibility based solely on the minimal safety rule-set described in Â§Â§10.1â€“8.3. This global rule-set permits the admission of all legally expressible ideas and prohibits only those payloads that are intrinsically illegal in nearly all jurisdictions (such as CSAM, involuntary doxxing, and operationally targetable instructions for imminent harm). Canonical admissibility MUST NOT vary by region, political regime, cultural norms, or local speech restrictions. The canonical universe is therefore a unified civilizational record of what humans attempted to say, limited only by global, irreducible safety constraints.
+The protocol defines a single, global notion of canonical admissibility based solely on the minimal safety rule-set described in §§10.1§8.3. This global rule-set permits the admission of all legally expressible ideas and prohibits only those payloads that are intrinsically illegal in nearly all jurisdictions (such as CSAM, involuntary doxxing, and operationally targetable instructions for imminent harm). Canonical admissibility MUST NOT vary by region, political regime, cultural norms, or local speech restrictions. The canonical universe is therefore a unified civilizational record of what humans attempted to say, limited only by global, irreducible safety constraints.
 
 However, nodes participating in the network operate under local laws that MAY impose additional restrictions on what they can store or serve. To accommodate this without allowing local censorship to redefine canonical truth, the protocol distinguishes between canonical admissibility and node-local visibility or storage constraints. A node MAY refuse to store or serve certain canonical payloads when compelled by local law, but such refusals MUST NOT alter the canonical event log, MUST NOT redefine admissibility, and MUST NOT prevent other nodes from hosting or serving the full canonical universe.
 
 A node that applies local-law constraints MUST identify itself as a filtered replica. A filtered replica MUST:
 
-synchronize the full canonical event structureâ€”timestamps, authorship, hashes, safety metadata, and challenge outcomesâ€”even when it cannot store or display the full payloads;
+synchronize the full canonical event structure - timestamps, authorship, hashes, safety metadata, and challenge outcomes - even when it cannot store or display the full payloads;
 
 materialize deterministic safe-language placeholders in place of locally prohibited payloads, preserving the semantic context without violating local law;
 
@@ -3307,7 +3307,7 @@ Filtered replicas MUST NOT block canonical events from entering the global histo
 
 Nodes operating under the same jurisdiction MUST produce identical placeholder hashes and placeholder structures for the same restricted payloads, ensuring deterministic replay and preventing fingerprinting across replicas.
 
-Full canonical replicas operating in permissive jurisdictions MUST store the complete admissible event history and MUST make it publicly available, ensuring that the system as a whole remains resistant to localized censorship or suppression. The protocol does not assume that all jurisdictions will allow full replicas to operate openly; some nodes MAY run underground or outside the enforcing regime. However, canonical validity MUST NOT depend on any particular jurisdictionâ€™s laws, and the global minimal safety rule-set MUST remain the sole determinant of admissibility.
+Full canonical replicas operating in permissive jurisdictions MUST store the complete admissible event history and MUST make it publicly available, ensuring that the system as a whole remains resistant to localized censorship or suppression. The protocol does not assume that all jurisdictions will allow full replicas to operate openly; some nodes MAY run underground or outside the enforcing regime. However, canonical validity MUST NOT depend on any particular jurisdiction’s laws, and the global minimal safety rule-set MUST remain the sole determinant of admissibility.
 
 Jurisdictional overlays therefore provide a compatible way for the system to operate globally without sacrificing its universal epistemic mandate. Nodes MAY comply with local requirements on what they store or serve, but they MUST NOT redefine, conceal, or erase canonical events. The canonical universe remains a single, immutable, globally consistent record of what was said, while filtered replicas serve as legally compliant interfaces in constrained environments.
 
@@ -3328,12 +3328,12 @@ Each node MUST maintain a **censorship-pressure profile**, updated continuously 
    Nodes operating under local-law overlays MUST publish which canonical events they cannot fully materialize, including counts per legal category (e.g., banned political symbol, prohibited speech, protected content) and the fraction of canonical events affected. These metrics allow downstream clients to detect when jurisdictions create significant epistemic blind spots.
 
 4. **presentation-layer suppression rates:**  
-   The number of times a nodeâ€™s UI layer refuses to display content for emotional-load reasons (e.g., extreme violence) or user preferences. These MUST be distinguished from legally imposed filters and safety-sanctioned encapsulations. Presentation-layer filters are optional, but their use MUST remain visible.
+   The number of times a node’s UI layer refuses to display content for emotional-load reasons (e.g., extreme violence) or user preferences. These MUST be distinguished from legally imposed filters and safety-sanctioned encapsulations. Presentation-layer filters are optional, but their use MUST remain visible.
 
 5. **classifier-deny ratio and ensemble tension:**  
    The distribution of classifier votes across all processed submissions, measuring how often classifiers disagree. Sudden shifts or persistent patterns of elevated disagreement MAY indicate tampering, political pressure, or data poisoning. Nodes MUST treat ensemble tension as a global signal requiring attention.
 
-Nodes MUST summarize these metrics into a deterministic **censorship-pressure vector** published at each snapshot. The vector MUST include a nodeâ€™s normalized block rate, sanitization rate, jurisdictional overlay impact, and classifier tension index. This vector becomes part of the canonical snapshot metadata, enabling the network to evaluate censorship pressures longitudinally across time, jurisdictions, and political regimes.
+Nodes MUST summarize these metrics into a deterministic **censorship-pressure vector** published at each snapshot. The vector MUST include a node’s normalized block rate, sanitization rate, jurisdictional overlay impact, and classifier tension index. This vector becomes part of the canonical snapshot metadata, enabling the network to evaluate censorship pressures longitudinally across time, jurisdictions, and political regimes.
 
 When censorship-pressure vectors exceed governance-defined thresholds, nodes MUST emit a **censorship_alert event**. These alerts do not change canonical content but function as signals to the global ecosystem that certain jurisdictions or nodes are experiencing unusually high suppression or distortion pressures. Alerts MUST include: (a) a breakdown of contributing factors, (b) the timeframe of escalation, and (c) links to affected blocked_submission or encapsulation events.
 
@@ -3343,9 +3343,9 @@ The censorship-pressure system ensures that any attempt to use safety, legality,
 
 ### 9.6 emotional load, sensitive content, and user-controlled visibility [anchor: emotional_load_sensitive_content_and_user_controlled_visibility]
 
-Safety constraints address only legality; emotional-load constraints address the psychological impact of content. Emotional-load filtering is a **presentation-layer mechanism**, not a canonical constraint. A node MAY classify certain canonical payloads as emotionally intenseâ€”such as depictions of violence, traumatic narratives, graphic descriptions of harm, or catastrophic predictionsâ€”but these classifications MUST NOT affect admissibility, ranking, challengeability, POD eligibility, or any part of the canonical universe. Emotional-load metadata is strictly advisory and MUST remain deterministic and replayable.
+Safety constraints address only legality; emotional-load constraints address the psychological impact of content. Emotional-load filtering is a **presentation-layer mechanism**, not a canonical constraint. A node MAY classify certain canonical payloads as emotionally intense - such as depictions of violence, traumatic narratives, graphic descriptions of harm, or catastrophic predictions - but these classifications MUST NOT affect admissibility, ranking, challengeability, POD eligibility, or any part of the canonical universe. Emotional-load metadata is strictly advisory and MUST remain deterministic and replayable.
 
-Nodes MAY maintain emotional-load classifiersâ€”distinct from safety classifiersâ€”to evaluate whether content SHOULD be blurred, gated, or previewed with warnings. These classifiers operate entirely in the visibility layer and MUST NOT block submissions or trigger encapsulation. When a node determines that content carries high emotional intensity, it MAY present it with a warning screen, reduced-resolution placeholder, or blurred preview. The user MUST have the ability to override such filters, and the override MUST NOT affect replay or canonical state. User preference settings MAY include automatic gating of traumatic or disturbing content, but these preferences MUST be local to the user interface and MUST NOT alter underlying event structures.
+Nodes MAY maintain emotional-load classifiers - distinct from safety classifiers - to evaluate whether content SHOULD be blurred, gated, or previewed with warnings. These classifiers operate entirely in the visibility layer and MUST NOT block submissions or trigger encapsulation. When a node determines that content carries high emotional intensity, it MAY present it with a warning screen, reduced-resolution placeholder, or blurred preview. The user MUST have the ability to override such filters, and the override MUST NOT affect replay or canonical state. User preference settings MAY include automatic gating of traumatic or disturbing content, but these preferences MUST be local to the user interface and MUST NOT alter underlying event structures.
 
 Emotional-load categories MUST be distinguished from safety categories in metadata and classifier outputs. Nodes MUST expose emotional-load classifications as separate machine-readable metadata fields attached to canonical events. This ensures that emotional-load decisions are interpretable, criticizable, and challengeable as presentation-layer choices rather than epistemic barriers. Nodes MUST also record classifier-version metadata so that emotional-load designations remain transparent across time.
 
@@ -3367,25 +3367,25 @@ The protocol supports participation by minors and vulnerable populations through
 
 Age-gating MAY rely on optional age declarations or third-party verification processes, but such information MUST NOT become part of the canonical identity record. Instead, age-gating operates on a node-local profile layer or client-controlled preference set. When age gating is active, nodes MAY blur, warn, or hide content deemed inappropriate for minors, including graphic violence, sexual material, self-harm content, or content requiring emotional maturity. But nodes MUST still synchronize the full canonical event structure beneath these visibility filters, and the canonical payload MUST remain available to full-access clients and offline seed packages.
 
-Nodes MUST clearly differentiate age-based UI restrictions from safety-based payload restrictions. An idea that is age-gated for minors MUST still be admissible, challengeable, and representable within the canonical universe. Age-gating MUST be reversible and user-selectable; adults MUST be able to view all canonical content except globally illegal payloads encapsulated under Â§Â§10.1â€“8.3. Minors who become adults MUST be able to remove age-gating without altering any canonical metadata.
+Nodes MUST clearly differentiate age-based UI restrictions from safety-based payload restrictions. An idea that is age-gated for minors MUST still be admissible, challengeable, and representable within the canonical universe. Age-gating MUST be reversible and user-selectable; adults MUST be able to view all canonical content except globally illegal payloads encapsulated under §§10.1§8.3. Minors who become adults MUST be able to remove age-gating without altering any canonical metadata.
 
 Protection of vulnerable populations MUST also occur strictly at the UI level. For example, clients MAY offer guided modes for users with mental-health concerns, such as softening the presentation of self-harm discussions or providing auto-links to support resources. These interventions MUST NOT restrict the canonical representation of the ideas themselves. The protocol ensures that **vulnerability support functions as optional interface scaffolding, never as a modification of epistemic structure**.
 
 
 ### 9.8 high-risk idea domains and harm minimization without censorship [anchor: high_risk_idea_domains_and_harm_minimization_without_censorship]
 
-Certain idea domainsâ€”self-harm, suicide, violent extremism, hate ideologies, biological threats, weapons design, and catastrophic forecastingâ€”carry elevated risk of misuse or psychological harm. The protocol allows full representation of these ideas so long as their payloads remain legal, but imposes structured requirements on how nodes handle them in the visibility layer. Harm minimization MUST NOT become censorship; instead, it MUST operate through **safe-language transformation**, **advisory UI scaffolding**, and **contextual metadata**.
+Certain idea domains—self-harm, suicide, violent extremism, hate ideologies, biological threats, weapons design, and catastrophic forecasting—carry elevated risk of misuse or psychological harm. The protocol allows full representation of these ideas so long as their payloads remain legal, but imposes structured requirements on how nodes handle them in the visibility layer. Harm minimization MUST NOT become censorship; instead, it MUST operate through **safe-language transformation**, **advisory UI scaffolding**, and **contextual metadata**.
 
-High-risk content MUST be admitted into the canonical universe whenever it can be expressed in permissibly sanitized form. Nodes MUST apply deterministic transformation rules that convert unsafe or overly explicit instructions into safe-language summaries (e.g., replacing detailed weapon construction steps with a generalized description: â€œThe user attempted to describe a method for constructing a weapon; details removedâ€). These summaries MUST preserve as much semantic meaning as is legal and safe, and MUST remain challengeable. If users believe a transformation misrepresented their intent, they MAY propose alternative formulations through canonical events.
+High-risk content MUST be admitted into the canonical universe whenever it can be expressed in permissibly sanitized form. Nodes MUST apply deterministic transformation rules that convert unsafe or overly explicit instructions into safe-language summaries (e.g., replacing detailed weapon construction steps with a generalized description: “The user attempted to describe a method for constructing a weapon; details removed”). These summaries MUST preserve as much semantic meaning as is legal and safe, and MUST remain challengeable. If users believe a transformation misrepresented their intent, they MAY propose alternative formulations through canonical events.
 
-Node interfaces MAY present high-risk ideas with contextual affordancesâ€”such as highlighting evidence requirements, linking to counterarguments, or surfacing prior challengesâ€”but MAY NOT demote or algorithmically hide them. High-risk labels MUST be lexically neutral descriptors (â€œself-harm domain,â€ â€œweapons domain,â€ â€œextremist ideology domainâ€) and MUST NOT express editorial judgment. These labels MUST be attached as machine-readable metadata fields, enabling transparent analysis of how risky ideas propagate through the graph.
+Node interfaces MAY present high-risk ideas with contextual affordances—such as highlighting evidence requirements, linking to counterarguments, or surfacing prior challenges—but MAY NOT demote or algorithmically hide them. High-risk labels MUST be lexically neutral descriptors (“self-harm domain,” “weapons domain,” “extremist ideology domain”) and MUST NOT express editorial judgment. These labels MUST be attached as machine-readable metadata fields, enabling transparent analysis of how risky ideas propagate through the graph.
 
 Nodes MUST also ensure that high-risk ideas do not automatically produce targeted harm. For example, self-harm ideation MUST NOT produce direct encouragement mechanisms, and violent-extremist content MUST NOT be rendered in a way that appears to endorse or recruit. Instead, nodes MAY provide contextual UI warnings and must preserve challengeability. Harm minimization therefore ensures that **dangerous content remains part of the global epistemic record while never functioning as an instruction manual or call to immediate violence**.
 
 
 ### 9.9 redaction, transformation, and semantic preservation guarantees [anchor: redaction_transformation_and_semantic_preservation_guarantees]
 
-When a payload requires alteration to meet global safety constraints (Â§10.1â€“8.3), local-law constraints (Â§10.4), or harm-minimization rules (Â§10.8), nodes MUST apply deterministic redaction and transformation procedures that preserve semantic meaning to the greatest legally permissible extent. Redaction MUST NOT remove an idea; it MUST replace unsafe elements with placeholders or summaries while retaining the epistemic structure of the event. All transformations MUST be recorded as canonical metadata and MUST remain visible during replay.
+When a payload requires alteration to meet global safety constraints (§10.1§8.3), local-law constraints (§10.4), or harm-minimization rules (§10.8), nodes MUST apply deterministic redaction and transformation procedures that preserve semantic meaning to the greatest legally permissible extent. Redaction MUST NOT remove an idea; it MUST replace unsafe elements with placeholders or summaries while retaining the epistemic structure of the event. All transformations MUST be recorded as canonical metadata and MUST remain visible during replay.
 
 Redactions fall into three categories:
 
@@ -3395,7 +3395,7 @@ Redactions fall into three categories:
 2. **semantic transformation:**  
    Replacement of unsafe payloads with safe-language summaries that convey the same meaning without illegal content. For example, explicit depictions of violence MAY be summarized descriptively; detailed instructions for harmful actions MUST be abstracted to non-operational form.
 
-3. **encapsulation (Â§10.3):**  
+3. **encapsulation (§10.3):**  
    A last-resort irreversible removal for illegally admitted payloads, preserving only a placeholder and explanatory metadata.
 
 All redactions and transformations MUST be deterministic given the input payload, rule-set version, and classifier ensemble outputs. They MUST produce identical results on all conformant nodes. Each transformation MUST generate a **transformation_record event** linked to the original event, containing: (a) the transformation category, (b) the removed or abstracted content type, (c) the semantic summary, (d) the rule-set and classifier versions, and (e) the rationale for transformation.
@@ -3404,28 +3404,28 @@ Semantic meaning MUST be preserved unless preservation is impossible. If users b
 
 ### 9.10 adversarial attacks on safety, visibility, and classifier ensembles [anchor: adversarial_attacks_on_safety_visibility_and_classifier_ensembles]
 
-The safety and visibility layers are potential attack surfaces for actors attempting to distort, suppress, or manipulate the epistemic record. Nodes MUST therefore detect, withstand, and expose adversarial behaviors designed to exploit classifier ensembles, emotional-load filters, jurisdictional overlays, or user-report systems. The purpose of this subsection is not to eliminate all adversarial attemptsâ€”many will occurâ€”but to ensure no such attempt can silently alter canonical state or bias the systemâ€™s epistemic structure.
+The safety and visibility layers are potential attack surfaces for actors attempting to distort, suppress, or manipulate the epistemic record. Nodes MUST therefore detect, withstand, and expose adversarial behaviors designed to exploit classifier ensembles, emotional-load filters, jurisdictional overlays, or user-report systems. The purpose of this subsection is not to eliminate all adversarial attempts - many will occur - but to ensure no such attempt can silently alter canonical state or bias the system's epistemic structure.
 
 Adversarial attacks fall into several categories:
 
 1. **payload poisoning:**  
-   Submitting borderline-legal content intended to trigger safety disagreements, overwhelm classifiers, or induce conservative overblocking. Nodes MUST detect anomalous clusters of near-threshold payloads and surface them in censorship-pressure metrics (Â§10.5).
+   Submitting borderline-legal content intended to trigger safety disagreements, overwhelm classifiers, or induce conservative overblocking. Nodes MUST detect anomalous clusters of near-threshold payloads and surface them in censorship-pressure metrics (§10.5).
 
 2. **classifier gaming:**  
    Attempts to craft inputs that cause misclassification by specific models. Because nodes use a diverse classifier ensemble with transparent outputs, attackers cannot target a single classifier. Ensemble disagreement MUST trigger human-visible review, preventing adversarial crafting from producing silent blocks.
 
 3. **visibility brigading:**  
-   Coordinated efforts to mass-report emotionally intense content in order to suppress its visibility. Since emotional-load filtering is deterministic and node-controlledâ€”not socially moderatedâ€”brigading MUST NOT influence canonical visibility. Nodes MAY log brigading attempts in anomaly metrics (Â§10.5).
+   Coordinated efforts to mass-report emotionally intense content in order to suppress its visibility. Since emotional-load filtering is deterministic and node-controlled - not socially moderated - brigading MUST NOT influence canonical visibility. Nodes MAY log brigading attempts in anomaly metrics (§10.5).
 
 4. **rule-set manipulation attempts:**  
-   Actors attempting to revise safety rule-sets to suppress disfavored ideas under the guise of legality or harm minimization. Since rule-set changes require canonical adoption actions (Â§8.3), such manipulation becomes fully visible and challengeable.
+   Actors attempting to revise safety rule-sets to suppress disfavored ideas under the guise of legality or harm minimization. Since rule-set changes require canonical adoption actions (§8.3), such manipulation becomes fully visible and challengeable.
 
 5. **jurisdictional exploitation:**  
-   Malicious actors seeking to route content through jurisdictions with strict laws to force filtered replicas to hide it. Filtered replicas MUST disclose constraints (Â§10.4), preventing such attacks from globally suppressing content.
+   Malicious actors seeking to route content through jurisdictions with strict laws to force filtered replicas to hide it. Filtered replicas MUST disclose constraints (§10.4), preventing such attacks from globally suppressing content.
 
 No adversarial behavior MAY affect canonical admissibility unless the payload is genuinely illegal under global minimal safety constraints. Nodes MUST treat all adversarial attempts as visibility-layer phenomena that do not influence canonical rankings, challenges, POD flows, or idea structures.
 
-All nodes MUST expose adversarial-detection metadata, including classifier anomaly spikes, suspicious submission bursts, and repeated edge-case triggering attempts. These signals MUST feed into censorship alerts (Â§10.5) and MAY trigger governance review of classifiers or rule-sets. The overarching guarantee is that **adversarial pressure cannot become invisible pressure**, and cannot silently compromise the epistemic integrity of the system.
+All nodes MUST expose adversarial-detection metadata, including classifier anomaly spikes, suspicious submission bursts, and repeated edge-case triggering attempts. These signals MUST feed into censorship alerts (§10.5) and MAY trigger governance review of classifiers or rule-sets. The overarching guarantee is that **adversarial pressure cannot become invisible pressure**, and cannot silently compromise the epistemic integrity of the system.
 
 
 ### 9.11 safety governance, classifier updates, and drift mitigation [anchor: safety_governance_classifier_updates_and_drift_mitigation]
@@ -3440,11 +3440,11 @@ Each classifier in the ensemble MUST publish the following metadata into the can
 - category definitions and mapping tables;  
 - rule-set version used for thresholding.
 
-A classifier update constitutes a **governance change** and MUST be proposed through an actionable idea, deliberated, and adopted by a governance adoption action (Â§8.3). No node MAY unilaterally change classifier configurations without recording a canonical change event. Nodes MUST reject safety decisions that rely on unrecorded classifier versions, ensuring deterministic replay.
+A classifier update constitutes a **governance change** and MUST be proposed through an actionable idea, deliberated, and adopted by a governance adoption action (§8.3). No node MAY unilaterally change classifier configurations without recording a canonical change event. Nodes MUST reject safety decisions that rely on unrecorded classifier versions, ensuring deterministic replay.
 
-Classifier driftâ€”in which models become more conservative or permissive over timeâ€”MUST be detectable through comparison of ensemble outputs across snapshots (Â§10.5). Nodes MUST publish drift metrics indicating whether their classifiers have become systematically more likely to block, sanitize, or encapsulate content. Sudden drift spikes MUST trigger governance review, and MAY lead to rollback or rebalancing of the ensemble.
+Classifier drift - in which models become more conservative or permissive over time - MUST be detectable through comparison of ensemble outputs across snapshots (§10.5). Nodes MUST publish drift metrics indicating whether their classifiers have become systematically more likely to block, sanitize, or encapsulate content. Sudden drift spikes MUST trigger governance review, and MAY lead to rollback or rebalancing of the ensemble.
 
-If a classifier or transformation-rule update is later judged harmful or incorrect, nodes MUST support reversal procedures that restore previous configurations without rewriting past events. Incorrect safety decisions MAY be corrected through wrongful-block or wrongful-encapsulation challenges (Â§Â§10.2â€“8.3), but the historical record MUST preserve which classifier versions produced the original decisions.
+If a classifier or transformation-rule update is later judged harmful or incorrect, nodes MUST support reversal procedures that restore previous configurations without rewriting past events. Incorrect safety decisions MAY be corrected through wrongful-block or wrongful-encapsulation challenges (§§10.2§8.3), but the historical record MUST preserve which classifier versions produced the original decisions.
 
 In this governance model, safety evolves transparently and collectively, not opaquely or unilaterally. The system guarantees that **classification changes are recorded as ideas, debated as ideas, adopted as actions, and reversible through challenges**, preserving epistemic neutrality while allowing adaptation to new legal realities and technological threats.
 
@@ -3453,7 +3453,7 @@ In this governance model, safety evolves transparently and collectively, not opa
 
 Offline replicas and mindseeds allow individuals and groups to preserve the canonical universe independent of network access, enabling operation under natural disasters or network fragmentation. However, offline replicas face unique safety challenges: they may contain content later deemed illegal, they may operate without updated rule-sets, and they may need to merge large histories back into the canonical universe once connectivity is restored.
 
-Offline replicas MUST store all content that was legal and admissible at the time of snapshot creation. Nodes operating offline MUST NOT delete or mutate historical payloads, even if later rule-sets would require sanitization. Instead, during offline â†’ online merge, the receiving node MUST apply deterministic sanitization, encapsulation, or transformation rules (Â§Â§10.1â€“8.3, 8.9) to bring the offline content into compliance with current global safety rules.
+Offline replicas MUST store all content that was legal and admissible at the time of snapshot creation. Nodes operating offline MUST NOT delete or mutate historical payloads, even if later rule-sets would require sanitization. Instead, during offline  -> online merge, the receiving node MUST apply deterministic sanitization, encapsulation, or transformation rules (§§10.1-8.3, 8.9) to bring the offline content into compliance with current global safety rules.
 
 When merging mindseeds or offline histories into the canonical universe, nodes MUST:
 
@@ -3506,7 +3506,7 @@ Explainability is a core protocol requirement and MUST NOT be treated as a UI-on
 
 ### 10.1 governance rulebooks: definition, roles, and canonical structure [anchor: governance_rulebooks_definition_roles_and_canonical_structure]
 
-Governance rulebooks are ideas that define how the canonical universe MAY evolve, what constraints apply to identities and events, and how deliberative authority is exercised. A governance rulebook is not an external document; it is a first-class idea with structured descriptions, relevance edges, and challengeability. Rulebooks do not replace the protocol. Instead, they form the top layer of modifiable rules that operate *within* the protocolâ€™s constitutional boundaries and MUST remain compatible with all invariants defined in Section 0.
+Governance rulebooks are ideas that define how the canonical universe MAY evolve, what constraints apply to identities and events, and how deliberative authority is exercised. A governance rulebook is not an external document; it is a first-class idea with structured descriptions, relevance edges, and challengeability. Rulebooks do not replace the protocol. Instead, they form the top layer of modifiable rules that operate *within* the protocol’s constitutional boundaries and MUST remain compatible with all invariants defined in Section 0.
 
 A governance rulebook consists of a set of normative statements that specify:
 
@@ -3516,7 +3516,7 @@ A governance rulebook consists of a set of normative statements that specify:
 * which safety or identity rules MUST be applied, and  
 * how rule supersession and lineage SHOULD be interpreted during replay.
 
-Rulebooks are permanent artifacts in the event log. They do not â€œreplaceâ€ previous rulebooks but exist in a versioned lineage. A later rulebook MAY supersede earlier rules for future events, but MUST NOT retroactively change interpretations of events that occurred before its activation cycle boundary. Each rulebook is internally immutable after creation; governance changes occur only by introducing successor rulebooks, not by editing existing ones.
+Rulebooks are permanent artifacts in the event log. They do not "replace" previous rulebooks but exist in a versioned lineage. A later rulebook MAY supersede earlier rules for future events, but MUST NOT retroactively change interpretations of events that occurred before its activation cycle boundary. Each rulebook is internally immutable after creation; governance changes occur only by introducing successor rulebooks, not by editing existing ones.
 
 The canonical universe treats governance rulebooks as semantic structures whose meaning is determined solely by deterministic replay. Implementations MUST NOT embed extra-protocol configuration files, environment variables, or local policy flags that affect governance semantics. All governance behavior MUST be traceable to ideas and events visible on-chain and reconstructable by any conformant node.
 
@@ -3531,7 +3531,7 @@ A governance proposal becomes actionable only when a governance challenge is ope
 * specified activation conditions at a scheduled activation cycle boundary, and  
 * justification for why the change is compatible with Section 0 invariants.
 
-During the challengeâ€™s argument and evidence phases, participants MAY submit supporting or opposing claims, including historical analysis of prior rulebooks, expert evaluations, and compatibility checks with constitutional invariants. Once voting completes, the challenge verdict determines whether the proposal WILL activate at the scheduled activation cycle boundary.
+During the challenge’s argument and evidence phases, participants MAY submit supporting or opposing claims, including historical analysis of prior rulebooks, expert evaluations, and compatibility checks with constitutional invariants. Once voting completes, the challenge verdict determines whether the proposal WILL activate at the scheduled activation cycle boundary.
 
 Governance proposals that are defeated remain permanently in the event log as inert ideas. Their content MAY still influence future governance debates but they SHALL NOT alter canonical behavior.
 
@@ -3563,15 +3563,15 @@ Governance rulebooks are partitioned into functional categories. Each category s
 
 The primary categories are:
 
-* **protocol rulebooks** â€” govern deterministic replay, event validity, state transition semantics, node conformance tests, and activation conditions for rule supersession. These rules MUST remain compatible with all constitutional invariants and MUST NOT redefine core ontology (ideas, descriptions, connections, challenges, actions).
+* **protocol rulebooks**  -  govern deterministic replay, event validity, state transition semantics, node conformance tests, and activation conditions for rule supersession. These rules MUST remain compatible with all constitutional invariants and MUST NOT redefine core ontology (ideas, descriptions, connections, challenges, actions).
 
-* **governance rulebooks** â€” define the procedures for proposing, deliberating, voting on, and activating changes to rulebooks themselves. This includes quorum definitions, eligible voter sets, challenge window durations, dispute resolution processes, and rule-supersession semantics.
+* **governance rulebooks**  -  define the procedures for proposing, deliberating, voting on, and activating changes to rulebooks themselves. This includes quorum definitions, eligible voter sets, challenge window durations, dispute resolution processes, and rule-supersession semantics.
 
-* **safety rulebooks** â€” define the classification of payloads, safe specificity boundaries, visibility overlays, regional overlays, classifier behavior, and blocked-submission handling. Safety rulebooks MAY refine or extend classifications, but MUST NOT contradict the constitutional constraints on meaning preservation, non-erasure, or the universal challengeability of decisions.
+* **safety rulebooks**  -  define the classification of payloads, safe specificity boundaries, visibility overlays, regional overlays, classifier behavior, and blocked-submission handling. Safety rulebooks MAY refine or extend classifications, but MUST NOT contradict the constitutional constraints on meaning preservation, non-erasure, or the universal challengeability of decisions.
 
-* **token rulebooks** â€” specify POD mechanics, POINT emission schedules, constraints on externalization, and POD/POINT relations to actions and significance attribution. Token rulebooks MUST remain forward-only and MUST NOT permit retroactive reassignment of POD or alteration of historical token flows.
+* **token rulebooks**  -  specify POD mechanics, POINT emission schedules, constraints on externalization, and POD/POINT relations to actions and significance attribution. Token rulebooks MUST remain forward-only and MUST NOT permit retroactive reassignment of POD or alteration of historical token flows.
 
-* **identity rulebooks** â€” govern identity creation, longevity, key rotation, delegation limits, death semantics, and rules concerning successor identities, tribes, or groups. Identity rulebooks MUST remain compatible with the human-first authorship invariant and MUST NOT grant canonical authority to non-human agents.
+* **identity rulebooks**  -  govern identity creation, longevity, key rotation, delegation limits, death semantics, and rules concerning successor identities, tribes, or groups. Identity rulebooks MUST remain compatible with the human-first authorship invariant and MUST NOT grant canonical authority to non-human agents.
 
 Each category evolves independently via successor rulebook ideas, but interactions between categories MUST remain deterministic and MUST NOT introduce cross-category ambiguities. When two rulebooks appear to conflict, the canonical resolution is determined by constitutional invariants and deterministic replay rules, not by local interpretation or node-specific policy.
 
@@ -3626,7 +3626,7 @@ Within those boundaries, the following additional limits apply to governance con
 7. **No retroactive modification of POD or identity claims.**  
    Governance MAY specify future token mechanics and identity procedures but SHALL NOT reassign POD, erase POD history, or retroactively alter past token flows or identity events.
 
-These limits ensure that governance remains adaptive while preventing authoritarian drift, plutocratic capture, or irreversible centralization. Governance may explore different eligibility patterns, expert-influenced workflows, layered decision mechanisms, and experimental democratic proceduresâ€”but all such experimentation MUST ultimately preserve equal-weight voting within pools, universal challengeability, and the perpetual ability of the broader population to reclaim authority over system-wide decisions.
+These limits ensure that governance remains adaptive while preventing authoritarian drift, plutocratic capture, or irreversible centralization. Governance may explore different eligibility patterns, expert-influenced workflows, layered decision mechanisms, and experimental democratic procedures—but all such experimentation MUST ultimately preserve equal-weight voting within pools, universal challengeability, and the perpetual ability of the broader population to reclaim authority over system-wide decisions.
 
 ### 10.6 quorum, thresholds, and voting mechanics [anchor: quorum_thresholds_and_voting_mechanics]
 
@@ -3642,7 +3642,7 @@ A quorum rule defines:
 
 A threshold rule defines:
 
-* the percentage of â€œyesâ€ votes required for approval among those who participate,  
+* the percentage of “yes” votes required for approval among those who participate,  
 * whether a simple majority or a supermajority is required for this decision type,  
 * deterministic tie-handling procedures,  
 * any conditional threshold adjustments stated explicitly in canonical rulebook descriptions.
@@ -3665,7 +3665,7 @@ A governance challenge SHALL include:
 * the intended activation cycle boundary for the resulting rulebook, if approved,  
 * any predecessor or parallel governance challenges it supersedes or invalidates.
 
-Governance challenges proceed through the same six-phase lifecycle as other action challengesâ€”creation, argumentation, voter selection, voting window, verdict aggregation, and state transformationâ€”with the following additional properties:
+Governance challenges proceed through the same six-phase lifecycle as other action challenges—creation, argumentation, voter selection, voting window, verdict aggregation, and state transformation—with the following additional properties:
 
 1. **Extended argument phase.**  
    Governance rule changes have long-term effects. Governance rulebooks MAY require a minimum argument duration or minimum number of submitted perspectives before voting MAY begin.
@@ -3810,14 +3810,14 @@ Upon reconnection, a seedpack MUST perform the following steps:
    Once online, any offline governance proposal or rulebook draft MUST be evaluated against the currently active governance and protocol rulebooks. If the proposal contradicts newly activated rules or constitutional invariants, it MUST either be amended or MAY be challenged on compatibility grounds.
 
 4. **No automatic adoption of offline results.**  
-   Offline governance outcomesâ€”including rule adoptions, eligibility pool changes, quorum decisions, importance rankings, or safety classificationsâ€”SHALL NOT be automatically imported or treated as authoritative. All such outcomes require full canonical challenges and voting cycles before they can affect canonical state.
+   Offline governance outcomes—including rule adoptions, eligibility pool changes, quorum decisions, importance rankings, or safety classifications—SHALL NOT be automatically imported or treated as authoritative. All such outcomes require full canonical challenges and voting cycles before they can affect canonical state.
 
 5. **Snapshot alignment.**  
    A seedpack MAY NOT introduce a rulebook, governance change, or other rule-altering event that would activate at a cycle boundary earlier than the cycle boundary immediately following reintegration. All rule activations MUST align with globally recognized cycle boundaries.
 
 Offline seedpacks MAY also apply jurisdictional or safety lenses when generating locally readable state, consistent with the safety and visibility rulebooks active at the time of disconnection. Such lenses affect what payloads are readable or withheld locally but MUST NOT erase the existence of ideas, connections, or challenges from the local record.
 
-These constraints preserve the integrity of governance and deterministic replay while allowing offline communitiesâ€”including those operating under restrictive or hostile conditionsâ€”to reason, deliberate, and prepare proposals using the full protocol structure. Offline operation therefore supports resilience and continuity of collective reasoning without introducing forks, hidden authority, or replay-incompatible semantics.
+These constraints preserve the integrity of governance and deterministic replay while allowing offline communities—including those operating under restrictive or hostile conditions—to reason, deliberate, and prepare proposals using the full protocol structure. Offline operation therefore supports resilience and continuity of collective reasoning without introducing forks, hidden authority, or replay-incompatible semantics.
 
 
 
@@ -3845,7 +3845,7 @@ However, any emergent structure MUST obey the following constraints:
    No structure MAY permanently claim authority over a domain such as safety, identity, or token mechanics. All domain assignments remain rulebook-defined and universally challengeable.
 
 4. **No privileged access to protocol mechanisms.**  
-   All governance toolsâ€”challenge creation, argument submission, rule supersessionâ€”remain equally available to all verified identities. Structures MAY coordinate collective reasoning but MUST NOT inhibit participation.
+   All governance tools—challenge creation, argument submission, rule supersession—remain equally available to all verified identities. Structures MAY coordinate collective reasoning but MUST NOT inhibit participation.
 
 5. **Transparency requirement.**  
    Any structure that seeks to influence governance MUST express its proposals, arguments, and analyses as ideas in the canonical universe. Closed deliberation MAY occur socially, but canonical authority requires on-chain transparency.
@@ -3881,7 +3881,7 @@ To support wide distribution, offline use, and resilience under constrained cond
 
 The protocol does not mandate a specific distribution scale. However, rulebooks MAY define default packaging profiles or importance-weighted inclusion strategies intended to maximize the redundancy and survivability of the most important ideas, descriptions, and verdicts across the network.
 
-This separation between readable state and deterministic history allows the system to maximize the spread of epistemically important contentâ€”especially in offline, low-bandwidth, or adversarial environmentsâ€”without imposing prohibitive storage or bandwidth requirements on all participants. At the same time, it preserves long-term verifiability, auditability, and the ability to reconstruct the full canonical universe wherever sufficient history is retained.
+This separation between readable state and deterministic history allows the system to maximize the spread of epistemically important content—especially in offline, low-bandwidth, or adversarial environments—without imposing prohibitive storage or bandwidth requirements on all participants. At the same time, it preserves long-term verifiability, auditability, and the ability to reconstruct the full canonical universe wherever sufficient history is retained.
 
 Readable state snapshots MAY be produced at multiple tiers to support inspection, onboarding, and survivability.
 
@@ -3922,10 +3922,10 @@ Snapshots enable:
 
 A snapshot MUST have a canonical, implementation-independent structure. Nodes MUST be able to reconstruct the snapshot exactly from the event log. The snapshot format SHALL include, at minimum:
 
-1. **snapshot index** â€” the event index at which the snapshot is taken.  
-2. **snapshot hash** â€” a canonical commitment over the serialized snapshot contents.  
-3. **active rulebooks** â€” references to the governance, protocol, safety, token, and identity rulebooks active immediately following this snapshot.  
-4. **idea map** â€” the full set of ideas, descript
+1. **snapshot index** — the event index at which the snapshot is taken.  
+2. **snapshot hash** — a canonical commitment over the serialized snapshot contents.  
+3. **active rulebooks** — references to the governance, protocol, safety, token, and identity rulebooks active immediately following this snapshot.  
+4. **idea map** — the full set of ideas, descript
 
 Each snapshot MUST include a marker indicating its snapshot tier and the required contents for that tier.
 
@@ -4001,12 +4001,12 @@ Partial replay is permitted if:
 
 Trustless verification is made possible by:
 
-1. **Snapshot commitments** â€” hashes that allow nodes to validate state without trusting implementations.  
-2. **Canonical serialization formats** â€” ensuring identical byte-level representations.  
-3. **Conformance tests** â€” derived directly from rulebooks, enabling nodes to verify each other.  
-4. **Absence of external dependencies** â€” all semantic meaning is internal to the log.
+1. **Snapshot commitments** — hashes that allow nodes to validate state without trusting implementations.  
+2. **Canonical serialization formats** — ensuring identical byte-level representations.  
+3. **Conformance tests** — derived directly from rulebooks, enabling nodes to verify each other.  
+4. **Absence of external dependencies** — all semantic meaning is internal to the log.
 
-Nodes MAY verify one another by exchanging snapshot commitments or by replaying each otherâ€™s snapshots and comparing results. Any divergence indicates non-conformance.
+Nodes MAY verify one another by exchanging snapshot commitments or by replaying each other’s snapshots and comparing results. Any divergence indicates non-conformance.
 
 ### 11.7 light clients and partial-state canonicality [anchor: light_clients_and_partial_state_canonicality]
 
@@ -4137,7 +4137,7 @@ Upon activation:
 Snapshots also provide a precise historical map of governance evolution. Future nodes inspecting the universe MUST be able to determine:
 
 * which rulebook governed any event E,  
-* which governance decision led to that rulebookâ€™s activation,  
+* which governance decision led to that rulebook’s activation,  
 * whether implementation occurred correctly,  
 * whether any superseded rulebooks were later revised or challenged.
 
@@ -4154,7 +4154,7 @@ Cycle export packs:
 
 Export packs MAY be used to:
 - browse and search important ideas offline,
-- inspect historical â€œwhat matteredâ€ views without full replay,
+- inspect historical “what mattered” views without full replay,
 - bootstrap partial replicas in constrained environments.
 
 Export packs MUST NOT:
@@ -4180,7 +4180,7 @@ An event MAY be invalid for structural, semantic, temporal, or constitutional re
 
 Invalidity MUST be deterministic. All conformant nodes SHALL classify the same event as valid or invalid when replaying the same log.
 
-Invalid events MUST be recorded in the nodeâ€™s diagnostic state for auditability and MAY be referenced by future governance proposals or safety rule updates.
+Invalid events MUST be recorded in the node’s diagnostic state for auditability and MAY be referenced by future governance proposals or safety rule updates.
 
 ### 12.2 structural invalidity: malformed or incomplete payloads [anchor: structural_invalidity_malformed_or_incomplete_payloads]
 
@@ -4323,7 +4323,7 @@ Nodes MUST NOT introduce non-canonical or private invalidation mechanisms. All d
 When a conformant node encounters an invalid event, it MUST:
 
 1. **classify the event as invalid** using deterministic rules,  
-2. **skip the eventâ€™s state transition**,  
+2. **skip the event’s state transition**,  
 3. **record diagnostic metadata** (locally) identifying the category of invalidity,  
 4. **continue replay** using the next event.
 
@@ -4432,7 +4432,7 @@ Protocol evolution may include:
 However, evolution MUST remain forward-only and SHALL NOT:
 
 * alter the interpretation of past events,  
-* retroactively classify previously valid events as invalid (except where mandated by Section 0â€™s safety invariants),  
+* retroactively classify previously valid events as invalid (except where mandated by Section 0's safety invariants),  
 * weaken constitutional or deterministic constraints,  
 * introduce nondeterministic or external dependencies.
 
@@ -4444,7 +4444,7 @@ Recurring error patterns SHOULD be discussed through ordinary idea creation, arg
 
 ### 13.1 purpose and scope of appendices [anchor: purpose_and_scope_of_appendices]
 
-Appendices provide formal structures, reference materials, and deterministic definitions used throughout the protocol. They SHALL NOT introduce new semantics or modify any rule in Sections 0â€“11. Instead, appendices clarify, formalize, and detail concepts already defined.
+Appendices provide formal structures, reference materials, and deterministic definitions used throughout the protocol. They SHALL NOT introduce new semantics or modify any rule in Sections 0§11. Instead, appendices clarify, formalize, and detail concepts already defined.
 
 If any appendix appears to contradict the main protocol, the contradiction SHALL be resolved by treating the main protocol text as authoritative.
 
@@ -4470,13 +4470,13 @@ This appendix defines the minimal schema required for conformant implementations
 
 Each idea MUST include:
 
-* **idea_id** â€” globally unique identifier (UUIDv7 string),  
-* **idea_role** â€” one of: `truth`, `conceptual`, `actionable`, `action`,  
-* **speaker_identity** â€” identity asserting the idea,  
-* **created_at_event** â€” index of event introducing the idea,  
+* **idea_id** — globally unique identifier (UUIDv7 string),  
+* **idea_role** — one of: `truth`, `conceptual`, `actionable`, `action`,  
+* **speaker_identity** — identity asserting the idea,  
+* **created_at_event** — index of event introducing the idea,  
 * **description_set** - structured set of **representation objects** in multiple tiers,  
-* **subtype** â€” truth-claim subtype (if applicable),  
-* **metadata** â€” reserved canonical fields for interoperability.
+* **subtype** — truth-claim subtype (if applicable),  
+* **metadata** — reserved canonical fields for interoperability.
 
 #### 13.2.2 description schema [anchor: description_schema]
 
@@ -4518,34 +4518,34 @@ Every connection SHALL include:
 * **source_idea**, **target_idea**  
 * **connection_type**  
 * **created_at_event**  
-* **supporting_metadata** â€” optional but canonical if present (metadata MUST follow the structured rules defined below).
+* **supporting_metadata** — optional but canonical if present (metadata MUST follow the structured rules defined below).
 
 The protocol defines a small, fixed set of valid `connection_type` values:
 
-* `same_as` â€” tiered semantic equivalence between ideas or descriptions.
-* `relative_importance` â€” directed importance and evidential relationships with a specified usage.
-* `membership` â€” identity-to-group and idea-to-group membership and stewardship relationships.
+* `same_as` — tiered semantic equivalence between ideas or descriptions.
+* `relative_importance` — directed importance and evidential relationships with a specified usage.
+* `membership` — identity-to-group and idea-to-group membership and stewardship relationships.
 
 Rulebooks MAY refine how these types are interpreted and MAY define additional allowed `usage` or `role` values, but SHALL NOT introduce new top-level `connection_type` values.
 
 For `relative_importance` connections, `supporting_metadata` MUST include:
 
-* `usage` â€” one of: `general`, `importance_argument`, `evidence_for`, `evidence_against` (plus any future usages defined by governance rulebooks within the same semantic scope).
-* `axis` â€” one of the standard importance axes (important-to vs important-for, etc.).
-* `timeframe` â€” one of the five temporal horizons.
-* `scope` â€” `universal`, `tribe`, or `personal`.
+* `usage` — one of: `general`, `importance_argument`, `evidence_for`, `evidence_against` (plus any future usages defined by governance rulebooks within the same semantic scope).
+* `axis` — one of the standard importance axes (important-to vs important-for, etc.).
+* `timeframe` — one of the five temporal horizons.
+* `scope` — `universal`, `tribe`, or `personal`.
 
 Rulebooks MAY add additional fields, provided they do not change the meaning of the core fields or break deterministic replay.
 
 For `same_as` connections, `supporting_metadata` MUST include:
 
-* `tier_kind` â€” one of: `title`, `sentence`, `paragraph`, `full`, `canonical`.
+* `tier_kind` — one of: `title`, `sentence`, `paragraph`, `full`, `canonical`.
 
 Multiple `same_as` connections between the same pair of ideas MAY exist, each with its own `tier_kind`. `same_as` connections are symmetric.
 
 For `membership` connections, `supporting_metadata` MUST include:
 
-* `role` â€” e.g. `member_of`, `steward_of`, `owns_special_garden`, or other membership roles defined by governance rulebooks.
+* `role` — e.g. `member_of`, `steward_of`, `owns_special_garden`, or other membership roles defined by governance rulebooks.
 
 Membership connections are directional from the member (identity or idea) to the group-like idea. Rulebooks MAY add non-semantic hints, but MUST NOT alter direction or the meaning of `role`.
 
@@ -4646,7 +4646,7 @@ All canonical events MUST include sufficient fields to support deterministic cyc
 At minimum, canonical events MUST record:
 - a deterministic event identifier (UUIDv7 string),
 - the identity performing the event,
-- the eventâ€™s position in the canonical order,
+- the event’s position in the canonical order,
 - the cycle index at which the event was authored or ingested.
 
 No new event types are introduced solely for rot/burn. Lifecycle_state derivation relies on existing event semantics and qualifying engagement predicates rather than dedicated lifecycle events.
@@ -4660,7 +4660,7 @@ A canonical signature MUST:
 
 * bind the event payload and event index,  
 * be produced by a private key controlled by a verified identity,  
-* be verifiable using the identityâ€™s registered public key,  
+* be verifiable using the identity’s registered public key,  
 * adhere to signature schemes specified in the active identity rulebook.
 
 This appendix defines:
@@ -4712,7 +4712,7 @@ This appendix defines:
 
 * canonical classifier input formats,  
 * classifier output schemas,  
-* deterministic mapping from classifier output â†’ allowable redaction actions,  
+* deterministic mapping from classifier output → allowable redaction actions,  
 * abstraction rules ensuring meaning preservation,  
 * procedures for recording **blocked_submission** events,  
 * formal constraints guaranteeing that no payload censorship alters meaning.
@@ -4747,7 +4747,7 @@ The glossary defines technical terms used throughout the protocol, ensuring stab
 * **canonical universe**, **deterministic replay**,  
 * **blocked_submission**, **completion_truth_claim**.
 
-Glossary definitions MUST remain consistent with semantics in Sections 0â€“11 and SHALL NOT introduce new concepts.
+Glossary definitions MUST remain consistent with semantics in Sections 0§11 and SHALL NOT introduce new concepts.
 
 **Block**
 A quorum-finalized canonical publication unit that assigns `block_height` and intra-block event order while adding no semantic authority beyond publication ordering.
@@ -4770,7 +4770,7 @@ Canonical engagement (such as challenges, votes, arguments, or evidence) that pr
 
 ### 13.11 structural roles: canonical metadata for personal, relational, and narrative spaces [anchor: structural_roles_canonical_metadata_for_personal_relational_and_narrative_spaces]
 
-Structural roles provide a protocol-recognized way to assign narrative, organizational, or interface semantics to specific ideas **without introducing new canonical `idea_role` values, new importance scopes, or additional challenge semantics**. They exist strictly as deterministic metadata layered on top of the canonical ontology defined in Sections 1â€“7.
+Structural roles provide a protocol-recognized way to assign narrative, organizational, or interface semantics to specific ideas **without introducing new canonical `idea_role` values, new importance scopes, or additional challenge semantics**. They exist strictly as deterministic metadata layered on top of the canonical ontology defined in Sections 1§7.
 
 Structural-role ideas include identity-root structures such as BACKYARD, RELATIONSHIP_GARDEN, SELF_TREE, and ANTHILL, as well as user-created personal structures such as shrubs, memory leaves, and vines. These ideas remain ordinary canonical ideas with additional metadata constraints and SHALL NOT alter epistemic or governance flows.
 
@@ -4803,7 +4803,7 @@ A structural_role is NOT:
 * a POD-bearing entity,  
 * or a governance-relevant classification.
 
-Structural roles MUST remain semantically neutral with respect to Sections 1â€“5.
+Structural roles MUST remain semantically neutral with respect to Sections 1§5.
 
 #### 13.11.3 creation rules [anchor: creation_rules]
 
@@ -4837,7 +4837,7 @@ Structural-role ideas:
 * MUST persist for the lifetime of the identity or narrative structure they belong to,  
 * MUST NOT be merged with other ideas (even via `same_as`),  
 * MUST NOT transform into a different structural role,  
-* MUST NOT be deleted except under full identity retirement as defined in Â§9.6,  
+* MUST NOT be deleted except under full identity retirement as defined in §9.6,  
 * MUST reconstruct identically under deterministic replay.
 
 These constraints prevent personal or relational structures from mutating into epistemic or governance-bearing constructs.
@@ -4863,7 +4863,7 @@ They MAY:
 * provide timeline / narrative sequencing (e.g., vines),  
 * support UI-level metaphors for navigation.
 
-Structural-role ideas are fully exempt from all challenge domains, importance calculations, and POD flows. They are invisible to the protocolâ€™s epistemic, governance, and economic mechanics. This means:
+Structural-role ideas are fully exempt from all challenge domains, importance calculations, and POD flows. They are invisible to the protocol’s epistemic, governance, and economic mechanics. This means:
 
 - No challenge (truth, importance, action, or representation) may target or reference a structural-role idea as subject, evidence, or argument.
 - No relative_importance connections to or from structural-role ideas carry any epistemic weight or contribute to universal-, tribe-, or personal-scope importance rankings.
@@ -4876,9 +4876,9 @@ This complete isolation ensures that personal structural spaces (e.g., BACKYARD,
 
 Structural-role ideas MUST use only canonical `connection_type` values:
 
-* `membership` â€” for identity â†’ structural space relationships  
-* `relative_importance` â€” only for non-epistemic indexing usages (e.g., timeline_next, narrative_order)  
-* `same_as` â€” strongly discouraged; structural roles SHOULD NOT co-refer
+* `membership` — for identity → structural space relationships  
+* `relative_importance` — only for non-epistemic indexing usages (e.g., timeline_next, narrative_order)  
+* `same_as` — strongly discouraged; structural roles SHOULD NOT co-refer
 
 All such connections MUST declare a `usage` field appropriate to the structural role, such as:
 
@@ -4894,7 +4894,7 @@ These usages SHALL NOT introduce or imply any epistemic meaning.
 
 #### 13.11.7 safe extension of structural roles [anchor: safe_extension_of_structural_roles]
 
-Implementations MAY define additional structural roles (e.g. â€œmythology cluster,â€ â€œproject tree,â€ â€œchapter rootâ€), provided that:
+Implementations MAY define additional structural roles (e.g. “mythology cluster,” “project tree,” “chapter root”), provided that:
 
 1. they do NOT introduce new canonical `idea_role` values;  
 2. they do NOT modify challenge, POD, importance, or governance semantics;  
@@ -4913,7 +4913,7 @@ All conformant nodes MUST:
 * reject events that treat structural-role ideas as epistemic, POD-bearing, or governance-bearing entities,  
 * enforce immutability of structural_role tags.
 
-Structural roles ensure that personal, relational, and narrative structures remain fully compatible with the protocolâ€™s epistemic core while allowing rich interface and social-layer expression.
+Structural roles ensure that personal, relational, and narrative structures remain fully compatible with the protocol’s epistemic core while allowing rich interface and social-layer expression.
 
 ## Anchors Added
 - canonical_substrate_and_scoped_overlays

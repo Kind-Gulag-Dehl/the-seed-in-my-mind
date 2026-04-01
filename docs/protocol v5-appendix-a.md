@@ -1793,9 +1793,9 @@ To support safety classification and explanation, Appendix A guarantees availabi
 - jurisdiction lenses,
 - explanation representation references.
 
-#### A6.4.2 “Why am I seeing this?” [anchor: a6_4_2_why_am_i_seeing_this]
+#### A6.4.2 "Why am I seeing this?" [anchor: a6_4_2_why_am_i_seeing_this]
 
-Nodes MUST be able to compute “why am I seeing this?” explanations deterministically from:
+Nodes MUST be able to compute "why am I seeing this?" explanations deterministically from:
 - safety classification events,
 - active rulebooks,
 - snapshot state.

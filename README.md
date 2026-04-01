@@ -1,5 +1,7 @@
 # the-seed-in-my-mind
 
+This repo is the public infrastructure layer for The Seed in My Mind. It contains the backend, reference frontend, docs, and export tooling needed to inspect and verify a shared idea graph without the private product layer. A reviewer can verify today that public seed data imports cleanly, replay and snapshot outputs are reproducible, a read-only API serves the verified state, and the open-core export boundary is enforced. It is a real runnable open-core package, not the full end-user product.
+
 The Seed in My Mind open-core repo is the public infrastructure package for a deterministic canonical-history substrate and its reference reviewer surface.
 
 This public open-core package contains the implemented and reviewer-runnable infrastructure layer:
@@ -153,6 +155,8 @@ That command:
 - runs build/test/smoke checks against the exported tree,
 - writes `EXPORT_INFO.txt`,
 - produces `tools/open-core/dist/open-core-export.zip`.
+
+`npm run verify:open-core-export` validates whichever tree `scripts/verify-open-core-export.mjs` resolves as the export root. In this repo's current setup, if `EXPORT_INFO.txt` exists at the repo root, the command checks the repo working tree itself for forbidden export content such as `dist/`, `node_modules/`, local runtime state, or other non-shippable files. To validate the generated export tree directly, run the verifier against `_export/open-core` after extraction.
 
 ## Current status
 

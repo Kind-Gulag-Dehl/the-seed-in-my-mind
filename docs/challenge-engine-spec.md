@@ -290,7 +290,7 @@ The following framing patterns are forbidden:
 - challenges that implicitly create or delete ideas,
 - challenges that bundle unrelated decisions,
 - challenges whose outcomes depend on future, unspecified events,
-- challenges that delegate interpretation to voters (“decide what seems right”).
+Such challenges MUST be rejected deterministically.
 
 Such challenges MUST be rejected deterministically.
 
@@ -360,7 +360,7 @@ Examples of permitted parallel challenges include:
 - an importance challenge between idea A and idea B,
   concurrently with truth challenges concerning claims made *about* A or B,
 - an importance challenge between idea A and idea B,
-  concurrently with representation challenges concerning either idea’s descriptions.
+Each such challenge is treated as an independent deliberative process with its own lifecycle and verdict.
 
 Each such challenge is treated as an independent deliberative process with its own lifecycle and verdict.
 
@@ -436,7 +436,7 @@ Wall-clock time, timestamps, calendars, block heights, or event index deltas MUS
 
 ### 3.3.1 Cycle anchoring of lifecycle phases (Normative) [anchor: cycle_anchoring_of_lifecycle_phases_normative]
 
-Each challenge lifecycle phase MUST be anchored to a specific canonical lifecycle transition event, and each phase’s duration MUST be expressed as an integer number of cycles.
+Let:
 
 Let:
 
@@ -758,7 +758,7 @@ Eligibility to participate in a challenge (as voter or contributor) MUST be comp
 
 the ordered canonical event log,
 
-the challenge’s domain and framing,
+the active rulebook set,
 
 the active rulebook set,
 
@@ -778,7 +778,7 @@ wall-clock time.
 
 Eligibility pool membership MUST NOT depend on current mana balance or current vote-session capacity.
 
-Where “recent participation” or “activity windows” are used as eligibility criteria, they MUST be expressed in cycle terms (Protocol v5 §3), such as “active within the last N cycles,” and MUST be derived solely from the canonical event log.
+Rulebooks MAY define eligibility criteria such as:
 
 Rulebooks MAY define eligibility criteria such as:
 
@@ -802,7 +802,7 @@ Vote events MUST be rejected if:
 
 the voter is ineligible,
 
-the voting window is closed (as defined in cycle terms per §3.9.2),
+the voter has already voted in that challenge.
 
 the voter has already voted in that challenge.
 
@@ -836,7 +836,7 @@ Vote tallies MUST be computed deterministically using:
 
 - the complete set of valid votes,
 - the challenge’s domain,
-- the active rulebook’s aggregation rules.
+Rulebooks MAY define:
 
 Rulebooks MAY define:
 - majority thresholds,
@@ -1086,7 +1086,7 @@ The challenge engine SHALL preserve the following invariants across all domains:
 - **Revisability**: no verdict is beyond future challenge.
 - **Non-coercion**: no challenge outcome enforces compliance outside the protocol.
 
-These invariants are essential to the system’s legitimacy and long-term resilience.
+---
 
 ---
 ## 8. Verdict finalization [anchor: 8_verdict_finalization]
@@ -1286,7 +1286,7 @@ If a challenge fails to meet required participation thresholds:
 
 - the challenge MUST NOT produce a canonical verdict,
 - the challenge MUST be deterministically closed without effect,
-- the outcome MUST be recorded explicitly (e.g., as “no verdict due to insufficient participation”).
+Such challenges remain part of immutable history and MAY be re-initiated later under the same instance-defining parameters.
 
 Such challenges remain part of immutable history and MAY be re-initiated later under the same instance-defining parameters.
 
@@ -1556,6 +1556,6 @@ This document introduces no independent authority and derives all legitimacy fro
 
 Any canonical state transformation that resolves disagreement, comparison, ranking, or representation MUST occur exclusively through a finalized challenge verdict.
 
-No parallel mechanism—administrative, automated, or exceptional—MAY produce equivalent effects outside this engine.
+No parallel mechanism - administrative, automated, or exceptional—MAY produce equivalent effects outside this engine.
 
 

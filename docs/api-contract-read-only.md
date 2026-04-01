@@ -3,10 +3,11 @@ doc_id: api_contract_read_only
 title: API Contract (Read Only)
 status: derived
 version: v0
-last_reviewed: 2026-02-11
+last_reviewed: 2026-04-01
 
 scope:
-  - Read-only implementation-facing API contract snapshot.
+  - Current public read-only runtime contract snapshot for the open-core package.
+  - Forward-looking read routes are included only when explicitly labeled as spec/future.
 
 authoritative_for:
   - Implementation reference only (must track authoritative specs).
@@ -38,7 +39,9 @@ keywords:
 
 ## 0. Purpose and Scope
 
-This document defines the authoritative, normative contract for the public read-only HTTP API exposed by conformant nodes for canonical data access.
+This document defines the current public read-only HTTP API contract for the open-core runtime's canonical data access surface.
+
+Endpoints explicitly marked as implemented below are the current open-core runtime routes exposed by `backend/bins/api-server/src/server/router.rs`. Any sections explicitly labeled as spec/future are informative only and are not part of the current open-core runtime contract or conformance surface.
 
 Canonical read/write policy reference: `protocol v5.md` (`canonical_read_write_access_policy`).
 
@@ -153,6 +156,7 @@ Responses use JSON objects with the following common schemas (fields are normati
 ```
 
 ### OverlayConnectionSummary
+Reserved for the spec/future overlay endpoints in section 4.11. It is not currently used by the open-core runtime router.
 ```json
 {
   "scope_kind": "string (enum: universal | tribe | personal)",
@@ -170,6 +174,7 @@ Responses use JSON objects with the following common schemas (fields are normati
 ```
 
 ### ScopedDisplayOverrideSummary
+Reserved for the spec/future overlay endpoints in section 4.11. It is not currently used by the open-core runtime router.
 ```json
 {
   "scope_kind": "string (enum: universal | tribe | personal)",
@@ -227,9 +232,31 @@ Cycle fields are advisory metadata only; snapshots remain keyed to block height.
 
 All strings are UTF-8; empty fields use null where applicable.
 
+### SnapshotCommitMetadata
+All numeric fields in this object are decimal strings.
+```json
+{
+  "block_height": "decimal string",
+  "snapshot_id": "hex string",
+  "snapshot_hash": "hex string",
+  "state_root_hash": "hex string",
+  "title_sentence_payload_root": "hex string",
+  "shared_map_commitment": "hex string",
+  "last_event_id": "UUIDv7 string",
+  "event_count": "decimal string",
+  "active_rulebook_set_hash": "hex string",
+  "created_event_id": "UUIDv7 string"
+}
+```
+
 ## 4. Endpoints
 
-Base path: `/api/v0`
+Current implemented router namespaces:
+
+- `/api/v0`
+- `/api/v1/canonical`
+
+Sections 4.0-4.10 describe endpoints currently implemented in the open-core runtime. Section 4.11 is spec/future only and is not implemented in the current open-core runtime.
 
 ### 4.0 GET /health
 
@@ -248,7 +275,7 @@ Notes:
 Returns metadata for the most recent available snapshot.
 
 Query Parameters:
-* `include_preview`: boolean (optional, default false) — if true, includes top 10 IdeaSummary by rank.
+Returns paginated top ideas by derived universal rank (default ascending; rank `1` first).
 
 Success Response (200 OK):
 ```json
@@ -347,67 +374,13 @@ Success Response (200 OK):
 }
 ```
 
-### 4.7 GET /overlays/relative-importance
-
-Returns scoped `relative_importance` overlay state for a declared overlay scope.
-
-Query Parameters:
-* `scope_kind`: `universal|tribe|personal` (required)
-* `anchor_id`: UUIDv7 string or rulebook-defined universal anchor constant (required)
-* `from_idea_id`: UUIDv7 string (optional)
-* `to_idea_id`: UUIDv7 string (optional)
-* `axis`: string (optional)
-* `timeframe`: string (optional)
-* `usage`: string (optional)
-* `limit`: decimal string (default 50, max 200)
-* `offset`: decimal string (default 0)
-
-Success Response (200 OK):
-```json
-{
-  "scope_key": { "scope_kind": "string", "anchor_id": "string" },
-  "items": "[OverlayConnectionSummary]",
-  "total": "decimal string (approximate)",
-  "offset": "decimal string",
-  "limit": "decimal string"
-}
-```
-
-### 4.8 GET /overlays/display-overrides
-
-Returns scoped display override state for a declared overlay scope.
-
-Query Parameters:
-* `scope_kind`: `universal|tribe|personal` (required)
-* `anchor_id`: UUIDv7 string or rulebook-defined universal anchor constant (required)
-* `target_kind`: `idea|rail` (optional)
-* `target_id`: UUIDv7 string (optional)
-* `display_slot_key`: string (optional)
-* `limit`: decimal string (default 50, max 200)
-* `offset`: decimal string (default 0)
-
-Success Response (200 OK):
-```json
-{
-  "scope_key": { "scope_kind": "string", "anchor_id": "string" },
-  "items": "[ScopedDisplayOverrideSummary]",
-  "total": "decimal string (approximate)",
-  "offset": "decimal string",
-  "limit": "decimal string"
-}
-```
-
-### 4.9 Future: rank history queries
-
-Nodes MAY expose rank history queries that return a series keyed by snapshot height (block height). If exposed, rank history responses MUST be deterministic for a declared basis and MUST include the snapshot height for each entry alongside derived rank values. This contract does not require specific endpoints or payload shapes in this version.
-
 ### 4.10 Stage-0 Extension Endpoints (implemented)
 
-The following read endpoints are implemented in Stage 0 as extension endpoints. They are canonical read views (derived from replayed canonical state), but are not part of the minimal core set in sections 4.1-4.8.
+The following read endpoints are implemented in the current open-core runtime as extension endpoints. They are canonical read views derived from replayed canonical state, but are outside the minimal core set in sections 4.1-4.6.
 
 Stability expectations for Stage 0:
-* Endpoint paths are stable within `/api/v0`.
-* Response JSON fields listed below are stable for Stage 0 clients.
+* Endpoint paths are stable within their current versioned namespace.
+* Response JSON fields listed below are stable for Stage 0 clients unless otherwise noted.
 * Semantics remain read-only and deterministic for a fixed snapshot basis.
 
 #### 4.10.1 GET /rail/{rail_id}
@@ -501,7 +474,260 @@ Success Response (200 OK):
 Errors:
 * 404 Not Found if identity is absent.
 
-### 4.11 Non-Canonical Sandbox APIs (out of scope for this contract)
+#### 4.10.5 GET /snapshots/commits
+
+Returns recent snapshot commit metadata records.
+
+Query Parameters:
+* `limit`: decimal string (default 50, max 200)
+
+Success Response (200 OK):
+```json
+{
+  "commits": "[SnapshotCommitMetadata]"
+}
+```
+
+#### 4.10.6 GET /snapshots/commits/{height}
+
+Path Parameter:
+* `height`: decimal string (block height)
+
+Success Response (200 OK):
+```json
+{
+  "commit": SnapshotCommitMetadata
+}
+```
+
+Errors:
+* 404 Not Found if height unavailable.
+
+#### 4.10.7 GET /coordinates
+
+Returns the current Stage 0 coordinate projection of the canonical idea map.
+
+Success Response (200 OK):
+```json
+{
+  "mode": "string",
+  "reference_id": "UUIDv7 string | null",
+  "coords": [
+    {
+      "id": "UUIDv7 string",
+      "x": "number",
+      "y": "number",
+      "title": "string",
+      "sentence": "string | null",
+      "idea_type": "string",
+      "derived_universal_rank": "decimal string | null",
+      "ri_in_count": "decimal string",
+      "ri_out_count": "decimal string"
+    }
+  ],
+  "meta": {
+    "spacing": "number",
+    "algo": "string",
+    "relaxed": "boolean"
+  }
+}
+```
+
+#### 4.10.8 GET /api/v1/canonical/cycles/current
+
+Returns current derived cycle status.
+
+Success Response (200 OK):
+```json
+{
+  "cycle": {
+    "cycle_index": "decimal string",
+    "h_start": "decimal string",
+    "current_height": "decimal string",
+    "w_target": "decimal string",
+    "observed_work": "decimal string",
+    "cycle_age_ge_dmin": "boolean",
+    "cycle_age_ge_dmax": "boolean",
+    "closure_predicate_satisfied": "boolean",
+    "last_cycle_close_height": "decimal string | null"
+  }
+}
+```
+
+#### 4.10.9 GET /api/v1/canonical/event-log
+
+Returns the current canonical event log view and its derived block/cycle bands.
+
+Success Response (200 OK):
+```json
+{
+  "events": [
+    {
+      "event_id": "UUIDv7 string",
+      "global_index": "decimal string",
+      "block_height": "decimal string",
+      "block_event_index": "decimal string",
+      "event_type": "string"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "string",
+      "block_height": "decimal string",
+      "start_global_index": "decimal string",
+      "end_global_index": "decimal string",
+      "label": "string"
+    }
+  ],
+  "cycles": [
+    {
+      "id": "string",
+      "cycle_index": "decimal string",
+      "start_global_index": "decimal string",
+      "end_global_index": "decimal string",
+      "label": "string",
+      "closure_event_id": "UUIDv7 string | null"
+    }
+  ]
+}
+```
+
+#### 4.10.10 GET /api/v1/canonical/tempo/status
+
+Returns current derived tempo status.
+
+Success Response (200 OK):
+```json
+{
+  "tempo": {
+    "cycle_age_ge_dmin": "boolean",
+    "cycle_age_ge_dmax": "boolean",
+    "constrained_mode": "boolean",
+    "record_only_mode": "boolean"
+  }
+}
+```
+
+#### 4.10.11 GET /api/v1/canonical/verification/{identity_id}
+
+Path Parameter:
+* `identity_id`: UUIDv7 string
+
+Success Response (200 OK):
+```json
+{
+  "verification": {
+    "identity_id": "UUIDv7 string",
+    "email_verified": "boolean",
+    "canonical_writer_level": "string",
+    "active_verifier": "boolean",
+    "last_updated_event_id": "UUIDv7 string | null",
+    "last_updated_block_height": "decimal string | null",
+    "last_updated_event_index": "decimal string | null"
+  }
+}
+```
+
+Errors:
+* 404 Not Found if the identity has no verification state.
+
+#### 4.10.12 GET /api/v1/canonical/challenges/{challenge_id}
+
+Path Parameter:
+* `challenge_id`: UUIDv7 string
+
+Success Response (200 OK):
+```json
+{
+  "challenge": {
+    "challenge_id": "UUIDv7 string",
+    "challenge_domain": "string",
+    "context_key": "string",
+    "axis": "string",
+    "timeframe": "string",
+    "scope": "string",
+    "target_left_idea_id": "UUIDv7 string",
+    "target_right_idea_id": "UUIDv7 string",
+    "reference_idea_id": "UUIDv7 string | null",
+    "framing_representation_ref": "string",
+    "created_by_identity_id": "UUIDv7 string",
+    "created_event_id": "UUIDv7 string",
+    "created_cycle_index": "decimal string",
+    "current_cycle_index": "decimal string",
+    "phase": "string",
+    "arguments": "[CanonicalChallengeArgumentSummary]",
+    "votes": "[CanonicalChallengeVoteSummary]",
+    "verdict": "CanonicalChallengeVerdictSummary | null"
+  }
+}
+```
+
+Errors:
+* 404 Not Found if the challenge is absent.
+
+### 4.11 Not part of current open-core runtime (spec / future)
+
+The following routes are part of the broader public API/spec surface but are not currently exposed by `backend/bins/api-server/src/server/router.rs` in the open-core runtime. They are informative/spec-only here and are not normative for current open-core conformance.
+
+#### 4.11.1 GET /overlays/relative-importance
+
+Returns scoped `relative_importance` overlay state for a declared overlay scope.
+
+Query Parameters:
+* `scope_kind`: `universal|tribe|personal` (required)
+* `anchor_id`: UUIDv7 string or rulebook-defined universal anchor constant (required)
+* `from_idea_id`: UUIDv7 string (optional)
+* `to_idea_id`: UUIDv7 string (optional)
+* `axis`: string (optional)
+* `timeframe`: string (optional)
+* `usage`: string (optional)
+* `limit`: decimal string (default 50, max 200)
+* `offset`: decimal string (default 0)
+
+Illustrative Response Shape:
+```json
+{
+  "scope_key": { "scope_kind": "string", "anchor_id": "string" },
+  "items": "[OverlayConnectionSummary]",
+  "total": "decimal string (approximate)",
+  "offset": "decimal string",
+  "limit": "decimal string"
+}
+```
+
+#### 4.11.2 GET /overlays/display-overrides
+
+Returns scoped display override state for a declared overlay scope.
+
+Query Parameters:
+* `scope_kind`: `universal|tribe|personal` (required)
+* `anchor_id`: UUIDv7 string or rulebook-defined universal anchor constant (required)
+* `target_kind`: `idea|rail` (optional)
+* `target_id`: UUIDv7 string (optional)
+* `display_slot_key`: string (optional)
+* `limit`: decimal string (default 50, max 200)
+* `offset`: decimal string (default 0)
+
+Illustrative Response Shape:
+```json
+{
+  "scope_key": { "scope_kind": "string", "anchor_id": "string" },
+  "items": "[ScopedDisplayOverrideSummary]",
+  "total": "decimal string (approximate)",
+  "offset": "decimal string",
+  "limit": "decimal string"
+}
+```
+
+#### 4.11.3 Future: rank history queries
+
+Nodes MAY expose rank history queries that return a series keyed by snapshot height (block height). If exposed in a future version, rank history responses MUST be deterministic for a declared basis and MUST include the snapshot height for each entry alongside derived rank values. This contract does not require specific endpoints or payload shapes in the current open-core runtime.
+
+Future overlay endpoint backward compatibility:
+* Implementations MAY support `GET /api/v0/overlays/importance` as a compatibility alias of `GET /api/v0/overlays/relative-importance` if the overlay endpoint family is introduced later.
+* If alias support is provided, response shape MUST be identical to the canonical endpoint.
+
+### 4.12 Non-Canonical Sandbox APIs (out of scope for this contract)
 
 Implementations MAY include authenticated, non-canonical sandbox APIs for accounts, private drafts, and AI map assistance. These APIs are outside the canonical event log: they MUST NOT create canonical events, MUST NOT modify canonical-state derivations, and MUST NOT affect public ranks or snapshots. They are private to the owning account and are not part of the deterministic public API surface defined above.
 
@@ -512,7 +738,7 @@ Examples of out-of-scope sandbox route families:
 
 AI helper behavior is advisory-only in the canonical universe: it may parse text, autocomplete fields, propose connections, or draft descriptions, but it MUST NOT write canonical events directly.
 
-### 4.12 Canonical Write Surfaces (out of scope for this read-only contract)
+### 4.13 Canonical Write Surfaces (out of scope for this read-only contract)
 
 Canonical write endpoints are intentionally out of scope for this document. Implementations MAY expose versioned canonical write APIs (for example under `/api/v1/canonical/*`) with authentication and canonical-writer eligibility checks.
 Normative clarification [anchor: canonical_write_activation_semantics_note]: when versioned canonical write surfaces are introduced, governance/rulebook changes are decided at cycle close and activate at deterministic cycle boundaries (`activation_cycle_index`) per Protocol v5 and Governance Specification.
@@ -526,24 +752,27 @@ See `protocol v5.md` (`canonical_read_write_access_policy`).
 
 ## 5. Versioning and Compatibility
 
-The API is versioned via base path `/api/v0`. This contract remains fixed until a canonical-breaking change requires v1.
+The current public read surface uses two versioned namespaces:
+
+- `/api/v0` for the main Stage 0 read API
+- `/api/v1/canonical` for additional canonical status/detail reads already exposed by the current runtime
+
+This contract remains fixed until a canonical-breaking change requires a new versioned surface.
 
 Future extensions MUST:
 * Preserve all existing endpoints and schemas.
 * Add new optional fields or endpoints without removing old ones.
 * Introduce new base paths only for incompatible changes.
 * Preserve legacy behavior of existing endpoints (`/snapshot/*`, `/ideas/top`, `/idea/{id}`, `/idea/{id}/neighborhood`, `/search/ideas`).
-* Preserve Stage-0 extension behavior for `/rail/{rail_id}`, `/idea/{idea_id}/rails`, `/connections/relative-importance`, and `/identity/{identity_id}` unless an explicit versioned change is introduced.
-
-Overlay endpoint backward compatibility:
-* Implementations SHOULD support `GET /api/v0/overlays/importance` as a compatibility alias of `GET /api/v0/overlays/relative-importance`.
-* If alias support is provided, response shape MUST be identical to the canonical endpoint.
+* Preserve current Stage-0 extension behavior for the implemented endpoints in section 4.10 unless an explicit versioned change is introduced.
 
 ## 6. Conformance Requirements
 
 Conformant servers MUST:
-* Implement all defined endpoints with identical schemas and determinism.
+* Implement the endpoints marked as implemented in sections 4.0-4.10 with identical schemas and determinism.
 * Serve responses only from verified snapshots (replay-validated `shared_map_commitment`).
+
+Sections explicitly labeled as spec/future are not required for current open-core runtime conformance.
 
 Conformant clients SHOULD:
 * Verify `X-Shared-Map-Commitment` against trusted sources.

@@ -55,6 +55,10 @@ These documents are part of the intended open-core architecture and are public i
 - `verification-spec.md`
 - `safety-spec.md`
 - `safety-rulebook-interface-mechanics-spec.md`
+- `privacy-and-high-risk-submission-spec.md`
+- `tribe-spec.md`
+- `roles-and-stewardship-spec.md`
+- `ai-boundaries-spec.md`
 
 Each of these documents carries an explicit status banner. `open-core-implementation-status.md` remains the authoritative current-state implementation reference.
 
@@ -138,6 +142,10 @@ When public documents conflict, resolve them in this order.
 14) `shared-map-and-payload-bundles-spec.md`
 15) `offline-and-mindseed-spec.md`
 16) `verification-spec.md`
+17) `privacy-and-high-risk-submission-spec.md`
+18) `tribe-spec.md`
+19) `roles-and-stewardship-spec.md`
+20) `ai-boundaries-spec.md`
 
 ---
 

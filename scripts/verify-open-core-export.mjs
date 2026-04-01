@@ -110,6 +110,9 @@ const resolveExportRoot = async (manifest) => {
   if (options.exportRoot) {
     return options.exportRoot;
   }
+  // Current behavior is intentionally dual-use:
+  // - if the repo root already carries EXPORT_INFO.txt, verify the repo tree itself
+  // - otherwise, verify the generated export tree at manifest.export_root
   if (await exists(path.join(repoRoot, "EXPORT_INFO.txt"))) {
     return repoRoot;
   }
@@ -240,6 +243,7 @@ const main = async () => {
   await verifyMustNotAppear(manifest, exportRoot, exportFiles);
 
   console.log("[verify-open-core-export] ok");
+  console.log("- mode: validates the resolved export root only; forbidden-path failures usually mean the target tree contains build/runtime artifacts that must not ship");
   console.log(`- export_root: ${exportRoot}`);
   console.log(`- files_scanned: ${exportFiles.length}`);
 };

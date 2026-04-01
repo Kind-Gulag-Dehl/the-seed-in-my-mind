@@ -26,11 +26,11 @@ conflicts:
   - none known
 
 change_rules:
-  - Any change here requires review of canonical-offline-mode.md and full-offline-canonical-mode.md.
+  - Any change here requires review of canonical-preservation-and-provenance-spine-spec.md and shared-map-and-payload-bundles-spec.md.
 
 reader_path:
   - prereq: verification-spec.md
-  - next: canonical-offline-mode.md
+  - next: canonical-preservation-and-provenance-spine-spec.md
 
 keywords:
   - offline
@@ -569,7 +569,7 @@ Offline operation MUST preserve these distinctions exactly.
 
 When offline personal-scope content is published into the canonical universe, clients MUST preserve canonical explainability requirements.
 
-In particular, when any personal-scope object is excluded or altered in default views, clients MUST be able to present “why am I seeing this?” diagnostics that distinguish:
+In particular, when any personal-scope object is excluded or altered in default views, clients MUST be able to present "why am I seeing this?" diagnostics that distinguish:
 - safety-based abstraction or redaction,
 - jurisdictional or regulatory visibility lenses,
 - derived exclusions (e.g., lifecycle_state exclusion such as rotted/burned, or taint-derived exclusions),
@@ -1078,7 +1078,7 @@ When visibility is gated or modified:
 
 - the existence of the event MUST remain visible,
 - relationships involving the event MUST remain visible,
-- explanatory metadata (e.g., “why am I seeing this?” or “why is this hidden?”) MUST be generated in accordance with protocol rules.
+- explanatory metadata (e.g., "why am I seeing this?" or "why is this hidden?") MUST be generated in accordance with protocol rules.
 
 Offline systems MUST NOT suppress or pre-empt these canonical visibility explanations.
 
@@ -1485,7 +1485,7 @@ This specification composes with and is subordinate to the following documents. 
   Defines POD and POINT issuance, deterministic issuance boundaries, routing constraints, eligibility exclusions (including effects of derived `lifecycle_state`), ethical quarantine, and audit requirements.
 
 - **Safety specification**  
-  Defines safety classifiers, abstraction rules, jurisdictional visibility lenses, emotional load handling, and required explanatory metadata (including “why am I seeing this?” requirements that apply during reintegration).
+  Defines safety classifiers, abstraction rules, jurisdictional visibility lenses, emotional load handling, and required explanatory metadata (including "why am I seeing this?" requirements that apply during reintegration).
 
 - **Identity specification**  
   Defines identity verification and continuity (including local identity vault / Mindseed handling), eligibility and authorship constraints, and challengeable identity claims and attestations.

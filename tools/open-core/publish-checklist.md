@@ -11,6 +11,11 @@ Expected outputs:
 - export metadata: `_export/open-core/EXPORT_INFO.txt`
 - release zip: `tools/open-core/dist/open-core-export.zip`
 
+Verification note:
+- `node scripts/verify-open-core-export.mjs --export-root _export/open-core` checks the generated export tree directly.
+- Running `node scripts/verify-open-core-export.mjs` from the repo root may instead validate the repo working tree if a root `EXPORT_INFO.txt` is present.
+- Failures about forbidden paths usually mean the checked tree contains local build/runtime artifacts that must not ship in the export.
+
 ## 2) Optional explicit rerun of the exported smoke path
 
 ```powershell

@@ -15,7 +15,7 @@ This specification defines the **Canonical Preservation & Provenance Spine** of 
 * survivable under partial failure, censorship, or isolation,
 * replayable locally without reliance on centralized services.
 
-The spine exists to preserve *what was said*, *when it was said*, *how it was deliberated*, and *why it mattered*, over long time horizons, while remaining fully compatible with the protocolâ€™s human-first authorship and deterministic replay invariants.
+The spine exists to preserve *what was said*, *when it was said*, *how it was deliberated*, and *why it mattered*, over long time horizons, while remaining fully compatible with the protocol's human-first authorship and deterministic replay invariants.
 
 ### 0.2 Scope [anchor: scope]
 
@@ -39,14 +39,14 @@ Those concerns are handled by other specifications and are referenced normativel
 
 ### 0.3 Framing and terminology [anchor: framing_and_terminology]
 
-This document deliberately avoids traditional â€œblockchainâ€ terminology that implies proposer selection, consensus authority, or semantic finality. The mechanisms defined here form a **meaning-preserving integrity spine**, not a consensus ledger.
+This document deliberately avoids traditional “blockchain” terminology that implies proposer selection, consensus authority, or semantic finality. The mechanisms defined here form a **meaning-preserving integrity spine**, not a consensus ledger.
 
 Throughout this document:
 
-* â€œCanonicalâ€ refers to data that is part of the authoritative event log or deterministically derived from it.
-* â€œDerivedâ€ refers to data that is computed from the canonical log according to protocol rules and may be stored for efficiency or legibility.
-* â€œIntegrityâ€ refers to the ability to detect tampering or inconsistency.
-* â€œAvailabilityâ€ refers to the ability to obtain payload bytes, not merely verify their existence.
+* “Canonical” refers to data that is part of the authoritative event log or deterministically derived from it.
+* “Derived” refers to data that is computed from the canonical log according to protocol rules and may be stored for efficiency or legibility.
+* “Integrity” refers to the ability to detect tampering or inconsistency.
+* “Availability” refers to the ability to obtain payload bytes, not merely verify their existence.
 
 ### 0.4 Explicit non-goals [anchor: explicit_non_goals]
 
@@ -55,7 +55,7 @@ This spine does **not**:
 * decide truth, importance, or correctness,
 * create authority through blocks, hashes, or anchoring,
 * elect leaders or order events by competition,
-* replace cycles as the systemâ€™s temporal boundary,
+* replace cycles as the system's temporal boundary,
 * function as a financial ledger or settlement chain,
 * require or assume external blockchains.
 
@@ -67,7 +67,7 @@ External anchoring and settlement chains may be referenced by this system, but t
 
 ### 1.1 Relationship to Protocol v5 [anchor: relationship_to_protocol_v5]
 
-Protocol v5 defines the systemâ€™s core invariants:
+Protocol v5 defines the system's core invariants:
 
 * a single ordered canonical event log,
 * human-first authorship of canonical events,
@@ -134,7 +134,7 @@ Offline and Mindseed operation rely on the spine for:
 * local replay without network access,
 * deterministic merging after isolation.
 
-This spine therefore defines the minimum structure necessary to carry the systemâ€™s history and meaning across disconnected environments.
+This spine therefore defines the minimum structure necessary to carry the system's history and meaning across disconnected environments.
 
 ### 1.6 Relationship to external settlement chains [anchor: relationship_to_external_settlement_chains]
 
@@ -158,7 +158,7 @@ This specification assumes the existence of the following canonical primitives d
 
 * **Canonical Event**: an immutable, signed record authored by a human identity.
 * **Event Ordering**: a total order over canonical events.
-* **Event Hash**: a cryptographic hash of an eventâ€™s canonical representation.
+* **Event Hash**: a cryptographic hash of an event's canonical representation.
 * **Cycle**: a governed temporal boundary used for recomputation and activation.
 * **Snapshot**: a deterministic checkpoint artifact keyed to a block height (per Snapshot Format v0).
 * **Derived State**: any state computed deterministically from the canonical log.
@@ -202,7 +202,7 @@ Derived artifacts MUST be computable by any conformant node and MUST NOT require
 
 All derivations defined in this specification MUST satisfy:
 
-* identical input canonical logs â†’ identical derived artifacts,
+* identical input canonical logs -> identical derived artifacts,
 * no dependence on wall-clock time,
 * no dependence on network topology,
 * no dependence on node identity or role.
@@ -238,8 +238,8 @@ Blocks are identified by their **block ordinal**, starting from block 0.
 
 The block ordinal is defined as:
 
-- block 0 contains events `[0 â€¦ N-1]`,
-- block 1 contains events `[N â€¦ 2N-1]`,
+- block 0 contains events `[0 ⬦ N-1]`,
+- block 1 contains events `[N ⬦ 2N-1]`,
 - and so on.
 
 The block ordinal is purely positional. It does not imply time, authority, importance, semantic finality, or prefix-certificate authority.
@@ -253,7 +253,7 @@ Each block has a derived block header containing:
 - a cryptographic commitment to the ordered set of event hashes in the block,
 - the inclusive range of event indices covered by the block.
 
-The commitment to the blockâ€™s events MAY be implemented as:
+The commitment to the block's events MAY be implemented as:
 - a Merkle root over the ordered event hashes, or
 - an equivalent rolling or tree-based commitment defined canonically.
 
@@ -281,7 +281,7 @@ Block Merkle hashing MUST use a distinct domain separation tag defined in the Ca
 
 ### 3.5 Hash chaining and integrity guarantees [anchor: hash_chaining_and_integrity_guarantees]
 
-Block headers are hash-chained by including the previous blockâ€™s header hash in the current block header.
+Block headers are hash-chained by including the previous block's header hash in the current block header.
 
 This hash chain provides:
 - tamper evidence for the ordering and contents of the event log,
@@ -327,7 +327,7 @@ A block:
 
 Blocks exist solely to improve integrity verification, transport efficiency, and reference convenience.
 
-Any interpretation of a blockâ€™s contents or significance MUST occur through explicit truth claims and explanation layers, not through the block itself.
+Any interpretation of a block's contents or significance MUST occur through explicit truth claims and explanation layers, not through the block itself.
 
 
 ## 4. Text payload immutability and content addressing [anchor: 4_text_payload_immutability_and_content_addressing]
@@ -446,7 +446,7 @@ The multi-tier model ensures that:
 - offline bundles can balance size and informational value,
 - historical understanding degrades gracefully rather than catastrophically.
 
-This model directly supports the systemâ€™s goal of preserving meaning across time, scale, and resource constraints.
+This model directly supports the system's goal of preserving meaning across time, scale, and resource constraints.
 
 ## 6. Payload availability and replication model [anchor: 6_payload_availability_and_replication_model]
 
@@ -454,8 +454,8 @@ This model directly supports the systemâ€™s goal of preserving meaning acro
 
 The spine explicitly separates **integrity** from **availability**.
 
-- Integrity answers the question: â€œCan I be sure this text is exactly what was written?â€
-- Availability answers the question: â€œCan I actually obtain the text bytes?â€
+- Integrity answers the question: "Can I be sure this text is exactly what was written?"
+- Availability answers the question: ?Can I actually obtain the text bytes?
 
 Integrity is guaranteed by:
 - canonical events,
@@ -475,7 +475,7 @@ Payload packs exist to:
 - provide bounded, named units of replication,
 - allow nodes to declare what they store,
 - enable offline transport and reseeding,
-- make â€œwhat should be widely preservedâ€ objective and auditable.
+- make “what should be widely preserved” objective and auditable.
 
 ### 6.3 Pack dimensions [anchor: pack_dimensions]
 
@@ -488,7 +488,7 @@ Every payload pack is defined along two orthogonal dimensions:
 - top-ranked ideas by universal importance in the living map,
 - ideas added or modified within a specific cycle range.
 
-**Depth** â€” which description tiers are included:
+**Depth** - which description tiers are included:
 - sentence only,
 - sentence + paragraph,
 - all length tiers at a given complexity,
@@ -510,7 +510,7 @@ Pack categories affect distribution and storage only. They MUST NOT affect canon
 The standard pack categories are:
 
 - **Core Library Pack**
-  Contains the most universally important ideas across all history, with deep description tiers. This pack represents the minimum â€œcivilizational memoryâ€ set the system aims to preserve widely.
+  Contains the most universally important ideas across all history, with deep description tiers. This pack represents the minimum “civilizational memory” set the system aims to preserve widely.
 
 - **Living Map Pack**
   Contains all ideas whose lifecycle_state is alive, typically with shallow description tiers. This pack supports everyday interaction and current relevance.
@@ -645,7 +645,7 @@ This allows the system to survive fragmentation, censorship, or temporary captur
 
 Cryptographic integrity alone does not guarantee human understanding or trust.
 
-The system therefore supports a **human witness and provenance layer** that records social observation of mechanical processes. This layer makes the systemâ€™s operation legible and contestable by people, not just by software.
+The system therefore supports a **human witness and provenance layer** that records social observation of mechanical processes. This layer makes the system's operation legible and contestable by people, not just by software.
 
 ### 8.2 Blocks and cycles as conceptual objects [anchor: blocks_and_cycles_as_conceptual_objects]
 
@@ -731,7 +731,7 @@ These chains allow observers to:
 - distinguish mechanical fact from interpretation,
 - build trust through transparent observation rather than blind faith.
 
-This layer fulfills the systemâ€™s goal of preserving not just history, but **the shared human understanding of that history**.
+This layer fulfills the system's goal of preserving not just history, but **the shared human understanding of that history**.
 
 
 ## 9. Explanation, prediction, and verification chains [anchor: 9_explanation_prediction_and_verification_chains]
@@ -921,7 +921,7 @@ Such claims are handled through:
 - evidence comparison,
 - certainty adjustment.
 
-No witness claim can alter canonical state, so malicious witnessing cannot corrupt the systemâ€™s foundation.
+No witness claim can alter canonical state, so malicious witnessing cannot corrupt the system's foundation.
 
 ### 11.3 Storage loss and recovery [anchor: storage_loss_and_recovery]
 
@@ -1009,7 +1009,7 @@ If an implementation supports payload packs, it MUST:
 
 - compute pack membership deterministically from the canonical log and defined pack rules,
 - compute pack commitments exactly as specified,
-- verify that a received packâ€™s contents match its declared commitment,
+- verify that a received pack's contents match its declared commitment,
 - expose verification failures clearly.
 
 An implementation MUST NOT:
@@ -1067,13 +1067,13 @@ Implementations MAY support additional pack profiles, anchoring mechanisms, or s
 
 This specification depends on and MUST be interpreted consistently with the following documents:
 
-- **Protocol v5** â€” defines canonical authority, cycles, and deterministic replay.
-- **Deterministic Replay & Merge Specification** â€” defines how canonical logs are replayed and merged.
-- **Node & Conformance Specification** â€” defines baseline node behavior and network expectations.
-- **Offline & Mindseed Specification** â€” defines offline operation and merge semantics.
-- **Token Specification** â€” defines economic effects that may depend on derived state.
-- **Tribe Specification** â€” defines scoped interaction without altering canonical preservation.
-- **Safety and Safety Rulebook Specifications** â€” define visibility and redaction rules that may affect presentation but not integrity.
+- **Protocol v5** - defines canonical authority, cycles, and deterministic replay.
+- **Deterministic Replay & Merge Specification** - defines how canonical logs are replayed and merged.
+- **Node & Conformance Specification** - defines baseline node behavior and network expectations.
+- **Offline & Mindseed Specification** - defines offline operation and merge semantics.
+- **Token Specification** - defines economic effects that may depend on derived state.
+- **Tribe Specification** - defines scoped interaction without altering canonical preservation.
+- **Safety and Safety Rulebook Specifications** - define visibility and redaction rules that may affect presentation but not integrity.
 
 Where conflicts appear, Protocol v5 and Deterministic Replay rules take precedence.
 
@@ -1264,7 +1264,7 @@ It makes it **honest, inspectable, and preservable**, which is sufficient for lo
 
 
 
-## Appendix A â€” Deterministic Commitments, Pack Profiles, and Bundle Manifests [anchor: appendix_a_deterministic_commitments_pack_profiles_and_bundle_manifests]
+## Appendix A - Deterministic Commitments, Pack Profiles, and Bundle Manifests [anchor: appendix_a_deterministic_commitments_pack_profiles_and_bundle_manifests]
 
 ### A0. Appendix purpose and status [anchor: a0_appendix_purpose_and_status]
 
@@ -1474,7 +1474,7 @@ Cadence:
 
 All sorting operations MUST be stable.
 
-If two payloads are otherwise indistinguishable under a packâ€™s ordering rules, the canonical payload hash MUST be used as the final tie-breaker.
+If two payloads are otherwise indistinguishable under a pack's ordering rules, the canonical payload hash MUST be used as the final tie-breaker.
 
 Pack membership MUST be identical for all conformant nodes given the same canonical state at the snapshot block height.
 
@@ -1494,7 +1494,7 @@ A pack commitment object MUST include the following fields:
 - payload_merkle_root (32 bytes),
 - commitment_version (uint32).
 
-All fields MUST be encoded using canonical encoding rules defined in Â§A1.3.
+All fields MUST be encoded using canonical encoding rules defined in §A1.3.
 
 #### A6.2 Recording location [anchor: a6_2_recording_location]
 
@@ -1510,7 +1510,7 @@ To verify a received pack, a node MUST:
 
 1. obtain the corresponding pack commitment,
 2. compute payload hashes for all received payloads,
-3. construct the Merkle tree using the rules in Â§A3,
+3. construct the Merkle tree using the rules in §A3,
 4. verify that the resulting root matches payload_merkle_root,
 5. verify that payload_count matches the number of leaves.
 

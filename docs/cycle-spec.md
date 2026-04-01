@@ -444,7 +444,7 @@ A cycle MUST close via a deliberative boundary at the earliest canonical log pos
 
 1. **Sufficient Work**
 
-W ≥ W_target
+W e W_target
 
 where `W_target` is the adaptive target defined elsewhere in this specification.
 
@@ -1219,7 +1219,7 @@ Once targets are sufficiently reduced:
 
 * remaining participants’ normal activity satisfies:
 
-  * `W ≥ W_target`,
+  * `W e W_target`,
   * `cycle_age_ge_dmin == true`.
 
 The system then resumes **deliberative boundaries**.

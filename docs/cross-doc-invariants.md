@@ -20,7 +20,7 @@ For each invariant, record:
 
 ### 1.1 human-first canonical authorship
 - statement: only verified humans may author canonical events. AI may analyze and propose, but cannot vote, govern, or directly create canonical events without explicit human adoption.
-- canonical home: `protocol v5.md` (the broader AI/Ent role material exists outside this public repo)
+- canonical home: `protocol v5.md`, `ai-boundaries-spec.md`
 - scope: all documents
 - enforcement: node validation + conformance tests
 
@@ -160,7 +160,7 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 - enforcement: rulebook constraints; governance audit
 
 ### 6.2 safety focuses on payload specificity
-- statement: safety redacts/gates harmful specificity, not the existence of ideas. History is preserved; exposure may be gated with transparent “why am I seeing this?” explanations.
+- statement: safety redacts/gates harmful specificity, not the existence of ideas. History is preserved; exposure may be gated with transparent "why am I seeing this?" explanations.
 - canonical home: `safety-spec.md`, `safety-rulebook-interface-mechanics-spec.md`
 - scope: UI docs and any safety-adjacent specs
 - enforcement: rulebook mechanics and UI requirements
@@ -177,7 +177,7 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 
 ### 7.1 universal canonical substrate
 - statement: all published non-draft ideas and all published representation candidates belong to one universal canonical substrate. No separate tribe-only or personal-only canonical idea plane is permitted.
-- canonical home: `protocol v5.md` (`canonical_substrate_and_scoped_overlays`) (broader tribe overlay detail is not included in this public repo)
+- canonical home: `protocol v5.md` (`canonical_substrate_and_scoped_overlays`), `tribe-spec.md`
 - scope: protocol, tribe, governance, replay/merge, api docs
 - enforcement: event/schema validation + replay conformance checks
 
@@ -189,7 +189,7 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 
 ### 7.3 no mirroring-as-copy
 - statement: mirroring-as-copy semantics (copying tribe-local ideas into separate public canonical objects) are forbidden. Cross-scope publication semantics must be represented by canonical substrate + overlays, not object duplication.
-- canonical home: `protocol v5.md` (`canonical_substrate_and_scoped_overlays`) (broader tribe overlay detail is not included in this public repo)
+- canonical home: `protocol v5.md` (`canonical_substrate_and_scoped_overlays`), `tribe-spec.md`
 - scope: protocol, tribe, replay/merge, token, api docs
 - enforcement: invariant validation + deprecation checks in conformance suite
 

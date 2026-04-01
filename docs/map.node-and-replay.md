@@ -85,7 +85,7 @@ Purpose: quick navigation of node conformance and deterministic replay sections.
 | n/a | 8. Safety Rules Enforcement | 8_safety_rules_enforcement | See node-and-conformance-spec.md (8_safety_rules_enforcement). Covers 8. Safety Rules Enforcement. |
 | 8.1 | Payload Classes | payload_classes | See node-and-conformance-spec.md §8.1 (payload_classes). Covers Payload Classes. |
 | 8.2 | Blocked Submission Events | blocked_submission_events | See node-and-conformance-spec.md §8.2 (blocked_submission_events). Covers Blocked Submission Events. |
-| 8.3 | â€œWhy Am I Seeing This?â€ Support | why_am_i_seeing_this_support | See node-and-conformance-spec.md §8.3 (why_am_i_seeing_this_support). Covers â€œWhy Am I Seeing This?â€ Support. |
+| 8.3 | "Why Am I Seeing This?" Support | why_am_i_seeing_this_support | See node-and-conformance-spec.md Section 8.3 (why_am_i_seeing_this_support). Covers "Why Am I Seeing This?" Support. |
 | 8.4 | Hard Floor Enforcement | hard_floor_enforcement | See node-and-conformance-spec.md §8.4 (hard_floor_enforcement). Covers Hard Floor Enforcement. |
 | n/a | **8A. Custody Manifest Canonical Encoding and Hashing** | 8a_custody_manifest_canonical_encoding_and_hashing | See node-and-conformance-spec.md (8a_custody_manifest_canonical_encoding_and_hashing). Covers **8A. Custody Manifest Canonical Encoding and Hashing**. |
 | n/a | **8A.1 Purpose** | 8a_1_purpose | See node-and-conformance-spec.md (8a_1_purpose). Covers **8A.1 Purpose**. |
@@ -163,7 +163,7 @@ Purpose: quick navigation of node conformance and deterministic replay sections.
 | n/a | 4. Event validation pipeline (deterministic) | 4_event_validation_pipeline_deterministic | See deterministic-replay-and-merge-spec.md (4_event_validation_pipeline_deterministic). Covers 4. Event validation pipeline (deterministic). |
 | 4.1 | Envelope validation | envelope_validation | See deterministic-replay-and-merge-spec.md §4.1 (envelope_validation). Covers Envelope validation. |
 | 4.2 | Payload validation | payload_validation | See deterministic-replay-and-merge-spec.md §4.2 (payload_validation). Covers Payload validation. |
-| 4.3 | Invariant validation (Protocol v5 Â§0) | invariant_validation_protocol_v5_0 | See deterministic-replay-and-merge-spec.md §4.3 (invariant_validation_protocol_v5_0). Covers Invariant validation (Protocol v5 Â§0). |
+| 4.3 | Invariant validation (Protocol v5 Section 0) | invariant_validation_protocol_v5_0 | See deterministic-replay-and-merge-spec.md §4.3 (invariant_validation_protocol_v5_0). Covers Invariant validation (Protocol v5 Section 0). |
 | 4.4 | Rulebook validation | rulebook_validation | See deterministic-replay-and-merge-spec.md §4.4 (rulebook_validation). Covers Rulebook validation. |
 | 4.5 | Deterministic failure semantics | deterministic_failure_semantics | See deterministic-replay-and-merge-spec.md §4.5 (deterministic_failure_semantics). Covers Deterministic failure semantics. |
 | n/a | 5. Event application semantics (state transition rules) | 5_event_application_semantics_state_transition_rules | See deterministic-replay-and-merge-spec.md (5_event_application_semantics_state_transition_rules). Covers 5. Event application semantics (state transition rules). |
