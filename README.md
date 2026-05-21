@@ -16,6 +16,12 @@ This repo also publishes some broader protocol/spec documents for architectural 
 
 The private/product layer is the richer game/product experience built on top of the same canonical substrate. That code is intentionally outside this public repo.
 
+## Repository authority model
+
+This repository is the source of truth for open-core code, open-core docs/specs, public reference tooling, public reviewer/demo materials, and the open-core export manifest. Private companion repositories may consume this repo, mirror selected open-core materials, or package generated exports for integration checks, but they must not automatically overwrite newer public/open-core work.
+
+Private/product/game work remains authoritative in private companion repositories. Changes should flow across the repo boundary deliberately: public/open-core changes originate here; proprietary integration changes originate outside this repo.
+
 ## What reviewers can verify today
 
 Today's open core is not a finished decentralized network. It is a working Stage 0 substrate with a reviewer-ready evaluation path.
@@ -156,7 +162,28 @@ That command:
 - writes `EXPORT_INFO.txt`,
 - produces `tools/open-core/dist/open-core-export.zip`.
 
-`npm run verify:open-core-export` validates whichever tree `scripts/verify-open-core-export.mjs` resolves as the export root. In this repo's current setup, if `EXPORT_INFO.txt` exists at the repo root, the command checks the repo working tree itself for forbidden export content such as `dist/`, `node_modules/`, local runtime state, or other non-shippable files. To validate the generated export tree directly, run the verifier against `_export/open-core` after extraction.
+## Verification commands
+
+Use the root commands for developer checks:
+
+```powershell
+npm run lint
+npm run test
+npm run build
+npm run verify
+```
+
+`npm run verify` is the public open-core working-tree check. It runs boundary checks, canonical DTO drift checks, reference frontend checks, and backend verification.
+
+Export-package checks are separate:
+
+```powershell
+npm run verify:generated-export
+npm run verify:open-core-export
+npm run verify:export-working-tree
+```
+
+`npm run verify:generated-export` validates `_export/open-core` after `npm run extract:open-core`; `npm run verify:open-core-export` is a compatibility alias for that generated-export check. `npm run verify:export-working-tree` intentionally treats the current repo tree as if it were a shippable export package; it should fail if local generated artifacts such as `node_modules`, `dist`, `backend/var`, or `tsconfig.tsbuildinfo` are present. This keeps local working-tree verification distinct from generated export cleanliness.
 
 ## Current status
 

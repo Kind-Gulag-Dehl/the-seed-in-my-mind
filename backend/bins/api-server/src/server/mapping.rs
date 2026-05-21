@@ -1,7 +1,6 @@
 use api_types_canonical::{
     AuthorInfo, CanonicalRailDetail, CanonicalRailRepresentations, CanonicalRailSummary,
-    ConnectionSummary, IdeaDetail, IdeaSummary, RailItem, SnapshotCommitMetadata,
-    SnapshotMetadata,
+    ConnectionSummary, IdeaDetail, IdeaSummary, RailItem, SnapshotCommitMetadata, SnapshotMetadata,
 };
 #[cfg(feature = "full")]
 use api_types_private::{

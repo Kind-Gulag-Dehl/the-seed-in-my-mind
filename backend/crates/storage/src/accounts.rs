@@ -293,7 +293,7 @@ impl Storage {
 
         let organizer_titles = [
             format!("{}'s Mind Garden", normalized_display_name),
-            format!("{}'s Backyard of Ideas", normalized_display_name),
+            format!("{}'s Backyard of Relationships", normalized_display_name),
             format!("{}'s Self Tree", normalized_display_name),
             format!("{}'s Anthill", normalized_display_name),
             format!("{}'s Saved Ideas", normalized_display_name),

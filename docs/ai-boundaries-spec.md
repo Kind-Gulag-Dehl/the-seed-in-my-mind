@@ -42,6 +42,8 @@ keywords:
 
 > **Status note:** This document is part of the intended open-core architecture. It is published in this public repo for transparency and architectural understanding. Current implementation status is limited, partial, or not yet implemented. [open-core-implementation-status.md](open-core-implementation-status.md) remains the authoritative current-state implementation reference.
 
+> **Repository authority note:** In the active two-repo model, this public file is the open-core source of truth for AI boundary rules. Private Ent/product/narrative extensions are subordinate to this document and MUST NOT redefine public AI authority, authorship, governance, token, sandbox, or adoption constraints.
+
 # AI Boundaries Specification
 
 ## 0. Purpose and scope

@@ -574,7 +574,7 @@ $titleSql = SqlQuote $OwnerDisplayTitle
 $usernameSql = SqlQuote $OwnerUsername
 $organizerTitles = @(
     "$OwnerDisplayTitle's Mind Garden",
-    "$OwnerDisplayTitle's Backyard of Ideas",
+    "$OwnerDisplayTitle's Backyard of Relationships",
     "$OwnerDisplayTitle's Self Tree",
     "$OwnerDisplayTitle's Anthill",
     "$OwnerDisplayTitle's Saved Ideas"

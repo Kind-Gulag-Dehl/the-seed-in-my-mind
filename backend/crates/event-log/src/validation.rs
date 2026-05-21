@@ -82,9 +82,7 @@ pub fn validate_event(event: &Event) -> Result<(), ValidationError> {
         }
         "vote_session_open" => validate_vote_session_open(payload, event.speaker_identity_id),
         "vote_cast" => validate_vote_cast(payload, event.speaker_identity_id),
-        "blocked_submission" => {
-            validate_blocked_submission(payload, event.speaker_identity_id)
-        }
+        "blocked_submission" => validate_blocked_submission(payload, event.speaker_identity_id),
         "canonical_writer_grant" => {
             validate_canonical_writer_grant(payload, event.speaker_identity_id)
         }
@@ -665,7 +663,10 @@ fn validate_snapshot_commit(
     if block_height % interval != 0 {
         return Err(ValidationError::new(
             "invalid_field",
-            format!("block_height must align with snapshot interval {}", interval),
+            format!(
+                "block_height must align with snapshot interval {}",
+                interval
+            ),
         ));
     }
 
@@ -674,10 +675,7 @@ fn validate_snapshot_commit(
     let state_root_hash = require_string(payload, "state_root_hash")?;
     validate_hex_64(state_root_hash, "state_root_hash")?;
     let title_sentence_payload_root = require_string(payload, "title_sentence_payload_root")?;
-    validate_hex_64(
-        title_sentence_payload_root,
-        "title_sentence_payload_root",
-    )?;
+    validate_hex_64(title_sentence_payload_root, "title_sentence_payload_root")?;
     let shared_map_commitment = require_string(payload, "shared_map_commitment")?;
     validate_hex_64(shared_map_commitment, "shared_map_commitment")?;
     let active_rulebook_set_hash = require_string(payload, "active_rulebook_set_hash")?;

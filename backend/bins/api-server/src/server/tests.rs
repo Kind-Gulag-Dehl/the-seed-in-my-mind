@@ -1,3 +1,7 @@
+use argon2::{
+    password_hash::{PasswordHasher, SaltString},
+    Argon2,
+};
 use axum::{
     body::{to_bytes, Body},
     extract::DefaultBodyLimit,
@@ -6,10 +10,6 @@ use axum::{
     routing::post,
     Json, Router,
 };
-use argon2::{
-    password_hash::{PasswordHasher, SaltString},
-    Argon2,
-};
 use common::security_limits::{API_AUTH_BODY_LIMIT_BYTES, IDEA_TITLE_MAX_CHARS};
 use rand_core::OsRng;
 use std::collections::BTreeSet;
@@ -17,11 +17,11 @@ use storage::{ensure_session_hmac_key_ready, ConnectionRow, Storage};
 use tower::ServiceExt;
 use uuid::Uuid;
 
-use crate::server::router::build_app;
 use crate::server::helpers::{
     ensure_pathway_items, is_reference_scoped_connection, parse_private_vine_items,
     parse_relative_importance_direction, scoped_neighbor_from_reference, validate_max_len,
 };
+use crate::server::router::build_app;
 use crate::server::types::{
     AppState, PrivateIdeaPayload, PrivateVineCreatePayload, PrivateVineItemPayload,
     PrivateVineUpdatePayload, RelativeImportanceDirection, VineTypeInput,
@@ -107,7 +107,10 @@ pub(super) fn status_is_unauthorized_or_forbidden(status: StatusCode) -> bool {
 
 pub(super) fn assert_error_code(snapshot: &ResponseSnapshot, expected: &str) {
     assert_eq!(
-        snapshot.json.get("error_code").and_then(|value| value.as_str()),
+        snapshot
+            .json
+            .get("error_code")
+            .and_then(|value| value.as_str()),
         Some(expected),
         "unexpected error_code; status={} preview={}",
         snapshot.status,
@@ -116,7 +119,9 @@ pub(super) fn assert_error_code(snapshot: &ResponseSnapshot, expected: &str) {
 }
 
 pub(super) async fn register_and_get_token() -> Option<String> {
-    register_and_get_session().await.map(|session| session.token)
+    register_and_get_session()
+        .await
+        .map(|session| session.token)
 }
 
 pub(super) async fn register_and_get_session() -> Option<AuthSession> {
@@ -598,11 +603,7 @@ async fn coordinates_endpoint_is_deterministic_for_global_and_reference_modes() 
             }
         };
         connections.retain(|row| {
-            is_reference_scoped_connection(
-                idea_row.idea_id,
-                row,
-                RelativeImportanceDirection::Both,
-            )
+            is_reference_scoped_connection(idea_row.idea_id, row, RelativeImportanceDirection::Both)
         });
 
         let mut expected_ids = BTreeSet::from([idea_row.idea_id.to_string()]);
@@ -650,7 +651,13 @@ async fn coordinates_endpoint_is_deterministic_for_global_and_reference_modes() 
 
     assert_eq!(global_first.status, StatusCode::OK);
     assert_eq!(global_first.json, global_second.json);
-    assert_eq!(global_first.json.get("mode").and_then(|value| value.as_str()), Some("global"));
+    assert_eq!(
+        global_first
+            .json
+            .get("mode")
+            .and_then(|value| value.as_str()),
+        Some("global")
+    );
     assert!(
         global_first
             .json
@@ -681,7 +688,10 @@ async fn coordinates_endpoint_is_deterministic_for_global_and_reference_modes() 
     assert_eq!(reference_first.status, StatusCode::OK);
     assert_eq!(reference_first.json, reference_second.json);
     assert_eq!(
-        reference_first.json.get("mode").and_then(|value| value.as_str()),
+        reference_first
+            .json
+            .get("mode")
+            .and_then(|value| value.as_str()),
         Some("reference")
     );
     assert_eq!(

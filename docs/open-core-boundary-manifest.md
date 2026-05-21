@@ -19,6 +19,8 @@ depends_on:
 
 This manifest summarizes the concrete public boundary currently enforced by local checks, export verification, and CI.
 
+Authority note: this public open-core repo is the source of truth for the public boundary checker, public export manifest, reference viewer boundary, and reviewer/demo verification flow. The private repo may run these checks against its own integration tree, but private copies or generated exports are not authoritative over this repo.
+
 ## 1. Public open-core surfaces
 
 The public package intentionally includes:
@@ -86,5 +88,8 @@ These rules are enforced by:
 
 - local boundary checks: `npm run verify:boundaries`
 - canonical DTO drift guard: `npm run verify:canonical-dto`
-- public export cleanliness: `npm run verify:open-core-export`
-- full export + packaged artifact verification: `npm run extract:open-core`
+- public working-tree verification: `npm run verify`
+- generated export cleanliness: `npm run verify:generated-export`
+- compatibility alias for generated export cleanliness: `npm run verify:open-core-export`
+- working-tree-as-export hygiene check: `npm run verify:export-working-tree`
+- full export + packaged artifact generation: `npm run extract:open-core`

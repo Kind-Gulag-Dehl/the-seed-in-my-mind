@@ -161,6 +161,7 @@ All above remain non-canonical.
 - backend is structurally close to separable open core.
 - frontend reference surfaces have some coupling risk with builder/private concerns.
 - ordering/domain utilities include both canonical and private overlay concerns in places.
+- the active repository model is now two-repo: this public open-core repo is authoritative for open-core materials, while private companion repositories are authoritative for private/product materials and integration glue.
 
 ### 4.2 target layout (recommended) [anchor: target_layout_recommended]
 `option a (single repo, folder-separated)`:
@@ -172,10 +173,12 @@ All above remain non-canonical.
 - `proprietary/hosted/`
 
 `option b (two repos)`:
-- `seed-open-core/` (public): backend + docs + reference viewer
-- `seed-product/` (private): product frontend/game + assets + hosted glue
+- Public open-core repo: open-core backend, open-core docs/specs, reference viewer, public verification scripts, public reviewer/demo materials, and open-core export manifest.
+- Private companion repositories: proprietary/product frontend, game and private overlay code, hosted/private integration, private docs, and glue that consumes or mirrors open-core contracts.
 
 Both options use identical boundary rules.
+
+In the active two-repo model, the public repo is authoritative for open-core changes. The private repo may mirror or consume those materials, but private copies must be labeled as mirrors/integration references when they duplicate public open-core docs or tooling.
 
 ## 5. dependency rules (normative) [anchor: dependency_rules_normative]
 

@@ -9,9 +9,14 @@
     "dev:backend": "powershell -ExecutionPolicy Bypass -File backend/scripts/run-server.ps1",
     "dev:check": "powershell -ExecutionPolicy Bypass -Command \"& backend/scripts/wait-health.ps1; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; Write-Host '[wait-health] monitoring until Ctrl+C'; while ($true) { Start-Sleep -Seconds 3600 }\"",
     "dev:frontend": "powershell -ExecutionPolicy Bypass -Command \"& backend/scripts/wait-health.ps1; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; npm --prefix frontend/open-core-reference run dev\"",
+    "lint": "npm run verify:boundaries",
+    "test": "npm --prefix frontend/open-core-reference test",
+    "build": "npm --prefix frontend/open-core-reference run build",
     "verify:boundaries": "node ./scripts/check-open-core-boundaries.mjs --frontend-dir frontend/open-core-reference",
     "verify:canonical-dto": "node ./tools/open-core/verify-canonical-dto.mjs",
-    "verify:open-core-export": "node ./scripts/verify-open-core-export.mjs",
+    "verify:open-core-export": "npm run verify:generated-export",
+    "verify:generated-export": "node ./scripts/verify-open-core-export.mjs --export-root _export/open-core",
+    "verify:export-working-tree": "node ./scripts/verify-open-core-export.mjs --export-root .",
     "extract:open-core": "node ./tools/open-core/extract-open-core.mjs --zip",
     "extract:open-core:dir": "node ./tools/open-core/extract-open-core.mjs",
     "extract:open-core:zip": "node ./tools/open-core/extract-open-core.mjs --zip",
@@ -19,6 +24,8 @@
     "review:demo": "powershell -ExecutionPolicy Bypass -File scripts/open-core-demo.ps1",
     "verify:frontend": "npm --prefix frontend/open-core-reference run lint:boundaries && npm --prefix frontend/open-core-reference test && npm --prefix frontend/open-core-reference run build",
     "verify:backend": "powershell -ExecutionPolicy Bypass -File backend/scripts/verify-backend.ps1",
-    "verify": "npm run verify:frontend && npm run verify:backend"
+    "verify:public": "npm run verify:boundaries && npm run verify:canonical-dto && npm run verify:frontend && npm run verify:backend",
+    "verify:all": "npm run verify:public && npm run verify:generated-export",
+    "verify": "npm run verify:public"
   }
 }

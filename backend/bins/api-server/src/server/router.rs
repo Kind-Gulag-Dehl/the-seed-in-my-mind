@@ -14,8 +14,8 @@ use crate::server::errors::normalize_error_response;
 #[cfg(feature = "full")]
 use crate::server::handlers::canonical::{
     canonical_attach_importance_argument, canonical_blocked_submission,
-    canonical_cast_challenge_vote, canonical_create_connection, canonical_create_identity,
-    canonical_create_idea, canonical_create_importance_challenge, canonical_pull_vote_session,
+    canonical_cast_challenge_vote, canonical_create_connection, canonical_create_idea,
+    canonical_create_identity, canonical_create_importance_challenge, canonical_pull_vote_session,
     canonical_verifier_grant_writer, canonical_verifier_revoke_writer,
 };
 use crate::server::handlers::canonical::{
@@ -151,8 +151,7 @@ pub(crate) fn build_app(state: AppState) -> Router {
             .route("/me", get(auth_me))
             .layer(DefaultBodyLimit::max(API_AUTH_BODY_LIMIT_BYTES));
 
-        app
-            .nest("/api/v0/auth", auth_routes)
+        app.nest("/api/v0/auth", auth_routes)
             .nest("/api/v0/private", private_routes)
             .nest("/api/v0/me", me_routes)
             .nest("/api/v1/canonical", canonical_write_routes)

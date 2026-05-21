@@ -1,15 +1,14 @@
 #![cfg_attr(not(feature = "full"), allow(dead_code, unused_imports))]
 
 use api_types_canonical::{
-    CanonicalBlockedSubmissionResponse,
-    CanonicalChallengeArgumentAttachResponse, CanonicalChallengeArgumentSummary,
-    CanonicalChallengeCreateResponse, CanonicalChallengeDetail, CanonicalChallengeDetailResponse,
-    CanonicalEventLogBlockBand, CanonicalEventLogCycleBand, CanonicalEventLogEvent,
-    CanonicalEventLogResponse,
-    CanonicalChallengeVerdictSummary, CanonicalChallengeVoteSummary,
-    CanonicalConnectionCreateResponse, CanonicalCycleStatus, CanonicalCycleStatusResponse,
-    CanonicalIdentityCreateResponse, CanonicalIdeaCreateResponse, CanonicalTempoStatus,
-    CanonicalTempoStatusResponse, CanonicalVerificationStatus, CanonicalVerificationStatusResponse,
+    CanonicalBlockedSubmissionResponse, CanonicalChallengeArgumentAttachResponse,
+    CanonicalChallengeArgumentSummary, CanonicalChallengeCreateResponse, CanonicalChallengeDetail,
+    CanonicalChallengeDetailResponse, CanonicalChallengeVerdictSummary,
+    CanonicalChallengeVoteSummary, CanonicalConnectionCreateResponse, CanonicalCycleStatus,
+    CanonicalCycleStatusResponse, CanonicalEventLogBlockBand, CanonicalEventLogCycleBand,
+    CanonicalEventLogEvent, CanonicalEventLogResponse, CanonicalIdeaCreateResponse,
+    CanonicalIdentityCreateResponse, CanonicalTempoStatus, CanonicalTempoStatusResponse,
+    CanonicalVerificationStatus, CanonicalVerificationStatusResponse,
     CanonicalVerifierGrantResponse, CanonicalVerifierRevokeResponse, CanonicalVoteCastResponse,
     CanonicalVoteSessionPullResponse,
 };
@@ -29,38 +28,37 @@ use common::security_limits::{
 };
 use replay::ReplayDriver;
 use serde::Serialize;
+use std::collections::{HashMap, HashSet};
 #[cfg(feature = "full")]
 use storage::{
     screen_text_for_secrets, CanonicalBlockedSubmissionInput, CanonicalConnectionCreateInput,
-    CanonicalIdentityCreateInput, CanonicalIdeaCreateInput,
-    CanonicalImportanceArgumentAttachInput, CanonicalImportanceChallengeCreateInput,
-    CanonicalVerifierGrantInput, CanonicalVerifierRevokeInput, CanonicalVoteCastInput,
-    CanonicalVoteSessionPullInput,
+    CanonicalIdeaCreateInput, CanonicalIdentityCreateInput, CanonicalImportanceArgumentAttachInput,
+    CanonicalImportanceChallengeCreateInput, CanonicalVerifierGrantInput,
+    CanonicalVerifierRevokeInput, CanonicalVoteCastInput, CanonicalVoteSessionPullInput,
 };
 use uuid::Uuid;
-use std::collections::{HashMap, HashSet};
 
-#[cfg(feature = "full")]
-use crate::server::errors::canonical_write_error_response;
-use crate::server::errors::json_error;
 use crate::server::coordinates::{
     project_slots, CoordinatePoint, CoordinateScatterConfig, CoordinateSlotInput, DEFAULT_SPACING,
 };
-use crate::server::helpers::{is_reference_scoped_connection, scoped_neighbor_from_reference};
+#[cfg(feature = "full")]
+use crate::server::errors::canonical_write_error_response;
+use crate::server::errors::json_error;
 #[cfg(feature = "full")]
 use crate::server::helpers::parse_non_negative_i64;
-use crate::server::helpers::{parse_uuid_v7, parse_uuid_v7_field};
+use crate::server::helpers::{is_reference_scoped_connection, scoped_neighbor_from_reference};
 #[cfg(feature = "full")]
 use crate::server::helpers::{
     normalize_optional_text, validate_max_len, validate_optional_max_len,
 };
+use crate::server::helpers::{parse_uuid_v7, parse_uuid_v7_field};
 use crate::server::mapping::{snapshot_headers, with_headers};
 use crate::server::types::AppState;
 use crate::server::types::RelativeImportanceDirection;
 #[cfg(feature = "full")]
 use crate::server::types::{
     AuthenticatedAccount, CanonicalBlockedSubmissionPayload, CanonicalChallengeVoteCastPayload,
-    CanonicalConnectionCreatePayload, CanonicalIdentityCreatePayload, CanonicalIdeaCreatePayload,
+    CanonicalConnectionCreatePayload, CanonicalIdeaCreatePayload, CanonicalIdentityCreatePayload,
     CanonicalImportanceArgumentAttachPayload, CanonicalImportanceChallengeCreatePayload,
     CanonicalVerifierGrantPayload, CanonicalVerifierRevokePayload, CanonicalVoteSessionPullPayload,
 };
@@ -248,7 +246,10 @@ pub(crate) async fn canonical_event_log(State(state): State<AppState>) -> Respon
     {
         Ok(rows) => rows,
         Err(err) => {
-            tracing::error!(?err, "failed to load canonical cycle boundaries for event log");
+            tracing::error!(
+                ?err,
+                "failed to load canonical cycle boundaries for event log"
+            );
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -260,7 +261,10 @@ pub(crate) async fn canonical_event_log(State(state): State<AppState>) -> Respon
     let replay = match ReplayDriver::run(state.storage.pool(), None).await {
         Ok(replay) => replay,
         Err(err) => {
-            tracing::error!(?err, "failed to derive replay status for canonical event log");
+            tracing::error!(
+                ?err,
+                "failed to derive replay status for canonical event log"
+            );
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -308,7 +312,10 @@ pub(crate) async fn canonical_event_log(State(state): State<AppState>) -> Respon
     let mut cycle_start_index = 0_i64;
 
     for boundary in cycle_boundaries {
-        let Some(end_global_index) = event_global_index_by_id.get(&boundary.source_event_id).copied() else {
+        let Some(end_global_index) = event_global_index_by_id
+            .get(&boundary.source_event_id)
+            .copied()
+        else {
             continue;
         };
         cycles.push(CanonicalEventLogCycleBand {
@@ -443,9 +450,11 @@ pub(crate) async fn canonical_coordinates(
         let mut neighbor_ids = Vec::<Uuid>::new();
         let mut seen_neighbor_ids = HashMap::<Uuid, ()>::new();
         for row in &connections {
-            let Some(neighbor_id) =
-                scoped_neighbor_from_reference(reference_id, row, RelativeImportanceDirection::Both)
-            else {
+            let Some(neighbor_id) = scoped_neighbor_from_reference(
+                reference_id,
+                row,
+                RelativeImportanceDirection::Both,
+            ) else {
                 continue;
             };
             allowed_ids.insert(neighbor_id);
@@ -664,7 +673,11 @@ pub(crate) async fn canonical_create_identity(
     Extension(auth): Extension<AuthenticatedAccount>,
     Json(payload): Json<CanonicalIdentityCreatePayload>,
 ) -> Response {
-    if let Err(response) = validate_max_len("identity_name", payload.identity_name.as_str(), IDEA_TITLE_MAX_CHARS) {
+    if let Err(response) = validate_max_len(
+        "identity_name",
+        payload.identity_name.as_str(),
+        IDEA_TITLE_MAX_CHARS,
+    ) {
         return response;
     }
     if let Err(response) = reject_secret_optional_text(payload.identity_id.as_deref()) {

@@ -225,6 +225,78 @@ const verifyMustNotAppear = async (manifest, exportRoot, exportFiles) => {
   }
 };
 
+const verifyNoPrivateLinkOnlyDocs = async (exportRoot, exportFiles) => {
+  const forbiddenMarkers = [
+    ["Current authority: `A:", "\\the-", "seed-in-my-mind-open-core"].join(""),
+    ["This private copy is ", "not authoritative"].join(""),
+    ["link-only ", "reference"].join("")
+  ];
+  const violations = [];
+
+  for (const relativePath of exportFiles) {
+    if (!relativePath.startsWith("docs/") || !/\.(md|txt)$/i.test(relativePath)) {
+      continue;
+    }
+
+    const content = await fs.readFile(path.join(exportRoot, ...relativePath.split("/")), "utf8");
+    const lines = content.split(/\r?\n/);
+    lines.forEach((line, index) => {
+      if (forbiddenMarkers.some((marker) => line.includes(marker))) {
+        violations.push(`${relativePath}:${index + 1} -> ${line.trim()}`);
+      }
+    });
+  }
+
+  if (violations.length > 0) {
+    throw new Error(
+      `[verify-open-core-export] private pointer-only mirror docs detected in export:\n- ${violations.join("\n- ")}`
+    );
+  }
+};
+
+const verifyNoPrivateRootMetadata = async (exportRoot) => {
+  const checks = [
+    {
+      file: "README.md",
+      markers: [
+        ["private ", "repo is the source of truth for ", "proprietary product code"].join(""),
+        ["From this ", "private ", "repo"].join(""),
+        "Private same-path copies are pointers"
+      ]
+    },
+    {
+      file: "package.json",
+      markers: [
+        ["../the-", "seed-in-my-mind", "-open-core"].join(""),
+        ["../the-", "seed-in", "-my-mind"].join(""),
+        ["..\\the-", "seed-in-my-mind", "-open-core"].join(""),
+        ["..\\the-", "seed-in", "-my-mind"].join("")
+      ]
+    }
+  ];
+  const violations = [];
+
+  for (const check of checks) {
+    const filePath = path.join(exportRoot, check.file);
+    if (!await exists(filePath)) {
+      continue;
+    }
+    const content = await fs.readFile(filePath, "utf8");
+    const lines = content.split(/\r?\n/);
+    lines.forEach((line, index) => {
+      if (check.markers.some((marker) => line.includes(marker))) {
+        violations.push(`${check.file}:${index + 1} -> ${line.trim()}`);
+      }
+    });
+  }
+
+  if (violations.length > 0) {
+    throw new Error(
+      `[verify-open-core-export] private root metadata detected in export:\n- ${violations.join("\n- ")}`
+    );
+  }
+};
+
 const main = async () => {
   const manifest = await loadManifest();
   const exportRoot = await resolveExportRoot(manifest);
@@ -241,6 +313,8 @@ const main = async () => {
   await verifyRequiredAbsentPaths(manifest, exportRoot);
   await verifyForbiddenPaths(manifest, exportRoot, exportFiles);
   await verifyMustNotAppear(manifest, exportRoot, exportFiles);
+  await verifyNoPrivateLinkOnlyDocs(exportRoot, exportFiles);
+  await verifyNoPrivateRootMetadata(exportRoot);
 
   console.log("[verify-open-core-export] ok");
   console.log("- mode: validates the resolved export root only; forbidden-path failures usually mean the target tree contains build/runtime artifacts that must not ship");

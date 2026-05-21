@@ -347,7 +347,9 @@ pub(super) fn apply_events_with_verification(
                         ),
                     ));
                 }
-                if let Some(reference_event_id) = parse_optional_uuid(payload, "reference_event_id")? {
+                if let Some(reference_event_id) =
+                    parse_optional_uuid(payload, "reference_event_id")?
+                {
                     if !seen_event_ids.contains(&reference_event_id) {
                         return Err(ReplayError::new(
                             "missing_reference_event",

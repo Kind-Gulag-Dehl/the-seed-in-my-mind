@@ -1628,8 +1628,8 @@ fn ensure_seed_identity_cluster_events(
             format!("{}'s Mind Garden", seed_identity_title),
         ),
         (
-            "backyard_of_ideas",
-            format!("{}'s Backyard of Ideas", seed_identity_title),
+            "backyard_of_relationships",
+            format!("{}'s Backyard of Relationships", seed_identity_title),
         ),
         ("self_tree", format!("{}'s Self Tree", seed_identity_title)),
         ("anthill", format!("{}'s Anthill", seed_identity_title)),
@@ -1943,7 +1943,7 @@ mod tests {
         for expected_title in [
             "kind gulag dehl",
             "kind gulag dehl's Mind Garden",
-            "kind gulag dehl's Backyard of Ideas",
+            "kind gulag dehl's Backyard of Relationships",
             "kind gulag dehl's Self Tree",
             "kind gulag dehl's Anthill",
             "kind gulag dehl's Saved Ideas",

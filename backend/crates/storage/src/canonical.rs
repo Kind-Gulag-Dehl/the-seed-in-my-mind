@@ -159,10 +159,9 @@ async fn maybe_emit_cycle_close_before_append(
 
 fn sign_cycle_close(event: &Event) -> std::result::Result<String, CanonicalWriteError> {
     let key = resolve_system_boundary_signing_key()?;
-    let payload = event
-        .payload
-        .as_object()
-        .ok_or_else(|| CanonicalWriteError::new("invalid_request", "cycle_close payload must be object"))?;
+    let payload = event.payload.as_object().ok_or_else(|| {
+        CanonicalWriteError::new("invalid_request", "cycle_close payload must be object")
+    })?;
     let mut message = Vec::new();
     message.extend_from_slice(CYCLE_CLOSE_SIGNATURE_DOMAIN);
     message.push(0);
@@ -196,7 +195,8 @@ fn sign_cycle_close(event: &Event) -> std::result::Result<String, CanonicalWrite
     Ok(format!("hmac-sha256:{}", bytes_to_hex(&digest)))
 }
 
-fn resolve_system_boundary_signing_key() -> std::result::Result<&'static [u8], CanonicalWriteError> {
+fn resolve_system_boundary_signing_key() -> std::result::Result<&'static [u8], CanonicalWriteError>
+{
     if let Some(key) = SYSTEM_BOUNDARY_SIGNING_KEY.get() {
         return Ok(key.as_slice());
     }

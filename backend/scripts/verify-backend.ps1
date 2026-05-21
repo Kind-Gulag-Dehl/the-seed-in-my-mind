@@ -7,7 +7,9 @@ Set-Location $backendDir
 . "$PSScriptRoot\dev-bootstrap.ps1"
 
 if ([string]::IsNullOrWhiteSpace($env:CARGO_TARGET_DIR)) {
-    $env:CARGO_TARGET_DIR = Join-Path $env:TEMP "seed-backend-verify-target"
+    $repoName = Split-Path -Leaf $repoRoot
+    $safeRepoName = $repoName -replace '[^A-Za-z0-9_.-]', '_'
+    $env:CARGO_TARGET_DIR = Join-Path $env:TEMP "$safeRepoName-backend-verify-target"
 }
 
 $env:CARGO_INCREMENTAL = "0"

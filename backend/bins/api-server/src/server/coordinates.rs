@@ -164,8 +164,8 @@ fn relax_points(points: &mut [RelaxablePoint], config: CoordinateScatterConfig) 
             if current_radius <= EPSILON {
                 continue;
             }
-            let next_radius = current_radius
-                + (point.target_radius - current_radius) * config.relaxation_tether;
+            let next_radius =
+                current_radius + (point.target_radius - current_radius) * config.relaxation_tether;
             let scale = next_radius / current_radius;
             point.x *= scale;
             point.y *= scale;

@@ -18,10 +18,23 @@ $cursor
 frontend/.tmp-*
 frontend/.tmp-*.cjs
 frontend/.tmp-*.json
+tmp-*
 
 # frontend build output
 frontend/dist/
 frontend/tsconfig.tsbuildinfo
+frontend/coverage/
+frontend/.vitest/
+frontend/vite.config.ts.timestamp-*.mjs
 frontend/open-core-reference/dist/
 frontend/open-core-reference/node_modules/
+frontend/open-core-reference/package-lock.json
 frontend/open-core-reference/tsconfig.tsbuildinfo
+frontend/open-core-reference/coverage/
+frontend/open-core-reference/.vitest/
+frontend/open-core-reference/vite.config.ts.timestamp-*.mjs
+
+# generated export/package artifacts
+_export/
+test-results/
+tools/open-core/dist/

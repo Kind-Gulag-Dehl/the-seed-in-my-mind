@@ -286,7 +286,10 @@ async fn stage1_canonical_flow_happy_path_and_negative_votes() {
         .and_then(|value| value.as_array())
         .map(|value| value.len())
         .unwrap_or(0);
-    assert!(arguments_len >= 1, "expected at least one challenge argument");
+    assert!(
+        arguments_len >= 1,
+        "expected at least one challenge argument"
+    );
     let votes_len = challenge
         .get("votes")
         .and_then(|value| value.as_array())
@@ -596,7 +599,10 @@ LIMIT 1;
         cycle_close_block_height + 1,
         "user event should begin the next block after cycle_close"
     );
-    assert_eq!(first_event_index, 0, "first event after cycle_close should open the next block");
+    assert_eq!(
+        first_event_index, 0,
+        "first event after cycle_close should open the next block"
+    );
 
     let Some(cycle_close_speaker) = psql_scalar(&format!(
         r#"
@@ -696,12 +702,7 @@ async fn grant_writer(
     true
 }
 
-async fn create_idea(
-    app: axum::Router,
-    token: &str,
-    title: &str,
-    label: &str,
-) -> Option<String> {
+async fn create_idea(app: axum::Router, token: &str, title: &str, label: &str) -> Option<String> {
     let response = oneshot_json(
         app,
         Method::POST,
@@ -841,7 +842,8 @@ fn first_representation_id() -> Option<String> {
 }
 
 fn insert_forced_cycle_close(noop_speaker_identity_id: &str) -> bool {
-    let Some(block_height_raw) = psql_scalar("SELECT COALESCE(MAX(block_height), 0)::bigint FROM blocks;")
+    let Some(block_height_raw) =
+        psql_scalar("SELECT COALESCE(MAX(block_height), 0)::bigint FROM blocks;")
     else {
         return false;
     };

@@ -156,21 +156,27 @@ async fn main() -> Result<(), anyhow::Error> {
         event_count: stage0.event_count,
         active_rulebook_set_hash: to_hex(&stage0.commitments.active_rulebook_set_hash),
     };
-    let snapshot_commit_outcome =
-        match ensure_snapshot_commit(&pool, &snapshot_commit, interval_blocks).await {
-            Ok(outcome) => outcome,
-            Err(err) => {
-                eprintln!(
+    let snapshot_commit_outcome = match ensure_snapshot_commit(
+        &pool,
+        &snapshot_commit,
+        interval_blocks,
+    )
+    .await
+    {
+        Ok(outcome) => outcome,
+        Err(err) => {
+            eprintln!(
                     "snapshot-builder: snapshot_commit emission failed at height={} interval={} error={}",
                     stage0.height, interval_blocks, err
                 );
-                if require_snapshot_commit && should_emit_snapshot_commit(stage0.height, interval_blocks)
-                {
-                    return Err(err);
-                }
-                SnapshotCommitOutcome::SkippedNonBoundary
+            if require_snapshot_commit
+                && should_emit_snapshot_commit(stage0.height, interval_blocks)
+            {
+                return Err(err);
             }
-        };
+            SnapshotCommitOutcome::SkippedNonBoundary
+        }
+    };
 
     println!(
         "snapshot-builder: height={} snapshot_hash={} state_root_hash={} artifact_path={}",
@@ -283,7 +289,9 @@ async fn ensure_snapshot_commit(
 
     if let Some(existing) = load_snapshot_commit(pool, commit.block_height).await? {
         ensure_snapshot_commit_matches(&existing, commit)?;
-        return Ok(SnapshotCommitOutcome::AlreadyExists(existing.created_event_id));
+        return Ok(SnapshotCommitOutcome::AlreadyExists(
+            existing.created_event_id,
+        ));
     }
 
     let event_id = Uuid::now_v7();
@@ -324,7 +332,9 @@ async fn ensure_snapshot_commit(
     if let Some(existing) = load_snapshot_commit_tx(&mut tx, commit.block_height).await? {
         ensure_snapshot_commit_matches(&existing, commit)?;
         tx.rollback().await?;
-        return Ok(SnapshotCommitOutcome::AlreadyExists(existing.created_event_id));
+        return Ok(SnapshotCommitOutcome::AlreadyExists(
+            existing.created_event_id,
+        ));
     }
 
     let event_index: i32 = sqlx::query_scalar(
@@ -467,7 +477,12 @@ fn should_emit_snapshot_commit(block_height: i64, interval_blocks: i64) -> bool 
 
 fn env_flag(name: &str) -> bool {
     std::env::var(name)
-        .map(|value| matches!(value.trim().to_ascii_lowercase().as_str(), "1" | "true" | "yes" | "on"))
+        .map(|value| {
+            matches!(
+                value.trim().to_ascii_lowercase().as_str(),
+                "1" | "true" | "yes" | "on"
+            )
+        })
         .unwrap_or(false)
 }
 
@@ -588,9 +603,8 @@ fn approximate_timestamp_from_event_id(event_id: Uuid) -> Result<DateTime<Utc>, 
     let (seconds, nanos) = timestamp.to_unix();
     let seconds_i64 = i64::try_from(seconds)
         .map_err(|_| anyhow::anyhow!("event_id={} timestamp out of range", event_id))?;
-    DateTime::<Utc>::from_timestamp(seconds_i64, nanos).ok_or_else(|| {
-        anyhow::anyhow!("event_id={} invalid timestamp components", event_id)
-    })
+    DateTime::<Utc>::from_timestamp(seconds_i64, nanos)
+        .ok_or_else(|| anyhow::anyhow!("event_id={} invalid timestamp components", event_id))
 }
 
 async fn upsert_snapshot(
@@ -711,17 +725,13 @@ mod tests {
             state_root_hash: "1123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
                 .to_string(),
             title_sentence_payload_root:
-                "2123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-                    .to_string(),
+                "2123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef".to_string(),
             shared_map_commitment:
-                "3123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-                    .to_string(),
-            last_event_id: Uuid::parse_str("00000000-0000-7000-8000-000000000111")
-                .expect("uuid"),
+                "3123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef".to_string(),
+            last_event_id: Uuid::parse_str("00000000-0000-7000-8000-000000000111").expect("uuid"),
             event_count: 250,
             active_rulebook_set_hash:
-                "4123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-                    .to_string(),
+                "4123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef".to_string(),
             created_event_id: event_id,
         };
         let commit = SnapshotCommitMaterialization {
