@@ -54,6 +54,9 @@ jobs:
       - name: install root dependencies
         run: npm ci
 
+      - name: verify conformance fixtures
+        run: npm run conformance
+
       - name: install frontend dependencies
         run: npm --prefix frontend/open-core-reference install
 

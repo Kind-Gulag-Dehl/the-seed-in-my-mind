@@ -170,10 +170,21 @@ Use the root commands for developer checks:
 npm run lint
 npm run test
 npm run build
+npm run conformance
 npm run verify
 ```
 
 `npm run verify` is the public open-core working-tree check. It runs boundary checks, canonical DTO drift checks, reference frontend checks, and backend verification.
+
+`npm run conformance` runs the currently available docs/spec conformance harnesses without depending on the reference frontend test install. Today it runs:
+
+```powershell
+npm run conformance:tempo-cycle
+```
+
+The Tempo/Cycle harness validates `docs/conformance/tempo-cycle-fixtures.v1.json` against its schema and replays the fixture events. It is fixture-scoped conformance scaffolding, not the production Tempo runtime.
+
+`npm run test` runs the reference frontend Vitest suite and requires `frontend/open-core-reference` dependencies to be installed.
 
 Export-package checks are separate:
 

@@ -3,27 +3,31 @@ doc_id: tempo_spec
 title: Tempo Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
-  - Defines tempo limits, acceleration control, and constrained/time-repair mode behavior (legacy label: time-only mode).
+  - Defines time claims, Tempo evidence roles, Dmin/Dmax predicates, derived beacons, and constrained/time-repair mode behavior.
 
 authoritative_for:
-  - Tempo constraints and enforcement surfaces.
-  - Constrained/time-repair mode triggers, restrictions, and exit conditions.
+  - Target-bound Tempo truth-claim semantics.
+  - Tempo evidence admissibility through ordinary ideas, connections, and challenges.
+  - Dmin/Dmax predicate production and Tempo modes.
 
 not_authoritative_for:
   - Canonical encoding/hashing (see canonical-encoding-and-hashing-spec.md).
+  - Cycle boundary emission and authorization-frontier mechanics (see cycle-spec.md).
 
 depends_on:
   - protocol v5.md
+  - protocol v5-appendix-a.md
+  - challenge-engine-spec.md
   - cycle-spec.md
 
 conflicts:
   - none known
 
 change_rules:
-  - Any change here requires review of node-and-conformance-spec.md and governance-spec.md.
+  - Any change here requires review of node-and-conformance-spec.md, deterministic-replay-and-merge-spec.md, and governance-spec.md.
 
 reader_path:
   - prereq: cycle-spec.md
@@ -31,1131 +35,396 @@ reader_path:
 
 keywords:
   - tempo
-  - acceleration
+  - time claims
+  - evidence ideas
+  - certainty bands
   - constrained mode
-  - time-repair-priority mode
-  - pacing
+  - time repair
 ---
 
 > **Status note:** This document is part of the intended open-core architecture. It is published in this public repo for transparency and architectural understanding. Current implementation status is limited, partial, or not yet implemented. [open-core-implementation-status.md](open-core-implementation-status.md) remains the authoritative current-state implementation reference.
 
 # Tempo Specification
 
-*(Time Evidence, Time Claims, and Predicate Production)*
+*(Time Claims, Evidence Ideas, Structural Support, Certainty Bands, and Predicate Production)*
 
 ---
 
 ## 0. Purpose, Scope, and Design Invariants [anchor: 0_purpose_scope_and_design_invariants]
 
-### 0.1 Purpose [anchor: purpose]
+Tempo represents and adjudicates time-related information inside the protocol. Tempo does not advance cycles, certify cycles, authorize power, mint economic effects, or create a separate truth system. Tempo exists so time enters the Seed only as socially contestable, identity-authored ideas.
 
-This specification defines **Tempo**: the subsystem responsible for representing, evaluating, and adjudicating time-related information inside the protocol.
+This specification normatively owns:
 
-Tempo does **not** advance cycles.
+- time anchors and target-bound time truth claims;
+- Tempo-context evidence rules using ordinary ideas and connections;
+- ordinary certainty-band interpretation for time claims;
+- structural-support production of `cycle_age_ge_dmin` and `cycle_age_ge_dmax`;
+- derived beacon status for time claims;
+- Tempo modes used by downstream restriction and recovery logic.
 
-Tempo does **not** advance cycles.
-Tempo does **not** authorize power.
-Tempo does **not** mint economic effects.
+This specification does not own cycle progression metrics, cycle boundary emission, authorization-frontier advancement, ordinary mana issuance, POD, POINT, governance activation, or lifecycle effects.
 
-Tempo exists to ensure that time enters the system **only as a socially contestable fact**, never as infrastructure authority.
+Core invariants:
 
----
-
-### 0.2 Scope [anchor: scope]
-
-This specification **normatively owns**:
-
-* the definition of time anchors and time claims,
-* the admissible forms of time evidence,
-* the lifecycle of time claims (creation, challenge, resolution),
-* certainty aggregation for time claims,
-* production of cycle-level time predicates:
-
-  * `cycle_age_ge_dmin`
-  * `cycle_age_ge_dmax`
-* production of tempo mode flags used for restriction and recovery.
-
-This specification **does not own**:
-
-* cycle progression metrics,
-* cycle sealing rules,
-* mana issuance or spendability rules,
-* POD or POINT recomputation,
-* burn/rot logic.
-
-Those are owned by the Cycle, Token, and Lifecycle Specifications respectively.
+1. Canonical time is claimed, not read from a trusted clock.
+2. Time claims are ordinary `truth_claim` ideas with conditional `tempo_claim` metadata.
+3. Evidence, testimony, attestations, observations, source reports, arguments, measurements, and statements about documents are ideas in roles, not separate content-object types.
+4. Dmin/Dmax targets are derived replay keys/views, not authored ideas, events, or connection types.
+5. Beacons are derived high-certainty statuses of ordinary time truth claims, not authored objects.
+6. Canonical truth certainty changes only through explicit idea, connection, challenge, vote, and verdict history.
+7. Nodes must not infer truth certainty from counts, hidden weights, model scores, links, timestamps, local/server/client clocks, block height, scheduler observations, or uncommitted AI output.
+8. `T_allow` is a derived structural-support threshold, not a canonical truth-certainty band.
+9. Passive machine timestamp evidence may assist structural support only when it is canonically committed, deterministically normalized, capped below `T_allow`, and combined with profile-required eligible human participation.
+10. Beacon certification, lag `K`, and the contiguous authorization frontier control consequential authority.
+11. Forced cycles never grant authority, and population collapse never lowers beacon diversity, lag, or authority thresholds automatically.
 
 ---
 
-### 0.3 Core Design Invariants [anchor: core_design_invariants]
-
-The following invariants MUST hold at all times:
-
-1. **No trusted clocks**
-   Tempo MUST NOT trust wall clocks, node clocks, block timestamps, or external calendars.
-
-2. **Time enters only as claims and evidence**
-   All time information MUST be represented as challengeable claims supported by admissible evidence.
-
-3. **Predicates, not actions**
-   Tempo outputs predicates and mode flags only. It MUST NOT trigger cycle boundaries or economic effects.
-
-4. **Deterministic replay**
-   Given the same canonical event log, all honest nodes MUST compute identical Tempo outputs.
-
-5. **Weak evidence cannot become authority**
-   Passive or automatically derived evidence MUST NOT, by itself, produce high-certainty time anchors.
-
----
-
-## 1. Core Concepts and Definitions [anchor: 1_core_concepts_and_definitions]
+## 1. Time Anchors, Targets, and Claims [anchor: 1_time_anchors_targets_and_claims]
 
 ### 1.1 Time Anchor [anchor: time_anchor]
 
-A **time anchor** is a canonical reference point against which elapsed time is evaluated.
+A time anchor is a canonical reference point against which elapsed time is evaluated. Valid anchors include the genesis anchor for cycle 0, a prior `cycle_close` event, a previously certified Tempo target, or another governance-approved canonical anchor type. Anchors must be immutable and replayable from the canonical log.
 
-Valid anchors include:
+### 1.2 Derived Dmin/Dmax Targets [anchor: derived_dmin_dmax_targets]
 
-* a specific **cycle boundary identifier** (the canonical `cycle_close` event at block height `H_close`),
-* a previously accepted **beacon-level time claim**,
-* any other governance-approved canonical anchor type.
+At the start of each structural cycle, replay derives:
 
-Anchors MUST be:
-
-* globally referencable,
-* immutable once created,
-* replayable from the canonical log.
-
----
-
-### 1.2 Time Claim [anchor: time_claim]
-
-A **time claim** is a truth claim asserting a **bounded elapsed-time relation** relative to an anchor.
-
-Time claims MUST be expressed as inequalities, not exact timestamps.
-
-Canonical forms include:
-
-
-Exact wall-clock timestamps (e.g., “it is now 14:32 UTC”) MUST NOT appear as claim content.
-
----
-
----
-
-### 1.3 Cycle Time Predicates [anchor: cycle_time_predicates]
-
-Tempo produces only the following **cycle-level predicates**, each with an associated certainty score:
-
-* `cycle_age_ge_dmin`
-* `cycle_age_ge_dmax`
-
-These predicates are consumed by the Cycle Specification as guardrails.
-
-Predicates are evaluated against the most recent `cycle_close` anchor at block height `H_close`, as defined in the Cycle Specification.
-
-Predicates are evaluated against the most recent `cycle_close` anchor at block height `H_close`, as defined in the Cycle Specification.
-
----
-
-### 1.4 Time Evidence [anchor: time_evidence]
-
-**Time evidence** is any admissible information that supports or refutes a time claim.
-
-Evidence is not truth. Evidence contributes weight toward certainty.
-
-Tempo recognizes two evidence channels with different authority levels:
-
-* **Voluntary attestations** (strong)
-* **Passive timestamp evidence** (weak)
-
----
-
----
-
-### 1.5 Certainty [anchor: certainty]
-
-**Certainty** is a deterministic confidence score in the range `[0, 1]` associated with a time claim.
-
-Certainty represents how strongly the system currently believes a claim is true, given:
-
-* accepted evidence,
-* challenge outcomes,
-* identity eligibility,
-* contradiction history.
-
-Certainty is:
-
-* monotonic only in the absence of counterevidence,
-* reversible under successful challenge,
-* never equivalent to truth itself.
-
----
-
-### 1.6 Beacon-Level Time Claim [anchor: beacon_level_time_claim]
-
-A **beacon** is a time claim that has achieved **high certainty** and is eligible to serve as a durable time reference.
-
-Beacon-level claims are the **only** time objects eligible for:
-
-* lagged legitimacy checks in the Cycle Specification,
-* authorizing exit from constrained mode.
-
----
-
----
-
-## 2. Time Claim Types [anchor: 2_time_claim_types]
-
-### 2.1 Guardrail Lower-Bound Claims (Elapsed e X) [anchor: guardrail_lower_bound_claims_elapsed_x]
-
-#### Definition [anchor: definition]
-
-A **lower-bound time claim** asserts that at least `X` time has elapsed since a given anchor.
-
-Canonical form:
-
-```
-elapsed(anchor) e X
+```text
+tempo_target(cycle_index, dmin)
+tempo_target(cycle_index, dmax)
 ```
 
-These claims are used to support:
+These keys are stable replay targets. They may be shown in UI as target cards or questions, but they are not canonical authored objects, events, ideas, or connection types. No system component may create a placeholder ordinary time claim on behalf of a target.
 
-* satisfaction of `cycle_age_ge_dmin`,
-* satisfaction of `cycle_age_ge_dmax`.
+### 1.3 Time Claims [anchor: time_claims]
 
----
+A time claim is an identity-authored ordinary `truth_claim` idea asserting a bounded elapsed-time relation relative to an anchor, such as:
 
-#### Constraints [anchor: constraints]
+> At least Dmin has elapsed since cycle r began.
 
-* `X` MUST be a governance-defined duration unit.
-* Claims MUST reference a valid anchor.
-* Claims MUST NOT assert exact durations.
-
----
-
-### 2.2 Guardrail Upper-Bound Claims (Elapsed d Y) *(Optional)* [anchor: guardrail_upper_bound_claims_elapsed_y_optional]
-
-#### Definition [anchor: definition_2]
-
-An **upper-bound time claim** asserts that no more than `Y` time has elapsed since a given anchor.
-
-Canonical form:
-
-```
-elapsed(anchor) d Y
-```
-
-These claims are optional and MAY be disabled by governance.
-
----
-
-#### Purpose [anchor: purpose_2]
-
-When enabled, upper-bound claims:
-
-* improve certainty discrimination.
-* provide contradiction evidence against false lower-bound claims,
-* improve certainty discrimination.
-
-Upper-bound claims MUST NOT be required for normal operation.
-
----
-
-### 2.3 Anchor Consolidation Claims (Beacons) [anchor: anchor_consolidation_claims_beacons]
-
-#### Definition [anchor: definition_3]
-
-An **anchor consolidation claim** is a time claim explicitly intended to become a beacon.
-
-Examples include:
-
-
-These claims:
-
-These claims:
-
-* are evaluated like all other time claims,
-* require stronger evidence and challenge survivability,
-* are elevated to beacon status only when certainty thresholds are met.
-
----
-
-### 2.4 Placeholder Claims [anchor: placeholder_claims]
-
-At the start of each cycle, the system MAY create **placeholder time claims** for:
-
-* `elapsed(cycle_start) e Dmin`
-* `elapsed(cycle_start) e Dmax`
-
-Placeholder claims:
-
-* begin with zero certainty,
-* carry no implicit truth,
-* exist only to aggregate evidence and challenges.
-
-They MUST NOT be auto-accepted.
-
----
-
-### 2.5 Prohibited Claim Types [anchor: prohibited_claim_types]
-
-Tempo MUST NOT accept:
-
-* claims asserting exact timestamps,
-* claims referencing node-local or external clocks directly,
-* claims that directly request cycle advancement or economic effects.
-
-
-## 3. Evidence Channels and Weighting [anchor: 3_evidence_channels_and_weighting]
-
-### 3.1 Principle of Evidence Plurality [anchor: principle_of_evidence_plurality]
-
-Tempo does not infer time from a single source.
-
-All time certainty MUST arise from the aggregation of **multiple, independently challengeable evidence contributions**.
-
-No single piece of evidence is sufficient to establish high certainty.
-
----
-
-### 3.2 Voluntary Human Attestations (Strong Evidence) [anchor: voluntary_human_attestations_strong_evidence]
-
-#### Definition [anchor: definition_4]
-
-A **voluntary attestation** is an explicit human action asserting support for or opposition to a specific time claim.
-
-Examples:
-
-
-Attestations MUST:
-
-Attestations MUST:
-
-* reference a specific time claim,
-* be cast deliberately by an eligible identity,
-* be cryptographically attributable to that identity.
-
----
-
-#### Weighting [anchor: weighting]
-
-* Voluntary attestations are the **strongest evidence type**.
-* Each eligible identity contributes at most one unit of attestation weight per claim.
-* Attestations MAY be affirmative or negative.
-
----
-
-#### Rationale [anchor: rationale]
-
-This channel ensures that:
-
-* time enters the system through conscious human judgment,
-* collusion is visible and challengeable,
-* legitimacy is socially constructed, not infrastructural.
-
----
-
-### 3.3 Passive Timestamp Evidence (Weak Evidence) [anchor: passive_timestamp_evidence_weak_evidence]
-
-#### Definition [anchor: definition_5]
-
-**Passive timestamp evidence** consists of timestamps recorded automatically when canonical events occur.
-
-These timestamps include:
-
-* event creation times,
-* event ordering metadata,
-* block inclusion times (if applicable).
-
----
-
-#### Role and Limits [anchor: role_and_limits]
-
-Passive timestamps:
-
-* MAY be admitted as weak evidence,
-* MAY contribute to certainty aggregation,
-* MUST NEVER be sufficient on their own to:
-
-  * satisfy Dmin or Dmax,
-  * elevate a claim to beacon level,
-  * exit constrained mode.
-
----
-
-#### Rationale [anchor: rationale_2]
-
-Passive timestamps:
-
-* provide weak corroboration,
-* help discriminate extreme falsehoods,
-* prevent total information vacuum under low participation,
-
-but are explicitly insufficient to establish authority.
-
----
-
-### 3.4 Evidence Weight Classes [anchor: evidence_weight_classes]
-
-Evidence is divided into weight classes:
-
-| Evidence Type         | Weight Class |
-| --------------------- | ------------ |
-| Voluntary attestation | Strong       |
-| Challenge verdict     | Strong       |
-| Passive timestamp     | Weak         |
-
-Governance MAY tune numeric weights but MUST preserve this ordering.
-
----
-
-### 3.5 Evidence Aggregation [anchor: evidence_aggregation]
-
-Certainty for a time claim is computed as a deterministic function of:
-
-* total affirmative weight,
-* total negative weight,
-* contradiction history,
-* identity eligibility filters.
-
-The aggregation function MUST:
-
-* be deterministic,
-* be monotonic only absent counterevidence,
-* degrade certainty when credible contradiction appears.
-
----
-
-## 4. Evidence Admissibility and Identity Constraints [anchor: 4_evidence_admissibility_and_identity_constraints]
-
-### 4.1 Identity Eligibility [anchor: identity_eligibility]
-
-Only **eligible identities** may contribute voluntary attestations.
-
-Eligibility criteria are governance-defined and MAY include:
-
-* human verification status,
-* stake or reputation requirements,
-* participation history.
-
-Bots or automated agents MUST NOT contribute voluntary attestations.
-
----
-
-### 4.2 One-Identity-One-Attestation Rule [anchor: one_identity_one_attestation_rule]
-
-For any given time claim:
-
-* each eligible identity MAY contribute at most one attestation,
-* later attestations by the same identity MUST replace earlier ones.
-
-This prevents weight amplification through repetition.
-
----
-
-### 4.3 Admissibility of Passive Evidence [anchor: admissibility_of_passive_evidence]
-
-Passive timestamp evidence is admissible only if:
-
-* it is derived from canonical events,
-* it is replayable deterministically,
-* it is not selectively included or excluded.
-
-Nodes MUST include all admissible passive timestamps uniformly.
-
----
-
-### 4.4 Contradictory Evidence [anchor: contradictory_evidence]
-
-Evidence MAY contradict existing claims.
-
-When contradiction occurs:
-
-* certainty MUST be recomputed,
-* claims MAY lose beacon eligibility,
-* downstream predicates MAY revert from true to false.
-
-Contradiction is a normal and expected part of Tempo operation.
-
----
-
-### 4.5 Fraud and Collusion Handling [anchor: fraud_and_collusion_handling]
-
-Tempo does not attempt to detect intent.
-
-Instead:
-
-* coordinated false attestations lower certainty under challenge,
-* contradiction accumulates evidence against claims,
-* legitimacy gating in the Cycle Specification limits damage.
-
-This preserves neutrality and determinism.
-
----
-
-## 5. Time Claim Lifecycle and Challenges [anchor: 5_time_claim_lifecycle_and_challenges]
-
-### 5.1 Claim Creation [anchor: claim_creation]
-
-Time claims MAY be created by:
-
-* any eligible identity,
-All claims begin with **zero certainty**.
-
-All claims begin with **zero certainty**.
-
-Creation alone carries no authority.
-
----
-
-### 5.2 Evidence Accumulation Phase [anchor: evidence_accumulation_phase]
-
-After creation:
-
-* identities MAY submit attestations,
-* passive timestamps accumulate automatically,
-* claims remain open to challenge.
-
----
-
----
-
-### 5.3 Challenge Initiation [anchor: challenge_initiation]
-
-Any eligible identity MAY challenge a time claim.
-
-Challenges MAY introduce:
-
-Challenges MAY introduce:
-
-* counterevidence,
-* expert testimony,
-* cross-claim contradiction.
-
----
-
-### 5.4 Challenge Resolution [anchor: challenge_resolution]
-
-Upon challenge resolution:
-
-* verdicts are treated as strong evidence,
-* certainty is updated deterministically,
-* claims MAY gain or lose beacon eligibility.
-
-Challenge verdicts do not delete claims; they alter certainty.
-
----
-
-### 5.5 Claim Finality [anchor: claim_finality]
-
-Time claims are **never final**.
-
-Even beacon-level claims:
-
-* MAY be challenged later,
-* MAY lose certainty,
-* MAY be superseded by better anchors.
-
-Finality is replaced by durability under continued scrutiny.
-
----
-
-### 5.6 Predicate Production [anchor: predicate_production]
-
-Tempo MUST evaluate all relevant time claims and output:
-
-* `cycle_age_ge_dmin`
-* `cycle_age_ge_dmax`
-
-Tempo predicates constrain cycle advancement but have no authority over snapshot boundaries or emission scheduling, which remain block-height deterministic per snapshot-format-v0.md.
-
-Predicates are true only if:
-
-* at least one supporting claim exceeds the certainty threshold,
-* no contradictory claim with sufficient certainty exists.
-
----
-
-### 5.7 Failure Modes [anchor: failure_modes]
-
-If no claim reaches sufficient certainty:
-
-* predicates remain false,
-* the system may enter or remain in constrained mode,
-* cycle sealing behavior is determined by the Cycle Specification.
-
-Tempo never forces advancement.
-
-
-## 6. Beacon Elevation, Persistence, and Decay [anchor: 6_beacon_elevation_persistence_and_decay]
-
-### 6.1 Purpose of Beacons [anchor: purpose_of_beacons]
-
-Beacon-level time claims exist to provide **durable, high-confidence temporal anchors** that can be safely consumed by other parts of the protocol, especially for **lagged legitimacy checks**.
-
----
-
----
-
-### 6.2 Beacon Eligibility Criteria [anchor: beacon_eligibility_criteria]
-
-A time claim MAY be elevated to **beacon status** if and only if all of the following conditions are met:
-
-1. **Certainty Threshold Met**
-2. **Diversity of Support**
-
-2. **Diversity of Support**
-   Certainty MUST be supported by attestations from a minimum number of distinct eligible identities.
-
-3. **Challenge Survivability**
-   The claim MUST have survived at least one completed challenge cycle OR remained unchallenged for a governance-defined duration.
-
-4. **No Strong Contradiction**
-   There MUST NOT exist any contradictory claim with certainty above a defined rejection threshold.
-
----
-
-### 6.3 Beacon Elevation Process [anchor: beacon_elevation_process]
-
-Beacon elevation is **deterministic and automatic**.
-
-When eligibility criteria are met:
-
-* the claim is marked as a beacon,
-* its anchor identifier becomes admissible for legitimacy checks,
-* its elevation is recorded in the canonical log.
-
----
-
----
-
-### 6.4 Beacon Persistence [anchor: beacon_persistence]
-
-Once elevated:
-
-* a beacon persists across cycles,
-* it MAY be referenced by future claims,
-* it MAY be used in lagged legitimacy checks.
-
-Beacon status does **not** imply permanence.
-
----
-
-### 6.5 Beacon Decay and Revocation [anchor: beacon_decay_and_revocation]
-
-Beacon status MUST be revoked if:
-
-* credible contradictory evidence accumulates,
-* a successful challenge materially reduces certainty below `T_beacon`,
-* governance-defined decay rules apply (optional).
-
-Upon revocation:
-
-* the claim reverts to a normal time claim,
-* downstream predicates MAY change,
-* legitimacy gating MAY re-enter constrained mode.
-
-No retroactive erasure occurs.
-
----
-
-### 6.6 Multiple Beacons and Conflict [anchor: multiple_beacons_and_conflict]
-
-Multiple beacon claims MAY coexist.
-
-If conflicting beacons exist:
-
-* both remain visible,
-* certainty aggregation resolves their relative strength,
-* downstream consumers MUST rely only on predicates, not raw beacons.
-
----
-
----
-
-
-
-
-
-
-
-
-
-
-## 7. Evidence Rate Limits and Tempo Mana [anchor: 7_evidence_rate_limits_and_tempo_mana]
-
-### 7.1 Purpose [anchor: purpose_3]
-
-Tempo requires explicit rate limiting to prevent temporal legitimacy from being manufactured through volume, coordination, or automation.
-
-This section defines **tempo mana**, a dedicated, non-transferable capacity that limits how frequently an identity may contribute voluntary time attestations.
-
-Tempo mana exists solely to protect the integrity of time certainty.
-
----
-
-### 7.2 Tempo Mana Definition [anchor: tempo_mana_definition]
-
-Each eligible identity has a **tempo mana pool**.
-
-Tempo mana:
-
-* is separate from all other mana types,
-* cannot be transferred, delegated, or stored,
-* exists only to rate-limit voluntary time attestations,
-* recharges slowly and deterministically.
-
-Tempo mana is **not** a reward and confers no advantage beyond participation.
-
----
-
-### 7.3 Tempo Mana Costs [anchor: tempo_mana_costs]
-
-Each voluntary attestation to a time claim consumes tempo mana.
+Target-bound Tempo claims use the existing truth subtype specified in Appendix A and conditional `tempo_claim` metadata binding the claim to a derived target key, anchor, cycle index, target kind, elapsed-time relation, duration, Tempo profile, and provenance references.
 
 Rules:
 
-* An identity MUST have sufficient tempo mana to submit an attestation.
-* Attestations submitted without sufficient tempo mana MUST be rejected.
-* Replacing a previous attestation counts as a new attestation and consumes tempo mana again.
+- authorship remains attached to each claim;
+- multiple identities may create equivalent or contradictory claims;
+- equivalent claims may share the same derived target key;
+- `same_as` connections may organize equivalent claims but do not erase separate authorship or determine authority;
+- contradictory claims remain visible and challengeable;
+- target-bound claims must not request cycle advancement, certification, economic effects, governance effects, token effects, lifecycle effects, or ordinary mana effects.
 
-Governance defines:
-
-* tempo mana capacity,
-* tempo mana recharge rate,
-* minimum recharge delay between attestations.
-
----
-
-### 7.4 Rationale [anchor: rationale_3]
-
-Tempo mana ensures that:
-
-* no identity can flood time claims,
-* coordination costs scale with the certainty sought,
-* low-participation systems remain safe,
-* time legitimacy grows slowly and visibly.
+Tempo must reject exact wall-clock timestamp claims as Tempo authority. A claim may describe a timestamp as source content or provenance, but the timestamp does not become a trusted clock.
 
 ---
 
-## 8. Passive Timestamp Evidence: Caps and Outlier Rejection [anchor: 8_passive_timestamp_evidence_caps_and_outlier_rejection]
+## 2. Evidence Ideas and External Sources [anchor: 2_evidence_ideas_and_external_sources]
 
-### 8.1 Passive Evidence Ceiling [anchor: passive_evidence_ceiling]
+Tempo uses the same evidence model as the rest of the protocol.
 
-Passive timestamp evidence MUST be subject to a **hard influence ceiling**.
+Potential evidence is represented by hypothetical evidence ideas. Actual evidence is represented by identity-authored evidence ideas, usually `truth_claim` ideas. Evidence ideas connect to a target time truth claim using existing `relative_importance` connections with `usage = evidence_for` or `usage = evidence_against`.
 
-Rules:
+Tempo-context evidence connections must validate both endpoints and the Tempo context. Nodes reject the connection with `ERR_TEMPO_EVIDENCE_CONNECTION_INVALID` when it references a non-existent target claim, points to an idea that is not valid evidence under the current schema, uses `evidence_for` or `evidence_against` without a valid target-bound time truth claim when required, uses `same_as` between claims with incompatible `tempo_claim` target keys, anchors, target kinds, durations, or Tempo profile hashes, attempts to make an external URL/hash/payload count directly as evidence without an identity-authored idea describing it, attempts to treat a derived `tempo_target` or beacon as an authored idea, or attempts to create Tempo certainty outside ordinary evidence-placement and certainty-band challenge flow.
 
-* Passive timestamps may contribute to certainty only up to a fixed maximum fraction `P_max`.
-* `P_max` MUST be strictly less than the minimum certainty required for:
+An attestation in a Tempo UI is an idea, usually a truth claim, such as:
 
-  * predicate truth (`T_allow`),
-  * beacon elevation (`T_beacon`).
+- "I observed that Dmin elapsed."
+- "The claimed anchor is incorrect."
+- "This event occurred after the cycle began."
+- "The evidence does not establish that Dmax elapsed."
 
-Passive evidence MUST NEVER, by itself, cause:
+These are not votes or separate content objects.
 
-* `cycle_age_ge_dmin == true`,
-* `cycle_age_ge_dmax == true`,
-* beacon elevation.
+External sources are provenance until represented by authored ideas. A paper, article, book, video, dataset, website, instrument output, or external record is not automatically canonical evidence. An identity creates ideas asserting what that source says, contains, measured, or supports. Those ideas may reference a URL, file hash, payload, author, section, timestamp, or archived copy. Important sources should be represented as source-document, source-section, or source-chunk ideas where existing base idea types can express them. Claims about those source ideas remain challengeable. An external link alone has no certainty effect.
 
----
+Node-local time, server time, client timestamps, receipt time, background scheduler observations, block height, publication volume, local observations, and AI observations must not affect Tempo truth certainty unless a verified human turns them into valid canonical ideas and connections under ordinary rules.
 
-### 8.2 Deterministic Outlier Rejection [anchor: deterministic_outlier_rejection]
+### 2.1 Passive Machine Timestamp Evidence [anchor: passive_machine_timestamp_evidence]
 
-Passive timestamps MUST be filtered deterministically.
+Passive machine timestamp evidence is an intentional weak evidence channel. It is not authoritative time, it does not determine canonical event ordering, and it never substitutes for eligible human participation.
 
-Outlier rejection rules MAY include:
+Permitted passive sources must be identically available to every replaying node and committed by canonical or canonically anchored data. The minimal admissible source categories are:
 
-* rejecting timestamps outside governance-defined plausibility bounds,
-* trimming extreme quantiles,
-* rejecting isolated spikes unsupported by other evidence.
+- a machine timestamp included in a signed human-authored canonical event envelope and covered by that event signature;
+- a machine observation committed in a canonical publication or finalization artifact where the active publication profile already defines such a committed field;
+- a content-addressed external timestamp observation referenced by a human-authored canonical event and available identically to replay;
+- another explicitly Tempo-profile-approved canonical timestamp field with equivalent deterministic commitment and replay availability.
 
-All nodes MUST apply identical outlier rules during replay.
+Forbidden direct inputs include uncommitted database `created_at`, HTTP receipt time, current node clock during replay, scheduler execution time, cache timestamps, filesystem modification time, local-only device metadata, implementation-specific server logs, values that differ between nodes, and snapshot approximate timestamps unless the active Tempo profile explicitly admits that exact committed field for Tempo evidence.
 
----
+Passive evidence normalization MUST be defined by the immutable Tempo profile for the target. It MUST specify canonical timestamp format, precision, uncertainty interval, source identifier, source class, target key, source epoch or observation interval, canonical provenance, admissibility, deduplication, outlier handling, and influence cap. Repeated events carrying the same underlying clock source MUST NOT multiply influence. At minimum, replay deduplicates by `(source_id, target_key, source_epoch)`. Multiple observations depending on the same upstream time source MUST share a source class or otherwise be capped together by the profile.
 
-### 8.3 Rationale [anchor: rationale_4]
+The total passive contribution MUST obey:
 
-These rules ensure that:
-
-* infrastructure does not become time authority,
-* botnets cannot fabricate elapsed time,
-* partitions do not silently dominate certainty.
-
-Passive evidence remains **contextual**, never decisive.
-
----
-
-## 9. Certainty Thresholds and Predicate Semantics [anchor: 9_certainty_thresholds_and_predicate_semantics]
-
-### 9.1 Dual Threshold Requirement [anchor: dual_threshold_requirement]
-
-Tempo MUST define **two distinct certainty thresholds**:
-
-1. **Predicate Threshold (`T_allow`)**
-   The minimum certainty required for a time predicate to evaluate as `true`.
-
-2. **Beacon Threshold (`T_beacon`)**
-   A strictly higher certainty required for beacon elevation.
-
-It MUST always hold that:
-
-```
-T_allow < T_beacon
+```text
+passive_contribution <= passive_evidence_cap
+passive_evidence_cap < T_allow
 ```
 
----
-
-### 9.2 Predicate Truth Rules [anchor: predicate_truth_rules]
-
-A predicate (e.g. `cycle_age_ge_dmin`) MAY evaluate to `true` if and only if:
-
-* at least one supporting claim has certainty e `T_allow`,
-* no contradictory claim has certainty e `T_allow`,
-* passive evidence ceilings are respected.
-
-Predicate truth does **not** imply durability, legitimacy, or authorization.
+No implementation may choose its own passive cap, source-class policy, or outlier algorithm.
 
 ---
 
-### 9.3 Anti-Stall Minimum Evidence Floor (Dmax Only) [anchor: anti_stall_minimum_evidence_floor_dmax_only]
+## 3. Certainty and Challenges [anchor: 3_certainty_and_challenges]
 
-For `cycle_age_ge_dmax` predicates only, the following exception applies:
+Tempo reuses canonical truth certainty bands. It does not define a second numerical certainty system.
 
-If:
+For each time truth claim:
 
-* passive evidence exceeds a governance-defined plausibility minimum,
-* attestations exist from at least a minimal number of distinct eligible identities,
-* no strong contradictory claim exists,
+1. potential evidence ideas define the evidence spectrum;
+2. actual evidence ideas are connected explicitly;
+3. evidence-placement challenges determine where actual evidence belongs;
+4. a certainty-band challenge proposes the claim's certainty band;
+5. eligible humans vote under ordinary challenge rules;
+6. the verdict assigns the operative certainty band.
 
-then `cycle_age_ge_dmax` MAY reach `T_allow` **without** reaching `T_beacon`.
+The canonical truth-certainty band order is defined once in Appendix A and encoded deterministically for replay and snapshots. `T_contradiction_block`, `T_beacon`, and `T_beacon_revoke` refer to ordinary canonical certainty bands or deterministic integer encodings of that band order. Floating-point truth certainty is forbidden.
 
-This rule exists solely to prevent permanent stall.
+`T_allow` is different. `T_allow` is a Tempo structural-support threshold derived from the canonical prefix. It asks only whether enough presently recorded eligible-human stance support and capped passive evidence exist to permit provisional structural progression while ordinary truth challenges continue. Crossing `T_allow` does not assign canonical truth certainty, does not create a beacon, does not certify a cycle, does not advance the authorization frontier, and does not finalize economic, governance, lifecycle, token, ordinary-mana, or rate-limit authority.
 
-It MUST NOT apply to:
+Challenge creation, voting, and verdict finalization require ordinary challenge eligibility unless a future explicit protocol amendment creates a narrowly scoped Tempo challenge capability. `tempo_contributor` status alone does not grant challenge creation, voting, or verdict authority.
 
-* `cycle_age_ge_dmin`,
-* beacon elevation,
-* legitimacy authorization.
-
----
-
-### 9.4 Rationale [anchor: rationale_5]
-
-This separation ensures that:
-
-* cycles can advance structurally under collapse,
-* power cannot be extracted without high-certainty time,
-* liveness and safety are decoupled.
+Challenge verdicts do not delete claims. They update current derived certainty-band state and may be challenged later.
 
 ---
 
-## 10. Tempo Modes and System Signaling [anchor: 10_tempo_modes_and_system_signaling]
+## 4. Tempo Profile, Structural Support, and Stances [anchor: 4_tempo_profile_structural_support_and_stances]
 
-### 10.1 Mode Taxonomy [anchor: mode_taxonomy]
+At the start of each structural cycle, replay derives and binds an immutable Tempo profile reference for each Dmin/Dmax target. The profile and eligibility basis are frozen for that target. Later rulebook/profile changes apply only to future targets and MUST NOT alter historical target evaluation.
 
-Tempo MUST expose the following mode flags:
+The active Tempo profile MUST define or reference at least:
 
-1. **Normal Tempo Mode**
-2. **Constrained Tempo Mode**
-3. **Time-Repair-Priority Mode**
+- `required_human_support_dmin`;
+- `required_human_margin_dmin`;
+- `required_human_support_dmax`;
+- `required_human_margin_dmax`;
+- `survivor_dmax_min_human_support`;
+- `T_allow`;
+- `passive_evidence_cap`;
+- `passive_source_dedup_policy`;
+- `passive_source_class_policy`;
+- `passive_outlier_policy`;
+- `contradiction_block_band`;
+- `beacon_minimum_certainty_band`;
+- `beacon_minimum_distinct_humans`;
+- `beacon_challenge_survival_cycles`;
+- `authorization_lag_k`;
+- any required evidence source, source-class, or interval limits.
 
-Modes are diagnostic signals consumed by downstream systems.
+Profile references MUST be deterministically encoded, hashable, and validated according to Appendix A and the canonical encoding specification. Profiles may define numeric structural-support units, but those units are not truth-certainty scores.
 
----
+### 4.1 Human Structural Stance [anchor: human_structural_stance]
 
-### 10.2 Normal Tempo Mode [anchor: normal_tempo_mode]
+For each Tempo target, replay derives at most one current structural stance per eligible human identity:
 
-Entered when:
+- `support`;
+- `oppose`;
+- `none`.
 
-* sufficient recent beacon-level claims exist,
-* time predicates are stable,
-* contradiction density is low.
+The stance is derived from ordinary canonical evidence or support/opposition connections under the active Tempo profile. A later valid stance by the same identity may supersede the earlier stance for current structural counting only; historical statements remain permanently preserved. Submitting many equivalent evidence ideas, claims, or connections MUST NOT multiply one human's structural weight.
 
-Downstream systems MAY operate normally.
+### 4.2 Structural Support Score [anchor: structural_support_score]
 
----
+For each target:
 
-### 10.3 Constrained Tempo Mode [anchor: constrained_tempo_mode]
+```text
+eligible_human_support = count(current eligible-human support stances)
+eligible_human_opposition = count(current eligible-human oppose stances)
+eligible_human_margin = eligible_human_support - eligible_human_opposition
+structural_support = human_support_component + capped_passive_contribution
+```
 
-Entered when:
+The profile defines the exact deterministic unit conversion from current human stances to `human_support_component`. Passive contribution is capped below `T_allow`; therefore passive evidence alone can never cross `T_allow`.
 
-* predicates exist but lack beacon support,
-* contradictions remain unresolved,
-* legitimacy lags structural progression.
-
-Downstream systems SHOULD restrict power and irreversible actions.
-
----
-
-### 10.4 Time-Repair-Priority Mode [anchor: time_repair_priority_mode]
-
-Entered when:
-
-* beacon coverage is absent for multiple cycles,
-* contradictions block predicate stability,
-* time legitimacy is severely degraded.
-
-In this mode:
-
-* time attestations and challenges SHOULD be prioritized,
-* non-essential actions SHOULD be further restricted,
-* recovery actions MUST remain available.
+An unresolved open challenge alone does not automatically block structural readiness. A finalized adverse verdict, an opposing target-bound claim at or above `contradiction_block_band`, or loss of the required support/margin may block readiness.
 
 ---
 
-### 10.5 Determinism [anchor: determinism]
+## 5. Tempo Contributor Eligibility and Tempo Mana [anchor: 5_tempo_contributor_eligibility_and_tempo_mana]
 
-Mode transitions MUST be:
+`tempo_contributor` is a narrow low-threshold lane for human time repair. It may permit:
 
-* deterministic,
-* replayable,
-* derived solely from canonical data.
+- creation of target-bound time truth claims with valid `tempo_claim` metadata;
+- creation of Tempo-context evidence truth claims if the active Tempo profile permits it;
+- creation of Tempo-context `evidence_for`, `evidence_against`, or `same_as` connections if the active Tempo profile permits it;
+- participation in time-related placement or certainty challenges only if the actor also has ordinary challenge eligibility, or if a future explicit Tempo challenge capability is adopted.
 
----
+`tempo_contributor` does not grant arbitrary canonical idea creation, evidence creation outside Tempo context, connection creation outside Tempo context, challenge creation, challenge voting, verdict finalization, governance authority, POD, POINT, token authority, ordinary mana authority, ordinary rate-limit authority, or ordinary canonical-writer eligibility.
 
-## 11. Failure Scenarios and Partition Handling [anchor: 11_failure_scenarios_and_partition_handling]
+Tempo mana is a dedicated, capped, non-transferable capacity that rate-limits the allowed Tempo lane operations. It recharges deterministically at structural cycle boundaries, is capped by the active profile, and is spent only by valid events in canonical log order. Invalid events do not spend mana. Forced cycles and uncertified cycles cannot create an unlimited bank.
 
-### 11.1 Coordinated Attestation Attacks [anchor: coordinated_attestation_attacks]
+The active Tempo profile defines:
 
-If coordinated false attestations occur:
+- `tempo_mana_cap`;
+- `tempo_mana_recharge`;
+- `time_claim_create_cost`;
+- `tempo_evidence_claim_create_cost`;
+- `tempo_evidence_connection_cost`;
+- `tempo_same_as_connection_cost`;
+- `time_challenge_cost`.
 
-* tempo mana limits bound their influence,
-* contradictions reduce certainty,
-* predicates may temporarily reach `T_allow`,
-* beacon elevation will fail,
-* downstream legitimacy gating prevents value extraction.
-
----
-
-### 11.2 Catastrophic Participation Loss [anchor: catastrophic_participation_loss]
-
-Under sudden participation collapse:
-
-* passive evidence may support Dmax predicates,
-* forced cycles may occur (Cycle Specification),
-* tempo remains constrained or degraded,
-* recovery depends on surviving identities rebuilding beacons.
-
-The system MUST remain live.
+`time_challenge_cost` applies only when challenge participation is otherwise valid. It does not create challenge eligibility.
 
 ---
 
-### 11.3 Network Partition and Merge [anchor: network_partition_and_merge]
+## 6. Predicate Production [anchor: 6_predicate_production]
 
-During partitions:
+Tempo evaluates ordinary target-bound time truth claims and outputs:
 
-* each partition accumulates independent time evidence,
-* no partition gains authority over another.
+- `cycle_age_ge_dmin`;
+- `cycle_age_ge_dmax`;
+- `structural_dmax_liveness_predicate`.
 
-Upon merge:
+A Dmin structural predicate may become true only when:
 
-* all claims coexist,
-* contradictions are evaluated deterministically,
-* certainty recomputes without arbitration.
+- `eligible_human_support >= profile.required_human_support_dmin`;
+- `eligible_human_margin >= profile.required_human_margin_dmin`;
+- `structural_support >= T_allow`;
+- no opposing target-bound claim has ordinary canonical certainty at or above `profile.contradiction_block_band`.
 
-No partition automatically overrides another.
+Ordinary Dmax structural readiness uses the same structural-support system with `profile.required_human_support_dmax` and `profile.required_human_margin_dmax`.
 
----
+Passive evidence alone MUST NOT satisfy Dmin, ordinary Dmax, survivor Dmax, or `T_allow`. At least the applicable profile-required eligible human participation is always required.
 
-## 12. Determinism, Replay, and Auditability (Extended) [anchor: 12_determinism_replay_and_auditability_extended]
+Predicate truth permits structural boundary evaluation only. It does not imply durability, legitimacy, certification, payout eligibility, governance activation, lifecycle finality, final rank authority, POD, POINT, ordinary mana spendability, or ordinary rate-limit authority.
 
-### 12.1 Replay Completeness [anchor: replay_completeness]
+For the same anchor and Tempo profile, `cycle_age_ge_dmax == true` mechanically implies structural `cycle_age_ge_dmin == true` for boundary evaluation only. It does not create a Dmin beacon, Dmin certification, or Dmin-based authority.
 
-The canonical log MUST be sufficient to reconstruct:
-
-* all time claims,
-* all attestations and challenges,
-* certainty values over time,
-* mode transitions.
+`structural_dmax_liveness_predicate` is a separate Dmax-only, structural-only survivor predicate. It is not ordinary truth certainty, beacon certainty, truth finality, certification, or authorization. It may become true without ordinary Dmax structural readiness only under the narrow survivor rule in Section 8, and it may be consumed only by Cycle Specification forced closure logic.
 
 ---
 
-### 12.2 External Auditability [anchor: external_auditability]
+## 7. Derived Beacon Status and Coverage [anchor: 7_derived_beacon_status_and_coverage]
 
-An external auditor MUST be able to determine:
+A beacon is not an object, event, idea type, selected winning claim, or authority granted to a claim author.
 
-* why a predicate was true or false at a given cycle,
-* why a beacon was or was not elevated,
-* why legitimacy was restricted or restored.
+Beacon status is a derived status of an ordinary time truth claim that:
 
-Opacity is a protocol failure.
+- reaches `T_beacon`;
+- satisfies diversity requirements through identity-authored supporting claims or evidence ideas;
+- satisfies independence requirements without exposing or weighting civil identity categories;
+- satisfies governance-defined stability and challenge-survivability rules;
+- has no contradictory claim at or above `T_beacon_revoke` or the active contradiction threshold.
 
----
+Multiple beacon-status time claims may coexist. A representative claim may be selected for display by deterministic tie-breaking, but the selection is display-only and grants no authority to its author.
 
-### 12.3 Invariant Restatement [anchor: invariant_restatement]
+Beacon revocation stops future authorization-frontier advancement where certification coverage is missing or blocked by a contradiction. It does not rewrite already authorized history.
 
-Tempo MUST NEVER:
+`T_beacon` is the minimum ordinary canonical truth-certainty band required for derived beacon status. It is not structural support. Beacon status also requires the profile-defined minimum distinct eligible human support, challenge-survival condition, and absence of contradiction at or above the blocking certainty band.
 
-* advance cycles,
-* authorize economic or governance power,
-* trust clocks or infrastructure,
-* create irreversibility.
+Beacon coverage may cover one Tempo target, multiple consecutive Tempo targets, or a structured elapsed-time relation that deterministically entails multiple targets. Coverage MUST be explicit, replay-verifiable, based on canonical structured relations, and independent of natural-language interpretation. Each cycle receives its own derived certification status even when one beacon covers several targets.
 
-Tempo exists only to **measure contested time** and expose it safely.
-
-
-## 13. Interaction with the Cycle Specification (Normative Bridge) [anchor: 13_interaction_with_the_cycle_specification_normative_bridge]
-
-### 13.1 Non-Authority Clause [anchor: non_authority_clause]
-
-Tempo outputs **informational predicates and mode flags only**.
-
-* seal a cycle,
-
-* seal a cycle,
-* advance a cycle,
-* mint, revoke, or unlock mana,
-* authorize governance effects,
-* bypass Cycle-owned requirements.
-
-All such actions remain exclusively governed by the Cycle Specification.
+Certification states are derived replay state and include at least `pending`, `certified`, `contested`, and `revoked`. A normal cycle is certified through applicable Dmin target coverage. A forced cycle may become time-certified through applicable Dmax coverage, but it remains forced permanently and never retroactively earns missing deliberative rewards.
 
 ---
 
----
+## 8. Structural Liveness and Survivor Scenarios [anchor: 8_structural_liveness_and_survivor_scenarios]
 
-### 13.2 Lagged Consumption Requirement [anchor: lagged_consumption_requirement]
+The protocol must reconcile three requirements:
 
-The Cycle Specification MUST consume Tempo predicates and beacon references only under **lagged evaluation rules**, such that:
+- all Tempo content is identity-authored ideas;
+- certainty normally comes from explicit evidence-placement and certainty-band challenge verdicts;
+- nonzero survivor participation must be able to maintain structural time repair and eventually satisfy Dmax structural progression while remaining unable to satisfy beacon diversity or unlock consequential authority alone.
 
-* predicates derived during cycle `r` MAY influence behavior no earlier than cycle `r+1`,
-* beacon elevation MUST precede any legitimacy-granting effect by a governance-defined delay.
+The selected survivor-compatible mechanism is `structural_dmax_liveness_predicate`.
 
-Tempo outputs MUST NOT be consumed within the same cycle in which they are derived for legitimacy or authorization purposes.
+A Dmax target-bound truth claim may satisfy `structural_dmax_liveness_predicate` only when:
 
----
+- at least `profile.survivor_dmax_min_human_support` eligible humans currently participate;
+- at least one valid target-bound Dmax claim or support stance exists;
+- required capped passive plausibility evidence exists under the active profile;
+- ordinary Dmax support requirements cannot be met;
+- the system is in the applicable constrained/time-repair condition;
+- every contributing claim is a valid ordinary `truth_claim`;
+- every contributing claim has valid `tempo_claim` metadata for the current Dmax target;
+- every contributing claim or stance was accepted through the narrow Tempo lane;
+- required Tempo mana for target-bound time-claim creation or stance creation was paid;
+- no accepted contradictory target-bound time claim currently blocks the target under the active rulebook;
+- no unresolved blocking truth challenge currently blocks the target under the active rulebook;
+- no existing certainty-band verdict contradicts the claim at or above `T_contradiction_block`.
 
-### 13.3 Failure-Safe Bias [anchor: failure_safe_bias]
+If another identity creates a contradictory target-bound claim, the liveness predicate is `blocked` until ordinary challenge process resolves the contradiction, unless the active rulebook explicitly defines a deterministic non-authoritative tie behavior. Nodes MUST NOT silently choose one claim.
 
-If Tempo outputs are ambiguous, contradictory, unstable, or below certainty thresholds:
+This predicate applies only to Dmax forced structural closure. It MUST NOT:
 
-* downstream systems MUST bias toward restriction rather than progression,
-* lack of time certainty MUST NOT be interpreted as permission to accelerate or finalize effects.
+- create ordinary Dmax structural readiness or truth certainty;
+- satisfy `cycle_age_ge_dmin`;
+- create a deliberative boundary;
+- create beacon status;
+- certify a cycle;
+- advance the authorization frontier;
+- authorize POD, POINT, governance, lifecycle, final rank, ordinary mana, ordinary rate limits, token effects, ordinary challenge authority, or ordinary canonical write authority;
+- reduce `K`, `T_beacon`, beacon diversity, independence, or stability requirements.
 
----
-
-## 14. Anti-Acceleration and Anti-Normalization Guarantees [anchor: 14_anti_acceleration_and_anti_normalization_guarantees]
-
-### 14.1 No Self-Normalizing Time [anchor: no_self_normalizing_time]
-
-Tempo MUST NOT infer acceptable tempo from recent system behavior.
-
-Specifically:
-
-* shorter recent cycles,
-* increased event volume,
-* faster convergence of claims
-
-MUST NOT, by themselves, alter acceptable elapsed-time expectations.
-
-Only explicit governance changes to tempo parameters may redefine acceptable tempo.
-
----
-
-### 14.2 Prediction Non-Authority [anchor: prediction_non_authority]
-
-Predictions, expectations, or forecasts about when cycles should complete:
-
-* MAY exist as ordinary truth claims elsewhere in the protocol,
-* MUST NOT be admissible as time evidence,
-* MUST NOT influence Tempo certainty aggregation.
-
-Tempo evaluates observed elapsed time only.
+Later identity-authored ideas and ordinary truth challenges may challenge the liveness claim. Later normal beacon certification may certify the relevant target, but it may finalize only explicitly pending outputs through the lagged frontier and MUST NOT validate actions that were forbidden when attempted.
 
 ---
 
-### 14.3 Automation Asymmetry Invariant [anchor: automation_asymmetry_invariant]
+Zero participating eligible humans means no new human Tempo claims or stances, no Dmin structural readiness, no Dmax structural readiness, no survivor Dmax structural liveness, no universal `cycle_close`, no cycle certification, and no authorization-frontier movement. Machine evidence alone may not continue universal cycles.
 
-Tempo MUST preserve the following invariant:
-
-> Increased speed or coordination MUST NOT increase authority.
-
-Accordingly:
-
-* high-volume attestations do not accelerate certainty,
-* rapid convergence does not bypass contradiction handling,
-* automation gains no structural advantage over slow, diverse participation.
+The term "internal anti-stall" is explanatory terminology for this survivor Dmax structural liveness mechanism. It is not a third independent fallback.
 
 ---
 
-## 15. Low-Participation and Survivor Scenarios [anchor: 15_low_participation_and_survivor_scenarios]
+## 9. Tempo Modes [anchor: 9_tempo_modes]
 
-### 15.1 Liveness Under Participation Collapse [anchor: liveness_under_participation_collapse]
+Tempo exposes derived mode flags consumed by downstream systems:
 
-If eligible participation drops sharply:
+- `normal`;
+- `constrained`;
+- `record_only`.
 
-* Tempo MUST continue to evaluate time predicates using admissible evidence,
-* passive evidence MAY contribute within strict ceilings,
-* `cycle_age_ge_dmax` MAY satisfy `T_allow` without beacon elevation as defined elsewhere.
+`normal` requires sufficient recent beacon/certification coverage, stable predicates, low contradiction density, and authorization-frontier coverage for normal effects.
 
-Tempo MUST NOT permanently stall the system.
+`constrained` applies when structural progression or Tempo repair remains possible but beacon support, certification coverage, or authorization-frontier coverage lags. Early cycles before lag `K` and certification coverage are constrained unless immutable independently verifiable genesis data defines a bootstrap basis that cannot weaken anti-collapse invariants.
 
----
+`record_only` applies when canonical publication cannot proceed or zero eligible human participation prevents minimum replayable Tempo repair. In record-only posture, nodes may read, replay, preserve, and prepare local/offline drafts for possible later publication, but universal structural cycle advancement does not proceed.
 
-### 15.2 Survivor Non-Capture Guarantee [anchor: survivor_non_capture_guarantee]
+`time_repair_priority` is not an independent global authority mode. It is a constrained-mode substate, reason code, or restricted action profile used when beacon coverage is absent for multiple cycles, contradictions block predicate stability, or time legitimacy is severely degraded. In this substate, target-bound time truth claims and explicitly permitted Tempo-context evidence ideas/connections should be prioritized. Challenge creation, voting, and verdict finalization remain ordinary challenge-system powers unless explicitly amended.
 
-If a small number of identities remain active:
+`time-only mode` is a deprecated historical alias for constrained time-repair behavior. Partition status is operational/offline context, not an independent global authority mode.
 
-* they MAY accumulate sufficient certainty to form new beacons only when no larger contradicting population exists,
-* the same identities MUST NOT be able to do so while a broader active population remains.
-
-This guarantee MUST arise solely from:
-
-* diversity requirements,
-* contradiction aggregation,
-* eligibility constraints.
-
-No special survivor privileges are permitted.
+Mode transitions must be deterministic, replayable, and derived solely from canonical data.
 
 ---
 
-### 15.3 No Retroactive Legitimization [anchor: no_retroactive_legitimization]
+## 10. Structural/Authority Separation [anchor: 10_structural_authority_separation]
 
-Time claims or beacons formed during degraded or low-participation periods:
+The Cycle Specification may consume `T_allow` structural predicates derived during cycle `r` within cycle `r` only for structural boundary evaluation:
 
-* MUST NOT retroactively legitimize prior actions,
-* MAY only support forward progress.
+- `cycle_age_ge_dmin` with `W_score >= W_target` permits deliberative structural close;
+- `cycle_age_ge_dmax` with unmet work target permits forced structural close;
+- `structural_dmax_liveness_predicate` with unmet work target permits forced structural close only;
+- Dmax mechanically implies structural Dmin for the same anchor and profile.
 
----
+Same-cycle Tempo predicate consumption must not authorize economic, governance, lifecycle, token, final-rank, POD, POINT, ordinary-mana, ordinary-rate-limit, or other irreversible effects.
 
-## 16. Explicit Non-Goals and Prohibited Interpretations [anchor: 16_explicit_non_goals_and_prohibited_interpretations]
+Consequential authority requires beacon-level certification and the Cycle Specification's contiguous lagged authorization frontier. Later certification may finalize explicitly pending outputs only. It must not validate actions that were forbidden when attempted or create stockpiles of unused ordinary mana allowances or rate-limit resets.
 
-### 16.1 Non-Goals [anchor: non_goals]
-
-Tempo MUST NOT be interpreted as:
-
-* a trusted clock,
-* a scheduler,
-* an emergency override,
-* a governance authority,
-* or a substitute for human judgment.
+Population collapse must not automatically reduce `K`, `T_beacon`, beacon identity requirements, independence requirements, or stability-cycle requirements. One surviving human may keep structural cycles and time repair moving where the active profile permits, but does not automatically become sovereign.
 
 ---
 
-### 16.2 Limits of Protection [anchor: limits_of_protection]
+## 11. Replay Completeness [anchor: 11_replay_completeness]
 
-Tempo does not claim to prevent:
+The canonical log must be sufficient to reconstruct:
 
-* total identity capture,
-* universal coercion,
-* or compromised governance authority.
+- all target-bound time truth claims;
+- all potential evidence ideas and actual evidence ideas used in Tempo context;
+- `evidence_for`, `evidence_against`, and `same_as` connections;
+- evidence-placement challenges and verdicts;
+- certainty-band challenges and verdicts;
+- contradiction challenge outcomes;
+- immutable Tempo profile references;
+- human structural stances;
+- passive evidence normalization, deduplication, outlier handling, and capped contribution;
+- Tempo mana balances;
+- structural Dmax liveness predicate status, including blocking contradictions and blocking challenges;
+- Dmin/Dmax predicates;
+- derived beacon status and revocation;
+- beacon target coverage;
+- cycle certification inputs;
+- Tempo mode transitions.
 
-Tempo exists to preserve auditability, contestability, and human-reactable pacing.
-
----
-
-## 17. Invariant Summary [anchor: 17_invariant_summary]
-
-The following invariants are mandatory:
-
-1. Time enters the system only as contestable claims.
-2. Uncertainty slows the system.
-3. Speed never grants authority.
-4. Deterministic replay is never violated to restore liveness.
-5. Tempo guards legitimacy conditions, not outcomes.
-
-
-
-
+Tempo must never advance cycles, authorize economic or governance power, trust clocks or infrastructure, or create irreversibility. Tempo measures contested time and exposes it safely.

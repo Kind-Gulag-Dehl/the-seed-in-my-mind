@@ -11,6 +11,7 @@ use axum::{
     Json, Router,
 };
 use common::security_limits::{API_AUTH_BODY_LIMIT_BYTES, IDEA_TITLE_MAX_CHARS};
+use common::test_db_guard::require_disposable_database_url;
 use rand_core::OsRng;
 use std::collections::BTreeSet;
 use storage::{ensure_session_hmac_key_ready, ConnectionRow, Storage};
@@ -56,6 +57,15 @@ pub(super) async fn try_test_db() -> Option<Storage> {
             return None;
         }
     };
+    match require_disposable_database_url(&database_url) {
+        Ok(database_name) => {
+            eprintln!("TEST_DB: {database_name} differs_from_seed_dev=true");
+        }
+        Err(err) => {
+            eprintln!("SKIP: DATABASE_URL rejected by test DB guard: {err}");
+            return None;
+        }
+    }
 
     match Storage::new(&database_url).await {
         Ok(storage) => Some(storage),

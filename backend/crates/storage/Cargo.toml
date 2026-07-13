@@ -8,6 +8,7 @@ common = { path = "../common" }
 encoding = { path = "../encoding" }
 event-log = { path = "../event-log" }
 snapshot = { path = "../snapshot" }
+verification = { path = "../verification" }
 anyhow.workspace = true
 chrono.workspace = true
 hmac.workspace = true

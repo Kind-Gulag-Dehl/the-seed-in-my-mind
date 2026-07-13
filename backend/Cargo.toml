@@ -55,15 +55,15 @@ anyhow = "1.0"
 argon2 = "0.5"
 axum = "0.7"
 chrono = { version = "0.4", features = ["serde"] }
+ed25519-dalek = "2.2"
 hmac = "0.12"
 rand_core = "0.6"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sha2 = "0.10"
-sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "postgres", "uuid", "chrono", "derive"] }
+sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "postgres", "uuid", "chrono", "derive", "migrate"] }
 thiserror = "1.0"
 tokio = { version = "1.35", features = ["macros", "rt-multi-thread"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
 uuid = { version = "1.6", features = ["serde", "v4", "v7"] }
-

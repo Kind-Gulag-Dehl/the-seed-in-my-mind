@@ -3,7 +3,7 @@ doc_id: node_and_conformance_spec
 title: Node and Conformance Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Defines node responsibilities and conformance requirements for validation and replay.
@@ -164,7 +164,7 @@ An event that:
 
 conforms to schema under the active rulebook version,
 
-is authored by a valid human identity, with a verifiable human-confirmation signature,
+is authored by a valid human identity, with a verifiable Profile-v0 `signature` under `canonical-event-authorship-and-signature-profile-v0.md`,
 
 may include AI provenance metadata, but AI identities MUST NOT appear as authors,
 
@@ -426,55 +426,66 @@ During merge, nodes MUST NOT perform implicit reconciliation, averaging, or tie-
 
 ### 2.3 Event Envelope and Schema Requirements [anchor: event_envelope_and_schema_requirements]
 
-Every canonical event MUST include the following envelope fields:
+Every ordinary human-authored canonical event MUST first exist as a signed authored candidate and then, after publication finality, as a published canonical event wrapper.
 
-global_ulid
+The signed authored candidate MUST include the canonical fields defined in `canonical-event-authorship-and-signature-profile-v0.md`, including:
 
-Globally unique identifier.
+- `signature_profile`
+- `event_id`
+- `event_type`
+- `author_identity_id`
+- optional `speaker_identity_id`
+- `public_key_ref`
+- `payload_hash`
+- `payload` or `payload_ref`
+- `payload_binding_mode`
+- optional non-semantic `author_observed_at`
+- `signature`
 
-Identifier only; MUST NOT be used as an ordering authority.
+Deprecated field names MUST be interpreted only as historical aliases:
 
-event_index
+- `global_ulid` maps to `event_id`;
+- `human_confirmation_proof` maps to `signature`;
+- `signer_key_id` maps to `public_key_ref`;
+- `human_author_id` maps to `author_identity_id`.
 
-Node-local sequential index.
+New normative envelope definitions MUST use the Appendix A canonical terms and MUST NOT introduce interchangeable names.
 
-MUST reflect canonical publication ordering within each derived block and never decrease within the block.
+The published canonical event wrapper supplies publication-derived fields such as:
 
-parent_hash or chain_reference
+- `event_index`
+- `block_height`
+- parent prefix-certificate hash or chain reference
+- derived block identifier
+- finalized-prefix-certificate reference
+- rulebook reference set
+- payload classification
 
-Hash or reference to the prior canonical publication element (parent prefix certificate hash, derived block header, or previous event anchor).
+Those publication-derived fields MUST reflect finalized canonical publication ordering and MUST NOT be part of ordinary human-authorship signed bytes.
 
-Used to validate chain continuity.
+`author_identity_id`
 
-block_id (optional, but canonical if present)
-
-Identifier of the derived publication block this event is included in.
-
-author_identity_id
-
-MUST reference a valid, active human identity in the Identity Table.
+MUST reference a valid, active human identity in replay-derived canonical identity state for ordinary human-authored events.
 
 This is the canonical **pseudonymous** author of the event content (public by default). Civil identity disclosure MUST NOT be required for validity.
 
-author_persona_id (optional)
+`speaker_identity_id` (optional)
 
-Optional public persona identity/profile attached to this event, if the author opts in to stronger attribution.
+Optional represented speaker identity attached to this event when the event schema permits or requires a speaker distinct from the author.
 
-human_confirmation_proof
+`signature`
 
-A cryptographic signature or authenticated request proving that the referenced human explicitly confirmed this event.
+A Profile-v0 Ed25519 signature proving that the referenced human explicitly confirmed the authored candidate.
 
-MUST bind the event's payload hash (and relevant envelope fields) to author_identity_id.
+MUST bind the authored candidate fields and `payload_hash` to `author_identity_id` according to `canonical-event-authorship-and-signature-profile-v0.md`.
 
-signer_key_id (or signer_key_ids)
+`public_key_ref`
 
-Key identifier(s) used to sign the event envelope.
+Hash32 key descriptor reference used to verify the event candidate signature.
 
-MUST be traceable to the author_identity_id via the identity's key and succession records.
+MUST resolve to an active key owned by `author_identity_id` through replay-derived identity key state.
 
-MAY represent device keys or delegated keys, but all MUST ultimately belong to the human identity.
-
-payload_hash
+`payload_hash`
 
 Cryptographic hash of the event payload (idea, connection, challenge, action, rulebook, etc.).
 
@@ -520,23 +531,27 @@ E.author_persona_id, if present, is presentation-only and MUST NOT affect validi
 
 E.author_identity_id MUST correspond to a human identity, not an AI, Ent, or synthetic actor.
 
-E.human_confirmation_proof MUST be valid and MUST cryptographically bind:
+E.signature MUST be valid and MUST cryptographically bind all Profile-v0 signed fields defined in `canonical-event-authorship-and-signature-profile-v0.md`, including:
 
 the event's payload_hash,
 
-the global_ulid (or clear envelope commitment),
+the event_id,
 
-and the author_identity_id.
+the author_identity_id,
 
-The signer key(s) listed in E.signer_key_id MUST be authorized keys for author_identity_id according to identity and succession records.
+the public_key_ref,
+
+and any optional speaker, payload-reference, or author-observed fields present in the candidate.
+
+The `public_key_ref` listed in E MUST resolve to an active key owned by author_identity_id according to replay-derived identity key state.
 
 Nodes MUST reject any event that:
 
 attributes authorship to a non-human identity,
 
-lacks a valid human_confirmation_proof,
+lacks a valid `signature`,
 
-has signer keys that do not resolve to the claimed human identity,
+has a `public_key_ref` that does not resolve to an active key owned by the claimed human identity,
 
 or contains inconsistent or missing authorship information.
 
@@ -567,16 +582,18 @@ Upon receiving a new event (local submission or from the network), the node MUST
 
 Envelope & Schema Validation
 
-Verify all required envelope fields are present:
-global_ulid, event_index (or assign it), author_identity_id, human_confirmation_proof, payload_hash, payload_class, rulebook_version, and chain reference fields.
+Verify all required authored-candidate fields are present:
+`event_id`, `event_type`, `author_identity_id`, `public_key_ref`, `payload_hash`, payload binding fields, and `signature`.
+
+Publication-derived fields such as `event_index`, block height, finalized-prefix-certificate references, and chain reference fields are validated only when evaluating the publication wrapper. They MUST NOT be required to reconstruct human-authorship signed bytes.
 
 Check that the payload structure conforms to the schemas defined by the active rulebooks at the last snapshot.
 
 Signature Validation
 
-Verify that human_confirmation_proof is a valid signature / authenticated confirmation from author_identity_id.
+Verify that `signature` is a valid Profile-v0 signature over the exact authored-candidate bytes from author_identity_id.
 
-Verify that signer_key_id is an authorized key for the human identity, respecting key rotation and identity succession.
+Verify that `public_key_ref` is an active replay-derived key reference for the human identity, respecting canonical key rotation, key revocation, and identity succession rules.
 
 Reject any canonical event that:
 
@@ -644,7 +661,7 @@ Reject events that exceed rate limits as invalid canonical events.
 
 Append to Candidate Store / Canonical Log
 
-After intake validation succeeds, the node MAY store the event as an authored candidate event.
+After intake validation succeeds, the node MAY store the event as a signed authored candidate.
 
 The event enters the canonical log only after it is included in a valid finalized prefix certificate. At that point the node assigns or verifies the derived `(block_height, event_index)` address and updates internal indexes.
 
@@ -713,7 +730,8 @@ Nodes MAY retain the original payload locally *only if* global legality rules al
 
 When a submission is classified as non_distributable_blocked:
 
-1. The node MUST emit a **canonical blocked_submission** event containing only:
+1. The node MUST emit a canonical `blocked_submission` event as defined by Appendix A, containing
+   only safe accountability metadata:
    - reference to the submitting identity,
    - rulebook and classifier references,
    - safe-summary or placeholder text,
@@ -722,6 +740,9 @@ When a submission is classified as non_distributable_blocked:
    - the existence of the attempted payload is visible,
    - users may challenge the classification,
    - history remains intact and auditable.
+3. The event MUST NOT admit or distribute the blocked payload and MUST NOT mutate truth certainty,
+   importance, governance authority, token authority, Tempo/Cycle certification, or the
+   authorization frontier.
 
 Nodes MUST NEVER silently drop dangerous content without recording a canonical trace.
 
@@ -814,9 +835,9 @@ Nodes MUST enforce strict human-first boundaries between canonical and sandbox u
 
 Canonical Events MUST be Human-Authored
 
-author_identity_id MUST always be a human identity.
+`author_identity_id` MUST always be a human identity for ordinary human-authored events.
 
-human_confirmation_proof MUST always be present and valid.
+`signature` MUST always be present and valid under `canonical-event-authorship-and-signature-profile-v0.md`.
 
 AI identities (including Ents) MAY appear in ai_provenance, but NEVER as authors.
 
@@ -841,7 +862,7 @@ Nodes MUST reject any canonical event that:
 
 is authored by an AI identity, Ent, or synthetic entity;
 
-lacks a valid human_confirmation_proof;
+lacks a valid human-authorship `signature`;
 
 attempts to treat ai_provenance as authorship;
 
@@ -1042,10 +1063,10 @@ A conformant node MUST:
    - Apply representation merges or equivalence results.
 
 3. **Recompute POD flows**
-   POD derivation from importance rankings MUST be deterministic and rulebook-governed.
+   POD derivation from importance rankings MUST be deterministic and rulebook-governed. POD effects remain provisional or pending until the relevant cycle is authorized by certification and the lagged authorization frontier.
 
 4. **Recompute POINT emissions**
-   Using the active token rulebook at each snapshot boundary.
+   Using the active token rulebook at each structural cycle or snapshot boundary. POINT mint, melt, distribution, or spendability effects remain pending or blocked until the relevant cycle is authorized by certification and the lagged authorization frontier.
 
 5. **Apply safety classifications deterministically**
    Payload classification and abstraction MUST yield the same results across nodes.
@@ -1059,6 +1080,25 @@ A conformant node MUST:
    Representation challenges may create same_as relationships that collapse ideas into canonical equivalents; nodes MUST derive identical results.
 
 No implementation-specific heuristics may alter replay logic.
+
+---
+
+### 5.2A Tempo/Cycle Conformance Hooks [anchor: tempo_cycle_conformance_hooks]
+
+Conformant nodes MUST implement the Appendix A Tempo/Cycle schemas and preserve the following boundaries:
+
+- AI identities, non-human actors, local automation, publication participants, or node operators MUST NOT become canonical Tempo contributors, authors of canonical Tempo claims/evidence, beacon supporters, cycle authorities, challengers, voters, verdict finalizers, or governance actors.
+- Low-threshold `tempo_contributor` eligibility permits only target-bound ordinary `truth_claim` creation with valid `tempo_claim` metadata and explicitly allowed Tempo-context evidence ideas/connections. It does not grant ordinary canonical write access, evidence creation outside Tempo context, connection creation outside Tempo context, challenge opening, challenge voting, verdict finalization, governance, POD, POINT, token, or ordinary mana authority.
+- Time-related challenge creation, challenge voting, and verdict finalization remain governed by the ordinary challenge eligibility rules unless a later authoritative rulebook explicitly defines a separate `tempo_challenger` capability.
+- Nodes MUST NOT admit hidden trusted-clock inputs into Tempo truth certainty or structural support. Node-local clocks, server time, client timestamps, receipt time, block height, scheduler observations, local uncommitted observations, AI-generated observations, publication volume, or availability timing have no Tempo effect unless represented as valid canonical ideas, canonical connections, or profile-admitted passive evidence inputs under explicit protocol rules.
+- Nodes MUST deterministically reproduce derived Dmin/Dmax target keys, immutable Tempo profile references, target-level truth certainty, human structural stances, passive evidence aggregation, structural-support state, Dmin/Dmax predicates, derived beacon states, structural cycle boundaries, cycle certification, the lagged authorization frontier, downstream output status, and normal/constrained/record-only modes.
+- Nodes MUST deterministically reproduce `structural_dmax_liveness_predicate` as a Dmax-only forced-closure predicate derived from nonzero eligible-human survivor support, valid target-bound Dmax claims or stances, required capped passive plausibility evidence, constrained/time-repair conditions, and blocker checks. Nodes MUST reject any use of that predicate for Dmin, deliberative closure, beacon status, certification, authorization-frontier advancement, or consequential authority.
+- Nodes MUST reject invalid Tempo-context `evidence_for`, `evidence_against`, or `same_as` connections with `ERR_TEMPO_EVIDENCE_CONNECTION_INVALID` when endpoints, target-bound time-claim metadata, compatibility, provenance-as-idea requirements, or ordinary evidence-placement/certainty flow requirements are not satisfied.
+- Nodes MUST reject any interpretation that treats forced structural cycles as consequential authority, accumulated legitimacy, payout authorization, governance activation, lifecycle finalization, final rank authority, ordinary mana authority, or rate-limit reset authority.
+- Nodes MUST reject any automatic reduction of `K`, `T_beacon`, beacon diversity, independence, or stability requirements under population collapse.
+- Nodes MUST reject backfilled ordinary mana, ordinary rate-limit, POD, POINT, token, or governance effects from uncertified or previously constrained cycles.
+- Nodes MUST verify that Tempo truth certainty comes from explicit idea, connection, challenge, vote, and verdict history. Nodes MUST also verify that `T_allow` structural support is separate from truth certainty and comes only from current eligible-human stances plus profile-capped passive evidence. Verification, identity certainty, provider, institution, jurisdiction, wealth, POD, POINT, reputation, role, model, or operator status MUST NOT multiply influence.
+- Nodes MUST expose deterministic rejection causes that map to Appendix A Tempo/Cycle rejection codes for conformance testing, without requiring any specific runtime exception class or API error format.
 
 ---
 
@@ -1084,11 +1124,11 @@ Replay strictly reconstructs the **human-authored canonical universe**.
 
 ### 5.4 Rulebook Versioning During Replay [anchor: rulebook_versioning_during_replay]
 
-Nodes MUST interpret historical events using **the rulebooks active at the time those events occurred**, not the rulebooks active now.
+Nodes MUST interpret historical events using **the rulebooks active at that canonical replay position**, not the rulebooks active now.
 
 - Every event stores a `rulebook_version` reference.
-- Snapshots commit rulebook activation state for deterministic verification at discrete block boundaries.
-- Replay MUST restore the exact rulebooks active at each historical boundary.
+- Snapshots commit rulebook activation state for deterministic verification at discrete derived block boundaries.
+- Replay MUST restore the exact rulebooks active at each historical replay boundary.
 
 This ensures:
 
@@ -1105,7 +1145,7 @@ This ensures:
 Full canonical nodes MUST integrate with the staged canonical publication system as follows:
 
 - **Validate authored events before finality**
-  Nodes validate authored event bytes, signatures, rulebook compatibility, and safety classification before treating an event as a candidate for canonical publication.
+  Nodes validate authored candidate bytes, Profile-v0 human-authorship signatures, replay-derived key state, rulebook compatibility, and safety classification before treating an event as a candidate for canonical publication.
 
 - **Follow the active publication profile**
   Canonical publication MUST follow the active profile defined in `pod-consensus-and-canonical-publication-spec.md`:
@@ -1193,7 +1233,7 @@ Nodes therefore MUST enforce:
 A conformant node MUST reject any event that:
 
 - originates from an AI-only identity,
-- lacks a valid human signature or confirmation,
+- lacks a valid human-authorship `signature`,
 - references an identity whose proof-of-humanity is missing, expired, or invalid.
 
 Identity anchoring ensures the canonical universe remains grounded in human deliberation.
@@ -1256,10 +1296,10 @@ Rules for classification, abstraction, and blocking are defined entirely by **ac
 
 Nodes MUST:
 
-- Create an explicit **blocked_submission** event when dangerous or non-distributable payloads are submitted.
+- Create an explicit Appendix A `blocked_submission` event when dangerous or non-distributable payloads are submitted.
 - **Never silently drop** such content.
 - Store:
-  - timestamp (non-canonical) / event_id,
+  - event ID and any non-semantic local receipt metadata,
   - human identity attempting submission,
   - classifier reasoning (abstracted as required),
   - rulebook references justifying the block.
@@ -1512,7 +1552,7 @@ Fixtures MUST assert identical canonical outcomes across implementations.
 ### 9.1 POD Calculations [anchor: pod_calculations]
 
 Proof-of-Deliberation (POD) represents **epistemic significance**, not value, not currency.
-Nodes MUST compute POD exactly as defined by the active token rulebooks at each snapshot boundary.
+Nodes MUST compute POD exactly as defined by the active token rulebooks at each structural cycle and snapshot boundary, but consequential POD effects remain provisional or pending until cycle certification and the lagged authorization frontier authorize them.
 
 A conformant node MUST:
 
@@ -1551,7 +1591,7 @@ unmerged representation-duplicate ideas,
 identity ideas as intermediate nodes (identities may only receive POD, not route it).
 
 POD computation MUST be fully deterministic.
-Any two conformant nodes replaying the same canonical universe MUST derive identical POD distributions.
+Any two conformant nodes replaying the same canonical universe MUST derive identical POD distributions and identical provisional, pending, authorized, or blocked POD status.
 
 ---
 
@@ -1569,10 +1609,12 @@ Nodes MUST:
   - or other governance-defined factors.
 
 - **Apply cycle-based emission rules**
-  At each cycle or snapshot boundary, identities holding POD receive POINT outputs according to:
+  At each structural cycle or snapshot boundary, identities holding POD derive pending POINT outputs according to:
   - emission rate,
   - holding-to-yield curve,
   - governance parameters.
+
+  Derived POINT outputs MUST NOT become authorized, spendable, melt-effective, or distributable until the lagged authorization frontier authorizes the relevant cycle.
 
 - **Enforce token invariants**
   - **POD is non-transferable** under all circumstances.
@@ -1583,7 +1625,7 @@ Nodes MUST:
     - grant special powers,
     - override human identities.
 
-Nodes MUST also record POINT balances at each snapshot to support deterministic replay.
+Nodes MUST also record POINT balances and pending/authorized status at each snapshot to support deterministic replay. Forced cycles, constrained operation, or later certification MUST NOT create burst capacity, backfilled ordinary rate-limit resets, or token value extraction for actions that were forbidden when attempted.
 
 ---
 
@@ -1614,7 +1656,7 @@ Any violation of identity-only token storage renders a node non-conformant.
 Conformant nodes MUST:
 
 - **Store every historical rulebook version**, including superseded ones.
-- **Apply the correct version based on event timestamp**
+- **Apply the correct version based on canonical replay position and scheduled cycle activation**
   Rulebooks activate only via adoption actions, and only at cycle boundaries.
 - **Record rulebook lineage**
   Nodes must maintain:
@@ -1623,7 +1665,7 @@ Conformant nodes MUST:
   - version identifiers,
   - adoption action references.
 
-A node replaying history MUST reconstruct the active rulebook versions at each block height exactly.
+A node replaying history MUST reconstruct the active rulebook versions at each replay position exactly. Where derived block heights are exposed, block height is only a packaging/address coordinate for the already-finalized canonical sequence and MUST NOT substitute for cycle, Tempo, or governance authority.
 
 ---
 
@@ -1632,7 +1674,7 @@ A node replaying history MUST reconstruct the active rulebook versions at each b
 Certain invariants are non-negotiable and MUST be enforced regardless of rulebook content:
 
 - **Human primacy**
-  Only humans can author canonical events; AI cannot vote, propose rulebooks, mint tokens, or shape governance.
+  Only humans can author canonical events; AI cannot vote, propose rulebooks, mint tokens, shape governance, contribute canonical Tempo authority, or support beacon elevation.
 
 - **POD non-transferability**
   POD cannot be moved, sold, staked, or delegated.
@@ -1717,8 +1759,10 @@ Nodes MUST distinguish sharply between:
   - be treated as submissions,
   - influence truth, importance, certainty, or tokens.
 
-Every canonical event must explicitly contain:
-- `human_author_id`
+Every ordinary human-authored canonical event candidate must explicitly contain:
+- `author_identity_id`
+- `signature`
+- `public_key_ref`
 - `ai_assist_flag` (optional)
 - `ai_model_reference` (optional)
 
@@ -1928,11 +1972,45 @@ Conformance testing includes, but is not limited to:
 - **Rulebook switching tests**
   Nodes must show correct activation of rulebooks at the proper cycle boundaries using recorded adoption actions.
 
+- **Canonical authorship-signature tests**
+  Nodes must pass the Profile-v0 authorship-signature vectors required by `canonical-event-authorship-and-signature-profile-v0.md`, including valid Ed25519 signatures, invalid signatures, altered payload hash, altered event type, altered author identity, wrong key owner, unknown key, revoked key use, historically valid pre-revocation signatures, key rotation, malformed key and signature encodings, unsupported signature profiles, byte-identical cross-implementation candidates, publication-wrapper mutation, unchanged signed bytes under canonical-position assignment, and attempted use of `event_index` in the human-authorship signed bytes.
+
 - **POD/POINT cycle simulation tests**
   Nodes must:
   - compute POD flows deterministically,
   - compute POINT emissions identically,
   - enforce melt/invariants and identity token storage rules.
+
+- **Tempo/Cycle schema and replay tests**
+  Nodes must:
+  - accept target-bound Tempo time claims only as ordinary `truth_claim` ideas with valid `tempo_claim` metadata,
+  - reject any `time_claim`, `tempo_target`, `beacon`, `evidence`, `attestation`, `testimony`, or `source` idea type,
+  - accept valid low-threshold target-bound Tempo claim creation and explicitly permitted Tempo-context evidence ideas/connections from eligible human `tempo_contributor` identities,
+  - reject arbitrary idea creation, evidence creation outside Tempo context, connection creation outside Tempo context, challenge opening, challenge voting, verdict finalization, governance, POD, POINT, token, ordinary mana, or ordinary rate-limit authority from `tempo_contributor` status alone,
+  - reject AI and non-human canonical Tempo claims, evidence ideas, challenges, votes, verdict authority, beacon support, cycle authority, and governance authority,
+  - reject invalid target keys, target/profile mismatches, and insufficient Tempo mana,
+  - reject invalid Tempo-context evidence or `same_as` connections with `ERR_TEMPO_EVIDENCE_CONNECTION_INVALID`,
+  - verify evidence is represented by identity-authored ideas and existing `evidence_for` / `evidence_against` connections,
+  - verify certainty-band challenge verdicts, not raw author counts or hidden weights, determine Tempo truth certainty,
+  - verify `T_allow` structural support does not assign truth certainty and can permit structural closure only,
+  - verify passive evidence alone cannot cross `T_allow`, `T_beacon`, Dmin, Dmax, survivor Dmax, certification, or frontier thresholds,
+  - verify passive evidence plus profile-required eligible-human support may contribute to Dmin/Dmax structural readiness within caps,
+  - verify repeated equivalent support from one identity counts once and later valid stance supersedes only current structural stance,
+  - verify zero eligible humans produce record-only posture and no universal `cycle_close`,
+  - verify one eligible human `tempo_contributor` can satisfy `structural_dmax_liveness_predicate` for forced Dmax structural closure only when the active profile's survivor minimum, passive plausibility, constrained/time-repair condition, and blocker checks are satisfied,
+  - verify one eligible human cannot use `structural_dmax_liveness_predicate` for Dmin deliberative closure, beacon status, cycle certification, authorization-frontier advancement, or consequential authority,
+  - verify accepted contradictory target-bound claims and unresolved blocking truth challenges block `structural_dmax_liveness_predicate`,
+  - verify external links alone cannot satisfy `T_allow` and cannot satisfy beacon diversity,
+  - verify local/server/client timestamps, receipt time, block height, scheduler observations, publication volume, local observations, and AI observations do not affect certainty,
+  - verify Dmax mechanically implies structural Dmin,
+  - verify Dmin plus `W_score >= W_target` closes deliberatively,
+  - verify Dmax plus `W_score < W_target` closes forcibly,
+  - verify `structural_dmax_liveness_predicate` plus `W_score < W_target` closes forcibly with trigger `dmax_structural_liveness_forced`,
+  - verify forced cycles do not create POD, POINT, governance, lifecycle, final-rank, ordinary mana, ordinary rate-limit, or token authority,
+  - verify `K`, beacon thresholds, diversity, independence, and stability requirements do not automatically shrink under collapse,
+  - verify authorization frontier advancement stops at certification gaps and never decreases,
+  - verify later certification finalizes explicit pending outputs only and does not retroactively validate forbidden actions or backfill ordinary mana/rate-limit authority,
+  - reproduce derived targets, immutable profile references, structural stances, passive evidence aggregation, predicates, beacon coverage, cycle certification, authorization frontier, Tempo mode, and provisional/pending/authorized/blocked output status.
 
 Nodes failing any vector are **not conformant**.
 

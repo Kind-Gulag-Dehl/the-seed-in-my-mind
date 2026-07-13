@@ -11,6 +11,8 @@
     "dev:frontend": "powershell -ExecutionPolicy Bypass -Command \"& backend/scripts/wait-health.ps1; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; npm --prefix frontend/open-core-reference run dev\"",
     "lint": "npm run verify:boundaries",
     "test": "npm --prefix frontend/open-core-reference test",
+    "conformance": "npm run conformance:tempo-cycle",
+    "conformance:tempo-cycle": "node ./scripts/tempo-cycle-fixture-harness.mjs",
     "build": "npm --prefix frontend/open-core-reference run build",
     "verify:boundaries": "node ./scripts/check-open-core-boundaries.mjs --frontend-dir frontend/open-core-reference",
     "verify:canonical-dto": "node ./tools/open-core/verify-canonical-dto.mjs",

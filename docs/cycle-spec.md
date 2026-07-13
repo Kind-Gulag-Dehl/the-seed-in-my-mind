@@ -3,7 +3,7 @@ doc_id: cycle_spec
 title: Cycle Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Defines cycle derivation and any mechanics gated by cycles.
@@ -13,7 +13,7 @@ authoritative_for:
   - Which behaviors are cycle-gated across the system.
 
 not_authoritative_for:
-  - Tempo enforcement and time-only mode (see tempo-spec.md).
+  - Tempo enforcement and constrained/time-repair modes (see tempo-spec.md).
 
 depends_on:
   - protocol v5.md
@@ -73,7 +73,7 @@ This specification **consumes**, but does not define:
 * the internal calculation of importance and POD routing (from the Token Specification),
 * burn/rot eligibility rules (from the Lifecycle/Burn Specification).
 
-This specification is the **single authoritative source** for when and how cycles advance and what cycle advancement means.
+Protocol v5 owns the root cycle invariants and sealing semantics. This specification provides the detailed subordinate normative algorithm for deriving, classifying, certifying, and replaying cycle boundaries and cycle-gated effects.
 
 Cycles provide semantic pacing and coordination boundaries but do not define or trigger snapshot emission. Snapshot creation remains governed exclusively by block-height intervals in snapshot-format-v0.md.
 
@@ -95,8 +95,8 @@ The following invariants MUST hold at all times:
 4. **Boundary creation is separate from boundary consequences**
    A cycle boundary may be created before legitimacy is fully established; power and rewards may not.
 
-5. **The system must never permanently stall**
-   Under any participation regime, the system must be able to advance cycle boundaries.
+5. **Recoverable nonzero-human operation must not permanently stall**
+   When at least one profile-eligible human can continue canonical Tempo repair, the system must be able to advance structure through the Dmax paths defined here. Zero eligible human participation enters true record-only posture; machine evidence alone must not continue universal cycles.
 
 6. **The system must never silently accelerate**
    No mechanism may allow sustained cycle advancement to directly mint economic or governance power without lagged, challengeable legitimacy.
@@ -135,19 +135,19 @@ A cycle boundary is not itself a truth claim, reward event, or governance decisi
 
 ### 1.2.1 Canonical Boundary Event (`cycle_close`) [anchor: canonical_boundary_event_cycle_close]
 
-Each cycle boundary MUST be recorded as a canonical `cycle_close` event anchored to a specific block height `H_close`.
+Each cycle boundary MUST be recorded as a canonical `cycle_close` event anchored to a deterministic canonical log position. If a deployment exposes derived block heights, the boundary may be addressed by the block height `H_close`, but block height is a packaging/address surface only and MUST NOT be interpreted as time authority or legitimacy.
 
 `cycle_close` is emitted automatically by deterministic protocol logic when closure predicates are satisfied. Human identities and operators MUST NOT manually submit `cycle_close`.
 
 The event author MUST be the reserved non-human canonical identity `system_boundary_emitter` defined by Protocol v5. `system_boundary_emitter` is restricted to mechanically verifiable boundary events and has no voting or governance authority.
 
-The `cycle_close` event is the sole authoritative marker that:
+The `cycle_close` event is the structural marker that:
 
 * ends the current cycle,
 * begins the next cycle,
-* binds all boundary recomputation to block height `H_close`.
+* binds all boundary recomputation to the deterministic replay prefix at the boundary.
 
-All cycle-based recomputations MUST occur at `H_close`, including at least:
+All cycle-based recomputations MUST occur at the boundary replay prefix (`H_close` where block heights are exposed), including at least:
 
 * rank recomputation,
 * POD recomputation,
@@ -155,13 +155,14 @@ All cycle-based recomputations MUST occur at `H_close`, including at least:
 * mana recharge,
 * eligibility rollovers.
 
-`cycle_close` records structural closure only; legitimacy gating still controls whether downstream effects are finalized.
+When block heights are exposed, `H_close` is an address for the replay prefix, not a time source. `cycle_close` records structural closure only; legitimacy gating and the authorization frontier control whether downstream effects are finalized or remain provisional/deferred.
 
 For cycle `r`, a `cycle_close` event is valid only at the earliest canonical log position `p` where:
 
 ```
-cycle_age_ge_dmin == true
-AND (event_target_reached == true OR cycle_age_ge_dmax == true)
+(cycle_age_ge_dmin == true AND event_target_reached == true)
+OR (cycle_age_ge_dmax == true AND event_target_reached == false)
+OR (structural_dmax_liveness_predicate == true AND event_target_reached == false)
 ```
 
 where:
@@ -186,7 +187,7 @@ This represents the normal, healthy progression of the system.
 
 #### 1.3.2 Forced Boundary (Liveness Seal) [anchor: forced_boundary_liveness_seal]
 
-A **forced boundary** is created when maximum-time guardrails are satisfied but deliberative completion is not possible, typically due to participation collapse, partition, or extreme inactivity.
+A **forced boundary** is created when maximum-time guardrails are satisfied, or the Dmax-only structural liveness predicate is satisfied, but deliberative completion is not possible, typically due to participation collapse, partition, or extreme inactivity.
 
 Forced boundaries exist to guarantee liveness and adaptation. They are explicitly marked and carry restricted consequences.
 
@@ -331,7 +332,7 @@ Time bounds serve two functions:
 2. **Liveness enforcement**
    Ensure cycles cannot remain open indefinitely when deliberative completion becomes impossible.
 
-Time bounds never *advance* a cycle by themselves. They only **permit** or **force** boundary creation when combined with the rules in §§4–5.
+Time bounds never measure work or create authority. Tempo `T_allow` structural predicates may **permit** or **force** structural boundary creation when combined with the rules in §§4–5. `T_allow` is structural support, not canonical truth certainty. High-certainty beacon certification and the lagged authorization frontier, not `T_allow`, control consequential authority.
 
 ---
 
@@ -349,7 +350,7 @@ A cycle MUST NOT close via a deliberative boundary unless:
 cycle_age_ge_dmin == true
 ```
 
-where `cycle_age_ge_dmin` is a boolean predicate produced by the Tempo Specification with sufficient certainty.
+where `cycle_age_ge_dmin` is a boolean predicate produced by the Tempo Specification when the derived Dmin target of the current cycle reaches `T_allow` structural readiness.
 
 #### Rationale [anchor: rationale_5]
 
@@ -367,13 +368,18 @@ where `cycle_age_ge_dmin` is a boolean predicate produced by the Tempo Specifica
 
 #### Rule [anchor: rule_2]
 
-A cycle MUST close if:
+A cycle MUST close structurally if:
 
 ```
 cycle_age_ge_dmax == true
+OR structural_dmax_liveness_predicate == true
 ```
 
-regardless of whether deliberative completion criteria are met.
+subject to the forced-closure conditions in §5.
+
+For the same anchor and Tempo profile, `cycle_age_ge_dmax == true` mechanically implies structural `cycle_age_ge_dmin == true`. This implication is only a structural closure rule for ordinary Dmax forced closure. It does not create a Dmin beacon, certify the cycle, or authorize downstream effects.
+
+`structural_dmax_liveness_predicate == true` is a narrower survivor path produced by the Tempo Specification from a valid Dmax target-bound truth claim and blocker checks. It applies only to forced structural closure, does not satisfy Dmin, and does not create ordinary Dmax certainty.
 
 #### Rationale [anchor: rationale_6]
 
@@ -391,7 +397,9 @@ All time-related inputs MUST be consumed exclusively from the **Tempo Specificat
 
 * `cycle_age_ge_dmin`
 * `cycle_age_ge_dmax`
+* `structural_dmax_liveness_predicate`
 * tempo mode flags (e.g., constrained mode)
+* derived target-level beacon and certification state used by §7.
 
 #### Explicit Prohibitions [anchor: explicit_prohibitions]
 
@@ -406,17 +414,19 @@ Implementations MUST NOT:
 
 ### 3.5 Certainty Requirements [anchor: certainty_requirements]
 
-* Time predicates are boolean but have associated certainty scores.
-* Governance defines certainty thresholds for predicates to be considered `true`.
-* This specification treats predicates as `false` until thresholds are met.
+* Ordinary Dmin/Dmax time predicates are boolean structural-readiness outputs from Tempo.
+* `structural_dmax_liveness_predicate` is boolean/blocked structural liveness status and is not a certainty score.
+* Governance defines `T_allow`, the structural-support threshold for predicates to be considered structurally `true`.
+* This specification treats predicates as `false` until Tempo structural-support thresholds and blockers are satisfied.
+* `T_allow` predicate truth does not imply beacon status, certification, authorization, or finality.
 
 ---
 
 ### 3.6 Time Bounds and Legitimacy [anchor: time_bounds_and_legitimacy]
 
-Satisfying `cycle_age_ge_dmin` or `cycle_age_ge_dmax`:
+Satisfying `cycle_age_ge_dmin`, `cycle_age_ge_dmax`, or `structural_dmax_liveness_predicate`:
 
-* permits or forces **boundary creation**,
+* permits or forces **structural boundary creation**,
 * does **not** by itself authorize:
 
   * mana spendability,
@@ -444,13 +454,17 @@ A cycle MUST close via a deliberative boundary at the earliest canonical log pos
 
 1. **Sufficient Work**
 
-W e W_target
+```
+W >= W_target
+```
 
 where `W_target` is the adaptive target defined elsewhere in this specification.
 
 2. **Minimum Time Satisfied**
 
+```
 cycle_age_ge_dmin == true
+```
 
 3. **Earliest-Valid Boundary Rule**
 
@@ -465,7 +479,7 @@ If any condition is false, a deliberative boundary MUST NOT occur at that log po
 A deliberative boundary:
 
 * indicates sufficient collective reasoning has completed,
-* is considered a **legitimate structural progression**,
+* is considered a **deliberative structural progression**,
 * is eligible (subject to §7) to authorize downstream effects,
 * is distinguishable from forced boundaries in the canonical log.
 
@@ -496,6 +510,8 @@ Low participation is expected to manifest as reduced realized work `W`. Particip
 
 If the cycle remains open until `cycle_age_ge_dmax == true`, forced closure rules apply (see §5).
 
+
+The same forced closure rules apply when `structural_dmax_liveness_predicate == true`.
 
 ### 4.6 Design Guarantees [anchor: design_guarantees]
 
@@ -541,14 +557,19 @@ Forced closure prioritizes **structural continuity** over legitimacy and power.
 A cycle MUST close via a forced boundary at the earliest canonical log position when:
 
 ```
-cycle_age_ge_dmin == true
-AND
-cycle_age_ge_dmax == true
+(
+  cycle_age_ge_dmax == true
+  OR structural_dmax_liveness_predicate == true
+)
 AND
 event_target_reached == false
 ```
 
-This requirement applies regardless of participation level and any minimum participation floors.
+If `cycle_age_ge_dmax == true` for the same anchor/profile, the structural Dmin condition is mechanically satisfied even if no separate Dmin beacon exists.
+
+If `structural_dmax_liveness_predicate == true`, the closure is still Dmax-only: it MUST use trigger `dmax_structural_liveness_forced`, MUST be forced, MUST NOT satisfy Dmin deliberative closure, and MUST NOT create ordinary Dmax certainty.
+
+This requirement applies when the relevant Tempo predicate is valid. Zero eligible human participation produces no Dmin readiness, no Dmax readiness, no survivor Dmax liveness, and no universal `cycle_close`.
 
 Any later forced `cycle_close` for the same cycle is invalid and MUST be deterministically rejected.
 
@@ -561,7 +582,8 @@ A forced boundary:
 * is explicitly marked as **forced** in the canonical log,
 * advances the cycle index deterministically,
 * exists solely to allow the system to adapt and recover,
-* does **not** imply sufficient deliberation occurred.
+* does **not** imply sufficient deliberation occurred,
+* remains forced forever.
 
 Forced boundaries MUST be distinguishable from deliberative boundaries during replay.
 
@@ -591,7 +613,7 @@ A forced boundary MAY:
 * update internal participation baselines used for diagnostics and adaptive smoothing,
 * allow the system to re-enter normal closure behavior after adjustment.
 
-Forced closure MUST NOT mint authority. It exists to preserve liveness and to allow adaptive targets to recalibrate under collapse conditions.
+Forced closure MUST NOT mint authority. It exists to preserve liveness and to allow adaptive targets to recalibrate under collapse conditions. Repeated forced closures do not accumulate legitimacy and later certification does not reclassify a forced boundary as deliberative.
 
 
 ### 5.6 Design Rationale [anchor: design_rationale]
@@ -612,9 +634,9 @@ without granting unearned power to remaining participants.
 
 ### 6.1 Purpose [anchor: purpose_3]
 
-The internal anti-stall mechanism exists to ensure that `cycle_age_ge_dmax` can be satisfied **within the same cycle**, even under extreme low participation.
+The internal anti-stall mechanism is explanatory terminology for the Tempo survivor Dmax structural liveness path. It exists to ensure that Dmax structural liveness can be satisfied **within the same cycle**, even under extreme but nonzero eligible-human participation.
 
-Without this mechanism, Dmax would itself require sufficient participation to verify, recreating the stall problem it is meant to solve.
+Without a survivor-compatible structural predicate, Dmax would itself require sufficient participation to verify, recreating the stall problem it is meant to solve.
 
 ---
 
@@ -622,11 +644,11 @@ Without this mechanism, Dmax would itself require sufficient participation to ve
 
 The internal anti-stall mechanism:
 
-* evaluates Tempo outputs and weak passive evidence,
-* determines whether Dmax has plausibly been exceeded,
+* evaluates Tempo outputs, replayable canonical evidence ideas, passive evidence admitted and capped by Tempo, and challenge verdicts admitted by Tempo,
+* evaluates `structural_dmax_liveness_predicate` when ordinary Dmax structural readiness cannot yet be produced,
 * may trigger a forced boundary.
 
-It is a **liveness aid**, not a source of truth.
+It is a **liveness aid**, not a source of truth certainty and not a third independent fallback.
 
 ---
 
@@ -645,6 +667,10 @@ It MUST NOT:
 * override legitimacy gating,
 * replace or bypass Tempo predicates.
 
+It MUST NOT infer Dmax liveness from clocks, schedulers, author counts, activity volume, or passive evidence alone. The survivor path is valid only when Tempo derives `structural_dmax_liveness_predicate` from nonzero eligible-human Dmax support, required capped passive plausibility evidence, profile thresholds, and blocker checks.
+
+It MUST NOT use node-local time, server time, receipt time, background schedulers, or uncommitted observations.
+
 ---
 
 ### 6.4 Determinism Requirements [anchor: determinism_requirements]
@@ -656,6 +682,8 @@ Anti-stall logic MUST be:
 * identical for all honest nodes.
 
 Any heuristics or thresholds used MUST be explicitly specified and governance-controlled.
+
+Zero-human operation is outside the anti-stall mechanism. If no eligible human can participate in minimum Tempo repair, replay enters or remains in record-only posture and no universal cycle boundary is emitted.
 
 ---
 
@@ -688,31 +716,46 @@ This separation is critical to preventing acceleration attacks.
 
 ---
 
-### 7.2 Legitimacy Lag Window (K) [anchor: legitimacy_lag_window_k]
+### 7.2 Certification and Lag Window (K) [anchor: certification_and_lag_window_k]
 
 A fixed, governance-defined lag window `K` (in cycles) is defined.
 
-For cycle `r`, full authorization of boundary consequences requires that:
+Each closed cycle has derived certification status:
 
-```
-cycle (r − K) has a high-certainty time anchor beacon
-```
+* a deliberative boundary requires certification of its derived Dmin target,
+* a forced boundary requires certification of its derived Dmax target.
 
-Only beacon-level time claims (as defined by the Tempo Specification) qualify.
+Certification requires target-level beacon state from the Tempo Specification. Beacons are derived state for deterministic target keys, not special authored objects or winning time claims.
 
 ---
 
-### 7.3 Authorization Rule [anchor: authorization_rule]
+### 7.3 Authorization Frontier [anchor: authorization_frontier]
 
-Boundary consequences at cycle `r` are authorized only if the above condition is met.
+The authorization frontier is a contiguous, monotonic, lagged derived value.
 
-If the condition is met:
+Initialization:
 
-* the system operates in **normal mode**.
+```text
+initial_authorization_frontier = -1
+```
 
-If the condition is not met:
+At each boundary:
 
-* the system operates in **constrained mode**.
+```text
+eligible_by_lag = current_cycle - K
+candidate_frontier = min(largest_contiguous_certified_cycle, eligible_by_lag)
+authorization_frontier = max(previous_frontier, candidate_frontier)
+```
+
+Rules:
+
+* a certification gap stops frontier advancement,
+* the frontier may not skip uncertified, contested, or revoked cycles,
+* revocation or a blocking contradiction stops future advancement but does not rewrite history already authorized by an earlier frontier,
+* cycles before lag `K` is satisfied operate in constrained mode,
+* no consequential outputs are finalized solely because the system is new.
+
+An alternative bootstrap basis is valid only if explicitly defined in immutable genesis data, independently verifiable, not added retroactively through later governance, and unable to weaken anti-collapse invariants.
 
 ---
 
@@ -727,7 +770,9 @@ In constrained mode:
 
 Allowed actions in constrained mode are limited to:
 
-* time repair (attestations, challenges, evidence),
+* target-bound time truth-claim creation by eligible `tempo_contributor` identities,
+* explicitly permitted Tempo-context evidence idea creation and evidence/same_as connections by eligible `tempo_contributor` identities,
+* time-related truth challenges only by identities satisfying ordinary challenge eligibility,
 * governance recovery actions,
 * system stabilization and maintenance.
 
@@ -737,12 +782,20 @@ The exact allowed action set is governance-defined but MUST preserve recovery ca
 
 ### 7.5 Exit from Constrained Mode [anchor: exit_from_constrained_mode]
 
-The system exits constrained mode automatically when:
-
-* sufficient beacon-level time anchors exist for cycles ≥ `r − K`,
-* legitimacy catches up with structure.
+The system exits constrained mode automatically when the contiguous certified authorization frontier has advanced through the lag-eligible cycle range required for normal authority.
 
 No manual intervention is required.
+
+### 7.6 Record-Only Posture [anchor: record_only_posture]
+
+Record-only posture applies when canonical publication cannot proceed or zero eligible humans can provide minimum Tempo repair. In record-only posture:
+
+* canonical history remains readable and replayable,
+* local/offline drafting and preservation may continue,
+* passive machine evidence may be preserved as future evidence material if later canonically published,
+* no Dmin readiness, Dmax readiness, survivor Dmax liveness, universal `cycle_close`, cycle certification, or authorization-frontier movement occurs.
+
+Record-only exits only when canonical publication and valid eligible-human Tempo repair inputs resume.
 
 ---
 
@@ -783,13 +836,13 @@ Mana is **not** a reward and is **not** a store of value.
 
 ### 8.2 Mana Issuance [anchor: mana_issuance]
 
-Mana MUST recharge at **every cycle boundary**, regardless of:
+Mana derivation MUST run at **every structural cycle boundary**, regardless of:
 
 * whether the boundary was deliberative or forced,
 * whether time legitimacy is currently sufficient,
 * whether the system is in constrained mode.
 
-This rule is absolute.
+Tempo mana MAY recharge to its small repair cap at structural boundaries so remaining humans can repair time. Ordinary mana pools may be derived, recharged, and capped for replay continuity, but constrained-mode spendability rules determine whether that capacity can be used.
 
 #### Rationale [anchor: rationale_7]
 
@@ -819,7 +872,9 @@ When time legitimacy requirements are not satisfied:
 
 Allowed uses in constrained mode MUST include:
 
-* time attestations and challenges,
+* target-bound time truth-claim creation by eligible `tempo_contributor` identities,
+* explicitly permitted Tempo-context evidence idea creation and evidence/same_as connections by eligible `tempo_contributor` identities,
+* time-related truth challenges only by identities satisfying ordinary challenge eligibility,
 * governance recovery actions,
 * system stabilization and maintenance actions.
 
@@ -830,6 +885,8 @@ Disallowed uses in constrained mode MUST include at least:
 * actions that would generate irreversible economic consequences.
 
 The exact allowlist is governance-defined but MUST preserve recovery.
+
+Missed ordinary allowances from uncertified, constrained, or forced cycles MUST NOT accumulate into later burst capacity. No past ordinary rate-limit reset is backfilled. Later certification MAY finalize outputs that were explicitly pending or provisional, but MUST NOT validate actions that were forbidden when attempted and MUST NOT create stockpiles of unused ordinary mana.
 
 ---
 
@@ -880,7 +937,7 @@ For any cycle `r`, the system MAY compute a realized pace estimate using only be
 ΔT_beacon(r, N) = elapsed time between beacon anchors associated with cycles r and r-N
 
 
-Only beacon-level time claims MAY be used for this computation.
+Only derived target-level beacons from Tempo MAY be used for this computation.
 
 If sufficient beacon coverage does not exist for the full window, this mechanism MUST be disabled for that cycle.
 
@@ -971,7 +1028,7 @@ This mechanism MUST NOT:
 - force a specific cycle to close earlier or later,
 - override cycle sealing rules,
 - serve as evidence for predicate satisfaction,
-- create or revoke beacon claims,
+- create or revoke derived beacon state,
 - act as a liveness guarantee.
 
 Its sole role is slow statistical bias correction.
@@ -1165,9 +1222,7 @@ In this state:
 If the cycle remains open until:
 
 ```
-cycle_age_ge_dmin == true
-AND
-cycle_age_ge_dmax == true
+(cycle_age_ge_dmax == true OR structural_dmax_liveness_predicate == true)
 AND
 event_target_reached == false
 ```
@@ -1182,7 +1237,10 @@ This forced boundary:
 
 * does not imply sufficient deliberation,
 * does not authorize unrestricted power,
-* exists solely to restore liveness.
+* exists solely to restore liveness,
+* remains forced forever.
+
+For the same anchor/profile, ordinary Dmax certainty mechanically supplies the structural Dmin condition. `structural_dmax_liveness_predicate` does not. Neither path creates a Dmin beacon or authorizes effects.
 
 ---
 
@@ -1211,6 +1269,8 @@ In practice, after one or two forced cycles:
 
 * targets converge to levels achievable by the remaining participants.
 
+This target convergence affects structure only. It does not reduce `K`, `T_beacon`, beacon diversity, independence, or stability requirements.
+
 ---
 
 ### 12.6 Resumption of Normal Operation [anchor: resumption_of_normal_operation]
@@ -1219,12 +1279,12 @@ Once targets are sufficiently reduced:
 
 * remaining participants’ normal activity satisfies:
 
-  * `W e W_target`,
+  * `W >= W_target`,
   * `cycle_age_ge_dmin == true`.
 
 The system then resumes **deliberative boundaries**.
 
-No external intervention is required.
+No external intervention is required for structural operation. Consequential authority still requires certification and the lagged authorization frontier.
 
 
 ### 12.7 Economic and Legitimacy Behavior During Recovery [anchor: economic_and_legitimacy_behavior_during_recovery]
@@ -1234,6 +1294,8 @@ Throughout this process:
 * mana continues to recharge each cycle,
 * mana spendability remains restricted if time legitimacy lags,
 * POD and POINT remain locked or provisional until legitimacy catches up.
+
+Ordinary mana allowances or rate-limit resets from constrained cycles are not backfilled and cannot be stockpiled for later burst capacity.
 
 This guarantees recovery without economic exploitation.
 
@@ -1260,7 +1322,7 @@ Each cycle boundary MUST record:
 
 * cycle index,
 * boundary type (deliberative or forced),
-* triggering condition (e.g., `W_target met`, `Dmax forced`).
+* triggering condition (e.g., `W_target met`, `Dmax forced`, `Dmax structural liveness forced`).
 
 This information MUST be derivable during replay and auditable.
 
@@ -1283,7 +1345,9 @@ The system MUST preserve:
 
 * participation metrics per cycle,
 * target values per cycle,
-* time predicate certainty histories,
+* time predicate structural-support and truth-certainty histories,
+* certification status per cycle,
+* authorization-frontier history,
 * legitimacy gating decisions.
 
 These records MUST be sufficient for an external auditor to reconstruct:
@@ -1301,10 +1365,12 @@ These records MUST be sufficient for an external auditor to reconstruct:
 
 This spec consumes from Tempo:
 
-* `cycle_age_ge_dmin` (boolean + certainty),
-* `cycle_age_ge_dmax` (boolean + certainty),
+* `cycle_age_ge_dmin` (boolean structural readiness + replay diagnostics),
+* `cycle_age_ge_dmax` (boolean structural readiness + replay diagnostics),
+* `structural_dmax_liveness_predicate` (Dmax-only forced-closure liveness status),
 * `tempo_mode` flags,
-* beacon-level time anchor identifiers.
+* derived target-level beacon state,
+* certification inputs for Dmin/Dmax targets.
 
 Tempo MUST NOT:
 
@@ -1345,6 +1411,8 @@ The following parameters MUST be governance-configurable:
 * adaptive target smoothing constants,
 * minimum and maximum clamps for `W_target`,
 * legitimacy lag window `K`,
+* Tempo predicate and beacon thresholds (`T_allow`, `T_beacon`, revocation and contradiction thresholds),
+* beacon identity, independence, and stability requirements,
 * mana spendability restrictions in constrained mode,
 * thresholds for provisional vs final POD/POINT computation,
 * parameters for long-horizon time-bound modulation (if enabled).
@@ -1361,7 +1429,8 @@ Governance MUST NOT change the following invariants:
 * forced closure never grants power,
 * mana always exists,
 * economic value requires lagged legitimacy,
-* the system must never permanently stall.
+* recoverable nonzero-human operation must not permanently stall,
+* `K`, `T_beacon`, beacon diversity, independence, and stability requirements do not automatically shrink during collapse.
 
 ---
 
@@ -1381,6 +1450,30 @@ No cycle boundary—deliberative or forced—MAY be interpreted as implicit auth
 * visibility or importance dominance.
 
 All authorization requires satisfaction of legitimacy conditions defined in §7.
+
+### **15.1A Consequence Classification Matrix** [anchor: consequence_classification_matrix]
+
+At structural `cycle_close`, replay classifies downstream effects as follows:
+
+| Effect | Classification |
+| --- | --- |
+| increment cycle index | immediate structural |
+| open next cycle | immediate structural |
+| derive next Dmin/Dmax targets | immediate structural |
+| derive next `W_target` | immediate structural |
+| cycle-index-based procedural challenge phase movement | immediate structural where current challenge rules intend it |
+| minimum nonbankable repair/participation capacity for time claims, evidence, challenges, voting, Tempo repair, and continued human deliberation | immediate structural, repair-limited |
+| POD recomputation/finalization | pending until certification, lag, and frontier authorization |
+| POINT mint, melt, redistribution, spendability | pending until certification, lag, and frontier authorization |
+| ordinary mana recharge or ordinary mana spendability beyond repair allowlist | pending or blocked until certification/frontier |
+| governance decision effects, governance activation, and rulebook activation where frontier legitimacy is required | pending until scheduled cycle and frontier authorization |
+| burn, rot, irreversible lifecycle changes, durable authority or eligibility changes capable of compounding control | pending until certification/frontier |
+| normal reward tied to deliberative completion | pending for deliberative cycles only; never created by forced boundaries for missing work |
+| snapshots | unaffected verification/resume artifacts, not authority |
+
+Pending state is derived replay state unless an existing authoritative schema explicitly requires an event. Snapshots may cache pending projections but are not authoritative.
+
+Forced boundaries may create only structural progression, recovery capacity, repair allowlist capacity, and necessary housekeeping explicitly permitted by this specification. Later time certification of a forced boundary does not retroactively create normal deliberative rewards.
 
 ---
 
@@ -1437,6 +1530,8 @@ The same population MUST NOT gain equivalent authority while a larger active pop
 
 This property MUST arise automatically from adaptive targets and legitimacy lag, not from special-case logic.
 
+Adaptive `W_target` may shrink to survivor scale, but `K`, `T_beacon`, beacon diversity, independence, and stability requirements do not automatically shrink.
+
 ---
 
 ### **16.3 No Retroactive Capture** [anchor: 16_3_no_retroactive_capture]
@@ -1488,7 +1583,7 @@ After rejoin:
 
 ### **18.1 Minimum Viable Continuity** [anchor: 18_1_minimum_viable_continuity]
 
-If participation collapses to a very small number of identities:
+If participation collapses to a very small nonzero number of eligible human identities:
 
 * cycles MUST remain advanceable,
 * mana MUST continue to recharge,
@@ -1496,6 +1591,8 @@ If participation collapses to a very small number of identities:
 * forced boundaries MUST allow adaptive recalibration.
 
 The system MUST remain operable by any non-zero human population.
+
+If participation collapses to zero eligible humans, universal cycles do not close. The system remains valid, readable, replayable, and preservable in record-only posture until valid human participation resumes.
 
 ---
 
@@ -1508,6 +1605,8 @@ Specifically:
 * no reduced legitimacy lag,
 * no lowered authority thresholds,
 * no bypass of time or challenge requirements.
+
+One surviving human may keep structural cycles and Tempo repair moving where the active profile permits, but does not automatically gain full economic, governance, POD, POINT, lifecycle, ordinary write, or challenge authority.
 
 ---
 
@@ -1547,6 +1646,3 @@ The following invariants are mandatory:
 3. Liveness is preserved without granting power.
 4. Authority is always lagged, challengeable, and explicit.
 5. Structural progress never implies consent.
-
-
-

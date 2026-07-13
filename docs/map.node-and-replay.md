@@ -3,7 +3,7 @@ doc_id: map_node_and_replay
 title: Map: Node and Replay
 status: derived
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Navigation map of section headings and anchors for the listed sources.
@@ -17,6 +17,7 @@ not_authoritative_for:
 depends_on:
   - node-and-conformance-spec.md
   - deterministic-replay-and-merge-spec.md
+  - canonical-event-authorship-and-signature-profile-v0.md
 
 conflicts:
   - none known
@@ -40,8 +41,20 @@ Purpose: quick navigation of node conformance and deterministic replay sections.
 ## source documents
 - node-and-conformance-spec.md
 - deterministic-replay-and-merge-spec.md
+- canonical-event-authorship-and-signature-profile-v0.md
 
 ## quick jump table
+### canonical-event-authorship-and-signature-profile-v0.md
+| section | heading | anchor | description |
+| --- | --- | --- | --- |
+| 0 | Purpose and Authority | 0-purpose-and-authority | Canonical home for authored event candidates, Profile-v0 signatures, key references, and key state. |
+| 2 | Two-Layer Canonical Event Model | 2-two-layer-canonical-event-model | Separates signed authored candidates from publication wrappers. |
+| 3 | Signature Profile v0 | 3-signature-profile-v0 | Defines `signature_profile = ed25519_v0` and Ed25519-only validation. |
+| 4 | Canonical Signed Bytes | 4-canonical-signed-bytes | Defines the exact Profile-v0 signed-byte layout. |
+| 5 | Public Key References | 5-public-key-references | Defines `public_key_ref` as hash32 of a key descriptor. |
+| 6 | Replay-Derived Identity Key State | 6-replay-derived-identity-key-state | Defines registration, rotation, revocation, active-key state, and non-retroactivity. |
+| 9 | Required Authorship-Signature Conformance Vectors | 9-required-authorship-signature-conformance-vectors | Lists required signature-profile vectors. |
+
 ### node-and-conformance-spec.md
 | § | heading | anchor | description |
 | --- | --- | --- | --- |
@@ -71,6 +84,7 @@ Purpose: quick navigation of node conformance and deterministic replay sections.
 | n/a | 5. Deterministic Replay System | 5_deterministic_replay_system | See node-and-conformance-spec.md (5_deterministic_replay_system). Covers 5. Deterministic Replay System. |
 | 5.1 | Replay Goals | replay_goals | See node-and-conformance-spec.md §5.1 (replay_goals). Covers Replay Goals. |
 | 5.2 | Replay Algorithm Requirements | replay_algorithm_requirements | See node-and-conformance-spec.md §5.2 (replay_algorithm_requirements). Covers Replay Algorithm Requirements. |
+| 5.2A | Tempo/Cycle Conformance Hooks | tempo_cycle_conformance_hooks | See node-and-conformance-spec.md §5.2A (tempo_cycle_conformance_hooks). Covers Tempo/Cycle conformance hooks. |
 | 5.3 | AI Activities Ignored | ai_activities_ignored | See node-and-conformance-spec.md §5.3 (ai_activities_ignored). Covers AI Activities Ignored. |
 | 5.4 | Rulebook Versioning During Replay | rulebook_versioning_during_replay | See node-and-conformance-spec.md §5.4 (rulebook_versioning_during_replay). Covers Rulebook Versioning During Replay. |
 | n/a | 6. Canonical Publication Profiles | 6_proof_of_deliberation_chain_integration | See node-and-conformance-spec.md (6_proof_of_deliberation_chain_integration). Covers 6. Canonical Publication Profiles. |
@@ -151,6 +165,7 @@ Purpose: quick navigation of node conformance and deterministic replay sections.
 | n/a | 1. Definitions and primitives | 1_definitions_and_primitives | See deterministic-replay-and-merge-spec.md (1_definitions_and_primitives). Covers 1. Definitions and primitives. |
 | 1.1 | Core terms | core_terms | See deterministic-replay-and-merge-spec.md §1.1 (core_terms). Covers Core terms. |
 | 1.2 | Inputs and outputs of replay | inputs_and_outputs_of_replay | See deterministic-replay-and-merge-spec.md §1.2 (inputs_and_outputs_of_replay). Covers Inputs and outputs of replay. |
+| 1.2A | Tempo/Cycle Replay Obligations | tempo_cycle_replay_obligations | See deterministic-replay-and-merge-spec.md §1.2A (tempo_cycle_replay_obligations). Covers Tempo/Cycle replay obligations. |
 | 1.3 | Deterministic serialization and hashing dependencies | deterministic_serialization_and_hashing_dependencies | See deterministic-replay-and-merge-spec.md §1.3 (deterministic_serialization_and_hashing_dependencies). Covers Deterministic serialization and hashing dependencies. |
 | n/a | 2. Canonical event ordering | 2_canonical_event_ordering | See deterministic-replay-and-merge-spec.md (2_canonical_event_ordering). Covers 2. Canonical event ordering. |
 | 2.1 | Ordering invariants | ordering_invariants | See deterministic-replay-and-merge-spec.md §2.1 (ordering_invariants). Covers Ordering invariants. |

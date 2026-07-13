@@ -39,7 +39,7 @@ keywords:
 
 ## 0. Purpose and Scope
 
-This document defines the current public read-only HTTP API contract for the open-core runtime's canonical data access surface.
+This document defines the current public read-only HTTP API contract for the open-core runtime's canonical data access surface. It also records the narrow implemented signed canonical write ingress where that route affects public DTO and boundary checks; the full canonical write contract remains owned by Protocol v5, Appendix A, and the canonical event authorship/signature specification.
 
 Endpoints explicitly marked as implemented below are the current open-core runtime routes exposed by `backend/bins/api-server/src/server/router.rs`. Any sections explicitly labeled as spec/future are informative only and are not part of the current open-core runtime contract or conformance surface.
 
@@ -51,11 +51,11 @@ The purpose of this API is to enable unauthenticated access to verifiable canoni
 * Efficient exploration of the idea graph via bounded neighborhoods and ranked listings.
 * Bootstrapping of new participants with meaningful human-readable content (Tier 0 title and sentence payloads).
 
-All responses MUST be derived exclusively from deterministic replay of the append-only event log, materialized at verified snapshot boundaries. Snapshot height always refers to **block height**; any cycle-related fields are advisory metadata only and MUST NOT alter snapshot identity or validity. The API MUST preserve the protocol's core invariants: single canonical truth, human-first authorship traceability, and strict separation of canonical facts from non-canonical derived views.
+All responses MUST be derived exclusively from deterministic replay of the append-only event log, materialized at verified snapshot boundaries. Snapshot height always refers to **block height**; any cycle-related fields are advisory metadata only and MUST NOT alter snapshot identity or validity. Block height, publication volume, receipt time, server time, or response time MUST NOT be treated as time legitimacy, payout eligibility, cycle certification, Tempo truth certainty, Tempo structural support, or authorization-frontier state. The API MUST preserve the protocol's core invariants: single canonical truth, human-first authorship traceability, and strict separation of canonical facts from non-canonical derived views.
 
-This contract is strictly scoped to read-only operations for the public canonical surface. It introduces no authentication mechanisms, no write paths, and no exposure of private sandbox subsystems in the canonical API. Implementations MAY additionally expose authenticated, non-canonical private drafting and AI-map helper APIs that are explicitly labeled below and remain outside the deterministic canonical log.
+This contract is primarily scoped to read-only operations for the public canonical surface. The only implemented public write route summarized here is the self-authenticating signed authored-candidate ingress in Section 4.13. It introduces no private login-session authentication and no exposure of private sandbox subsystems in the canonical API. Implementations MAY additionally expose authenticated, non-canonical private drafting and AI-map helper APIs that are explicitly labeled below and remain outside the deterministic canonical log.
 
-This scope does not change canonical write policy. Canonical writes are handled on versioned write surfaces (for example, `/api/v1/canonical/*`) and are authentication + canonical-writer-verification gated; canonical reads remain publicly readable without authentication.
+This scope does not change canonical write policy. Ordinary canonical writes are handled on versioned write surfaces (for example, `/api/v1/canonical/*`) and are self-authenticating through Profile-v0 signatures plus canonical-writer-verification gates; canonical reads remain publicly readable without authentication. The Protocol v5 narrow Tempo repair lane is a semantic exception for eligible human `tempo_contributor` target-bound ordinary `truth_claim` ideas with conditional `tempo_claim` metadata and explicitly permitted Tempo-context evidence ideas/connections only, not a public read API behavior and not a general write permission.
 
 Explicit non-goals (for the public canonical read-only surface):
 * Real-time event streaming or subscription.
@@ -78,7 +78,7 @@ Conformant implementations MUST adhere to the following for the public read-only
 * Caching MUST be supported via ETag derived from `snapshot_hash` and appropriate Cache-Control headers.
 * All numeric identifiers and quantities MUST be transmitted as base-10 decimal strings (JSON bodies, query parameters, and headers) to avoid precision loss.
 * All identifier fields in wire format MUST be UUIDv7 strings (lowercase hex with hyphens) unless explicitly labeled as a hash/commitment. Exception: `snapshot_id` is defined as `hex(snapshot_hash)` per Snapshot Format v0.
-* Snapshot height always refers to block height; cycle data (if provided) is metadata only.
+* Snapshot height always refers to block height; cycle data (if provided) is metadata only and MUST NOT be interpreted as Tempo truth certainty, structural support, certification, payout eligibility, or consequential authority.
 * Responses MUST NOT expose civil identity by default; author attribution is a pseudonymous author identity plus a non-identifying verification level (persona attachment is optional if explicitly set).
 
 Implementations MUST reject any request implying mutation on the public read-only surface and return 405 Method Not Allowed.
@@ -546,8 +546,8 @@ Success Response (200 OK):
     "current_height": "decimal string",
     "w_target": "decimal string",
     "observed_work": "decimal string",
-    "cycle_age_ge_dmin": "boolean",
-    "cycle_age_ge_dmax": "boolean",
+    "cycle_age_ge_dmin": "boolean (structural readiness)",
+    "cycle_age_ge_dmax": "boolean (structural readiness)",
     "closure_predicate_satisfied": "boolean",
     "last_cycle_close_height": "decimal string | null"
   }
@@ -567,7 +567,17 @@ Success Response (200 OK):
       "global_index": "decimal string",
       "block_height": "decimal string",
       "block_event_index": "decimal string",
-      "event_type": "string"
+      "event_type": "string",
+      "authorship_status": "profile_v0_signed | legacy_or_unsigned",
+      "author_identity_id": "UUIDv7 string | null",
+      "speaker_identity_id": "UUIDv7 string | null",
+      "signature_profile": "ed25519_v0 | null",
+      "signature": "64-byte Ed25519 signature as lowercase hex | null",
+      "public_key_ref": "hash32 hex string | null",
+      "payload_hash": "hash32 hex string | null",
+      "payload_binding_mode": "embedded_payload | payload_ref | null",
+      "authored_candidate_hash_v0": "hash32 hex string | null",
+      "publication_profile": "string | null"
     }
   ],
   "blocks": [
@@ -592,16 +602,58 @@ Success Response (200 OK):
 }
 ```
 
+For Profile-v0 signed rows, the event-log DTO exposes public authorship audit fields needed to reconstruct the signed authored candidate and verify its publication wrapper. Legacy/bootstrap rows that were admitted before Profile-v0 signed ingress remain readable with `authorship_status = "legacy_or_unsigned"` and null signed-candidate fields; null signed fields MUST NOT be interpreted as newly verified human signatures.
+
 #### 4.10.10 GET /api/v1/canonical/tempo/status
 
 Returns current derived tempo status.
+
+This implemented status payload is a current runtime read view. `record_only_mode`, when present, is a legacy-compatible status field and MUST NOT be interpreted as the broader constrained record-and-recovery mode defined by Protocol v5. Constrained recovery, cycle certification, derived beacon state, and the lagged authorization frontier require future explicit read surfaces before clients can rely on them through this contract.
+
+Future Tempo/Cycle read surfaces MAY expose derived replay state such as current cycle index, current Dmin/Dmax target keys, predicate status, `structural_dmax_liveness_predicate` status, certification status, authorization frontier, Tempo operating mode, beacon summaries, and pending/provisional/authorized/blocked status. Such surfaces MUST remain read-only, deterministic, and privacy-preserving; they MUST NOT expose civil identity details, private verification material, raw independence proofs, or non-canonical observations beyond what public canonical rules already permit.
+
+Future derived-state payloads SHOULD use a shape equivalent to:
+
+```json
+{
+  "tempo_cycle": {
+    "current_cycle_index": "decimal string",
+    "dmin_target_key": "string",
+    "dmax_target_key": "string",
+    "cycle_age_ge_dmin": "boolean (structural readiness)",
+    "cycle_age_ge_dmax": "boolean (structural readiness)",
+    "structural_dmax_liveness_predicate": "true | false | blocked",
+    "cycle_certification_status": "pending | certified | contested | revoked",
+    "authorization_frontier": "decimal string",
+    "tempo_mode": "normal | constrained | record_only",
+    "tempo_substate": "time_repair_priority | null",
+    "beacon_summaries": [
+      {
+        "target_key": "string",
+        "status": "not_eligible | eligible_pending_stability | elevated | contested | revoked",
+        "operative_certainty_band": "string",
+        "highest_contradiction_certainty_band": "string | null",
+        "distinct_qualified_supporters": "decimal string"
+      }
+    ],
+    "output_status_counts": {
+      "provisional": "decimal string",
+      "pending": "decimal string",
+      "authorized": "decimal string",
+      "blocked": "decimal string"
+    }
+  }
+}
+```
+
+This is a future read shape only. It does not create write authority and does not imply the current open-core runtime implements these fields.
 
 Success Response (200 OK):
 ```json
 {
   "tempo": {
-    "cycle_age_ge_dmin": "boolean",
-    "cycle_age_ge_dmax": "boolean",
+    "cycle_age_ge_dmin": "boolean (legacy structural-readiness view)",
+    "cycle_age_ge_dmax": "boolean (legacy structural-readiness view)",
     "constrained_mode": "boolean",
     "record_only_mode": "boolean"
   }
@@ -738,14 +790,74 @@ Examples of out-of-scope sandbox route families:
 
 AI helper behavior is advisory-only in the canonical universe: it may parse text, autocomplete fields, propose connections, or draft descriptions, but it MUST NOT write canonical events directly.
 
-### 4.13 Canonical Write Surfaces (out of scope for this read-only contract)
+### 4.13 Canonical Write Surfaces
 
-Canonical write endpoints are intentionally out of scope for this document. Implementations MAY expose versioned canonical write APIs (for example under `/api/v1/canonical/*`) with authentication and canonical-writer eligibility checks.
+Most canonical write endpoints remain out of scope for this read-focused contract. The current open-core runtime implements one narrow default-open-core write route:
+
+#### 4.13.1 POST /api/v1/canonical/events (implemented)
+
+Accepts a self-authenticating signed authored event candidate plus embedded payload for ordinary `idea_create` and ordinary `connection_create` only.
+
+Request shape:
+
+```json
+{
+  "candidate": {
+    "signature_profile": "ed25519_v0",
+    "event_id": "UUIDv7 string",
+    "event_type": "idea_create | connection_create",
+    "author_identity_id": "UUIDv7 string",
+    "speaker_identity_id": "UUIDv7 string | null",
+    "public_key_ref": "hash32 hex string",
+    "payload_hash": "hash32 hex string",
+    "payload_binding_mode": "embedded_payload",
+    "payload_ref": null,
+    "author_observed_at": "string | null",
+    "signature": "64-byte Ed25519 signature as lowercase hex"
+  },
+  "payload": "{ event-specific payload object }"
+}
+```
+
+Response shape:
+
+```json
+{
+  "event": {
+    "event_id": "UUIDv7 string",
+    "event_type": "idea_create | connection_create",
+    "block_height": "decimal string",
+    "event_index": "decimal string",
+    "authored_candidate_hash_v0": "hash32 hex string",
+    "publication_profile": "profile_0_bootstrap_single_publisher",
+    "idempotent": false
+  },
+  "object": {
+    "object_type": "idea | connection",
+    "object_id": "UUIDv7 string"
+  }
+}
+```
+
+This route:
+* does not use private account, cookie, or bearer-session authentication;
+* requires Profile-v0 Ed25519 verification over canonical signed bytes;
+* requires replayable identity key state and canonical-writer eligibility;
+* currently resolves identity keys and writer eligibility from bootstrap-provisioned or operator/test-provisioned open-core state rows until the public identity/key lifecycle and writer-eligibility lifecycle are implemented;
+* admits accepted candidates under `profile_0_bootstrap_single_publisher`, a constrained single-publisher bootstrap publication profile, not multi-node finalized-prefix-certificate consensus;
+* rejects unsupported event kinds, including Tempo claims, challenges, voting, cycle closure, beacons, certification, governance, and token events;
+* supports only `payload_binding_mode = embedded_payload` in the current runtime profile.
+
+The signed route assigns canonical position only at publication under the active bootstrap profile. Signature validity alone does not make a candidate canonical, and publication-derived `block_height`/`event_index` values are not part of the human-authored signed bytes.
+
+Other implementations MAY expose additional versioned canonical write APIs (for example under `/api/v1/canonical/*`) only with the required signature, key-state, and canonical-writer eligibility checks.
 Normative clarification [anchor: canonical_write_activation_semantics_note]: when versioned canonical write surfaces are introduced, governance/rulebook changes are decided at cycle close and activate at deterministic cycle boundaries (`activation_cycle_index`) per Protocol v5 and Governance Specification.
 
 Normative policy remains:
 * canonical reads are public and unauthenticated for canonical substrate state;
-* canonical writes require canonical-writer verification;
+* ordinary canonical writes require canonical-writer verification;
+* the only low-threshold exception is the Protocol v5 Tempo repair lane for eligible human `tempo_contributor` target-bound ordinary `truth_claim` ideas with conditional `tempo_claim` metadata and explicitly permitted Tempo-context evidence ideas/connections;
+* Tempo contributor status does not grant arbitrary idea, evidence outside Tempo context, connection outside Tempo context, challenge, voting, governance, POD, POINT, or token authority;
 * canonical claims remain publicly challengeable.
 
 See `protocol v5.md` (`canonical_read_write_access_policy`).
@@ -779,4 +891,3 @@ Conformant clients SHOULD:
 * Cache aggressively using ETag.
 
 This contract ensures verifiable, efficient access to the shared canonical universe while preserving the protocol's invariants of durability, challengeability, and human-scale collective reasoning.
-

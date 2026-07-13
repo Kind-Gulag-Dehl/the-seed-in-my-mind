@@ -26,5 +26,7 @@ replay = { path = "../../crates/replay" }
 chrono.workspace = true
 
 [dev-dependencies]
+ed25519-dalek.workspace = true
+encoding = { path = "../../crates/encoding" }
 tower = "0.5"
-
+verification = { path = "../../crates/verification" }

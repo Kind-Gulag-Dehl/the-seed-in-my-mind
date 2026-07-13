@@ -19,10 +19,16 @@ For each invariant, record:
 ## 1. determinism and canonical authorship
 
 ### 1.1 human-first canonical authorship
-- statement: only verified humans may author canonical events. AI may analyze and propose, but cannot vote, govern, or directly create canonical events without explicit human adoption.
+- statement: only eligible humans may author ordinary canonical events. The narrow Tempo repair lane allows eligible human `tempo_contributor` identities to create only target-bound ordinary `truth_claim` ideas with conditional `tempo_claim` metadata and, where explicitly allowed by the active Tempo profile, Tempo-context evidence ideas and `relative_importance` connections using existing `evidence_for`, `evidence_against`, or `same_as` usages. AI may analyze and propose, but cannot vote, govern, create canonical Tempo claims or evidence, or directly create canonical events without explicit human adoption.
 - canonical home: `protocol v5.md`, `ai-boundaries-spec.md`
 - scope: all documents
 - enforcement: node validation + conformance tests
+
+### 1.1A canonical event authorship signatures
+- statement: ordinary human-authored canonical events use the two-layer event model. The human signs a Profile-v0 authored event candidate with `signature_profile = ed25519_v0`; Profile v0 uses Ed25519 only. The signed bytes include the candidate fields defined by `canonical-event-authorship-and-signature-profile-v0.md` and exclude publication-derived fields such as `event_index`, block height, finalized-prefix-certificate data, canonical publication position, local receipt time, database identifiers, and private account/session data. The finalized publication certificate binds the exact signed candidate bytes to canonical order. `public_key_ref` is the hash32 of the versioned key descriptor and resolves through replay-derived identity key state. Key revocation is non-retroactive.
+- canonical home: `canonical-event-authorship-and-signature-profile-v0.md`
+- scope: protocol root, Appendix A, encoding, publication, replay, node/conformance, verification, offline, privacy, implementation status, conformance fixtures
+- enforcement: signature-profile conformance vectors, event-envelope validation, publication-wrapper validation, replay-derived key-state validation
 
 ### 1.2 append-only history
 - statement: canonical history is append-only. No retroactive edits; corrections are new events.
@@ -101,20 +107,26 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 
 ## 5. cycles and tempo
 
+### 5.0 idea-only deliberative content
+- statement: all canonical deliberative content is expressed as identity-authored ideas using existing base idea types. Evidence, arguments, attestations, observations, testimony, source statements, potential evidence, and source descriptions are roles or uses of ideas, not separate canonical content-object types. Canonical relationships use existing connection types and usages, and canonical resolution uses the unified challenge, vote, verdict, and cycle processes. No document may introduce top-level `evidence`, `attestation`, `testimony`, `source`, `time_claim`, `tempo_target`, or `beacon` idea types.
+- canonical home: `protocol v5.md`, `protocol v5-appendix-a.md`, `challenge-engine-spec.md`
+- scope: all documents
+- enforcement: schema validation, conformance fixtures, and search checks for forbidden content-object types
+
 ### 5.1 cycles gate pacing, not semantics
-- statement: cycle boundaries and cycle-gated mechanics are defined in `cycle-spec.md` and used consistently across challenge/governance/token/offline.
-- canonical home: `cycle-spec.md`
+- statement: Protocol v5 owns root cycle invariants and sealing semantics; `cycle-spec.md` provides the detailed subordinate normative algorithm. Cycle boundaries gate pacing and structural replay, not truth semantics or consequential authority by themselves.
+- canonical home: `protocol v5.md`, `cycle-spec.md`
 - scope: `tempo-spec.md`, `challenge-engine-spec.md`, `governance-spec.md`, `token-spec.md`, `offline-and-mindseed-spec.md`
 - enforcement: conformance tests
 
-### 5.2 tempo and time-only mode
-- statement: tempo exists to cap acceleration; constrained/time-repair mode restrictions, triggers, and exit conditions (legacy label: time-only mode) must be consistent across node behavior and governance.
+### 5.2 tempo, constrained mode, and time repair
+- statement: Tempo owns target-bound ordinary truth-claim metadata, Tempo-context evidence rules, ordinary certainty-band interpretation for time truth claims, `T_allow` structural-support derivation for Dmin/Dmax predicates, the Dmax-only `structural_dmax_liveness_predicate`, derived beacons, and modes. Tempo does not create a separate evidence, attestation, challenge, or truth-certainty system. `T_allow` is structural support, not ordinary truth certainty. `T_allow` predicates may be consumed same-cycle only for structural boundary evaluation; `structural_dmax_liveness_predicate` may be consumed only for forced Dmax structural closure. Consequential authority requires certification and the lagged authorization frontier.
 - canonical home: `tempo-spec.md`
-- scope: `node-and-conformance-spec.md`, `governance-spec.md`, offline specs
+- scope: `cycle-spec.md`, `node-and-conformance-spec.md`, `governance-spec.md`, offline specs
 - enforcement: node/client behavior requirements
 
 ### 5.3 automatic cycle_close boundary emission
-- statement: `cycle_close` is emitted automatically when cycle closure predicates are satisfied; it is not human/operator-submitted.
+- statement: `cycle_close` is emitted automatically by the system boundary emitter when structural closure predicates are satisfied; it is not human/operator-submitted and is not proof of consequential authority.
 - canonical home: `cycle-spec.md` (`canonical_boundary_event_cycle_close`), `protocol v5.md` (`cycle_sealing_mechanisms_normative`)
 - scope: cycle, replay/merge, node/conformance, protocol appendices
 - enforcement: replay validation rejects manual/non-mechanical cycle-close submissions
@@ -142,6 +154,42 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 - canonical home: `challenge-engine-spec.md` (`eligibility_pools`, `eligibility_computation`, `voting_rights_and_constraints`), `protocol v5.md` (`voter_eligibility_juror_selection_and_rate_limited_vote_sessions`), `protocol v5-appendix-a.md` (`a11_1_eligibility_requirement`)
 - scope: challenge, protocol appendices, replay/merge, node/conformance
 - enforcement: vote acceptance tests validating eligible-but-insufficient-capacity rejection behavior
+
+### 5.7A lagged authorization frontier
+- statement: consequential authority advances only through a contiguous, monotonic authorization frontier derived from certified cycles and governance lag `K`. Certification gaps stop advancement; revocation blocks future advancement without rewriting authorized history; genesis starts with `initial_authorization_frontier = -1` unless immutable independently verifiable genesis data defines a safe bootstrap basis.
+- canonical home: `protocol v5.md`, `cycle-spec.md`
+- scope: protocol, cycle, tempo, governance, token, POD, POINT, lifecycle, replay/merge, node/conformance
+- enforcement: replay of certification status, frontier state, deferred-output finalization, and rejection of forbidden retroactive effects
+
+### 5.7B forced cycles and anti-collapse
+- statement: deliberative close requires Dmin structural readiness and `W_score >= W_target`; forced close requires either Dmax structural readiness with unmet work target or `structural_dmax_liveness_predicate` true with unmet work target. Ordinary Dmax structural readiness mechanically implies structural Dmin for the same anchor/profile; `structural_dmax_liveness_predicate` does not. The survivor predicate is Dmax-only, forced-closure-only, not ordinary certainty, not beacon certainty, not certification, and not authorization. Forced boundaries remain forced forever, never accumulate legitimacy, and never grant authority. `W_target` may adapt downward in nonzero-human constrained operation, but `K`, `T_beacon`, beacon diversity, independence, and stability requirements do not automatically shrink during population collapse. Zero eligible humans produce record-only posture and no universal `cycle_close`.
+- canonical home: `protocol v5.md`, `cycle-spec.md`, `tempo-spec.md`
+- scope: protocol, cycle, tempo, governance, token, POD, POINT, lifecycle, replay/merge
+- enforcement: cycle-close classification tests, anti-collapse conformance tests, deferred-output replay checks
+
+### 5.7C Tempo targets, claims, evidence, and equality
+- statement: Dmin/Dmax targets are derived deterministic target keys, not authored canonical objects, events, ideas, or connection types. Humans author target-bound ordinary `truth_claim` ideas using the existing truth-subtype enum and conditional `tempo_claim` metadata. Tempo evidence and attestations are ordinary identity-authored ideas, usually `truth_claim` ideas, connected through existing `relative_importance` usages such as `evidence_for` or `evidence_against`; they are not separate events or content-object types. Verification may gate eligibility or diversity, but must not weight truth, challenge, governance, or Tempo influence.
+- canonical home: `tempo-spec.md`, `protocol v5.md`, `verification-spec.md`
+- scope: protocol, appendices, tempo, verification, challenge, API contracts, node/conformance
+- enforcement: schema validation, replay aggregation, rejection of AI/non-human Tempo events and weighted-identity formulas
+
+### 5.7C.1 Tempo evidence connection validity
+- statement: Tempo-context `evidence_for`, `evidence_against`, and `same_as` connections use existing connection types and must reference valid identity-authored ideas in the relevant Tempo context. Invalid endpoints, incompatible target-bound time-claim metadata, direct external URL/hash/payload evidence, derived target/beacon endpoints, or attempts to create certainty outside ordinary evidence-placement and certainty-band challenge flow reject with `ERR_TEMPO_EVIDENCE_CONNECTION_INVALID`.
+- canonical home: `protocol v5-appendix-a.md`, `tempo-spec.md`
+- scope: tempo, challenge, replay/merge, node/conformance, fixtures
+- enforcement: schema validation and conformance fixtures
+
+### 5.7D canonical evidence only
+- statement: Tempo truth certainty may use evidence only when represented by identity-authored canonical evidence ideas, explicit allowed connections, and challenge verdicts with inspectable provenance and reproducible replay inputs. Tempo structural support may additionally use profile-admitted passive machine timestamp evidence only when the source is canonically committed or canonically anchored, normalized deterministically, deduplicated, outlier-handled by profile rule, and capped below `T_allow`. Node-local time, server time, client timestamps, receipt time, background schedulers, block height, publication volume, AI-generated observations, external links alone, or uncommitted observations never affect Tempo truth certainty or structural support except through the explicit passive-evidence channel and valid canonical ideas/connections.
+- canonical home: `tempo-spec.md`, `protocol v5.md`
+- scope: protocol, tempo, replay/merge, node/conformance, API contracts
+- enforcement: replay input validation and rejection of hidden-clock certainty inputs
+
+### 5.7E structural support vs truth certainty
+- statement: `T_allow` operates on derived provisional structural support from current eligible-human stances plus capped passive evidence. `T_beacon` operates on ordinary canonical truth-certainty bands plus beacon diversity, challenge-survival, and contradiction requirements. Structural support may close a cycle structurally in the same cycle, but does not assign truth certainty, create a beacon, certify a cycle, advance the frontier, or finalize consequences.
+- canonical home: `tempo-spec.md`, `protocol v5.md`, `cycle-spec.md`
+- scope: protocol, tempo, cycle, challenge, replay/merge, node/conformance, fixtures
+- enforcement: conformance fixtures separating structural readiness from certainty-band verdicts and beacon/certification outputs
 
 ### 5.8 importance challenge duplicate uniqueness
 - statement: Stage 1 importance duplicate uniqueness key is `(domain=importance, context_key, ordered target tuple)`; identical active keys are forbidden, while same pairs in different contexts/domains may coexist.
@@ -187,14 +235,20 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 - scope: protocol, tribe, challenge, governance, replay/merge, api docs
 - enforcement: scope-key validation + deterministic replay of overlay events
 
-### 7.3 no mirroring-as-copy
+### 7.3 relative importance axis vocabulary
+- statement: relative_importance connection metadata uses relative axes (`important_to_reference`, `important_for_reference`) crossed with the five protocol timeframes. Universal orientation values (`important_to_current_individual`, `important_for_current_individual`, `important_to_collective`, `important_for_collective`) belong to universal importance profiles and MUST NOT be used as ordinary relative_importance axis values unless a future rulebook explicitly defines a deterministic projection.
+- canonical home: `protocol v5.md` (`scoped_importance_universal_tribal_and_personal_contexts`), `protocol v5-appendix-a.md` (`a2_4_2_conditional_metadata_by_connection_type`)
+- scope: protocol, appendices, challenge, tribe, governance, token, replay/merge, node/conformance, api docs
+- enforcement: schema validation + challenge framing validation + rank snapshot validation
+
+### 7.4 no mirroring-as-copy
 - statement: mirroring-as-copy semantics (copying tribe-local ideas into separate public canonical objects) are forbidden. Cross-scope publication semantics must be represented by canonical substrate + overlays, not object duplication.
 - canonical home: `protocol v5.md` (`canonical_substrate_and_scoped_overlays`), `tribe-spec.md`
 - scope: protocol, tribe, replay/merge, token, api docs
 - enforcement: invariant validation + deprecation checks in conformance suite
 
-### 7.4 canonical read/write access policy
-- statement: canonical substrate state is always publicly readable; canonical writes are allowed to any identity that satisfies canonical-writer verification requirements (current deployment: Seed verifier-issued `canonical_writer_level`); all canonical claims remain publicly challengeable, and challenge creation/voting use the same canonical-writer eligibility gate.
+### 7.5 canonical read/write access policy
+- statement: canonical substrate state is always publicly readable. Ordinary canonical writes require ordinary canonical-writer verification requirements (current deployment: Seed verifier-issued `canonical_writer_level`). The only low-threshold exception is the narrow human Tempo repair lane for target-bound ordinary `truth_claim` ideas with conditional `tempo_claim` metadata and, if explicitly permitted, Tempo-context evidence ideas and evidence/same_as connections by eligible `tempo_contributor` identities. All canonical claims remain publicly challengeable, and challenge creation/voting use ordinary challenge eligibility unless a future explicit Tempo-only challenge capability is adopted; Tempo contributor status alone is insufficient.
 - canonical home: `protocol v5.md` (`canonical_read_write_access_policy`)
 - scope: protocol, API contracts, challenge spec, verification spec, roadmap/planning docs
 - enforcement: API access tests (public canonical GET; auth-gated canonical POST), replay validation of challenge/vote author eligibility

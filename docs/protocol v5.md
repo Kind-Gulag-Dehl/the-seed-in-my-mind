@@ -178,7 +178,7 @@ Every idea in the system is treated as a statement issued by a real agent. Even 
 
 For the canonical universe:
 
-- Every canonical event in the system—idea creation, description submission, connection formation, challenge creation, vote, action declaration, action completion claim—MUST originate from a unique, verified human identity, except for mechanically emitted boundary events authored by the reserved non-human identity `system_boundary_emitter` as defined below.  
+- Every ordinary canonical event in the system—idea creation, description submission, connection formation, challenge creation, vote, action declaration, action completion claim, and allowed Tempo repair idea/connection submission—MUST originate from a unique, verified human identity, except for mechanically emitted boundary events authored by the reserved non-human identity `system_boundary_emitter` as defined below.
 - AI systems, institutions, corporations, governments, or other non-human entities MUST NOT directly author canonical events.  
 - AI MAY generate drafts in non-canonical layers, but canonical authorship ALWAYS requires a human adoption event.
 
@@ -202,15 +202,21 @@ Canonical access policy is invariant across protocol, API, and challenge subsyst
    All canonical state and canonical claims MUST be publicly readable without authentication. Implementations MAY gate private or tribe/personal overlay features, but they MUST NOT gate visibility of canonical substrate facts.
 
 2. **Canonical writes are verification-gated, not role-privileged.**  
-   Any identity that meets the active canonical-writer verification requirement MAY submit canonical write events. The current deployment profile uses Seed verifier-issued verification level to satisfy this gate (canonical_writer_level), but the gate remains rulebook-defined and challengeable.
+   Ordinary canonical writes require the active ordinary canonical-writer verification requirement. The current deployment profile uses Seed verifier-issued verification level to satisfy this gate (`canonical_writer_level`), but the gate remains rulebook-defined and challengeable.
+
+   Tempo repair has a narrow, enumerated exception: an eligible human `tempo_contributor` MAY submit only target-bound ordinary `truth_claim` ideas with valid `tempo_claim` metadata and, where the active Tempo profile explicitly permits it, Tempo-context evidence truth claims and `relative_importance` connections using existing `evidence_for`, `evidence_against`, or `same_as` usages. These are ordinary ideas and connections in a Tempo role, not separate Tempo content objects or non-idea support records. `tempo_contributor` status does not authorize arbitrary idea creation, evidence creation outside the Tempo context, connection creation outside the Tempo context, challenge creation, voting, verdict finalization, governance, POD, POINT, or any token authority.
 
 3. **Canonical claims are publicly challengeable.**  
-   Any canonical claim MUST remain challengeable under protocol challenge mechanics. Challenge creation and challenge voting are canonical write actions and therefore require the same canonical-writer eligibility gate as other canonical writes.
+   Any canonical claim MUST remain challengeable under protocol challenge mechanics. Challenge creation and challenge voting are ordinary canonical write actions and require ordinary challenge eligibility unless a future explicit protocol amendment creates a separate `tempo_challenger` capability. Tempo contributor status alone does not grant challenge creation or voting eligibility.
+
+Verification gates eligibility but MUST NOT weight influence. Evidence, arguments, attestations, observations, testimony, and source statements are identity-authored ideas in a role; their certainty changes only through explicit evidence placement, certainty-band challenge outcomes, and other ordinary challenge verdict effects. Verification level, identity certainty, provider, institution, jurisdiction, wealth, POD, POINT, reputation, or role MUST NOT multiply an eligible human's truth, challenge, governance, or Tempo influence.
 
 This policy applies uniformly across universal substrate semantics and does not permit private canonical planes.
 ---
 
 ### 0.4 ideas, consciousness, and layers of expression [anchor: ideas_consciousness_and_layers_of_expression]
+
+**Idea-only deliberative content invariant.** All canonical deliberative content is expressed as identity-authored ideas using existing base idea types. Evidence, testimony, attestations, observations, source reports, arguments, measurements, and statements about documents are not separate content-object types. They are ideas, usually `truth_claim` ideas, used in evidential, argumentative, observational, or source-description roles. Canonical relationships among them are expressed through existing connection types and usages; canonical resolution occurs through ordinary challenge, vote, verdict, and cycle processes. The protocol MUST NOT introduce top-level `evidence`, `attestation`, `testimony`, `source`, `time_claim`, `tempo_target`, or `beacon` idea types.
 
 The protocol treats every idea as originating in a locus of consciousness: a specific agent who experiences, entertains, and eventually expresses it. In the wider world there exist unbounded:
 
@@ -327,7 +333,7 @@ These domains serve different purposes and MUST remain structurally separate for
 
 ### 0.13 invariants of POD: non-transferability, provenance, and persistence [anchor: invariants_of_pod_non_transferability_provenance_and_persistence]
 
-POD is permanently tied to the human-authored epistemic and action events that earned it. POD balances MUST remain non-transferable and eternally linked to the identity that earned them. Deceased identities retain their POD indefinitely; POD MUST NOT be reassigned or inherited. Governance MAY change the influence weighting of past POD for future processes, but MUST NOT mutate the historical record of who earned what.
+POD is permanently tied to the human-authored epistemic and action events that earned it. POD balances MUST remain non-transferable and eternally linked to the identity that earned them. Deceased identities retain their POD indefinitely; POD MUST NOT be reassigned or inherited. Governance MAY change how past POD is considered in non-authority scoring or emission formulas for future processes, but MUST NOT mutate the historical record of who earned what and MUST NOT convert POD into governance, challenge, Tempo, or canonical-write authority.
 
 ---
 
@@ -790,25 +796,25 @@ To resist Orwellian time manipulation, any rulebook that enables calendar-aligne
 - anchors MUST declare method and uncertainty explicitly,
 - anchors MUST remain perpetually challengeable without requiring privileged access.
 
-If high-confidence time anchoring becomes unavailable (e.g., collapse of infrastructure), the universe MUST remain valid and replayable. In such conditions, calendar-aligned processes (including payouts) MUST degrade deterministically to progress-based epochs derived from canonical ordering (e.g., block height), rather than accepting low-confidence or coerced time claims.
+If high-confidence time anchoring becomes unavailable (e.g., collapse of infrastructure), the universe MUST remain valid and replayable, but consequential authority MUST remain constrained. Block height, publication volume, local progress, or canonical ordering position MUST NOT substitute for time legitimacy, payouts, cycle certification, or authority. Calendar-aligned or time-legitimacy-dependent processes MUST remain provisional, deferred, or disabled until Tempo-derived certification and the lagged authorization frontier permit finalization.
 
 Canonical time is defined exclusively by internal progression derived from the event log. The protocol separates (a) blocks (quorum-finalized canonical publication units that assign `block_height` and intra-block order), (b) snapshots (resume and verification artifacts keyed to block height), and (c) cycles (semantic pacing for rate limits, eligibility windows, and derived state). Cycles are not wall-clock time and do not define snapshot cadence. If activity ceases, progression halts without reassigning authority or accelerating control.
 
 
-The protocol has no trusted clock. Nodes MUST NOT use device time, wall-clock timestamps, or external calendars as canonical inputs. All temporal constraints enter the canonical universe only as **challengeable time truth claims** whose certainty is established by the standard truth-challenge mechanism (Tempo specification).
+The protocol has no trusted clock. Nodes MUST NOT use device time, wall-clock timestamps, client timestamps, server timestamps, receipt time, scheduler observations, local observations, block height, AI-generated observations, or external calendars as canonical Tempo inputs unless converted into valid canonical ideas and connections under explicit protocol rules. All temporal constraints enter the canonical universe only as ordinary **challengeable truth claims** with conditional `tempo_claim` metadata. Dmin/Dmax structural predicates are derived from the canonical prefix using Tempo structural support: profile-required eligible human stances plus capped passive evidence, with contradiction checks. Ordinary time-claim truth certainty is established separately through ordinary evidence placement and certainty-band challenge verdicts. The sole survivor exception is the Dmax-only `structural_dmax_liveness_predicate`, which is derived from nonzero eligible-human survivor support, required capped passive plausibility evidence, and blockers under the Tempo Specification and may be consumed only for forced structural closure.
 
 Canonical cadence integrity is enforced by two guardrails consumed by the cycle system:
 - **Dmin**: a minimum-duration guardrail that prevents machine-speed cadence even if deliberative work thresholds are met.
 - **Dmax**: a maximum-duration guardrail that forces liveness progression when deliberation stalls.
 
-These guardrails are satisfied only by adjudicated time-claim certainty outcomes (e.g., boolean predicates such as `cycle_age_ge_dmin` and `cycle_age_ge_dmax`). The protocol MUST treat these as evidence-derived predicates, not as absolute time.
+These guardrails are satisfied only by Tempo-derived structural predicates (e.g., `cycle_age_ge_dmin` and `cycle_age_ge_dmax`) or, for the survivor fallback, the Dmax-only `structural_dmax_liveness_predicate`. `T_allow` structural readiness is not ordinary truth certainty. The protocol MUST treat these as claim-derived predicates, not as absolute time.
 
 Anti-capture requirement: no amount of raw activity volume, object creation, or throughput (ideas, connections, submissions) may accelerate canonical cadence. Cycles advance only via the cycle sealing rules defined in §4, subject to Dmin/Dmax guardrails.
 
-Degraded operation: if participation collapses such that the system cannot (a) meet minimum voting plurality requirements for canonical decisions or (b) converge time-claim certainty for Dmin/Dmax, the system MUST enter a **record-only posture**. In record-only posture:
-- events MAY be recorded locally (offline or delayed publication),
-- universal canonical cycle seals MUST NOT advance,
-- normal canonical sealing resumes only when sufficient identities participate and deterministic replay can derive guardrail predicates and eligible votes/verdicts consistently.
+Degraded operation is split into two cases:
+
+- **Constrained record-and-recovery mode:** if at least one eligible human can continue canonical Tempo repair, the protocol MAY continue accepting the narrow Tempo-only lane for target-bound time truth claims and explicitly permitted Tempo-context evidence ideas/connections. Forced structural cycles MAY occur when the Dmax structural predicate reaches `T_allow` or when `structural_dmax_liveness_predicate` is true and the work target is unmet; adaptive `W_target` may move downward; consequential authority remains blocked until beacon certification and the lagged authorization frontier catch up.
+- **True record-only halt:** if canonical publication cannot proceed, or zero eligible humans can perform the minimum Tempo repair needed to produce replayable target-bound time truth claims and explicit Tempo-context evidence/challenge history, nodes may preserve local/offline records, but universal structural cycle advancement halts until canonical publication and minimum human Tempo repair resume. Machine evidence alone cannot continue universal cycles.
 
 
 ### 0.59 time truth claims, uncertainty, and non-authority of calendars [anchor: time_truth_claims_uncertainty_and_non_authority_of_calendars]
@@ -1166,9 +1172,9 @@ Cycles MUST NOT be used to:
 - imply authority, truth, correctness, or finality,
 - reference or depend on trusted wall-clock time.
 
-Cycle advancement does not require continuous activity. If deliberative activity stalls, cycles may still advance via the forced-seal mechanism defined in §4, provided the relevant guardrail predicates are satisfied. Conversely, if participation collapses such that guardrails cannot be adjudicated, cycle advancement halts and the system enters degraded (record-only) operation until canonical conditions are restored.
+Cycle advancement does not require continuous activity. If deliberative activity stalls, cycles may still advance structurally via the forced structural-close mechanism defined in this section and detailed in the Cycle Specification, provided the relevant guardrail predicates are satisfied. If canonical publication or minimum human Tempo repair cannot proceed, structural cycle advancement halts in true record-only mode until canonical conditions are restored.
 
-The sole normative definition of when and how cycles seal and advance is §4.
+Protocol v5 owns the root cycle invariants and sealing semantics. The Cycle Specification provides the detailed subordinate normative algorithm for deriving, classifying, certifying, and replaying cycle boundaries.
 
 
 ### 1.8.4 Cycle Export Packs [anchor: cycle_export_packs]
@@ -1223,7 +1229,7 @@ This separation is a core invariant of the protocol and MUST be preserved under 
 
 ### 2.1 definition of an idea [anchor: definition_of_an_idea]
 
-An idea is the fundamental unit of representation in the canonical universe. Every claim, concept, identity, governance rule, safety rule, action, prediction, observation, and AI contribution is expressed as an idea. Ideas do not represent objective truths or abstract entities in themselves; they represent what an agent has chosen to express. Each idea is therefore anchored in the speech condition: an idea corresponds to "an agent says⬦", where the underlying agent is either a real human or an authorized AI identity. This grounding ensures that all ideas remain attributable and challengeable, preserving accountability and enabling the deliberative process to operate on expressed statements rather than unverifiable internal beliefs or metaphysical assertions.
+An idea is the fundamental unit of representation in the canonical universe. Every claim, concept, identity, governance rule, safety rule, action, prediction, observation, and human-adopted AI-assisted contribution is expressed as an idea. Ideas do not represent objective truths or abstract entities in themselves; they represent what a human agent has chosen to express. Each canonical idea is therefore anchored in the speech condition: an idea corresponds to "a human identity says ...". This grounding ensures that all ideas remain attributable and challengeable, preserving accountability and enabling the deliberative process to operate on expressed statements rather than unverifiable internal beliefs or metaphysical assertions.
 
 The protocol also recognizes that agents may hold and develop ideas privately prior to publication. Such private drafts are not part of the canonical universe until an agent explicitly publishes them as canonical events. Private drafts are out of protocol conformance scope: conformant nodes are not required to store, validate, replicate, or interpret them, and deterministic replay does not include them. Private drafts become canonical ideas only when a valid idea-creation event (or equivalent canonical publication event) is appended to the event log.
 
@@ -1270,7 +1276,7 @@ The protocol recognizes the following primary idea types:
 * **conceptual idea**  -  an interpretive, normative, or framing idea that shapes meaning and relevance.  
 * **actionable idea**  -  a proposed plan, strategy, or intervention for what should be done.  
 * **action**  -  a record of something that actually occurred in the world.  
-* **identity**  -  the idea representing the human or authorized AI agent who speaks within the system.
+* **identity**  -  the idea representing the human who speaks within the canonical system.
 
 These types form the core ontology of the universe. Governance rules, safety rules, tribes, and other system-level constructs are also represented as ideas, but their extended semantics are defined in specialized sections and companion specifications.
 
@@ -1282,7 +1288,7 @@ An **actionable idea** represents a plan or strategy for what an agent says ough
 
 An **action** records what actually occurred in the world. Unlike actionable ideas, actions describe completed events. Actions are where deliberation meets reality: they provide grounding for evaluating predictions, commitments, strategies, and the reliability of prior claims. Actions also serve as terminal nodes for token flow. POD that begins at universally important ideas and moves through relatively important chains eventually reaches actions, and from there flows into the identity ideas of the agents responsible.
 
-An **identity** idea represents a real human or an authorized AI agent who participates in the universe. Every idea originates from an identity under the speech condition, ensuring accountability and traceability. Identity ideas are also the ultimate sinks for POD after it flows through chains of relative-importance connections - from universally important ideas, to supporting conceptual or empirical ideas, to actionable ideas, to actions, and finally to the identities who carried them out.
+An **identity** idea represents a real human who participates in the canonical universe. Every canonical idea originates from a human identity under the speech condition, ensuring accountability and traceability. Identity ideas are also the ultimate sinks for POD after it flows through chains of relative-importance connections - from universally important ideas, to supporting conceptual or empirical ideas, to actionable ideas, to actions, and finally to the identities who carried them out.
 
 By classifying ideas in this structured way, the protocol maintains semantic coherence and enables deterministic evaluation. The idea-type system defines the roles ideas can play, the rules governing their interactions, the way POD flows through the importance graph, and the semantic chains that connect abstract reasoning to concrete actions within the canonical universe.
 
@@ -1360,7 +1366,7 @@ When a merge event is valid, one idea is designated as the surviving idea and th
 
 Connections referencing the alias idea are redirected to the surviving idea in a deterministic manner. Where connections are compatible, they are unified; where they conflict - for example, contradictory importance judgments or incompatible execution links - conflict-resolution rules MUST be applied or the merge MUST be blocked until further deliberation resolves the inconsistency. Implementations MUST NOT silently drop or rewrite conflicting connections during merge processing. Instead, merge events either proceed with a deterministic conflict-handling procedure defined by the protocol or are invalidated when irreconcilable conflicts exist. This ensures that merging does not introduce hidden semantic changes or inconsistencies into the universe.
 
-Merges affect ideas, not identities. Identity ideas, which represent human or authorized AI agents, MUST NEVER merge. If two identity ideas are believed to represent the same real-world agent, this MUST be handled through separate identity-governance and verification processes, not through idea-merging. When two non-identity ideas merge, any POD routing, importance attribution, or epistemic credit tied to those ideas is recomputed deterministically based on the merged structure, subject to the token and importance specifications. Merge events therefore may change how credit and importance are distributed across the graph but MUST do so in a way that is fully determined by the event log and protocol rules.
+Merges affect ideas, not identities. Identity ideas, which represent humans, MUST NEVER merge. If two identity ideas are believed to represent the same real-world agent, this MUST be handled through separate identity-governance and verification processes, not through idea-merging. When two non-identity ideas merge, any POD routing, importance attribution, or epistemic credit tied to those ideas is recomputed deterministically based on the merged structure, subject to the token and importance specifications. Merge events therefore may change how credit and importance are distributed across the graph but MUST do so in a way that is fully determined by the event log and protocol rules.
 
 Merging is irreversible at the event-log level. If a merge is later judged incorrect, the system does not delete or rewind the merge event. Instead, a split event may be issued to create new successor ideas that separate the concepts again, while the merged idea remains as historical evidence of the prior conflation. The split event MUST reconstruct distinct ideas with appropriate subsets or reinterpretations of the descriptions and connections, and MUST be governed by its own deterministic rules. This preserves a complete and inspectable trail of how the community's understanding of semantic identity has changed over time.
 
@@ -1398,7 +1404,7 @@ evidence_for  -  a connection stating that A is being used as evidence in favor 
 
 evidence_against  -  a connection stating that A is being used as evidence against truth claim B.
 
-Rulebooks MAY introduce additional usage values (for example, future specializations such as action_outcome) provided they remain within the semantic scope of "A is important for evaluating or understanding B" and preserve deterministic replay. The axes and timeframes of importance (universal vs tribe vs personal, important-to vs important-for, and the five time horizons) are governed by the importance system in Section 5 and encoded in rulebook-defined metadata; they are not separate connection types.
+Rulebooks MAY introduce additional usage values (for example, future specializations such as action_outcome) provided they remain within the semantic scope of "A is important for evaluating or understanding B" and preserve deterministic replay. The scopes, relative axes, and timeframes of relative importance (universal vs tribe vs personal scope; important-to-reference vs important-for-reference; and the five time horizons) are governed by the importance system in Section 5 and encoded in rulebook-defined metadata; they are not separate connection types.
 
 When usage = general, relative_importance edges form the underlying importance graph for universal and tribe views. When usage = importance_argument, they capture arguments about importance advanced during challenges and allow later users and nodes to inspect which ideas were proposed as the main reasons to move one idea above another. When usage = evidence_for or usage = evidence_against, relative_importance edges specify that an idea is being used as evidence in support of or against a truth claim; the truth-claim subtypes of the involved ideas and the active rulebooks determine which evidential relationships are valid and how they contribute to certainty bands in truth challenges. In all cases, the same primitive - "A is important for evaluating B" - drives both importance flows and the organization of evidence, with the usage tag determining how that edge participates in different deliberative processes.
 
@@ -1654,9 +1660,11 @@ All canonical state transitions are derived exclusively from:
 - applicable protocol rules and governance-adopted rulebooks,
 - and adjudicated truth-claim outcomes.
 
-Wall-clock time MAY appear only as **evidence** within time-related truth claims. Such evidence remains perpetually challengeable and has no effect unless and until it contributes to a truth claim that reaches the required certainty threshold.
+Wall-clock time MAY appear only inside identity-authored ideas, provenance references, or claims about sources. Such material remains perpetually challengeable and has no effect unless and until it is connected through ordinary evidential relationships and a certainty-band challenge assigns the required certainty. Node-local time, server time, receipt time, background schedulers, uncommitted observations, or external links alone MUST NOT affect certainty, cycle sealing, certification, payouts, or authority.
 
-Time-based guardrails and thresholds (including those used for cycle progression) MUST consume only evidence-derived predicates established through truth challenges, never raw timestamps.
+Tempo evidence may contribute to certainty only when represented by identity-authored ideas, explicit allowed connections, and challenge verdicts with inspectable provenance and replayable inputs. Evidence links, source references, or event metadata do not by themselves satisfy predicates or beacon diversity.
+
+Time-based guardrails and thresholds (including those used for cycle progression) MUST consume only Tempo-derived predicates, never raw timestamps.
 
 Wall-clock time therefore exists in the system strictly as **observed testimony**, never as **authority**.
 
@@ -1672,6 +1680,7 @@ Characteristics:
 * the timestamp is signed as part of the event payload
 * it reflects what the device clock reported, not a guaranteed global time
 * incorrect, drifting, or manipulated clocks do not invalidate events
+* inclusion in an event does not make the timestamp authoritative or admissible as Tempo certainty
 
 When an event is created through delayed transcription from non-digital or offline activity, the event may include an approximate wall-clock timestamp (or an approximate wall-clock statement as a truth claim), which is treated as lower-precision observational evidence.
 
@@ -1695,8 +1704,9 @@ Any observation about time MUST be expressible as a truth claim with evidence. T
 Time-related truth claims MAY be used to derive threshold predicates required by §4, including predicates of the form:
 - `cycle_age_ge_dmin`
 - `cycle_age_ge_dmax`
+- `structural_dmax_liveness_predicate`
 
-These predicates MUST be considered satisfied only when the relevant time-claim(s) reach required certainty through truth challenges (Tempo specification). Raw timestamps MUST NOT satisfy these predicates directly.
+`cycle_age_ge_dmin` and `cycle_age_ge_dmax` MUST be considered satisfied only when the relevant target reaches required Tempo structural support under the Tempo Specification. Structural support is derived from profile-required eligible-human stances plus capped passive evidence and blocker checks; it is not ordinary truth certainty. `structural_dmax_liveness_predicate` is the Dmax-only survivor exception: it is derived from nonzero eligible-human survivor support, required capped passive plausibility evidence, and blocker checks, not from ordinary certainty, and it may be consumed only for forced structural closure. Raw timestamps MUST NOT satisfy any of these predicates directly.
 
 
 #### 2.10.5 Node-level time recording (non-normative) [anchor: node_level_time_recording_non_normative]
@@ -1773,7 +1783,7 @@ Qualifying engagement is any canonical activity that demonstrates active deliber
 Unless overridden by governance, qualifying engagement includes:
 - participation in a challenge,
 - receiving or casting votes in a related challenge,
-- being referenced by an argument or evidence object,
+- being referenced by an argument or evidence idea,
 - being involved in a canonical transformation affecting importance or representation.
 
 Mere existence or passive presence does not constitute engagement.
@@ -1833,7 +1843,7 @@ This section defines the system's canonical pacing mechanism ("cycles"), the con
 
 Cycles are derived from the canonical event log and exist solely to pace activity, adapt to participation scale, and bound per-identity influence while preserving deterministic replay. Cycles MUST NOT be used to determine truth, importance, or governance authority.
 
-This section is the **sole normative definition** of cycle sealing and cycle progression. No other specification, appendix, rulebook, or subsystem may define when a cycle advances or seals; all such documents MUST defer to this section.
+This section owns the root normative cycle invariants and sealing semantics. The Cycle Specification is the detailed subordinate normative algorithm for cycle derivation, boundary classification, certification, authorization-frontier interaction, and replay. No appendix, rulebook, or subsystem may contradict the Protocol v5 invariants or the Cycle Specification's subordinate algorithm.
 
 
 ### 3.1 Purpose of cycles (normative) [anchor: purpose_of_cycles_normative]
@@ -1867,7 +1877,7 @@ Given the same ordered set of canonical events and applicable rulebooks, all nod
 
 Nodes MUST NOT use device clocks, wall-clock timestamps, or external time sources to determine cycle sealing or boundary placement.
 
-Time may constrain cycle sealing only through **challengeable time truth claims** that reach required certainty (as defined in the Tempo specification). Protocol v5 consumes only the resulting guardrail predicates (e.g., `cycle_age_ge_dmin`, `cycle_age_ge_dmax`) and MUST NOT consume raw timestamps.
+Time may constrain cycle sealing only through **challengeable time truth claims**. Protocol v5 consumes only Tempo-derived guardrail predicates (e.g., `cycle_age_ge_dmin`, `cycle_age_ge_dmax`) and the Dmax-only `structural_dmax_liveness_predicate`; it MUST NOT consume raw timestamps.
 
 At each cycle boundary, deterministic boundary processing MUST be performed as specified in **Section 3.4.3**. Boundary processing MUST be replayable, auditable, and produce identical results on all nodes given the same event log and rulebooks.
 
@@ -1952,9 +1962,9 @@ W_score_since >= event_target[r]
 
 where `event_target[r]` is the deterministic cycle work target (`W_target[r]`).
 
-2. **Minimum duration guardrail satisfied**
+2. **Minimum duration guardrail structurally satisfied**
 
-The predicate `cycle_age_ge_dmin` has reached the required certainty threshold (Section 5.5).
+The predicate `cycle_age_ge_dmin` has reached Tempo `T_allow` structural readiness (Section 5.5).
 
 3. **Earliest-valid boundary rule**
 
@@ -1964,23 +1974,29 @@ When sealed via this path:
 - the cycle is considered to have met its deliberative completion target,
 - all boundary-scoped derivations occur normally,
 - the seal MUST be recorded as a *deliberative* seal.
-#### 3.4.2 Forced seal (liveness path) [anchor: forced_seal_liveness_path]
+#### 3.4.2 Forced structural close (liveness path) [anchor: forced_structural_close_liveness_path]
 
-A cycle *r* MUST seal via the **forced path** at the earliest canonical log position where:
+A cycle *r* MUST close via the **forced path** at the earliest canonical log position where:
 
-- the predicate `cycle_age_ge_dmin` has reached the required certainty threshold,
-- the predicate `cycle_age_ge_dmax` has reached the required certainty threshold,
+- either `cycle_age_ge_dmax` has reached Tempo `T_allow` structural readiness or `structural_dmax_liveness_predicate == true`,
 - `W_score_since < event_target[r]`, and
 - no earlier valid `cycle_close` exists for cycle *r*.
 
-A forced seal occurs regardless of participation level and any `V_min` telemetry values.
+For the same anchor and Tempo profile, adjudicated Dmax mechanically implies structural Dmin for boundary evaluation only. `structural_dmax_liveness_predicate` may force Dmax closure only; it does not satisfy Dmin deliberative closure. Neither path creates a Dmin beacon, Dmin certification, or Dmin-based authority.
+
+A forced structural close occurs regardless of participation level and any `V_min` telemetry values.
 
 When sealed via this path:
 - a canonical cycle boundary MUST be emitted by `system_boundary_emitter`,
-- the seal MUST be marked with `forced_seal = true`,
+- the boundary MUST be classified as forced,
 - the cycle is NOT considered to have met its deliberative completion target.
 
-Forced seals exist solely to guarantee liveness and forward progress and MUST NOT be interpreted as successful deliberative completion.
+Forced boundaries exist solely to guarantee structural liveness and forward progress and MUST NOT be interpreted as successful deliberative completion. A forced boundary remains forced forever. Repeated forced boundaries do not accumulate legitimacy and do not become authority by repetition, passage of structural cycles, survivor mode, or later certification.
+
+When the forced close uses `structural_dmax_liveness_predicate`, the boundary trigger MUST be `dmax_structural_liveness_forced`. That trigger does not create ordinary truth certainty, beacon status, cycle certification, authorization-frontier advancement, or authority over POD, POINT, governance, lifecycle, final rank, ordinary mana, ordinary rate limits, token effects, ordinary challenge powers, or ordinary canonical writing.
+
+Tempo structural predicates at `T_allow` MAY be consumed in cycle `r` for structural boundary evaluation in cycle `r`. They MUST NOT assign ordinary truth certainty, create beacons, certify cycles, authorize economic effects, governance activation, lifecycle irreversibility, token effects, final rank effects, ordinary mana spendability, or any other consequential authority. Consequential authority is controlled only by beacon certification and the lagged authorization frontier.
+
 #### 3.4.3 Boundary derivations (normative) [anchor: boundary_derivations_normative]
 
 At each cycle boundary (regardless of seal type), the following deterministic boundary derivations MUST be performed:
@@ -2006,17 +2022,20 @@ Cycles are constrained by minimum and maximum duration guardrails to prevent bot
 
 #### 3.5.1 Time as challengeable evidence [anchor: time_as_challengeable_evidence]
 
-There is no trusted clock in the system. Duration is established only through **time-related truth claims** that reach required certainty via challenges, as defined in the Tempo specification.
+There is no trusted clock in the system. Duration is represented only through ordinary **time-related truth claims** with Tempo metadata. Structural Dmin/Dmax readiness is derived from the canonical prefix using profile-required eligible-human structural stances, capped passive evidence, and blocker checks as defined in the Tempo Specification. Ordinary truth certainty for those claims remains governed by evidence-placement and certainty-band challenges. The only exception is the Dmax-only `structural_dmax_liveness_predicate`, which is not certainty and can be consumed only for forced structural closure.
 
 Protocol v5 consumes only the resulting boolean predicates:
 - `cycle_age_ge_dmin`
 - `cycle_age_ge_dmax`
+- `structural_dmax_liveness_predicate`
 
 Raw timestamps, device clocks, UI timers, or external calendars MUST NOT be consumed by cycle logic.
 
 #### 3.5.2 Minimum duration guardrail (Dmin) [anchor: minimum_duration_guardrail_dmin]
 
-A cycle MUST NOT seal (by any path) until the predicate `cycle_age_ge_dmin` is satisfied.
+A cycle MUST NOT seal through the deliberative path until the predicate `cycle_age_ge_dmin` is satisfied.
+
+Forced Dmax closure is the explicit exception to this deliberative Dmin rule. Ordinary Dmax mechanically supplies structural Dmin for boundary evaluation only. Survivor Dmax structural liveness does not satisfy Dmin, but it may still force a Dmax-only structural boundary when the Cycle and Tempo specifications permit it.
 
 Dmin exists to:
 - prevent adversarial or accidental rapid cycling,
@@ -2025,12 +2044,32 @@ Dmin exists to:
 
 #### 3.5.3 Maximum duration guardrail (Dmax) [anchor: maximum_duration_guardrail_dmax]
 
-A cycle MUST seal when the predicate `cycle_age_ge_dmax` is satisfied.
+A cycle MUST seal through the forced path when the predicate `cycle_age_ge_dmax` reaches Tempo structural readiness and the work target is unmet. It MAY also seal through the forced path when `structural_dmax_liveness_predicate` is true and the work target is unmet.
+
+Dmax mechanically implies structural Dmin for the same anchor and Tempo profile. This implication is valid only for structural boundary evaluation. `structural_dmax_liveness_predicate` does not satisfy Dmin. Neither path creates a Dmin beacon, certifies the cycle, or authorizes downstream effects.
 
 Dmax exists to:
 - guarantee liveness during low participation or disruption,
 - allow the system to progress even when deliberation stalls,
 - enable adaptive targets to respond to participation collapse.
+
+#### 3.5.4 Lagged certification and authorization frontier (normative) [anchor: lagged_certification_authorization_frontier_normative]
+
+Structural cycle boundaries are separate from consequential authority.
+
+Each closed cycle has a derived certification status based on the required Tempo target:
+- deliberative boundaries require certification of the cycle's Dmin target,
+- forced boundaries require certification of the cycle's Dmax target.
+
+Certification requires derived beacon coverage at the target level. A beacon-level claim may explicitly cover one target, multiple consecutive targets, or a structured elapsed-time relation that deterministically entails multiple targets. Each cycle still receives its own derived certification status. A representative time claim may be displayed for auditability, but it is not the source of authority.
+
+The authorization frontier is derived as a contiguous, monotonic, lagged frontier:
+- it may advance only through contiguous certified cycles,
+- it may not advance beyond `current_cycle - K`, where `K` is the active governance-defined lag window,
+- a certification gap stops advancement,
+- revocation or contradiction stops future advancement but does not rewrite history already authorized by an earlier frontier.
+
+Genesis starts with `initial_authorization_frontier = -1`. Cycles before lag `K` is satisfied operate in constrained mode, and no consequential outputs are finalized solely because the system is new. An alternative bootstrap basis is valid only if it is explicitly defined in immutable genesis data, independently verifiable, not added retroactively through later governance, and unable to weaken anti-collapse invariants.
 
 ---
 
@@ -2045,7 +2084,7 @@ For each completed cycle *r*:
 W_obs[r] = V[r] + C[r]
 
 
-Forced seals are included in `W_obs[r]`.
+Forced boundaries are included in `W_obs[r]`.
 
 #### 3.6.2 Exponential moving average [anchor: exponential_moving_average]
 
@@ -2119,7 +2158,7 @@ As cycles become larger, per-cycle allowances MAY increase proportionally within
 
 This ensures:
 - rapid cycle advancement does not reset limits at machine speed,
-- forced seals do not amplify throughput,
+- forced boundaries do not amplify throughput,
 - influence accrues over time, not bursts.
 
 Heavy or high-impact actions MAY require accumulation of allowances across multiple cycles. Scaling rules MUST be monotonic and deterministic.
@@ -2142,6 +2181,8 @@ Each identity maintains multiple mana pools as defined elsewhere in the protocol
 
 Mana pools persist across cycles up to governance-defined caps.
 
+During constrained record-and-recovery mode, Tempo mana MAY recharge to its small repair cap and may be spent only on the Tempo-only lane. Ordinary mana pools or allowances may still be derived and capped at structural boundaries for replay continuity, but they remain unspendable outside the constrained allowlist until the authorization frontier permits consequential effects.
+
 ---
 
 ### 3.11 Multi-cycle accrual (normative) [anchor: multi_cycle_accrual_normative]
@@ -2152,21 +2193,23 @@ Action costs and caps MUST be set such that:
 - heavy actions require accrual across multiple cycles,
 - rapid or forced cycle advancement cannot be exploited to bypass intended scarcity.
 
+Missed ordinary allowances from uncertified, constrained, or forced cycles MUST NOT accumulate into later burst capacity. No past ordinary rate-limit reset is backfilled. Later certification MAY finalize outputs that were explicitly pending or provisional, but it MUST NOT validate actions that were forbidden when attempted and MUST NOT create stockpiles of unused ordinary mana.
+
 ---
 
 ### 3.12 Participation collapse and degraded operation (normative) [anchor: participation_collapse_and_degraded_operation_normative]
 
-If participation drops below the minimum required to:
-- resolve challenges,
-- establish time-claim certainty,
+If participation drops below the minimum required to resolve ordinary challenges or finalize consequential authority, the system enters constrained record-and-recovery mode if at least one eligible human can continue canonical Tempo repair.
 
-the system enters a **record-only posture**:
+In constrained record-and-recovery mode:
+- the narrow Tempo-only lane remains available to eligible human `tempo_contributor` identities,
+- forced structural cycles may occur when Dmax reaches `T_allow`, or when `structural_dmax_liveness_predicate` is true, and the work target is unmet,
+- `W_target` may adapt downward through the EMA after structural boundaries,
+- ordinary canonical writes, governance activation, POD/POINT finalization, lifecycle irreversibility, final-rank effects, and ordinary mana spendability remain blocked or provisional until certification and the lagged authorization frontier permit them.
 
-- events are recorded and preserved,
-- no canonical cycle seals occur,
-- normal operation resumes once sufficient participation is restored and logs are replayed.
+True record-only halt occurs when canonical publication cannot proceed or zero eligible humans can produce the minimum human Tempo repair needed for replayable target-bound time truth claims and explicit Tempo-context evidence/challenge history. In true record-only halt, local/offline records may be preserved, but universal structural cycle advancement does not proceed. Passive machine evidence, publication timestamps, or scheduler observations cannot substitute for eligible human participation.
 
-Targets and thresholds adapt downward through the EMA as forced seals occur.
+Population collapse never lowers authority requirements automatically. `K`, `T_beacon`, beacon diversity, independence, and stability requirements do not automatically shrink, even when `W_target` adapts downward.
 
 ---
 
@@ -2435,6 +2478,8 @@ Universal importance represents the system’s shared, public assessment of how 
 
 Universal importance is defined through **20 axes**, formed by crossing four orientations of importance with five time horizons. The four orientations are: importance *to the currently existing individual human* and importance *for the currently existing individual human*; and importance *to the collective* and importance *for the collective*, where **the collective is defined strictly as all life, intelligence, and consciousness in the universe through time**, not any particular society, nation, species, ideology, political group, or culture. This ensures that "collective importance" refers only to the broadest possible scope of moral and existential concern, never to narrower human factions.
 
+The universal orientation values are `important_to_current_individual`, `important_for_current_individual`, `important_to_collective`, and `important_for_collective`. These values belong to universal importance profiles and MUST NOT be used as the axis vocabulary for ordinary relative-importance ranking contexts unless a future rulebook explicitly defines a deterministic projection.
+
 The five time horizons - near-term, mid-term, long-term, very long-term, and trans-generational or civilizational timescales - encode the temporal dimension of importance. Each idea therefore has a value on each of the 20 orientation-time axes reflecting how important agents judge it to be for the currently existing individual human or for all life and consciousness, across short and long temporal scales. These axes are maintained through open challenge-based ranking procedures that allow ideas to rise or fall according to recorded reasoning.
 
 Universal importance is calculated as a simple aggregate scalar derived from the rankings across all 20 axes. The protocol does not weight the axes differently by default; it simply sums or averages them in a straightforward way, ensuring that universal importance remains transparent and deterministic. Users can always inspect the underlying 20-axis profile of any idea to understand *why* its aggregate importance has the value it does. An idea may be especially important to currently living individuals, or primarily significant for long-term collective futures; the system captures all such patterns without collapsing them into a single opaque judgment.
@@ -2461,11 +2506,13 @@ These scopes MUST be modeled as overlays only. A scope MUST NOT be interpreted a
 
 A relative_importance connection expresses that an idea is important relative to a chosen reference idea on a specific axis and timeframe. As soon as two ideas share the same reference under the same scope, axis, and timeframe, they may be brought into an importance challenge. A challenge compares two candidates and, if the challenger wins, moves it immediately above the target in the rank list for that (reference, axis, timeframe, scope). No numeric scores are stored; each rank list is derived solely from the sequence of challenges and verdicts in that context.
 
+Relative importance uses a **10-axis framework**. For any reference idea R, an idea X may be ranked by whether X is `important_to_reference` or `important_for_reference` across five time horizons: `near_term`, `mid_term`, `long_term`, `very_long_term`, and `trans_generational`. These two relative orientations crossed with five time horizons produce ten relative-importance axes. For a connection X -> R, the question is how important X is to R, or how important X is for R, under the declared timeframe and scope. This is distinct from universal importance, whose axes ask whether X is important to or for the current individual or the collective. Relative-importance ranks are derived per reference idea, usage, scope, relative axis, and timeframe; they are not global idea ranks and are not authored facts.
+
 Universal scope is the global, public layer of the organism. When a relative importance connection is created with a universal reference idea - such as "humanity" or "the collective of all life and intelligence through time" - it enters the universal ranking system. Only identities that satisfy universal eligibility (verification, rate limits, and rulebook constraints) may vote in universal-scope challenges, but the resulting universal rank lists are visible to everyone. Universal-scope ranks determine how much POD is injected at different ideas during minting cycles and constrain the direction of significance and POD flow.
 
-Tribe scope uses the same mechanism but is restricted in **voting**, not in **visibility**. A tribe is defined by membership connections from user identity ideas to a tribe nucleus idea. Tribe members may create and vote in tribe-scope importance challenges that compare public ideas relative to the tribe nucleus on specific axes and timeframes. The resulting tribe-scope rank lists are **publicly viewable overlays** on the global graph, showing how that tribe prioritizes public ideas. Tribe-scope rankings NEVER alter universal importance or POD flow directly; they are interpretive maps over the same public ideas, governed by tribe-only voting but visible to all.
+Tribe scope uses the same mechanism but is restricted in **voting**, not in **visibility**. A tribe is defined by membership connections from user identity ideas to a tribe nucleus idea. Tribe members may create and vote in tribe-scope importance challenges that compare public ideas relative to the tribe nucleus on the relative axes and timeframes defined above. The resulting tribe-scope rank lists are **publicly viewable overlays** on the global graph, showing how that tribe prioritizes public ideas. Tribe-scope rankings NEVER alter universal importance or POD flow directly; they are interpretive maps over the same public ideas, governed by tribe-only voting but visible to all.
 
-Personal scope applies the same machinery to user identity ideas. Each user identity idea may serve as the reference for its own personal importance map. Relative importance edges originating from the user identity idea express what the user says is important to them, using the same axes and timeframes as all other importance structures. Personal scope is restricted in **voting**, not in **visibility**, in the same manner as tribe scope: the personal-scope map is a publicly inspectable overlay once published, but only the owning identity may create and vote in personal-scope importance challenges anchored to that identity. No one else may vote or challenge within another user’s personal scope. Personal rankings allow individuals to express and maintain their own ordering of public ideas without affecting public or tribal rank lists.
+Personal scope applies the same machinery to user identity ideas. Each user identity idea may serve as the reference for its own personal importance map. Relative importance edges originating from the user identity idea express what the user says is important to or for that identity reference, using the same relative axes and timeframes as all other relative-importance structures. Personal scope is restricted in **voting**, not in **visibility**, in the same manner as tribe scope: the personal-scope map is a publicly inspectable overlay once published, but only the owning identity may create and vote in personal-scope importance challenges anchored to that identity. No one else may vote or challenge within another user’s personal scope. Personal rankings allow individuals to express and maintain their own ordering of public ideas without affecting public or tribal rank lists.
 
 Private drafts and private draft rankings are distinct from personal scope and are out of protocol conformance scope. A user MAY maintain local-only drafts, draft importance orderings, or private working maps that include unpublished ideas or unpublished relative-importance edges. Such private drafts are not required for nodes, are not part of deterministic replay, and do not exist as canonical ideas, connections, or rank lists until the user publishes them as canonical events. Once published, they become part of the canonical universe and are therefore publicly readable (subject to safety and jurisdiction lenses), even if interaction remains restricted by scope eligibility.
 
@@ -2486,7 +2533,7 @@ A tribe is an idea that serves as the nucleus of a group context - a scoped over
 
 A user becomes a member of a tribe by forming a membership connection from their user identity idea to the tribe nucleus idea. Membership determines which identities may create and vote in tribe-scope importance challenges anchored at that nucleus. However, all of the content that tribes operate on - ideas, descriptions, connections, arguments, and internal rank lists - is built entirely from public ideas. Anyone MAY inspect which public ideas a tribe considers important, how those ideas are ranked relative to the tribe nucleus, and which arguments the tribe has attached. Only tribe members MAY vote in tribe-scope challenges or alter the tribe's internal rankings.
 
-Tribe-scope importance uses the same relative importance and challenge mechanics as universal scope but is strictly interpretive. Tribe-scope rank lists represent how that tribe orders public ideas relative to its nucleus, across the same importance axes and time horizons. These lists are always publicly visible. They DO NOT determine universal importance, DO NOT affect POD injection, and DO NOT directly alter the direction or magnitude of POD flow. Universal importance and POD remain grounded solely in the universal-scope rankings and challenges that are open to all eligible voters.
+Tribe-scope importance uses the same relative importance and challenge mechanics as universal scope but is strictly interpretive. Tribe-scope rank lists represent how that tribe orders public ideas relative to its nucleus, across the ten relative-importance axes and time horizons. These lists are always publicly visible. They DO NOT determine universal importance, DO NOT affect POD injection, and DO NOT directly alter the direction or magnitude of POD flow. Universal importance and POD remain grounded solely in the universal-scope rankings and challenges that are open to all eligible voters.
 
 If a tribe wishes to coordinate around a new idea, it MUST first exist as a public idea in the global graph. Tribes cannot maintain hidden doctrines or private propositions that influence universal outcomes. If an idea is worth organizing around, it must be visible, challengable, and inspectable by the entire system. If a tribe attaches special structure or interpretation to a public idea using non-standard workflows, any user MUST be able to fork or duplicate that idea into a fully public, challengable idea that can participate in universal importance and POD flows. Only fully public, challengable ideas may enter the canonical civilizational record.
 
@@ -2726,6 +2773,8 @@ Challenges are the protocol's unified mechanism for resolving disputes about wha
 The protocol defines a single challenge primitive with four domains distinguished by the type of proposition they target and the state transformation they enact: truth challenges, importance challenges, action challenges, and representation challenges. These domains are applications of the same challenge framework but use distinct usages of the core connection types and domain-specific voter instructions, rather than introducing separate connection families for each domain.
 
 Truth challenges evaluate the accuracy, certainty, or classification of a truth claim. They use relative_importance connections whose usage is evidence_for or evidence_against between candidate evidence ideas and the challenged claim, together with the evidence rails defined in Section 5. Prediction resolution, action completion verification, test-result confirmation, and governance-rule evaluation are all subcases of truth challenges. Truth challenges may modify certainty bands, update claim status, activate or reject governance rules, or - when confirming a completion truth claim - trigger POD transfer from an actionable idea to a human identity. The core target is always a truth claim; all submodes inherit the same fundamental deliberation process.
+
+External sources do not become canonical evidence by being linked. A paper, article, book, video, dataset, website, instrument output, or external record becomes relevant only when an identity authors ideas asserting what that source says, contains, measured, or supports, with provenance such as URLs, hashes, sections, timestamps, archived copies, or payload references. Important sources SHOULD be represented by source-document, source-section, and source-chunk ideas where the existing base idea types can express them. Claims about those sources remain challengeable, and certainty changes only through explicit connections and challenge outcomes.
 
 Importance challenges evaluate the ordering between two ideas within a specific importance axis or scoped relative-importance context. They operate on the ranked list induced by relative_importance connections in a given (scope, reference idea, axis, timeframe) context. Only upward challenges are permitted: an idea ranked lower may challenge an idea ranked higher. During the challenge, participants attach importance arguments as ordinary ideas linked to either contestant via relative_importance connections whose usage is importance_argument. Voters assess which idea is more important across the relevant axes and timeframe. Verdicts may swap the ordering of the two ideas, update the local ranking, or preserve the current order. Importance challenges are the exclusive mechanism for modifying universal and scoped importance rankings, and they directly affect POD routing in future cycles.
 
@@ -3036,7 +3085,7 @@ Export pack metadata MUST always include cycle-boundary cadence context sufficie
 
 ### 8.1 human-first identity architecture [anchor: human_first_identity_architecture]
 
-The protocol maintains a strict human-first architecture for the canonical universe. Every canonical event - idea creation, description submission, connection creation, argument or evidence submission, challenge creation, vote, action declaration, or completion claim - MUST be authored and cryptographically signed by a unique, verified human identity. Only these verified human identities MAY emit POD-eligible events or directly modify canonical rankings and challenge outcomes. AI systems, anonymous burners, and other non-verified actors MAY generate content in non-canonical layers, but such content has no canonical effect until explicitly adopted by a verified human identity.
+The protocol maintains a strict human-first architecture for the canonical universe. Every canonical event - idea creation, description submission, connection creation, argument or evidence idea submission, challenge creation, vote, action declaration, or completion claim - MUST be authored and cryptographically signed by a unique, verified human identity, except for mechanically emitted boundary events by `system_boundary_emitter`. Verified-human status is necessary but not sufficient for every action: ordinary canonical writes require ordinary canonical-writer eligibility, and the narrow Tempo-only lane requires `tempo_contributor` eligibility and permits only target-bound time truth claims plus explicitly allowed Tempo-context evidence ideas/connections. Only eligible verified human identities MAY emit POD-eligible events or directly modify canonical rankings and challenge outcomes. AI systems, anonymous burners, and other non-verified actors MAY generate content in non-canonical layers, but such content has no canonical effect until explicitly adopted by a verified human identity.
 
 The system conceptually distinguishes three layers: the **canonical universe**, an **anonymous outer layer**, and the **AI map**. The canonical universe is the PoD-bearing layer, backed by event logs and snapshots, where universal importance, challenge outcomes, POD flows, and long-term governance are defined. Only verified human identities MAY act directly in this layer. The anonymous outer layer is a non-canonical, web-facing space where ideas MAY be created and discussed under fully anonymous or burner-like handles without prior verification. This layer is intended to support whistleblowing, dissent, experimentation, and expression under threat, including use from within authoritarian regimes. Events in the anonymous layer are not POD-eligible and MUST NOT change canonical ranks or challenge results until they are explicitly adopted. The AI map is a separate sandbox in which AI agents MAY freely propose ideas, structures, and interpretations without any canonical authority.
 Outer-layer content remains non-canonical until adopted by a verified-human identity, and such adoption preserves source anonymity by default and MUST NOT embed transport metadata (see `privacy-and-high-risk-submission-spec.md` §6§7).
@@ -3060,13 +3109,13 @@ Each USER identity idea in the canonical universe MUST carry a minimal, determin
 
 At minimum, a canonical human identity MUST include:
 
-- **public key and signature scheme:**  
-  A cryptographic public key and declared signature algorithm. All canonical events attributed to the identity MUST carry a signature that verifies against this key. Nodes MUST reject events with missing or invalid signatures, or signatures using undeclared schemes.
+- **public key state and signature profile:**
+  Replay-derived identity key state sufficient to resolve active `public_key_ref` values under `canonical-event-authorship-and-signature-profile-v0.md`. Ordinary human-authored canonical events MUST carry a Profile-v0 `signature` over the exact authored-candidate bytes and MUST verify against an active key owned by `author_identity_id`. Nodes MUST reject events with missing signatures, invalid signatures, unknown keys, keys owned by another identity, revoked keys used after revocation, or unsupported signature profiles.
 
 - **verification state:**  
   A state describing whether and how the identity has been verified as a unique human. The protocol defines the following canonical states:
   - *unverified*: the identity and its structural-role ideas exist and MAY explore the interface and act in the anonymous outer layer, but MUST NOT author canonical events, MUST NOT vote, and MUST NOT receive POD;
-  - *verified-human*: the identity MAY author canonical events, participate in canonical challenges, and receive POD;
+  - *verified-human*: the identity MAY become eligible for ordinary canonical events, canonical challenges, Tempo contribution, and POD according to the active action-specific rulebooks;
   - *revoked*: the identity has been invalidated (for example, due to fraud or policy violations) and MUST NOT author further canonical events; historical events remain valid under replay;
   - *deceased*: the human has died; no new canonical events may be authored, but historical authorship and POD remain intact;
   - *transferred*: the identity has undergone a succession process (see §9.6), with clear markers of continuity and transfer.
@@ -3137,7 +3186,7 @@ Each human identity represents a single real person and persists for the duratio
 
 Verification provides the USER identity with a recognized, challengeable attestation of personhood. A USER identity MAY initially be unverified, but it MUST NOT participate in universal-scope challenges or voting until verification is complete. Verification consists of the identity producing evidence - such as government ID checks, anthill-mediated peer verification, third-party attestations, or live-verification sessions - and embedding this evidence into a truth-claim chain. Once a verification truth claim survives challenge, the identity's verification state becomes active for all nodes at the next scheduled activation cycle boundary.
 
-Identity continuity is preserved through stable cryptographic signatures and key-management events. A USER identity MUST control at least one long-term keypair, and MAY rotate keys through signed key-rotation events. The identity’s underlying canonical representation MUST remain constant under replay; only descriptions and metadata MAY change. The identity’s lifetime ends only through explicit death, retirement, or succession events defined in a rulebook. Structural-role ideas (backyard, relationship_garden, self_tree, anthill) remain attached to the identity throughout its lifetime and SHALL NOT be merged, reassigned, or severed except through formal succession processes.
+Identity continuity is preserved through stable cryptographic signatures and replay-derived key-management events. A USER identity MUST control at least one active key or a canonically specified recovery path, and MAY rotate or revoke keys through signed key-management events under `canonical-event-authorship-and-signature-profile-v0.md`. The identity’s underlying canonical representation MUST remain constant under replay; only descriptions and metadata MAY change. The identity’s lifetime ends only through explicit death, retirement, or succession events defined in a rulebook. Structural-role ideas (backyard, relationship_garden, self_tree, anthill) remain attached to the identity throughout its lifetime and SHALL NOT be merged, reassigned, or severed except through formal succession processes.
 
 ### 8.5 death, succession, and account freezing [anchor: death_succession_and_account_freezing]
 
@@ -3149,11 +3198,11 @@ Succession events transfer stewardship but not authorship. The successor identit
 
 ### 8.6 identity keys, signatures, and attribution rules [anchor: identity_keys_signatures_and_attribution_rules]
 
-All canonical events in the system MUST be attributed to a specific human identity through cryptographic signatures. Every event - idea creation, description proposal, connection formation, challenge creation, argument submission, vote cast, action declaration, and completion claim - MUST include a signature from the USER identity's active key at the time of submission. Nodes MUST reject any canonical event that lacks a valid signature, that is signed with a key not associated with the identity, or that attempts to reuse a key that has been explicitly revoked via a key-rotation event.
+All ordinary human-authored canonical events in the system MUST be attributed to a specific human identity through cryptographic signatures. Every event - idea creation, description proposal, connection formation, challenge creation, argument submission, vote cast, action declaration, and completion claim - MUST include a Profile-v0 `signature` from an active key owned by `author_identity_id` at the event candidate's applicable publication point. The exact authored-candidate structure, signed bytes, `public_key_ref` construction, key rotation, revocation, and non-retroactive key-state rules are defined in `canonical-event-authorship-and-signature-profile-v0.md`.
 
-Key rotation is allowed and encouraged. A USER identity MAY generate a new keypair and attach it to itself via a signed key-rotation idea. After a key rotation becomes active (at the next scheduled activation cycle boundary), nodes MUST accept signatures from the new key and MUST reject signatures from the old key, unless a temporary dual-signature window is explicitly allowed by the verification standard. Key rotations ensure long-term security without disrupting the continuity of the identity’s authored events.
+Key rotation is allowed and encouraged. A USER identity MAY generate a new keypair and attach it through a signed key-rotation event authorized by an active prior key or by a canonically specified recovery process. A valid rotation becomes effective at its finalized canonical position. A valid revocation becomes effective at its finalized canonical position and does not invalidate earlier finalized events that were valid when published.
 
-Attribution rules are strict and deterministic. An event is considered authored by the identity whose key signed it. AI identities MAY propose drafts in the sandbox but MAY NOT sign canonical events. Tribe identities MAY NOT sign events. Only human USER identities produce canonical signatures. Events without a valid attribution MUST be rejected to maintain non-repudiation and prevent injection of unsigned or forged actions into the canonical universe. These rules ensure that every canonical event is tied to a real human and remains permanently traceable under replay.
+Attribution rules are strict and deterministic. An event is considered authored by `author_identity_id` only when the signed candidate verifies against an active key descriptor owned by that identity and the identity is eligible for the event family. AI identities MAY propose drafts in the sandbox but MAY NOT satisfy ordinary human-authorship signatures. Tribe identities MAY NOT sign ordinary human-authored events. Events without valid attribution MUST be rejected to maintain non-repudiation and prevent injection of unsigned or forged actions into the canonical universe. These rules ensure that every ordinary human-authored canonical event is tied to a real human and remains permanently traceable under replay.
 
 ### 8.6 death, succession, and archival identity states [anchor: death_succession_and_archival_identity_states]
 
@@ -3335,9 +3384,9 @@ Each node MUST maintain a **censorship-pressure profile**, updated continuously 
 
 Nodes MUST summarize these metrics into a deterministic **censorship-pressure vector** published at each snapshot. The vector MUST include a node’s normalized block rate, sanitization rate, jurisdictional overlay impact, and classifier tension index. This vector becomes part of the canonical snapshot metadata, enabling the network to evaluate censorship pressures longitudinally across time, jurisdictions, and political regimes.
 
-When censorship-pressure vectors exceed governance-defined thresholds, nodes MUST emit a **censorship_alert event**. These alerts do not change canonical content but function as signals to the global ecosystem that certain jurisdictions or nodes are experiencing unusually high suppression or distortion pressures. Alerts MUST include: (a) a breakdown of contributing factors, (b) the timeframe of escalation, and (c) links to affected blocked_submission or encapsulation events.
+When censorship-pressure vectors exceed governance-defined thresholds, nodes MUST derive and expose a **censorship_alert** surface. These alerts do not change canonical content and are not standalone canonical events; they function as signals to the global ecosystem that certain jurisdictions or nodes are experiencing unusually high suppression or distortion pressures. Alerts MUST include: (a) a breakdown of contributing factors, (b) the timeframe of escalation, and (c) links to affected `blocked_submission` records or encapsulation records.
 
-Users and clients SHOULD treat censorship_alert events as navigational cues. High-pressure regions MAY indicate environments where only filtered replicas can operate legally, where authoritarian policies attempt to suppress dissent, or where classifier ensembles may be compromised. The protocol imposes no punitive action on filtered replicas; instead, it ensures that the entire network becomes aware of the distortion and can route around it by increasing replication from low-pressure nodes or offline seed archives.
+Users and clients SHOULD treat `censorship_alert` surfaces as navigational cues. High-pressure regions MAY indicate environments where only filtered replicas can operate legally, where authoritarian policies attempt to suppress dissent, or where classifier ensembles may be compromised. The protocol imposes no punitive action on filtered replicas; instead, it ensures that the entire network becomes aware of the distortion and can route around it by increasing replication from low-pressure nodes or offline seed archives.
 
 The censorship-pressure system ensures that any attempt to use safety, legality, or infrastructure constraints as disguised censorship becomes **visible at the network layer**. It does not prevent jurisdictions from imposing local restrictions, but it prevents such restrictions from becoming invisible, normalized, or globally binding. The canonical universe remains unified, durable, and censorship-resistant, while the network continuously monitors and surfaces patterns that threaten that universality.
 
@@ -4531,9 +4580,11 @@ Rulebooks MAY refine how these types are interpreted and MAY define additional a
 For `relative_importance` connections, `supporting_metadata` MUST include:
 
 * `usage` — one of: `general`, `importance_argument`, `evidence_for`, `evidence_against` (plus any future usages defined by governance rulebooks within the same semantic scope).
-* `axis` — one of the standard importance axes (important-to vs important-for, etc.).
-* `timeframe` — one of the five temporal horizons.
+* `axis` — one of the relative-importance axes: `important_to_reference` or `important_for_reference`.
+* `timeframe` — one of the five temporal horizons: `near_term`, `mid_term`, `long_term`, `very_long_term`, or `trans_generational`.
 * `scope` — `universal`, `tribe`, or `personal`.
+
+Universal-importance orientation values (`important_to_current_individual`, `important_for_current_individual`, `important_to_collective`, and `important_for_collective`) are used for universal importance profiles and universal rank snapshots. They are not valid `axis` values for ordinary `relative_importance` connection metadata unless a future rulebook explicitly defines a deterministic projection.
 
 Rulebooks MAY add additional fields, provided they do not change the meaning of the core fields or break deterministic replay.
 
@@ -4611,43 +4662,68 @@ Hashing and serialization rules MUST be fully specified and versioned to ensure 
 
 ### 13.4 canonical event types and required fields [anchor: canonical_event_types_and_required_fields]
 
-This appendix defines the minimal required fields for each event type. Rulebooks MAY extend these definitions, but SHALL NOT remove or reinterpret required fields.
+Appendix A defines the authoritative canonical event names and minimal required fields. Rulebooks MAY extend these definitions where Appendix A permits extension, but SHALL NOT remove, alias, or reinterpret required fields. Older prose aliases are non-authoritative.
 
-Event types include:
+Canonical event names use Appendix A spelling. The current catalog includes:
 
-* **idea_created**,  
-* **representation_create**,  
-* **rail_create**,  
-* **rail_fork**,  
-* **rail_update_representation**,  
-* **connection_created**,  
-* **challenge_opened**,  
-* **vote_cast**,  
-* **verdict_reached**,  
-* **importance_update**,  
-* **identity_created**,  
-* **identity_verified**,  
-* **completion_truth_claim**,  
-* **blocked_submission**,  
+* **identity_create**,
+* **identity_verification_update**,
+* **identity_visibility_update**,
+* **identity_key_rotate** / **identity_key_revoke**,
+* **idea_create**,
+* **idea_update_metadata**,
+* **idea_update_representation** (deprecated alias of **representation_create**),
+* **idea_deprecate** / **idea_retract**,
+* **representation_create**,
+* **rail_create**,
+* **rail_fork**,
+* **rail_update_representation** (deprecated alias of **representation_create**),
+* **connection_create**,
+* **connection_update**,
+* **connection_remove**,
+* **same_as_resolution**,
+* **challenge_create**,
+* **challenge_open_arguments**,
+* **challenge_close_arguments**,
+* **challenge_open_voting**,
+* **challenge_close_voting**,
+* **challenge_finalize_verdict**,
+* **challenge_cancel** / **challenge_supersede**,
+* **vote_cast**,
+* **vote_commit** / **vote_reveal** where commit-reveal voting is enabled,
+* **blocked_submission**,
+* optional/interface token and safety events listed in Appendix A, where adopted by active rulebooks,
 * **snapshot_commit** (canonical boundary index event for derived snapshots; replay no-op),
-* **snapshot_created** (deprecated legacy/debug alias only; not required for conformance).
+* **cycle_close** (canonical system-boundary event for structural cycle closure).
 
-Each event type SHALL include:
+Completion claims are ordinary `truth_claim` ideas created via `idea_create`; they are not a
+separate event type. Importance changes are expressed through connections, challenges, and verdicts,
+not a standalone event.
 
-* **event_id** (UUIDv7 string),  
-* **event_index**,  
-* **speaker_identity** (if applicable),  
-* **timestamp** (non-semantic),  
-* **payload** with required fields,  
-* **signature** verifying authorship and integrity.
+Each ordinary human-authored event type SHALL be represented first as a signed authored candidate and then, after valid publication, as a published canonical event wrapper.
 
-All canonical events MUST include sufficient fields to support deterministic cycle derivation and lifecycle computation.
+At minimum, the signed authored candidate records:
 
-At minimum, canonical events MUST record:
+* **event_id** (UUIDv7 string),
+* **signature_profile**,
+* **event_type**,
+* **author_identity_id**,
+* **speaker_identity_id** (if applicable),
+* **public_key_ref**,
+* **payload_hash**,
+* **payload** or **payload_ref** according to the event schema,
+* **payload_binding_mode**,
+* **signature** verifying authorship and payload integrity under `canonical-event-authorship-and-signature-profile-v0.md`.
+
+At minimum, the published canonical event wrapper records the finalized canonical order and any publication-derived block, prefix-certificate, rulebook, payload-classification, and chain-reference metadata required by the publication profile.
+
+All canonical events MUST include sufficient authored-candidate fields and publication-wrapper fields to support deterministic cycle derivation and lifecycle computation. The human signature MUST NOT bind a future publication-assigned `event_index`, block height, cycle index, finalized-prefix-certificate reference, or private account/session field.
+
+At minimum, replay MUST be able to recover:
 - a deterministic event identifier (UUIDv7 string),
 - the identity performing the event,
-- the event’s position in the canonical order,
-- the cycle index at which the event was authored or ingested.
+- the event’s finalized position in canonical order,
+- the cycle index derived from canonical replay context.
 
 No new event types are introduced solely for rot/burn. Lifecycle_state derivation relies on existing event semantics and qualifying engagement predicates rather than dedicated lifecycle events.
 
@@ -4656,20 +4732,15 @@ No new event types are introduced solely for rot/burn. Lifecycle_state derivatio
 
 Identity semantics require deterministic, verifiable signatures for every canonical event.
 
-A canonical signature MUST:
+A canonical ordinary human-authorship signature MUST:
 
-* bind the event payload and event index,  
-* be produced by a private key controlled by a verified identity,  
-* be verifiable using the identity’s registered public key,  
-* adhere to signature schemes specified in the active identity rulebook.
+* bind the Profile-v0 authored-candidate fields and payload hash,
+* exclude publication-derived fields that do not exist when the human signs,
+* be produced by a private key controlled by an eligible verified human identity,
+* be verifiable using the replay-derived identity key state for `public_key_ref`,
+* adhere to `signature_profile = ed25519_v0` unless a later explicit signature-profile specification supersedes it.
 
-This appendix defines:
-
-* signature algorithms (e.g., Ed25519, secp256k1),  
-* key rotation procedures,  
-* identity mapping across key generations,  
-* procedures for revoking compromised keys,  
-* canonical formats for publishing keys and identity attestations.
+`canonical-event-authorship-and-signature-profile-v0.md` defines the authored-candidate structure, Profile-v0 Ed25519 algorithm, exact signed bytes, public-key descriptor, `public_key_ref`, key rotation, key revocation, and authorship-signature conformance-vector requirements. Rulebooks MAY gate which verified humans are eligible for which event families, but conforming Profile-v0 implementations MUST NOT choose alternate human-signature algorithms locally.
 
 Identity verification procedures MUST remain human-first and SHALL NOT rely on cryptographic proofs alone.
 
@@ -4745,7 +4816,7 @@ The glossary defines technical terms used throughout the protocol, ensuring stab
 * **snapshot**, **activation boundary**, **rulebook**,  
 * **POD**, **POINT**, **importance**, **universal importance**,  
 * **canonical universe**, **deterministic replay**,  
-* **blocked_submission**, **completion_truth_claim**.
+* **blocked_submission**, **completion truth-claim ideas**.
 
 Glossary definitions MUST remain consistent with semantics in Sections 0§11 and SHALL NOT introduce new concepts.
 

@@ -96,7 +96,9 @@ async fn maybe_emit_cycle_close_before_append(
         payload: payload.clone(),
         speaker_identity_id: Some(system_boundary_emitter_id()),
     };
-    validate_event(&event).map_err(|err| {
+    // Stage 0 still materializes cycle boundaries with the legacy cycle_close payload
+    // (`closure_kind`/`forced_seal`). Public Appendix A validation rejects that payload.
+    validate_stage0_internal_event(&event).map_err(|err| {
         CanonicalWriteError::new(
             err.code,
             format!("event validation failed: {}", err.message),
@@ -262,6 +264,31 @@ fn is_production_mode() -> bool {
     })
 }
 
+const PUBLICATION_PROFILE_BOOTSTRAP_SINGLE_PUBLISHER: &str = "profile_0_bootstrap_single_publisher";
+
+#[derive(Debug, Clone, sqlx::FromRow)]
+struct ExistingSignedEventRow {
+    block_height: i64,
+    event_index: i32,
+    event_type: String,
+    authored_candidate_hash_v0: Option<String>,
+    signature: Option<String>,
+    payload_json: serde_json::Value,
+}
+
+#[derive(Debug, Clone, sqlx::FromRow)]
+struct IdentityKeyStateRow {
+    public_key_ref: String,
+    public_key_bytes: Vec<u8>,
+    is_active: bool,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct SignedWriteObject {
+    object_id: Uuid,
+    object_type: &'static str,
+}
+
 fn bytes_to_hex(value: &[u8]) -> String {
     const HEX: &[u8; 16] = b"0123456789abcdef";
     let mut out = String::with_capacity(value.len() * 2);
@@ -272,7 +299,650 @@ fn bytes_to_hex(value: &[u8]) -> String {
     out
 }
 
+fn storage_candidate_to_verification(
+    input: &SignedCanonicalCandidateInput,
+) -> AuthoredEventCandidate {
+    AuthoredEventCandidate {
+        signature_profile: input.signature_profile.clone(),
+        event_id: input.event_id,
+        event_type: input.event_type.clone(),
+        author_identity_id: input.author_identity_id,
+        speaker_identity_id: input.speaker_identity_id,
+        public_key_ref: input.public_key_ref.clone(),
+        payload_hash: input.payload_hash.clone(),
+        payload_binding_mode: input.payload_binding_mode.clone(),
+        payload_ref: input.payload_ref.clone(),
+        author_observed_at: input.author_observed_at.clone(),
+        signature: input.signature.clone(),
+    }
+}
+
+fn signature_error(err: verification::signatures::SignatureValidationError) -> CanonicalWriteError {
+    CanonicalWriteError::new(err.code, err.message)
+}
+
+fn validate_signed_public_payload(
+    input: &SignedCanonicalCandidateInput,
+    effective_speaker_identity_id: Uuid,
+) -> std::result::Result<SignedWriteObject, CanonicalWriteError> {
+    let payload = input
+        .payload
+        .as_object()
+        .ok_or_else(|| CanonicalWriteError::new("invalid_payload", "payload must be object"))?;
+    match input.event_type.as_str() {
+        "idea_create" => {
+            let idea_id = parse_payload_uuid(payload, "idea_id")?;
+            let idea_type = parse_payload_string(payload, "idea_type")?;
+            if idea_type == "identity" {
+                return Err(CanonicalWriteError::new(
+                    "unsupported_event_type",
+                    "identity idea creation is outside this signed public write slice",
+                ));
+            }
+            ensure_payload_speaker(payload, effective_speaker_identity_id)?;
+            Ok(SignedWriteObject {
+                object_id: idea_id,
+                object_type: "idea",
+            })
+        }
+        "connection_create" => {
+            let connection_id = parse_payload_uuid(payload, "connection_id")?;
+            ensure_payload_speaker(payload, effective_speaker_identity_id)?;
+            Ok(SignedWriteObject {
+                object_id: connection_id,
+                object_type: "connection",
+            })
+        }
+        _ => Err(CanonicalWriteError::new(
+            "unsupported_event_type",
+            "unsupported event type",
+        )),
+    }
+}
+
+fn parse_payload_uuid(
+    payload: &serde_json::Map<String, serde_json::Value>,
+    field: &'static str,
+) -> std::result::Result<Uuid, CanonicalWriteError> {
+    let value = payload
+        .get(field)
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| CanonicalWriteError::new("missing_field", format!("{field} required")))?;
+    Uuid::parse_str(value)
+        .map_err(|_| CanonicalWriteError::new("invalid_id", format!("invalid {field}")))
+}
+
+fn parse_payload_string<'a>(
+    payload: &'a serde_json::Map<String, serde_json::Value>,
+    field: &'static str,
+) -> std::result::Result<&'a str, CanonicalWriteError> {
+    payload
+        .get(field)
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| CanonicalWriteError::new("missing_field", format!("{field} required")))
+}
+
+fn ensure_payload_speaker(
+    payload: &serde_json::Map<String, serde_json::Value>,
+    effective_speaker_identity_id: Uuid,
+) -> std::result::Result<(), CanonicalWriteError> {
+    let payload_speaker = parse_payload_uuid(payload, "speaker_identity_id")?;
+    if payload_speaker != effective_speaker_identity_id {
+        return Err(CanonicalWriteError::new(
+            "invalid_field",
+            "payload speaker_identity_id must match the signed candidate speaker/author",
+        ));
+    }
+    Ok(())
+}
+
+async fn load_existing_event_by_id(
+    tx: &mut Transaction<'_, Postgres>,
+    event_id: Uuid,
+) -> std::result::Result<Option<ExistingSignedEventRow>, CanonicalWriteError> {
+    sqlx::query_as::<_, ExistingSignedEventRow>(
+        r#"
+        SELECT
+          block_height,
+          event_index,
+          event_type,
+          authored_candidate_hash_v0,
+          signature,
+          payload_json
+        FROM events
+        WHERE event_id = $1
+        FOR UPDATE
+        "#,
+    )
+    .bind(event_id)
+    .fetch_optional(&mut **tx)
+    .await
+    .map_err(canonical_storage_error)
+}
+
+async fn lock_identity_for_signed_write(
+    tx: &mut Transaction<'_, Postgres>,
+    identity_id: Uuid,
+) -> std::result::Result<(), CanonicalWriteError> {
+    let identity_lock_key = advisory_lock_key_for_uuid(identity_id);
+    sqlx::query("SELECT pg_advisory_xact_lock($1::bigint)")
+        .bind(identity_lock_key)
+        .execute(&mut **tx)
+        .await
+        .map_err(canonical_storage_error)?;
+    Ok(())
+}
+
+async fn ensure_signed_author_identity(
+    tx: &mut Transaction<'_, Postgres>,
+    identity_id: Uuid,
+) -> std::result::Result<(), CanonicalWriteError> {
+    if identity_id == system_boundary_emitter_id() {
+        return Err(CanonicalWriteError::new(
+            "forbidden",
+            "system_boundary_emitter cannot author ordinary human signed writes",
+        ));
+    }
+    ensure_identity_exists(tx, identity_id).await
+}
+
+async fn ensure_signed_writer_eligibility(
+    tx: &mut Transaction<'_, Postgres>,
+    identity_id: Uuid,
+    position: EventInsertPosition,
+) -> std::result::Result<(), CanonicalWriteError> {
+    let row = sqlx::query_as::<_, IdentityWriterVerificationStateRow>(
+        r#"
+        SELECT
+          identity_id,
+          email_verified,
+          canonical_writer_level,
+          granted_by_identity_id,
+          source_event_id,
+          source_block_height,
+          source_event_index
+        FROM canonical_writer_verification_states
+        WHERE identity_id = $1
+          AND (
+            source_block_height < $2
+            OR (source_block_height = $2 AND source_event_index < $3)
+          )
+        ORDER BY source_block_height DESC, source_event_index DESC
+        LIMIT 1
+        FOR UPDATE
+        "#,
+    )
+    .bind(identity_id)
+    .bind(position.block_height)
+    .bind(position.event_index)
+    .fetch_optional(&mut **tx)
+    .await
+    .map_err(canonical_storage_error)?;
+
+    let Some(row) = row else {
+        return Err(CanonicalWriteError::new(
+            "forbidden",
+            "canonical write requires verified-human canonical writer eligibility",
+        ));
+    };
+    if !row.email_verified || row.canonical_writer_level < MIN_CANONICAL_WRITER_LEVEL {
+        return Err(CanonicalWriteError::new(
+            "forbidden",
+            "canonical writer eligibility is inactive or revoked",
+        ));
+    }
+    Ok(())
+}
+
+async fn load_active_identity_key_before_position(
+    tx: &mut Transaction<'_, Postgres>,
+    input: &SignedCanonicalCandidateInput,
+    position: EventInsertPosition,
+) -> std::result::Result<IdentityKeyStateRow, CanonicalWriteError> {
+    let row = sqlx::query_as::<_, IdentityKeyStateRow>(
+        r#"
+        SELECT public_key_ref, public_key_bytes, is_active
+        FROM canonical_identity_key_states
+        WHERE public_key_ref = $1
+          AND identity_id = $2
+          AND signature_profile = $3
+          AND signature_algorithm = 'ed25519'
+          AND (
+            source_block_height IS NULL
+            OR source_block_height < $4
+            OR (source_block_height = $4 AND source_event_index < $5)
+          )
+        ORDER BY source_block_height DESC NULLS LAST,
+                 source_event_index DESC NULLS LAST,
+                 created_at DESC
+        LIMIT 1
+        FOR UPDATE
+        "#,
+    )
+    .bind(input.public_key_ref.as_str())
+    .bind(input.author_identity_id)
+    .bind(input.signature_profile.as_str())
+    .bind(position.block_height)
+    .bind(position.event_index)
+    .fetch_optional(&mut **tx)
+    .await
+    .map_err(canonical_storage_error)?;
+
+    let Some(row) = row else {
+        return Err(CanonicalWriteError::new(
+            "unknown_key",
+            "public_key_ref is not registered for the author identity",
+        ));
+    };
+    if !row.is_active {
+        return Err(CanonicalWriteError::new(
+            "revoked_key",
+            "public_key_ref is not active at the candidate publication point",
+        ));
+    }
+    Ok(row)
+}
+
+async fn validate_signed_context(
+    tx: &mut Transaction<'_, Postgres>,
+    input: &SignedCanonicalCandidateInput,
+    object: SignedWriteObject,
+    position: EventInsertPosition,
+) -> std::result::Result<(), CanonicalWriteError> {
+    let payload = input
+        .payload
+        .as_object()
+        .ok_or_else(|| CanonicalWriteError::new("invalid_payload", "payload must be object"))?;
+    match input.event_type.as_str() {
+        "idea_create" => {
+            let exists: bool =
+                sqlx::query_scalar("SELECT EXISTS (SELECT 1 FROM ideas WHERE idea_id = $1)")
+                    .bind(object.object_id)
+                    .fetch_one(&mut **tx)
+                    .await
+                    .map_err(canonical_storage_error)?;
+            if exists {
+                return Err(CanonicalWriteError::new(
+                    "conflict",
+                    "canonical idea_id already exists",
+                ));
+            }
+        }
+        "connection_create" => {
+            let from_idea_id = parse_payload_uuid(payload, "from_idea_id")?;
+            let to_idea_id = parse_payload_uuid(payload, "to_idea_id")?;
+            ensure_idea_exists_before_position(tx, from_idea_id, position).await?;
+            ensure_idea_exists_before_position(tx, to_idea_id, position).await?;
+            let exists: bool = sqlx::query_scalar(
+                "SELECT EXISTS (SELECT 1 FROM connections WHERE connection_id = $1)",
+            )
+            .bind(object.object_id)
+            .fetch_one(&mut **tx)
+            .await
+            .map_err(canonical_storage_error)?;
+            if exists {
+                return Err(CanonicalWriteError::new(
+                    "conflict",
+                    "canonical connection_id already exists",
+                ));
+            }
+        }
+        _ => {
+            return Err(CanonicalWriteError::new(
+                "unsupported_event_type",
+                "unsupported event type",
+            ))
+        }
+    }
+    Ok(())
+}
+
+async fn ensure_idea_exists_before_position(
+    tx: &mut Transaction<'_, Postgres>,
+    idea_id: Uuid,
+    position: EventInsertPosition,
+) -> std::result::Result<(), CanonicalWriteError> {
+    let exists: bool = sqlx::query_scalar(
+        r#"
+        SELECT EXISTS (
+          SELECT 1
+          FROM ideas
+          WHERE idea_id = $1
+            AND (
+              created_block_height < $2
+              OR (created_block_height = $2 AND created_event_index < $3)
+            )
+        )
+        "#,
+    )
+    .bind(idea_id)
+    .bind(position.block_height)
+    .bind(position.event_index)
+    .fetch_one(&mut **tx)
+    .await
+    .map_err(canonical_storage_error)?;
+    if !exists {
+        return Err(CanonicalWriteError::new(
+            "invalid_request",
+            "referenced idea does not exist at the validation position",
+        ));
+    }
+    Ok(())
+}
+
+async fn insert_signed_event(
+    tx: &mut Transaction<'_, Postgres>,
+    input: &SignedCanonicalCandidateInput,
+    effective_speaker_identity_id: Uuid,
+    position: EventInsertPosition,
+    signed_candidate_bytes_v0: &[u8],
+    authored_candidate_hash_v0: &str,
+) -> std::result::Result<(), CanonicalWriteError> {
+    sqlx::query(
+        r#"
+        INSERT INTO events (
+          block_height,
+          event_index,
+          event_id,
+          event_type,
+          speaker_identity_id,
+          payload_json,
+          signature,
+          signature_profile,
+          author_identity_id,
+          public_key_ref,
+          payload_hash,
+          payload_binding_mode,
+          payload_ref,
+          author_observed_at,
+          signed_candidate_bytes_v0,
+          authored_candidate_hash_v0,
+          publication_profile
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7,
+          $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
+        )
+        "#,
+    )
+    .bind(position.block_height)
+    .bind(position.event_index)
+    .bind(input.event_id)
+    .bind(input.event_type.as_str())
+    .bind(Some(effective_speaker_identity_id))
+    .bind(input.payload.clone())
+    .bind(Some(input.signature.as_str()))
+    .bind(Some(input.signature_profile.as_str()))
+    .bind(Some(input.author_identity_id))
+    .bind(Some(input.public_key_ref.as_str()))
+    .bind(Some(input.payload_hash.as_str()))
+    .bind(Some(input.payload_binding_mode.as_str()))
+    .bind(input.payload_ref.as_deref())
+    .bind(input.author_observed_at.as_deref())
+    .bind(signed_candidate_bytes_v0)
+    .bind(Some(authored_candidate_hash_v0))
+    .bind(Some(PUBLICATION_PROFILE_BOOTSTRAP_SINGLE_PUBLISHER))
+    .execute(&mut **tx)
+    .await
+    .map_err(map_canonical_write_sqlx_error)?;
+    Ok(())
+}
+
+async fn materialize_signed_object(
+    tx: &mut Transaction<'_, Postgres>,
+    input: &SignedCanonicalCandidateInput,
+    object: SignedWriteObject,
+    position: EventInsertPosition,
+) -> std::result::Result<(), CanonicalWriteError> {
+    let payload = input
+        .payload
+        .as_object()
+        .ok_or_else(|| CanonicalWriteError::new("invalid_payload", "payload must be object"))?;
+    match input.event_type.as_str() {
+        "idea_create" => {
+            let idea_type = parse_payload_string(payload, "idea_type")?;
+            sqlx::query(
+                r#"
+                INSERT INTO ideas (
+                  idea_id,
+                  idea_type,
+                  speaker_identity_id,
+                  is_identity_idea,
+                  underlying_identity_id,
+                  is_personal_space_organizer,
+                  title_representation_id,
+                  sentence_representation_id,
+                  created_block_height,
+                  created_event_index,
+                  created_event_id
+                ) VALUES (
+                  $1, $2, $3, false, NULL, false, NULL, NULL, $4, $5, $6
+                )
+                "#,
+            )
+            .bind(object.object_id)
+            .bind(idea_type)
+            .bind(
+                input
+                    .speaker_identity_id
+                    .unwrap_or(input.author_identity_id),
+            )
+            .bind(position.block_height)
+            .bind(position.event_index)
+            .bind(input.event_id)
+            .execute(&mut **tx)
+            .await
+            .map_err(map_canonical_write_sqlx_error)?;
+        }
+        "connection_create" => {
+            let from_idea_id = parse_payload_uuid(payload, "from_idea_id")?;
+            let to_idea_id = parse_payload_uuid(payload, "to_idea_id")?;
+            let connection_type = parse_payload_string(payload, "connection_type")?;
+            let usage = payload
+                .get("usage")
+                .and_then(serde_json::Value::as_str)
+                .map(str::to_string);
+            let axis = payload
+                .get("axis")
+                .and_then(serde_json::Value::as_str)
+                .map(str::to_string);
+            let timeframe = payload
+                .get("timeframe")
+                .and_then(serde_json::Value::as_str)
+                .map(str::to_string);
+            let scope = payload
+                .get("scope")
+                .and_then(serde_json::Value::as_str)
+                .map(str::to_string);
+
+            sqlx::query(
+                r#"
+                INSERT INTO connections (
+                  connection_id,
+                  from_idea_id,
+                  to_idea_id,
+                  connection_type,
+                  usage,
+                  axis,
+                  timeframe,
+                  scope,
+                  created_block_height,
+                  created_event_index,
+                  created_by_event_id
+                ) VALUES (
+                  $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+                )
+                "#,
+            )
+            .bind(object.object_id)
+            .bind(from_idea_id)
+            .bind(to_idea_id)
+            .bind(connection_type)
+            .bind(usage)
+            .bind(axis)
+            .bind(timeframe)
+            .bind(scope)
+            .bind(position.block_height)
+            .bind(position.event_index)
+            .bind(input.event_id)
+            .execute(&mut **tx)
+            .await
+            .map_err(map_canonical_write_sqlx_error)?;
+        }
+        _ => {
+            return Err(CanonicalWriteError::new(
+                "unsupported_event_type",
+                "unsupported event type",
+            ))
+        }
+    }
+    Ok(())
+}
+
 impl Storage {
+    pub async fn submit_signed_canonical_candidate(
+        &self,
+        input: SignedCanonicalCandidateInput,
+    ) -> std::result::Result<SignedCanonicalWriteResult, CanonicalWriteError> {
+        if input.payload_binding_mode != PAYLOAD_BINDING_EMBEDDED {
+            return Err(CanonicalWriteError::new(
+                "unsupported_payload_binding",
+                "this runtime supports only embedded_payload candidates",
+            ));
+        }
+        if input.payload_ref.is_some() {
+            return Err(CanonicalWriteError::new(
+                "unsupported_payload_binding",
+                "payload_ref transport is not implemented by this runtime profile",
+            ));
+        }
+        if !matches!(
+            input.event_type.as_str(),
+            "idea_create" | "connection_create"
+        ) {
+            return Err(CanonicalWriteError::new(
+                "unsupported_event_type",
+                format!("unsupported public signed event type: {}", input.event_type),
+            ));
+        }
+
+        let computed_payload_hash = canonical_json_payload_hash_hex(&input.payload)
+            .map_err(|err| CanonicalWriteError::new("canonical_encoding_failed", err))?;
+        if computed_payload_hash != input.payload_hash {
+            return Err(CanonicalWriteError::new(
+                "invalid_payload_hash",
+                "candidate payload_hash does not match canonical embedded payload bytes",
+            ));
+        }
+
+        let effective_speaker_identity_id = input
+            .speaker_identity_id
+            .unwrap_or(input.author_identity_id);
+        let object = validate_signed_public_payload(&input, effective_speaker_identity_id)?;
+        let event = Event {
+            id: input.event_id,
+            kind: input.event_type.clone(),
+            payload: input.payload.clone(),
+            speaker_identity_id: Some(effective_speaker_identity_id),
+        };
+        validate_event(&event).map_err(|err| {
+            CanonicalWriteError::new(
+                err.code,
+                format!("event validation failed: {}", err.message),
+            )
+        })?;
+
+        let candidate = storage_candidate_to_verification(&input);
+        let signed_bytes = signed_candidate_bytes_v0(&candidate).map_err(signature_error)?;
+        let signature_bytes = decode_signature64(&candidate.signature).map_err(signature_error)?;
+        let candidate_hash =
+            authored_candidate_hash_v0(&signed_bytes, &signature_bytes).map_err(signature_error)?;
+
+        let mut tx = self
+            .pool
+            .begin()
+            .await
+            .map_err(|err| canonical_storage_error(err))?;
+
+        if let Some(existing) = load_existing_event_by_id(&mut tx, input.event_id).await? {
+            if existing.authored_candidate_hash_v0.as_deref() == Some(candidate_hash.as_str())
+                && existing.signature.as_deref() == Some(input.signature.as_str())
+                && existing.payload_json == input.payload
+                && existing.event_type == input.event_type
+            {
+                tx.commit()
+                    .await
+                    .map_err(|err| canonical_storage_error(err))?;
+                return Ok(SignedCanonicalWriteResult {
+                    event_id: input.event_id,
+                    event_type: input.event_type,
+                    block_height: existing.block_height,
+                    event_index: existing.event_index,
+                    authored_candidate_hash_v0: candidate_hash,
+                    object_type: object.object_type.to_string(),
+                    object_id: object.object_id,
+                    idempotent: true,
+                    publication_profile: PUBLICATION_PROFILE_BOOTSTRAP_SINGLE_PUBLISHER.to_string(),
+                });
+            }
+            return Err(CanonicalWriteError::new(
+                "conflict",
+                "event_id already exists with different candidate bytes",
+            ));
+        }
+
+        let position = allocate_canonical_event_position(&mut tx).await?;
+        lock_identity_for_signed_write(&mut tx, input.author_identity_id).await?;
+        ensure_signed_author_identity(&mut tx, input.author_identity_id).await?;
+        ensure_signed_writer_eligibility(&mut tx, input.author_identity_id, position).await?;
+        let key_state = load_active_identity_key_before_position(&mut tx, &input, position).await?;
+        let expected_ref = public_key_ref_v0(&key_state.public_key_bytes, input.author_identity_id)
+            .map_err(signature_error)?;
+        if key_state.public_key_ref != expected_ref {
+            return Err(CanonicalWriteError::new(
+                "unknown_key",
+                "stored key descriptor does not match public_key_ref",
+            ));
+        }
+        let verified =
+            verify_ed25519_v0(&candidate, &key_state.public_key_bytes).map_err(signature_error)?;
+        if verified.authored_candidate_hash_v0 != candidate_hash
+            || verified.signed_candidate_bytes_v0 != signed_bytes
+        {
+            return Err(CanonicalWriteError::new(
+                "invalid_signature",
+                "candidate verification did not reproduce candidate commitments",
+            ));
+        }
+        validate_signed_context(&mut tx, &input, object, position).await?;
+
+        insert_signed_event(
+            &mut tx,
+            &input,
+            effective_speaker_identity_id,
+            position,
+            &signed_bytes,
+            &candidate_hash,
+        )
+        .await?;
+        materialize_signed_object(&mut tx, &input, object, position).await?;
+
+        tx.commit()
+            .await
+            .map_err(|err| canonical_storage_error(err))?;
+
+        Ok(SignedCanonicalWriteResult {
+            event_id: input.event_id,
+            event_type: input.event_type,
+            block_height: position.block_height,
+            event_index: position.event_index,
+            authored_candidate_hash_v0: candidate_hash,
+            object_type: object.object_type.to_string(),
+            object_id: object.object_id,
+            idempotent: false,
+            publication_profile: PUBLICATION_PROFILE_BOOTSTRAP_SINGLE_PUBLISHER.to_string(),
+        })
+    }
+
     pub async fn grant_canonical_writer_level(
         &self,
         account_id: Uuid,
@@ -311,7 +981,8 @@ impl Storage {
             payload: payload.clone(),
             speaker_identity_id: Some(verifier_identity_id),
         };
-        validate_event(&event).map_err(|err| {
+        // Stage 0 writer grants are implementation/bootstrap events, not public Protocol v5 events.
+        validate_stage0_internal_event(&event).map_err(|err| {
             CanonicalWriteError::new(
                 err.code,
                 format!("event validation failed: {}", err.message),
@@ -407,7 +1078,8 @@ impl Storage {
             payload: payload.clone(),
             speaker_identity_id: Some(verifier_identity_id),
         };
-        validate_event(&event).map_err(|err| {
+        // Stage 0 writer revokes are implementation/bootstrap events, not public Protocol v5 events.
+        validate_stage0_internal_event(&event).map_err(|err| {
             CanonicalWriteError::new(
                 err.code,
                 format!("event validation failed: {}", err.message),
@@ -669,6 +1341,30 @@ impl Storage {
             ));
         }
         reject_secret_like_text(blocked_reason_code)?;
+        let safe_summary_ref = input.safe_summary_ref.trim();
+        if safe_summary_ref.is_empty() {
+            return Err(CanonicalWriteError::new(
+                "invalid_request",
+                "safe_summary_ref is required",
+            ));
+        }
+        reject_secret_like_text(safe_summary_ref)?;
+        let classifier_profile_ref = input.classifier_profile_ref.trim();
+        if classifier_profile_ref.is_empty() {
+            return Err(CanonicalWriteError::new(
+                "invalid_request",
+                "classifier_profile_ref is required",
+            ));
+        }
+        reject_secret_like_text(classifier_profile_ref)?;
+        let rulebook_ref = input.rulebook_ref.trim();
+        if rulebook_ref.is_empty() {
+            return Err(CanonicalWriteError::new(
+                "invalid_request",
+                "rulebook_ref is required",
+            ));
+        }
+        reject_secret_like_text(rulebook_ref)?;
 
         let mut tx = self
             .pool
@@ -704,6 +1400,10 @@ impl Storage {
             "submission_hash": input.submission_hash,
             "blocked_reason_code": blocked_reason_code,
             "blocked_by_identity": verifier_identity_id,
+            "safe_summary_ref": safe_summary_ref,
+            "classifier_profile_ref": classifier_profile_ref,
+            "rulebook_ref": rulebook_ref,
+            "wrongful_block_challenge_ref": input.wrongful_block_challenge_ref,
             "reference_event_id": input.reference_event_id
         });
         let event_id = input.event_id.unwrap_or_else(Uuid::now_v7);
@@ -1673,7 +2373,9 @@ impl Storage {
             payload: payload.clone(),
             speaker_identity_id: Some(voter_identity_id),
         };
-        validate_event(&event).map_err(|err| {
+        // vote_session_open materializes Stage 0 challenge-session assignment. Protocol v5
+        // derives this lifecycle state instead of accepting it as a public canonical event.
+        validate_stage0_internal_event(&event).map_err(|err| {
             CanonicalWriteError::new(
                 err.code,
                 format!("event validation failed: {}", err.message),

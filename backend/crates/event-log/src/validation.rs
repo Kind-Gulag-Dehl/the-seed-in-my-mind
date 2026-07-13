@@ -27,7 +27,29 @@ impl std::fmt::Display for ValidationError {
 
 impl std::error::Error for ValidationError {}
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum EventValidationMode {
+    PublicCanonical,
+    Stage0Internal,
+    LegacyImport,
+}
+
 pub fn validate_event(event: &Event) -> Result<(), ValidationError> {
+    validate_event_with_mode(event, EventValidationMode::PublicCanonical)
+}
+
+pub fn validate_stage0_internal_event(event: &Event) -> Result<(), ValidationError> {
+    validate_event_with_mode(event, EventValidationMode::Stage0Internal)
+}
+
+pub fn validate_legacy_import_event(event: &Event) -> Result<(), ValidationError> {
+    validate_event_with_mode(event, EventValidationMode::LegacyImport)
+}
+
+pub fn validate_event_with_mode(
+    event: &Event,
+    mode: EventValidationMode,
+) -> Result<(), ValidationError> {
     let event_id = event.id.to_string();
     validate_id(&event_id).map_err(|err| ValidationError::new("invalid_id", err))?;
 
@@ -58,8 +80,16 @@ pub fn validate_event(event: &Event) -> Result<(), ValidationError> {
         ));
     }
 
+    validate_event_kind(event, payload, mode)
+}
+
+fn validate_event_kind(
+    event: &Event,
+    payload: &serde_json::Map<String, Value>,
+    mode: EventValidationMode,
+) -> Result<(), ValidationError> {
     match event.kind.as_str() {
-        "genesis" | "noop" => Ok(()),
+        "genesis" | "noop" if mode != EventValidationMode::PublicCanonical => Ok(()),
         "identity_create" => validate_identity_create(payload, event.speaker_identity_id),
         "idea_create" => validate_idea_create(payload, event.speaker_identity_id),
         "connection_create" => validate_connection_create(payload, event.speaker_identity_id),
@@ -80,13 +110,15 @@ pub fn validate_event(event: &Event) -> Result<(), ValidationError> {
         | "challenge_close_voting" => {
             validate_challenge_id_only(payload, event.speaker_identity_id)
         }
-        "vote_session_open" => validate_vote_session_open(payload, event.speaker_identity_id),
+        "vote_session_open" if mode != EventValidationMode::PublicCanonical => {
+            validate_vote_session_open(payload, event.speaker_identity_id)
+        }
         "vote_cast" => validate_vote_cast(payload, event.speaker_identity_id),
         "blocked_submission" => validate_blocked_submission(payload, event.speaker_identity_id),
-        "canonical_writer_grant" => {
+        "canonical_writer_grant" if mode != EventValidationMode::PublicCanonical => {
             validate_canonical_writer_grant(payload, event.speaker_identity_id)
         }
-        "canonical_writer_revoke" => {
+        "canonical_writer_revoke" if mode != EventValidationMode::PublicCanonical => {
             validate_canonical_writer_revoke(payload, event.speaker_identity_id)
         }
         "challenge_cancel" | "challenge_supersede" => {
@@ -95,7 +127,10 @@ pub fn validate_event(event: &Event) -> Result<(), ValidationError> {
         "challenge_finalize_verdict" => {
             validate_challenge_finalize_verdict(payload, event.speaker_identity_id)
         }
-        "cycle_close" => validate_cycle_close(payload, event.speaker_identity_id),
+        "cycle_close" if mode == EventValidationMode::PublicCanonical => {
+            validate_cycle_close(payload, event.speaker_identity_id)
+        }
+        "cycle_close" => validate_legacy_cycle_close(payload, event.speaker_identity_id),
         "snapshot_commit" => validate_snapshot_commit(payload, event.speaker_identity_id),
         _ => Err(ValidationError::new(
             "unsupported_event_type",
@@ -613,6 +648,102 @@ fn validate_cycle_close(
         ));
     }
 
+    if payload.contains_key("forced_seal")
+        || payload.contains_key("closure_kind")
+        || payload.contains_key("cycle_index")
+    {
+        return Err(ValidationError::new(
+            "invalid_field",
+            "legacy cycle_close fields are not valid in public canonical validation",
+        ));
+    }
+
+    let cycle_index_closed = payload
+        .get("cycle_index_closed")
+        .ok_or_else(|| ValidationError::new("missing_field", "cycle_index_closed required"))?;
+    let cycle_index_closed =
+        parse_non_negative_i64_value(cycle_index_closed, "cycle_index_closed")?;
+    let next_cycle_index = payload
+        .get("next_cycle_index")
+        .ok_or_else(|| ValidationError::new("missing_field", "next_cycle_index required"))?;
+    let next_cycle_index = parse_non_negative_i64_value(next_cycle_index, "next_cycle_index")?;
+    if next_cycle_index != cycle_index_closed + 1 {
+        return Err(ValidationError::new(
+            "invalid_field",
+            "next_cycle_index must equal cycle_index_closed + 1",
+        ));
+    }
+
+    let boundary_type = require_string(payload, "boundary_type")?;
+    if !matches!(boundary_type, "deliberative" | "forced") {
+        return Err(ValidationError::new(
+            "invalid_field",
+            "boundary_type must be deliberative or forced",
+        ));
+    }
+
+    let trigger = require_string(payload, "trigger")?;
+    let trigger_allowed = match boundary_type {
+        "deliberative" => trigger == "dmin_plus_work_target",
+        "forced" => matches!(trigger, "dmax_forced" | "dmax_structural_liveness_forced"),
+        _ => false,
+    };
+    if !trigger_allowed {
+        return Err(ValidationError::new(
+            "invalid_field",
+            "trigger must match boundary_type",
+        ));
+    }
+
+    parse_non_negative_i64_value(
+        payload
+            .get("W_score")
+            .ok_or_else(|| ValidationError::new("missing_field", "W_score required"))?,
+        "W_score",
+    )?;
+    parse_non_negative_i64_value(
+        payload
+            .get("W_target")
+            .ok_or_else(|| ValidationError::new("missing_field", "W_target required"))?,
+        "W_target",
+    )?;
+    require_non_empty_string(payload, "dmin_target_key")?;
+    require_non_empty_string(payload, "dmax_target_key")?;
+    require_non_empty_string(payload, "tempo_profile_hash")?;
+    require_non_empty_string(payload, "derived_state_commitment")?;
+
+    let authorization_frontier_before =
+        payload
+            .get("authorization_frontier_before")
+            .ok_or_else(|| {
+                ValidationError::new("missing_field", "authorization_frontier_before required")
+            })?;
+    parse_i64_value(
+        authorization_frontier_before,
+        "authorization_frontier_before",
+    )?;
+
+    let closure_boundary_ref = payload
+        .get("closure_boundary_ref")
+        .ok_or_else(|| ValidationError::new("missing_field", "closure_boundary_ref required"))?;
+    parse_closure_boundary_height(closure_boundary_ref)?;
+
+    Ok(())
+}
+
+fn validate_legacy_cycle_close(
+    payload: &serde_json::Map<String, Value>,
+    speaker_identity_id: Option<uuid::Uuid>,
+) -> Result<(), ValidationError> {
+    let speaker_identity_id = speaker_identity_id
+        .ok_or_else(|| ValidationError::new("missing_field", "speaker_identity_id required"))?;
+    if speaker_identity_id != system_boundary_emitter_id() {
+        return Err(ValidationError::new(
+            "invalid_field",
+            "cycle_close must be authored by system_boundary_emitter",
+        ));
+    }
+
     let cycle_index = payload
         .get("cycle_index")
         .ok_or_else(|| ValidationError::new("missing_field", "cycle_index required"))?;
@@ -732,8 +863,18 @@ fn validate_blocked_submission(
         ));
     }
 
+    require_non_empty_string(payload, "safe_summary_ref")?;
+    require_non_empty_string(payload, "classifier_profile_ref")?;
+    require_non_empty_string(payload, "rulebook_ref")?;
+
     if let Some(reference_event_id) = optional_string(payload, "reference_event_id")? {
         validate_id(&reference_event_id).map_err(|err| ValidationError::new("invalid_id", err))?;
+    }
+    if let Some(wrongful_block_challenge_ref) =
+        optional_string(payload, "wrongful_block_challenge_ref")?
+    {
+        validate_id(&wrongful_block_challenge_ref)
+            .map_err(|err| ValidationError::new("invalid_id", err))?;
     }
 
     Ok(())
@@ -1075,6 +1216,20 @@ fn require_string<'a>(
         .ok_or_else(|| ValidationError::new("missing_field", format!("{field} required")))
 }
 
+fn require_non_empty_string<'a>(
+    payload: &'a serde_json::Map<String, Value>,
+    field: &str,
+) -> Result<&'a str, ValidationError> {
+    let value = require_string(payload, field)?;
+    if value.trim().is_empty() {
+        return Err(ValidationError::new(
+            "invalid_field",
+            format!("{field} must be non-empty"),
+        ));
+    }
+    Ok(value)
+}
+
 fn require_bool(
     payload: &serde_json::Map<String, Value>,
     field: &str,
@@ -1083,6 +1238,21 @@ fn require_bool(
         .get(field)
         .and_then(|value| value.as_bool())
         .ok_or_else(|| ValidationError::new("missing_field", format!("{field} required")))
+}
+
+fn parse_i64_value(value: &Value, field: &str) -> Result<i64, ValidationError> {
+    match value {
+        Value::Number(number) => number
+            .as_i64()
+            .ok_or_else(|| ValidationError::new("invalid_field", format!("{field} invalid"))),
+        Value::String(string) => string
+            .parse::<i64>()
+            .map_err(|_| ValidationError::new("invalid_field", format!("{field} invalid"))),
+        _ => Err(ValidationError::new(
+            "invalid_field",
+            format!("{field} invalid"),
+        )),
+    }
 }
 
 fn parse_non_negative_i64_value(value: &Value, field: &str) -> Result<i64, ValidationError> {
@@ -1226,14 +1396,67 @@ mod tests {
     }
 
     #[test]
+    fn rejects_stale_aliases_and_noncanonical_helper_names_publicly() {
+        for kind in [
+            "idea_created",
+            "connection_created",
+            "challenge_opened",
+            "verdict_reached",
+            "identity_created",
+            "identity_verified",
+            "completion_truth_claim",
+            "snapshot_created",
+            "vote_session_open",
+            "canonical_writer_grant",
+            "canonical_writer_revoke",
+            "genesis",
+            "noop",
+            "censorship_alert",
+        ] {
+            let event = Event {
+                id: v7("00000000-0000-7000-8000-00000000010a"),
+                kind: kind.to_string(),
+                payload: json!({}),
+                speaker_identity_id: None,
+            };
+            let err = validate_event(&event).expect_err("public validation should reject");
+            assert_eq!(err.code, "unsupported_event_type", "kind={kind}");
+        }
+    }
+
+    #[test]
+    fn allows_genesis_and_noop_only_in_stage0_internal_validation() {
+        for kind in ["genesis", "noop"] {
+            let event = Event {
+                id: v7("00000000-0000-7000-8000-00000000010b"),
+                kind: kind.to_string(),
+                payload: json!({}),
+                speaker_identity_id: None,
+            };
+            assert!(
+                validate_stage0_internal_event(&event).is_ok(),
+                "kind={kind}"
+            );
+        }
+    }
+
+    #[test]
     fn validates_cycle_close_from_system_boundary_emitter() {
         let event = Event {
             id: v7("00000000-0000-7000-8000-000000000201"),
             kind: "cycle_close".to_string(),
             payload: json!({
-                "cycle_index": 0,
-                "closure_kind": "forced",
-                "forced_seal": true,
+                "cycle_index_closed": 0,
+                "next_cycle_index": 1,
+                "boundary_type": "forced",
+                "trigger": "dmax_forced",
+                "W_score": 0,
+                "W_target": 1,
+                "dmin_target_key": "tempo_target(0, dmin)",
+                "dmax_target_key": "tempo_target(0, dmax)",
+                "tempo_profile_hash": "hash_tempo_profile_test",
+                "authorization_frontier_before": -1,
+                "derived_state_commitment": "hash_cycle_state",
                 "closure_boundary_ref": {
                     "block_height": 1
                 }
@@ -1249,9 +1472,17 @@ mod tests {
             id: v7("00000000-0000-7000-8000-00000000020f"),
             kind: "cycle_close".to_string(),
             payload: json!({
-                "cycle_index": 2,
-                "closure_kind": "deliberative",
-                "forced_seal": false,
+                "cycle_index_closed": 2,
+                "next_cycle_index": 3,
+                "boundary_type": "deliberative",
+                "trigger": "dmin_plus_work_target",
+                "W_score": 4,
+                "W_target": 3,
+                "dmin_target_key": "tempo_target(2, dmin)",
+                "dmax_target_key": "tempo_target(2, dmax)",
+                "tempo_profile_hash": "hash_tempo_profile_test",
+                "authorization_frontier_before": 0,
+                "derived_state_commitment": "hash_cycle_state",
                 "closure_boundary_ref": {
                     "block_height": 7
                 }
@@ -1267,15 +1498,43 @@ mod tests {
             id: v7("00000000-0000-7000-8000-000000000202"),
             kind: "cycle_close".to_string(),
             payload: json!({
-                "cycle_index": 0,
-                "closure_kind": "forced",
-                "forced_seal": true,
+                "cycle_index_closed": 0,
+                "next_cycle_index": 1,
+                "boundary_type": "forced",
+                "trigger": "dmax_forced",
+                "W_score": 0,
+                "W_target": 1,
+                "dmin_target_key": "tempo_target(0, dmin)",
+                "dmax_target_key": "tempo_target(0, dmax)",
+                "tempo_profile_hash": "hash_tempo_profile_test",
+                "authorization_frontier_before": -1,
+                "derived_state_commitment": "hash_cycle_state",
                 "closure_boundary_ref": 1
             }),
             speaker_identity_id: Some(v7("00000000-0000-7000-8000-00000000a001")),
         };
         let err = validate_event(&event).expect_err("should error");
         assert_eq!(err.code, "invalid_field");
+    }
+
+    #[test]
+    fn rejects_legacy_cycle_close_payload_in_public_validation() {
+        let event = Event {
+            id: v7("00000000-0000-7000-8000-00000000020e"),
+            kind: "cycle_close".to_string(),
+            payload: json!({
+                "cycle_index": 0,
+                "closure_kind": "forced",
+                "forced_seal": true,
+                "closure_boundary_ref": {
+                    "block_height": 1
+                }
+            }),
+            speaker_identity_id: Some(system_boundary_emitter_id()),
+        };
+        let err = validate_event(&event).expect_err("public validation should reject legacy field");
+        assert_eq!(err.code, "invalid_field");
+        assert!(validate_stage0_internal_event(&event).is_ok());
     }
 
     #[test]
@@ -1408,7 +1667,7 @@ mod tests {
     }
 
     #[test]
-    fn validates_vote_session_open() {
+    fn gates_vote_session_open_to_stage0_internal_validation() {
         let speaker = v7("00000000-0000-7000-8000-00000000a010");
         let event = Event {
             id: v7("00000000-0000-7000-8000-000000000210"),
@@ -1423,7 +1682,9 @@ mod tests {
             }),
             speaker_identity_id: Some(speaker),
         };
-        assert!(validate_event(&event).is_ok());
+        let err = validate_event(&event).expect_err("public validation should reject");
+        assert_eq!(err.code, "unsupported_event_type");
+        assert!(validate_stage0_internal_event(&event).is_ok());
     }
 
     #[test]
@@ -1453,6 +1714,9 @@ mod tests {
                 "submission_hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
                 "blocked_reason_code": "unsafe_payload",
                 "blocked_by_identity": speaker,
+                "safe_summary_ref": "00000000-0000-7000-8000-00000000d213",
+                "classifier_profile_ref": "safety-profile:test",
+                "rulebook_ref": "safety-rulebook:test",
                 "reference_event_id": "00000000-0000-7000-8000-000000000101"
             }),
             speaker_identity_id: Some(speaker),
@@ -1469,7 +1733,10 @@ mod tests {
             payload: json!({
                 "submission_hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
                 "blocked_reason_code": "unsafe_payload",
-                "blocked_by_identity": "00000000-0000-7000-8000-00000000b013"
+                "blocked_by_identity": "00000000-0000-7000-8000-00000000b013",
+                "safe_summary_ref": "00000000-0000-7000-8000-00000000d214",
+                "classifier_profile_ref": "safety-profile:test",
+                "rulebook_ref": "safety-rulebook:test"
             }),
             speaker_identity_id: Some(speaker),
         };
@@ -1478,7 +1745,24 @@ mod tests {
     }
 
     #[test]
-    fn validates_canonical_writer_grant_and_revoke() {
+    fn rejects_blocked_submission_without_safe_metadata_refs() {
+        let speaker = v7("00000000-0000-7000-8000-00000000a014");
+        let event = Event {
+            id: v7("00000000-0000-7000-8000-000000000215"),
+            kind: "blocked_submission".to_string(),
+            payload: json!({
+                "submission_hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                "blocked_reason_code": "unsafe_payload",
+                "blocked_by_identity": speaker
+            }),
+            speaker_identity_id: Some(speaker),
+        };
+        let err = validate_event(&event).expect_err("should error");
+        assert_eq!(err.code, "missing_field");
+    }
+
+    #[test]
+    fn gates_canonical_writer_grant_and_revoke_to_stage0_internal_validation() {
         let speaker = v7("00000000-0000-7000-8000-00000000a050");
         let grant = Event {
             id: v7("00000000-0000-7000-8000-000000000250"),
@@ -1490,7 +1774,9 @@ mod tests {
             }),
             speaker_identity_id: Some(speaker),
         };
-        assert!(validate_event(&grant).is_ok());
+        let err = validate_event(&grant).expect_err("public validation should reject grant");
+        assert_eq!(err.code, "unsupported_event_type");
+        assert!(validate_stage0_internal_event(&grant).is_ok());
 
         let revoke = Event {
             id: v7("00000000-0000-7000-8000-000000000251"),
@@ -1500,7 +1786,9 @@ mod tests {
             }),
             speaker_identity_id: Some(speaker),
         };
-        assert!(validate_event(&revoke).is_ok());
+        let err = validate_event(&revoke).expect_err("public validation should reject revoke");
+        assert_eq!(err.code, "unsupported_event_type");
+        assert!(validate_stage0_internal_event(&revoke).is_ok());
     }
 
     #[test]
@@ -1516,7 +1804,7 @@ mod tests {
             }),
             speaker_identity_id: Some(speaker),
         };
-        let err = validate_event(&event).expect_err("should error");
+        let err = validate_stage0_internal_event(&event).expect_err("should error");
         assert_eq!(err.code, "invalid_field");
     }
 

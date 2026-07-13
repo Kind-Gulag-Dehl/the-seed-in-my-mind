@@ -1,12 +1,16 @@
 #[cfg(feature = "full")]
 use axum::middleware::from_fn_with_state;
-use axum::{extract::DefaultBodyLimit, middleware::map_response, routing::get, Router};
-use common::security_limits::API_GLOBAL_BODY_LIMIT_BYTES;
+use axum::{
+    extract::DefaultBodyLimit,
+    middleware::map_response,
+    routing::{get, post},
+    Router,
+};
 #[cfg(feature = "full")]
 use common::security_limits::{
-    API_AUTH_BODY_LIMIT_BYTES, API_CANONICAL_BODY_LIMIT_BYTES, API_PRIVATE_AI_BODY_LIMIT_BYTES,
-    API_PRIVATE_BODY_LIMIT_BYTES,
+    API_AUTH_BODY_LIMIT_BYTES, API_PRIVATE_AI_BODY_LIMIT_BYTES, API_PRIVATE_BODY_LIMIT_BYTES,
 };
+use common::security_limits::{API_CANONICAL_BODY_LIMIT_BYTES, API_GLOBAL_BODY_LIMIT_BYTES};
 
 #[cfg(feature = "full")]
 use crate::server::auth::{auth_login, auth_logout, auth_me, auth_middleware, auth_register};
@@ -20,7 +24,8 @@ use crate::server::handlers::canonical::{
 };
 use crate::server::handlers::canonical::{
     canonical_challenge_detail, canonical_coordinates, canonical_cycles_current,
-    canonical_event_log, canonical_tempo_status, canonical_verification_status,
+    canonical_event_log, canonical_submit_signed_event, canonical_tempo_status,
+    canonical_verification_status,
 };
 #[cfg(feature = "full")]
 use crate::server::handlers::private::{
@@ -37,6 +42,7 @@ use crate::server::types::AppState;
 
 pub(crate) fn build_app(state: AppState) -> Router {
     let canonical_public_routes = Router::new()
+        .route("/events", post(canonical_submit_signed_event))
         .route("/cycles/current", get(canonical_cycles_current))
         .route("/event-log", get(canonical_event_log))
         .route("/tempo/status", get(canonical_tempo_status))
@@ -44,7 +50,8 @@ pub(crate) fn build_app(state: AppState) -> Router {
             "/verification/:identity_id",
             get(canonical_verification_status),
         )
-        .route("/challenges/:challenge_id", get(canonical_challenge_detail));
+        .route("/challenges/:challenge_id", get(canonical_challenge_detail))
+        .layer(DefaultBodyLimit::max(API_CANONICAL_BODY_LIMIT_BYTES));
     let app = Router::new()
         .route("/api/v0/health", get(health_check))
         .route("/api/v0/snapshot/latest", get(latest_snapshot))

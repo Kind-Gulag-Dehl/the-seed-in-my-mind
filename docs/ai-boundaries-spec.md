@@ -3,7 +3,7 @@ doc_id: ai_boundaries_spec
 title: AI Boundaries Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-03-29
+last_reviewed: 2026-06-22
 
 scope:
   - Defines public AI authority boundaries, sandbox separation, adoption constraints, and conformance requirements.
@@ -114,6 +114,14 @@ The ecosystem maintains two distinct spaces:
 AI systems MAY operate only within the AI sandbox. AI systems MUST NOT execute inside the canonical replay path and MUST NOT introduce any dependency of canonical correctness on sandbox computation.
 
 No node or client behavior MAY require the presence, availability, or correct operation of any AI component in order to validate, replay, or interpret canonical state.
+
+AI systems MAY simulate Tempo, cycle-close, challenge, vote, verdict, beacon, certification, authorization-frontier, governance, POD, POINT, and lifecycle flows only in non-canonical realms. Such simulations are advisory and MUST NOT become canonical inputs by default.
+
+AI systems MUST NOT be canonical Tempo contributors, authors of Tempo claims or Tempo-context evidence ideas, challengers, voters, verdict finalizers, beacon supporters, cycle authorities, governance actors, publication authorities, or token authorities.
+
+AI-generated observations, timestamps, interpretations, local cycle simulations, AI-map time claims, and AI-map beacon states MUST NOT affect canonical Tempo certainty, Dmin/Dmax predicates, cycle certification, the lagged authorization frontier, or consequential authority unless a verified human explicitly turns the material into valid canonical ideas and connections under ordinary Protocol v5 rules. After adoption, the adopting human is the sole canonical author, and the AI-originated material remains only provenance.
+
+AI-map time claims, AI-map attestations, and AI-map beacons are realm-local annotations only. They are not authored canonical ideas or objects, do not satisfy beacon diversity, and do not grant Tempo mana, POD, POINT, governance, lifecycle, rank, or ordinary write authority.
 
 ### 2.2 Sandbox artifact boundary
 

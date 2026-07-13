@@ -111,7 +111,10 @@ pub(super) fn apply_events_with_verification(
             speaker_identity_id: row.speaker_identity_id,
         };
 
-        validate_event(&event).map_err(|err| {
+        // Current open-core replay still supports Stage 0/bootstrap event-log rows such as
+        // vote_session_open and canonical_writer_grant/revoke. Public canonical validation
+        // remains stricter in event-log::validation::validate_event.
+        validate_stage0_internal_event(&event).map_err(|err| {
             ReplayError::new(
                 "event_validation_failed",
                 format!("event_id={} {}", row.event_id, err),

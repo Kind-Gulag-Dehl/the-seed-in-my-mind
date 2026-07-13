@@ -3,7 +3,7 @@ doc_id: map_token_governance
 title: Map: Token and Governance
 status: derived
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Navigation map of section headings and anchors for the listed sources.
@@ -106,6 +106,7 @@ Purpose: quick navigation of token mechanics and governance sections and anchors
 | n/a | 9. POINT semantics | 9_point_semantics | See token-spec.md (9_point_semantics). Covers 9. POINT semantics. |
 | 9.1 | Definition and role of POINT | definition_and_role_of_point | See token-spec.md Section 9.1 (definition_and_role_of_point). Covers Definition and role of POINT. |
 | 9.2 | Cycle-based base minting from POD (canonical) | cycle_based_base_minting_from_pod_canonical | See token-spec.md Section 9.2 (cycle_based_base_minting_from_pod_canonical). Covers Cycle-based base minting from POD (canonical). |
+| 9.2A | Authorization-Frontier Token States | authorization_frontier_token_states | See token-spec.md Section 9.2A (authorization_frontier_token_states). Covers provisional, pending, authorized, and blocked token states. |
 | 9.3 | Dynamic supply adjustment tied to living-graph growth (canonical) | dynamic_supply_adjustment_tied_to_living_graph_growth_canonical | See token-spec.md Section 9.3 (dynamic_supply_adjustment_tied_to_living_graph_growth_canonical). Covers Dynamic supply adjustment tied to living-graph growth (canonical). |
 | 9.4 | POINT melt mechanics (canonical) | point_melt_mechanics_canonical | See token-spec.md Section 9.4 (point_melt_mechanics_canonical). Covers POINT melt mechanics (canonical). |
 | 9.5 | Redistribution pool and payout (canonical) | redistribution_pool_and_payout_canonical | See token-spec.md Section 9.5 (redistribution_pool_and_payout_canonical). Covers Redistribution pool and payout (canonical). |
@@ -190,6 +191,7 @@ Purpose: quick navigation of token mechanics and governance sections and anchors
 | 2.1 | rulebooks as versioned ideas | rulebooks_as_versioned_ideas | See governance-spec.md Section 2.1 (rulebooks_as_versioned_ideas). Covers rulebooks as versioned ideas. |
 | 2.2 | rulebook families | rulebook_families | See governance-spec.md Section 2.2 (rulebook_families). Covers rulebook families. |
 | 2.3 | rulebook invariants (non-overrideable) | rulebook_invariants_non_overrideable | See governance-spec.md Section 2.3 (rulebook_invariants_non_overrideable). Covers rulebook invariants (non-overrideable). |
+| 2.3A | Tempo Profile Governance Boundary | tempo_profile_governance_boundary | See governance-spec.md Section 2.3A (tempo_profile_governance_boundary). Covers Tempo profile parameters and non-overrideable Tempo/Cycle invariants. |
 | 2.4 | activation at cycle boundaries | activation_at_snapshot_boundaries | See governance-spec.md Section 2.4 (activation_at_snapshot_boundaries). Covers activation at cycle boundaries. |
 | 2.5 | supersession | supersession | See governance-spec.md Section 2.5 (supersession). Covers supersession. |
 | n/a | 3. proposal lifecycle (full governance flow) | 3_proposal_lifecycle_full_governance_flow | See governance-spec.md (3_proposal_lifecycle_full_governance_flow). Covers 3. proposal lifecycle (full governance flow). |

@@ -3,7 +3,7 @@ doc_id: privacy_and_high_risk_submission_spec
 title: Privacy and High-Risk Submission Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-03-29
+last_reviewed: 2026-06-22
 
 scope:
   - Defines privacy invariants, high-risk submission compatibility, and operator metadata minimization requirements.
@@ -14,12 +14,15 @@ authoritative_for:
 
 not_authoritative_for:
   - Verification mechanics beyond privacy-related constraints.
+  - Authored-candidate signature profiles, signed bytes, or public-key-reference construction.
 
 depends_on:
   - protocol v5.md
+  - canonical-event-authorship-and-signature-profile-v0.md
   - node-and-conformance-spec.md
   - verification-spec.md
   - offline-and-mindseed-spec.md
+  - tempo-spec.md
 
 conflicts:
   - none known
@@ -309,6 +312,12 @@ Verification attestations SHOULD use:
 
 Deterministic replay correctness MUST NOT depend on fine-grained personal timestamps.
 
+Submission timestamps, receipt timestamps, server timestamps, node-local observations, and transport metadata MUST NOT be admitted as Tempo certainty inputs unless a verified human separately represents the material as canonical ideas and connections with inspectable provenance and deterministic replay inputs.
+
+Tempo beacon independence and diversity requirements MUST be satisfiable without exposing civil identity, precise location, demographic category, nationality, institution, jurisdiction, or other identifying metadata as public canonical data.
+
+Tempo independence and diversity checks MUST be derived from privacy-preserving verification or anti-Sybil evidence, or from replayable attestation-graph independence, without exposing civil identity. They act only as eligibility and diversity gates. They MUST NOT become demographic, national, institutional, jurisdictional, wealth, reputation, or civil-identity weighting, and public proofs SHOULD expose only the minimum data needed for replay and conformance.
+
 ---
 
 ### 4.4 Verified-Human Eligibility Without Civil Disclosure
@@ -318,7 +327,7 @@ Verification of human presence (VH) MUST NOT require publication of civil identi
 Canonical eligibility SHALL require:
 
 - Verified-human status.
-- Valid signature binding to a canonical identity.
+- Valid Profile-v0 signature binding to a canonical identity under `canonical-event-authorship-and-signature-profile-v0.md`.
 - Conformance with verification gate requirements.
 
 Canonical eligibility SHALL NOT require:
@@ -425,7 +434,7 @@ Adoption into the canonical universe requires:
 
 - A verified-human identity.
 - A canonical event explicitly adopting the content.
-- A valid signature from the adopting identity.
+- A valid Profile-v0 signature from the adopting identity.
 
 The adopting identity becomes accountable for the canonical representation of the adopted content.
 
@@ -549,8 +558,9 @@ Submission time SHALL NOT affect:
 - Event validity.
 - Canonical replay.
 - Author eligibility (subject to verification state at inclusion time).
+- Tempo certainty, cycle certification, authorization-frontier advancement, POD, POINT, or mana spendability.
 
-Nodes SHALL treat offline-originated events equivalently to network-originated events, provided signature and validation rules are satisfied.
+Nodes SHALL treat offline-originated events equivalently to network-originated events, provided `canonical-event-authorship-and-signature-profile-v0.md` signature rules and all other validation rules are satisfied.
 
 ---
 
@@ -728,7 +738,7 @@ At the same time:
 - Challenges MUST NOT rely on publication of raw PII.
 - Challenges MUST follow existing safety and anti-doxxing constraints.
 
-Verification certainty is determined deterministically through canonical evidence and challenge outcomes.  
+Verification certainty is determined deterministically through canonical evidence ideas and challenge outcomes.
 Civil identity disclosure is not a substitute for proper challenge resolution.
 
 ---
@@ -865,4 +875,3 @@ The protocol does not guarantee:
 Privacy in this system is structural minimization, not magic.
 
 ---
-

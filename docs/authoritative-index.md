@@ -35,6 +35,7 @@ These documents define protocol or system behavior within the public repo.
 - `protocol v5.md`
 - `protocol v5-appendix-a.md`
 - `canonical-encoding-and-hashing-spec.md`
+- `canonical-event-authorship-and-signature-profile-v0.md`
 - `deterministic-replay-and-merge-spec.md`
 - `node-and-conformance-spec.md`
 - `pod-consensus-and-canonical-publication-spec.md`
@@ -95,16 +96,22 @@ When public documents conflict, resolve them in this order.
 
 ### 2.1 mechanics and determinism
 
-1) `canonical-encoding-and-hashing-spec.md` wins for canonical encodings, hashing rules, byte-level formats, and commitment primitives.
-2) `deterministic-replay-and-merge-spec.md` wins for deterministic replay and merge semantics.
-3) `pod-consensus-and-canonical-publication-spec.md` wins for canonical publication profiles, finalized-prefix rules, and derived block mapping.
-4) `node-and-conformance-spec.md` wins for conformance expectations, but must not redefine canonical mechanics.
+1) `canonical-encoding-and-hashing-spec.md` wins for canonical primitive encodings, hashing rules, byte-level primitive formats, and commitment primitives.
+2) `canonical-event-authorship-and-signature-profile-v0.md` wins for authored event candidates, ordinary human-authorship signature profiles, exact signed bytes, public-key references, and replay-derived identity key state.
+3) `deterministic-replay-and-merge-spec.md` wins for deterministic replay and merge semantics.
+4) `pod-consensus-and-canonical-publication-spec.md` wins for canonical publication profiles, finalized-prefix rules, and derived block mapping.
+5) `node-and-conformance-spec.md` wins for conformance expectations, but must not redefine canonical mechanics.
 
 ### 2.2 root protocol semantics
 
 1) `protocol v5.md` is the public root for constitutional invariants and core semantics.
 2) `protocol v5-appendix-a.md` is subordinate to `protocol v5.md`.
 3) Subsystem specs are authoritative within their scope, but may not contradict `protocol v5.md`.
+
+Cycle/Tempo scope split:
+- `protocol v5.md` owns root normative cycle invariants, structural/consequential authority separation, and sealing semantics.
+- `cycle-spec.md` owns the detailed subordinate structural cycle-close, certification, and lagged authorization-frontier algorithm.
+- `tempo-spec.md` owns target-bound time truth claims, Tempo-context evidence rules using ordinary ideas/connections, certainty-band interpretation, Dmin/Dmax predicates, derived beacons, and Tempo modes.
 
 ### 2.3 reviewer and navigation documents
 
@@ -128,24 +135,25 @@ When public documents conflict, resolve them in this order.
 
 1) `protocol v5.md`
 2) `canonical-encoding-and-hashing-spec.md`
-3) `deterministic-replay-and-merge-spec.md`
-4) `node-and-conformance-spec.md`
-5) `pod-consensus-and-canonical-publication-spec.md`
-6) `cycle-spec.md`
-7) `tempo-spec.md`
-8) `challenge-engine-spec.md`
-9) `governance-spec.md`
-10) `token-spec.md`
-11) `safety-spec.md`
-12) `safety-rulebook-interface-mechanics-spec.md`
-13) `snapshot-format-v0.md`
-14) `shared-map-and-payload-bundles-spec.md`
-15) `offline-and-mindseed-spec.md`
-16) `verification-spec.md`
-17) `privacy-and-high-risk-submission-spec.md`
-18) `tribe-spec.md`
-19) `roles-and-stewardship-spec.md`
-20) `ai-boundaries-spec.md`
+3) `canonical-event-authorship-and-signature-profile-v0.md`
+4) `deterministic-replay-and-merge-spec.md`
+5) `node-and-conformance-spec.md`
+6) `pod-consensus-and-canonical-publication-spec.md`
+7) `cycle-spec.md`
+8) `tempo-spec.md`
+9) `challenge-engine-spec.md`
+10) `governance-spec.md`
+11) `token-spec.md`
+12) `safety-spec.md`
+13) `safety-rulebook-interface-mechanics-spec.md`
+14) `snapshot-format-v0.md`
+15) `shared-map-and-payload-bundles-spec.md`
+16) `offline-and-mindseed-spec.md`
+17) `verification-spec.md`
+18) `privacy-and-high-risk-submission-spec.md`
+19) `tribe-spec.md`
+20) `roles-and-stewardship-spec.md`
+21) `ai-boundaries-spec.md`
 
 ---
 

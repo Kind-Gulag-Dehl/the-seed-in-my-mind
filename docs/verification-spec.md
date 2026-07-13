@@ -3,7 +3,7 @@ doc_id: verification_spec
 title: Verification Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Defines human identity verification and eligibility guarantees.
@@ -14,10 +14,14 @@ authoritative_for:
 
 not_authoritative_for:
   - Governance mechanics beyond eligibility surfaces.
+  - Canonical authored-candidate signed bytes, signature algorithms, or public-key-reference construction.
 
 depends_on:
   - protocol v5.md
+  - canonical-event-authorship-and-signature-profile-v0.md
   - node-and-conformance-spec.md
+  - tempo-spec.md
+  - challenge-engine-spec.md
 
 conflicts:
   - none known
@@ -64,13 +68,13 @@ Any conformant node must be able to evaluate verification state deterministicall
 
 The verification layer composes in a fixed responsibility order:
 
-Anthill hub → evidence objects → VH/VI certainty tracks → VL eligibility gates.
+Anthill hub → evidence ideas → VH/VI certainty tracks → VL eligibility gates.
 
 1) Anthill hub  
    The Anthill is the mandatory graph location in which verification artifacts are anchored and indexed. It provides storage topology only and confers no governance or economic power.
 
-2) Evidence objects  
-   All confidence in verification originates from accumulated evidence claims created by real agents. Evidence objects are structured under standard schemas and are themselves perpetually challengeable.
+2) Evidence ideas
+   All confidence in verification originates from accumulated evidence claims created by real agents. Evidence ideas use existing base idea types, usually `truth_claim`, and are themselves perpetually challengeable.
 
 3) Certainty tracks  
    Implementations MUST maintain two independent quantitative tracks:  
@@ -110,6 +114,9 @@ Certainty is a **derived scalar** computed during replay. Verification Levels, V
 
 VL tiers may gate only:
 
+- ordinary canonical-writer eligibility,
+- narrow Tempo `tempo_contributor` eligibility,
+- `beacon_qualified_identity` and diversity-gate eligibility,
 - how many invites an account may issue,  
 - how much personal mana the account may hold,  
 - and eligibility to participate in voter pools.
@@ -117,6 +124,7 @@ VL tiers may gate only:
 VL tiers must never be used as weights for:
 
 - truth evaluation outside verification,  
+- Tempo claim or evidence influence,
 - importance rankings,  
 - governance decisions,  
 - or cryptocurrency payouts.
@@ -126,14 +134,18 @@ VL tiers must never be used as weights for:
 Canonical write submission eligibility is derived from verification state and is separate from canonical read access.
 
 - Canonical reads remain publicly readable and do not require verification.
-- Canonical writes require satisfaction of the active canonical-writer verification gate.
-- Challenge creation and voting are canonical write actions and therefore use the same gate.
+- Ordinary canonical writes require satisfaction of the active canonical-writer verification gate.
+- The only exception is the narrow Tempo repair lane defined in Protocol v5 and the Tempo Specification: an eligible human `tempo_contributor` may create only target-bound ordinary `truth_claim` ideas with valid `tempo_claim` metadata and, if the active Tempo profile permits it, Tempo-context evidence ideas and evidence/same_as connections.
+- `tempo_contributor` eligibility does not grant arbitrary canonical idea creation, evidence creation outside Tempo context, connection creation outside Tempo context, challenge creation, voting, verdict finalization, governance authority, POD, POINT, or token authority.
+- Challenge creation and voting are canonical write actions and therefore use ordinary challenge eligibility; `tempo_contributor` status alone is insufficient.
 
 Current deployment profile:
 - The canonical writer gate is implemented as `canonical_writer_level` and is currently issued through the Seed verifier role.
 - This is a gate for write eligibility, not an authority override of canonical challengeability or replay semantics.
 
-### 1.4 evidence objects
+Verification gates eligibility but MUST NOT weight influence. In Tempo, verification may affect `tempo_contributor` and `beacon_qualified_identity` eligibility, but it MUST NOT multiply certainty, challenge, governance, or Tempo influence.
+
+### 1.4 evidence ideas
 
 Typical evidence classes to be consumed later include:
 
@@ -143,7 +155,7 @@ Typical evidence classes to be consumed later include:
 - operator verification attestations,  
 - and ideas asserting negative fraud signals.
 
-The actual identifiers, images, or databases used in any check must remain off-system or in the subject’s local vault. The canonical graph references only the attestation of what was observed.
+The actual identifiers, images, or databases used in any check must remain off-system or in the subject’s local vault. The canonical graph references only an identity-authored idea attesting what was observed.
 
 ---
 
@@ -227,7 +239,7 @@ Such vines are presentation aids only; the canonical authority remains the event
 
 ## 4. challenges to verification claims
 
-Any identity in the platform may initiate a challenge against verification ideas or evidence objects using the ordinary challenge primitive.
+Any identity in the platform may initiate a challenge against verification ideas or evidence ideas using the ordinary challenge primitive.
 
 A verification challenge may concern:
 
@@ -264,9 +276,9 @@ Each derived snapshot MUST expose:
 - vh_certainty,
 - vi_certainty,
 - vl_tier,
-- eligibility_flags  {can_create, can_invite, voter_pool_member}.
+- eligibility_flags including ordinary canonical-writer eligibility, `tempo_contributor`, `beacon_qualified_identity`, can_invite, and voter_pool_member where applicable.
 
-These outputs are computed deterministically from evidence objects under this specification.
+These outputs are computed deterministically from evidence ideas under this specification.
 
 ---
 
@@ -291,10 +303,12 @@ issuer/credential or provider_login_attestation → vi_certainty updates.
 
 ### 5.3 Challenge workflow
 
-Any agent may open:
+Any identity with ordinary challenge eligibility may open:
 truth_challenge on a verification artifact,  
 importance_challenge on evidence class,  
 representation_challenge on VL mapping.
+
+Tempo contributor status alone does not authorize verification challenges, time-related truth challenges, or voting in any challenge.
 
 ### 5.4 Taint workflow
 
@@ -813,6 +827,9 @@ Permissions are derived from the two certainty tracks and from no other source. 
 
 Verification Levels may gate only:
 
+- ordinary_canonical_writer_eligibility
+- tempo_contributor_eligibility
+- beacon_qualified_identity_or_diversity_gate_eligibility
 - invite_rate  
 - personal_mana_max  
 - voter_pool_eligibility  
@@ -822,6 +839,7 @@ Verification Levels must never gate or weight:
 
 - importance_ranking  
 - governance_votes  
+- Tempo claim or evidence influence
 - truth_evaluation outside verification  
 - POD or POINT payouts.
 
@@ -846,6 +864,8 @@ If a negative_fraud_claim is upheld, forward surface permissions may be gated an
 
 No algorithm or operator may delete verification artifacts. No mechanism may convert VL tiers into governance or payout weighting. Any relief mechanism must rely only on what a real agent has signed and on deterministic recomputation.
 
+No mechanism may convert VL tiers, provider lanes, institutions, jurisdictions, POD, POINT, wealth, reputation, or roles into unequal Tempo truth certainty, structural support, challenge, governance, or repair influence.
+
 ### 13.7 User understanding goal
 
 The intent of these tables is to help users see step by step:
@@ -869,7 +889,7 @@ Canonical reasoning is performed only over:
 - signatures and key provenance,
 - and challenge outcomes that uphold or invalidate those artifacts.
 
-No off-platform database, document image, or provider record is part of the canonical graph. Such materials may be consulted privately by an attester, but only the attester’s signed statement becomes canonical evidence.
+No off-platform database, document image, or provider record is part of the canonical graph. Such materials may be consulted privately by an attester, but only the attester’s signed statement as an identity-authored idea becomes a canonical evidence idea.
 
 ### 14.2 Required identity link fields
 
@@ -949,6 +969,18 @@ The Challenge Engine defines how challenges are created, argued, voted, and fina
 - and any rulebook-defined verification procedures.
 
 Challenge verdicts may invalidate artifacts and thereby change derived certainty at boundaries. No other mechanism may invalidate evidence.
+
+### 15.2A Tempo Specification
+
+Tempo defines target-bound time truth claims, Tempo-context evidence ideas/connections, derived target truth-certainty band state, structural-support state, and beacon qualification. Verification supplies only deterministic eligibility gates for `tempo_contributor`, `beacon_qualified_identity`, and diversity counting.
+
+An eligible human `tempo_contributor` may author the Dmax truth claim used by `structural_dmax_liveness_predicate`, but verification status only gates eligibility. It does not make the claim certain, does not satisfy beacon diversity by itself, and does not grant challenge, governance, POD, POINT, token, ordinary mana, rate-limit, or authorization-frontier authority.
+
+Verification MUST NOT:
+- multiply Tempo claim, evidence, challenge, or governance influence,
+- let non-human or AI actors create canonical Tempo claims or Tempo-context evidence,
+- grant ordinary challenge creation or voting rights through Tempo contributor status,
+- reduce beacon or authorization thresholds during population collapse.
 
 ### 15.3 Deterministic replay and merge specification
 
@@ -1132,11 +1164,11 @@ Control of that identity is expressed operationally through cryptographic key ma
 The protocol distinguishes between:
 
 - the **identity** (persistent canonical anchor), and  
-- the **active controlling keyset** (local signing authority).
+- the **active controlling keyset** (replay-derived signing authority).
 
 Keys are not the identity. Keys are replaceable instruments used to speak for the identity.
 
-Nodes MUST treat event signatures as valid only when they originate from a keyset that is currently recognized as controlling the identity according to canonical state derived from replay.
+Nodes MUST treat ordinary human-authored event signatures as valid only when they satisfy `canonical-event-authorship-and-signature-profile-v0.md`: the signed bytes reconstruct exactly, `public_key_ref` resolves to a key owned by `author_identity_id`, and that key is active according to canonical state derived from replay. Verification status controls whether the identity is eligible to use that key for the event family; it does not redefine signature bytes or key-reference construction.
 
 ---
 
@@ -1194,11 +1226,11 @@ Evidence MAY include:
 - provider login attestations,
 - lineage continuity evidence,
 - previously issued credentials,
-- or any other canonical evidence artifact.
+- or any other canonical evidence idea.
 
-Raw documents, identifiers, or biometric materials MUST remain off-system or in the subject’s local vault. Only the signed attestation of what was observed may enter the canonical graph.
+Raw documents, identifiers, or biometric materials MUST remain off-system or in the subject’s local vault. Only the signed identity-authored idea describing what was observed may enter the canonical graph.
 
-Recovery therefore consists of producing new canonical evidence sufficient to support a control reassignment claim.
+Recovery therefore consists of producing new canonical evidence ideas sufficient to support a control reassignment claim.
 
 ---
 
@@ -1266,11 +1298,10 @@ The system must remain capable of recovering identity control without reliance o
 Identity control mechanisms MUST satisfy:
 
 - identity persistence independent of any single wallet or device,
-- recoverability through challengeable canonical evidence,
+- recoverability through challengeable canonical evidence ideas,
 - absence of administrative override authority,
 - preservation of full historical record,
 - deterministic replay across nodes,
 - and privacy preservation through off-system storage of sensitive materials.
 
 Any implementation that allows identity control to be reset by administrative action, provider database authority, or undisclosed procedures is non-conformant.
-

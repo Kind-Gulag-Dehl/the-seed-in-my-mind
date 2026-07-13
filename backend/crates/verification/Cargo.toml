@@ -2,3 +2,11 @@
 name = "verification"
 version.workspace = true
 edition.workspace = true
+
+[dependencies]
+ed25519-dalek.workspace = true
+encoding = { path = "../encoding" }
+uuid.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

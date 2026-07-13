@@ -3,7 +3,7 @@ doc_id: map_encoding_snapshots_bundles
 title: Map: Encoding, Snapshots, Bundles
 status: derived
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Navigation map of section headings and anchors for the listed sources.
@@ -16,6 +16,7 @@ not_authoritative_for:
 
 depends_on:
   - canonical-encoding-and-hashing-spec.md
+  - canonical-event-authorship-and-signature-profile-v0.md
   - snapshot-format-v0.md
   - shared-map-and-payload-bundles-spec.md
 
@@ -41,10 +42,19 @@ Purpose: quick navigation of encoding, snapshot, and bundle format sections and 
 
 ## source documents
 - canonical-encoding-and-hashing-spec.md
+- canonical-event-authorship-and-signature-profile-v0.md
 - snapshot-format-v0.md
 - shared-map-and-payload-bundles-spec.md
 
 ## quick jump table
+### canonical-event-authorship-and-signature-profile-v0.md
+| section | heading | anchor | description |
+| --- | --- | --- | --- |
+| 3 | Signature Profile v0 | 3-signature-profile-v0 | Defines Profile-v0 Ed25519 key and signature representation. |
+| 4 | Canonical Signed Bytes | 4-canonical-signed-bytes | Uses canonical encoding primitives to define event-candidate signed bytes. |
+| 5 | Public Key References | 5-public-key-references | Defines domain-separated key-descriptor hashing. |
+| 9 | Required Authorship-Signature Conformance Vectors | 9-required-authorship-signature-conformance-vectors | Lists required byte/vector coverage for interoperable implementations. |
+
 ### canonical-encoding-and-hashing-spec.md
 | § | heading | anchor | description |
 | --- | --- | --- | --- |
@@ -131,6 +141,7 @@ Purpose: quick navigation of encoding, snapshot, and bundle format sections and 
 | n/a | 4. body schema (sections/tables, canonical ordering) | none | See snapshot-format-v0.md (no_anchor). Covers 4. body schema (sections/tables, canonical ordering). |
 | 4.1 | section IDs (v0) | none | See snapshot-format-v0.md §4.1 (no_anchor). Covers section IDs (v0). |
 | 4.1.1 | derived state packs: ranks | none | See snapshot-format-v0.md §4.1.1 (no_anchor). Covers derived state packs: ranks. |
+| 4.1.2 | derived state packs: Tempo/Cycle | none | See snapshot-format-v0.md §4.1.2 (no_anchor). Covers derived state packs: Tempo/Cycle. |
 | 4.2 | canonical record ordering | none | See snapshot-format-v0.md §4.2 (no_anchor). Covers canonical record ordering. |
 | 4.3 | section schemas | none | See snapshot-format-v0.md §4.3 (no_anchor). Covers section schemas. |
 | n/a | 5. embedded text rules (title + sentence tier) | none | See snapshot-format-v0.md (no_anchor). Covers 5. embedded text rules (title + sentence tier). |

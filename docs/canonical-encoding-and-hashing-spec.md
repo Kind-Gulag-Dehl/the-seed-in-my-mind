@@ -15,9 +15,11 @@ authoritative_for:
 not_authoritative_for:
   - Governance rules and pacing policy.
   - Challenge lifecycle semantics beyond encoding surfaces.
+  - Ordinary human-authorship signature algorithms, signed event-candidate fields, or replay-derived key state.
 
 depends_on:
   - protocol v5.md
+  - canonical-event-authorship-and-signature-profile-v0.md
 
 conflicts:
   - none known
@@ -65,11 +67,13 @@ This document does **not** define:
 * Rulebook semantics
 * Ranking algorithms
 * Token economics
+* Human-authorship signature algorithms or identity key-state semantics
 * UI or presentation-layer behavior
 
 Relationship to other specifications:
 
 * **Snapshot Format v0** relies on this document for all section hashes, Merkle roots, and commitments.
+* **Canonical Event Authorship and Signature Profile v0** relies on this document for primitive field encodings, canonical UUIDv7 `id` encoding, hash32 bytes, canonical text bytes, payload hashes, and domain-separated hash primitives, but it owns ordinary authored-event signature profiles and signed-byte layouts.
 * **Offline and Mindseed Specification** relies on this document for portable verification, custody manifests, and reconciliation.
 * **Node and Conformance Specification** relies on this document for test vectors and determinism guarantees.
 * **Preservation Spine** defines higher-level archival strategy but MUST use the encodings defined here.
@@ -575,6 +579,7 @@ Rules:
   * `"derived_publication_block_v1"`
 * Merkle roots embedded in publication artifacts MUST use the Merkle construction rules in §6.
 * Signatures over publication artifacts MUST sign the artifact hash derived from the canonical encoded body, not a local transport wrapper.
+* Ordinary human-authored event signatures are not publication-artifact signatures. They MUST follow `canonical-event-authorship-and-signature-profile-v0.md` and MUST NOT sign publication-assigned positions.
 * Transport-specific envelopes, compression layers, or batching containers MUST NOT affect the canonical bytes or hashes of these artifacts.
 
 These rules ensure that publication finality, omission proofs, and derived block packaging remain replay-verifiable across implementations.

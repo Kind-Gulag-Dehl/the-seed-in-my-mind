@@ -87,11 +87,13 @@ The root `lint`, `test`, and `build` scripts are real commands and should not be
 npm run lint
 npm run test
 npm run build
+npm run conformance
 ```
 
 Use these narrower commands when isolating failures:
 
 ```powershell
+npm run conformance:tempo-cycle
 npm run verify:boundaries
 npm run verify:canonical-dto
 npm run verify:frontend
@@ -101,6 +103,10 @@ npm run verify:open-core-export
 npm run verify:export-working-tree
 npm run verify:all
 ```
+
+`npm run conformance` runs docs/spec conformance harnesses that do not depend on the reference frontend test install. Today it delegates to `npm run conformance:tempo-cycle`, which validates and replays the Tempo/Cycle fixture set. This harness is conformance scaffolding for the current fixtures, not the production Tempo runtime.
+
+`npm run test` is the reference frontend Vitest suite and requires `frontend/open-core-reference` dependencies to be installed.
 
 `npm run verify:public` and `npm run verify` check the local public working tree as a developer checkout. `npm run verify:generated-export` checks `_export/open-core` after `npm run extract:open-core`; `npm run verify:open-core-export` is a compatibility alias for that generated-export check. `npm run verify:export-working-tree` intentionally treats the current repo tree as if it were a shippable export package; it is expected to fail if local-only generated artifacts such as `node_modules`, `dist`, `backend/var`, or `tsconfig.tsbuildinfo` are present.
 

@@ -64,6 +64,7 @@ Public note: this repo is a curated documentation subset. Some broader specs are
 - `protocol v5.md`
 - `protocol v5-appendix-a.md`
 - `canonical-encoding-and-hashing-spec.md`
+- `canonical-event-authorship-and-signature-profile-v0.md`
 - `deterministic-replay-and-merge-spec.md`
 - `node-and-conformance-spec.md`
 - `pod-consensus-and-canonical-publication-spec.md`

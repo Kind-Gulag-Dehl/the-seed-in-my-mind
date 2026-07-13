@@ -3,7 +3,7 @@ doc_id: challenge_engine_spec
 title: Challenge Engine Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Defines the lifecycle, voting, and resolution of challenges.
@@ -198,6 +198,14 @@ This invariant is absolute and SHALL NOT be bypassed.
 Because challenge operations are canonical writes, challenge creation and voting use the same canonical-writer eligibility gate as other canonical write events.
 All canonical claims remain publicly challengeable even when write eligibility is gated.
 
+The narrow Tempo repair lane is not a challenge lane. `tempo_contributor` status alone does not authorize challenge creation, argument submission, voting, or verdict finalization. Time-related truth challenges remain ordinary truth challenges and require ordinary challenge eligibility unless a later explicit rulebook creates a separate `tempo_challenger` capability.
+
+Tempo evidence and attestations are ideas in roles, usually `truth_claim` ideas, connected through existing `relative_importance` usages such as `evidence_for` and `evidence_against`. They are not challenge votes, not separate non-idea records, and not separate content-object types. Verification level, identity certainty, provider, institution, jurisdiction, wealth, POD, POINT, reputation, model, or role MUST NOT multiply truth, challenge, governance, or Tempo influence.
+
+Tempo-context evidence placement uses the ordinary evidence connection model. A placement connection that claims Tempo relevance but fails Tempo target, claim, `same_as`, provenance, or schema validation is rejected under Appendix A with `ERR_TEMPO_EVIDENCE_CONNECTION_INVALID`; it must not enter an evidence-placement challenge as valid support or opposition.
+
+The Tempo `structural_dmax_liveness_predicate` is not a challenge verdict and does not assign certainty. It may permit only a Dmax forced structural boundary under the Tempo and Cycle specifications. Any contradictory target-bound claim or unresolved blocking truth challenge blocks that liveness path until resolved by ordinary challenge process unless a rulebook explicitly defines a deterministic non-authoritative tie behavior.
+
 ---
 
 ### 1.6 Uniformity across the protocol [anchor: uniformity_across_the_protocol]
@@ -261,10 +269,13 @@ Each challenge domain imposes strict anchoring rules:
 - MUST reference exactly one `truth_claim` idea as the primary subject.
 - MAY reference additional ideas as contextual anchors.
 - MUST NOT introduce new truth claims implicitly.
+- MAY challenge a target-bound Tempo time claim, but the challenge remains an ordinary truth challenge.
+- MUST NOT treat Tempo-context evidence ideas or attestations as votes or as a substitute for challenge arguments, ballots, or verdicts.
 
 #### 2.3.2 Importance challenges [anchor: importance_challenges]
 - MUST reference exactly two ideas whose relative importance is being evaluated.
 - MUST declare the axis, timeframe, and scope under which comparison occurs.
+- For relative-importance challenges, `axis` MUST be either `important_to_reference` or `important_for_reference`, and `timeframe` MUST be one of `near_term`, `mid_term`, `long_term`, `very_long_term`, or `trans_generational`.
 - MUST NOT attempt to set absolute importance values.
 
 #### 2.3.3 Action challenges [anchor: action_challenges]
@@ -703,7 +714,7 @@ Arguments:
 
 ### 4.3 Evidence ideas [anchor: evidence_ideas]
 
-**Evidence** is an idea intended to support or undermine a truth claim relevant to a challenge.
+**Evidence** is an idea intended to support or undermine a truth claim relevant to a challenge. Evidence, testimony, attestations, observations, source statements, arguments, and measurements are roles of ideas, not additional canonical content-object types.
 
 Evidence MUST be expressed as an idea (typically a `truth_claim`) and associated to its target using a `relative_importance` connection with one of the following usages:
 - `evidence_for`
@@ -1085,6 +1096,7 @@ The challenge engine SHALL preserve the following invariants across all domains:
 - **Determinism**: all outcomes are replayable from the event log.
 - **Revisability**: no verdict is beyond future challenge.
 - **Non-coercion**: no challenge outcome enforces compliance outside the protocol.
+- **Tempo separation**: Tempo evidence and attestations are ordinary ideas in evidential roles; Tempo contributor status does not grant challenge authority.
 
 ---
 
@@ -1163,6 +1175,8 @@ to:
 - derived certainty bands,
 - derived truth-status labels,
 - and other permitted truth-state outputs.
+
+For target-bound Tempo time claims, evidence-placement and certainty-band challenge verdicts determine operative truth certainty under the Tempo Specification. Tempo `T_allow` structural support is separate: it may permit provisional structural cycle closure from current eligible-human stances plus capped passive evidence while truth challenges continue. Challenge verdicts MUST NOT delete the claim, mark a selected winning time claim as authoritative, create a beacon as an authored object, infer truth certainty from counts or hidden weights, or bypass the Tempo Specification's derived beacon and lagged authorization-frontier rules.
 
 Nodes MUST reject (or deterministically ignore, if rulebooks specify no-effect acceptance) any event that attempts to directly set truth-state fields without passing through a truth challenge and verdict finalization.
 
@@ -1477,6 +1491,8 @@ The challenge engine MUST NOT support weighted voting based on:
 
 All voting power within a challenge is equal among eligible participants, as determined by rulebooks. Governance influence is procedural, not economic.
 
+Tempo contributor status is separate from challenge authority. Challenge voting eligibility MUST NOT be inferred from Tempo contributor status, and Tempo contributor status MUST NOT be inferred from challenge voter status.
+
 ---
 
 ### 14.2 No AI adjudication or autonomous resolution [anchor: no_ai_adjudication_or_autonomous_resolution]
@@ -1557,5 +1573,3 @@ This document introduces no independent authority and derives all legitimacy fro
 Any canonical state transformation that resolves disagreement, comparison, ranking, or representation MUST occur exclusively through a finalized challenge verdict.
 
 No parallel mechanism - administrative, automated, or exceptional—MAY produce equivalent effects outside this engine.
-
-

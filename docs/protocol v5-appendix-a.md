@@ -117,7 +117,7 @@ No canonical meaning may depend on:
 - user interface state,
 - non-canonical sandbox data.
 
-Serialization, hashing, domain separation, Merkle construction, and signature encoding and verification MUST follow the Canonical Encoding and Hashing Specification (v0).
+Serialization, hashing, domain separation, Merkle construction, and payload hashing MUST follow the Canonical Encoding and Hashing Specification (v0). Ordinary human-authored event candidates, signature profiles, exact signed bytes, `public_key_ref`, and replay-derived key state MUST follow `canonical-event-authorship-and-signature-profile-v0.md`.
 
 ---
 
@@ -228,29 +228,33 @@ Cryptographic signatures bind canonical content to author identities and ensure 
 
 #### A1.3.1 Signature requirements [anchor: a1_3_1_signature_requirements]
 
-All canonical events MUST include a valid cryptographic signature.
+All ordinary human-authored canonical event candidates MUST include a valid cryptographic signature.
 
 Signatures MUST:
 
-- be verifiable using the public key associated with `author_identity_id`,
-- be generated using an approved cryptographic algorithm,
-- cover the exact canonical byte representation of the signed content.
+- be verifiable using the active replay-derived key state for `public_key_ref`,
+- be generated using `signature_profile = ed25519_v0` for Profile v0,
+- cover the exact canonical signed bytes defined by `canonical-event-authorship-and-signature-profile-v0.md`.
 
-Unsigned or improperly signed events MUST be rejected.
+Unsigned or improperly signed ordinary human-authored candidates MUST be rejected.
 
 #### A1.3.2 What is signed [anchor: a1_3_2_what_is_signed]
 
-At minimum, the following MUST be signed:
+At minimum, the Profile-v0 signed bytes include:
 
-- the complete canonical event envelope, including:
-  - event type,
-  - author identity reference,
-  - canonical ordering references,
-  - payload.
+- `signature_profile`;
+- `event_id`;
+- `event_type`;
+- `author_identity_id`;
+- optional `speaker_identity_id`;
+- `public_key_ref`;
+- `payload_hash`;
+- payload binding mode and any payload reference;
+- optional author-observed wall-clock value where the event schema permits it.
 
-If blocks are used, the canonical block header MAY also be signed, as defined elsewhere.
+The ordinary human-authorship signature MUST NOT include publication-derived fields such as `event_index`, block height, finalized-prefix-certificate data, canonical publication position, node-local receipt time, database identifiers, or private account/session information.
 
-The signed byte sequence is defined canonically by the Canonical Encoding and Hashing Specification (v0); this section specifies *what* is signed, not how bytes are formed.
+The exact signed-byte sequence is defined by `canonical-event-authorship-and-signature-profile-v0.md`. If publication artifacts or block headers are signed by publication actors, those signatures are separate publication-profile signatures and are not ordinary human-authorship signatures.
 
 #### A1.3.3 Verification and failure modes [anchor: a1_3_3_verification_and_failure_modes]
 
@@ -282,6 +286,8 @@ Nodes MUST NOT:
 - mint tokens or advance epochs based on node-local time.
 
 All time-dependent behavior MUST be derived from canonical events and deterministic rules.
+
+Tempo-specific time legitimacy is derived only through the Tempo Specification's target-bound ordinary `truth_claim` ideas with conditional `tempo_claim` metadata, identity-authored Tempo-context evidence ideas, explicit `relative_importance` connections using existing evidence usages, evidence-placement challenge verdicts, certainty-band challenge verdicts, profile-admitted passive evidence committed or anchored in canonical data, derived target certainty-band state, derived beacon state, cycle certification, and the lagged authorization frontier. Node-local time, server time, client timestamps, receipt time, background scheduler observations, uncommitted local observations, AI-generated observations, publication volume, external links alone, or block height MUST NOT create Tempo certainty, structural support, payout eligibility, cycle certification, or consequential authority unless converted into valid canonical ideas/connections or profile-admitted passive evidence under explicit protocol rules.
 
 ---
 
@@ -352,6 +358,7 @@ OPTIONAL:
   - MUST NOT author canonical events,
   - MUST NOT vote,
   - MUST NOT govern,
+  - MUST NOT create canonical Tempo time claims, Tempo-context evidence ideas, or Tempo-context evidence connections,
   - MUST NOT mint or receive POD or POINT.
 - All human-authored canonical events are interpreted as **“this identity says …”**.
 
@@ -361,6 +368,8 @@ Identities violating these invariants MUST be rejected at event validation time.
 ### A2.2 Idea object (unified idea model) [anchor: a2_2_idea_object_unified_idea_model]
 
 The idea object is the unified representation for all epistemic and practical content in the system.
+
+Evidence, testimony, attestations, observations, source reports, arguments, measurements, and statements about documents are not separate content-object types. They are ideas, usually `truth_claim` ideas, used in particular evidential, argumentative, observational, or source-description roles. A paper, article, book, video, dataset, website, instrument output, or external record is not automatically canonical evidence; an identity must create ideas asserting what that source says, contains, measured, or supports, with provenance references where appropriate.
 
 #### A2.2.1 Required core fields [anchor: a2_2_1_required_core_fields]
 
@@ -411,6 +420,42 @@ CONDITIONAL:
     - `test_or_validation`
     - `prediction`
     - `model_or_integration`
+
+  Tempo time claims MUST use the existing `observation_or_measurement` truth subtype with conditional target-bound `tempo_claim` metadata. No new truth subtype is introduced for Tempo.
+
+  If `tempo_claim` is present, the idea remains `idea_type = truth_claim`. Appendix A does not define a `time_claim` idea type, a `tempo_target` idea type, or a `beacon` idea type.
+
+  `tempo_claim` REQUIRED fields:
+  - `target_key`
+    Deterministic derived target key. MUST equal `tempo_target(anchor_cycle_index, dmin)` or `tempo_target(anchor_cycle_index, dmax)`.
+  - `anchor_event_id`
+    The canonical event ID that anchors the measured cycle interval, normally the prior `cycle_close` or immutable genesis anchor for cycle 0.
+  - `anchor_cycle_index`
+    Non-negative integer cycle index whose Dmin/Dmax target is being claimed.
+  - `target_kind`
+    Enum: `dmin` or `dmax`.
+  - `relation`
+    Enum: `elapsed_greater_than_or_equal`.
+  - `duration_value`
+    Positive integer duration amount under the active Tempo profile.
+  - `duration_unit_profile`
+    String or hash identifying the rulebook-defined duration unit/profile. This is not a trusted clock source.
+  - `tempo_profile_hash`
+    Hash of the active Tempo profile used to derive the target.
+  - `asserted_value`
+    Boolean. For canonical Dmin/Dmax target-bound claims in this version, MUST be `true`.
+  - `uncertainty_bound`
+    Fixed-point integer uncertainty bound in the active Tempo profile's certainty scale.
+  - `provenance_refs`
+    Ordered list of canonical IDs or payload references for provenance, supporting source-document/source-section/source-chunk ideas, archived copies, hashes, or connection placements. Provenance does not replace identity-authored evidence ideas and MUST be replayable from canonical state when used by Tempo.
+
+  `tempo_claim` validation rules:
+  - `target_key`, `anchor_cycle_index`, and `target_kind` MUST agree exactly.
+  - `duration_value`, `duration_unit_profile`, `relation`, and `tempo_profile_hash` MUST match the derived target view for the active profile at the claim's replay position.
+  - Low-threshold `tempo_contributor` identities MAY create only target-bound `truth_claim` ideas with valid `tempo_claim` metadata.
+  - Non-target-bound truth claims still require ordinary canonical-writer eligibility.
+  - Evidence remains ordinary connected ideas, usually truth claims, linked with existing `relative_importance` usages such as `evidence_for` or `evidence_against`. A Tempo claim does not create evidence by itself, and an external link alone has no certainty effect.
+  - A malformed or mismatched `tempo_claim` MUST be deterministically rejected.
 
 - If `idea_type` is `action`:
   - `execution_window` MAY be present, describing claimed or observed time bounds.
@@ -518,6 +563,19 @@ CONDITIONAL:
   - `axis`
   - `timeframe`
   - `scope`
+
+  Allowed `axis` values for `relative_importance` connections:
+  - `important_to_reference`
+  - `important_for_reference`
+
+  Allowed `timeframe` values for `relative_importance` connections:
+  - `near_term`
+  - `mid_term`
+  - `long_term`
+  - `very_long_term`
+  - `trans_generational`
+
+  Universal importance orientation values (`important_to_current_individual`, `important_for_current_individual`, `important_to_collective`, `important_for_collective`) are not valid `axis` values for `relative_importance` connection metadata unless a future rulebook explicitly defines a deterministic projection.
 
   OPTIONAL:
   - `value_representation`
@@ -653,6 +711,23 @@ REQUIRED:
 - `ordered_idea_ids`
 - `created_event_id`
 
+For relative-rank snapshots, `ranking_scope` MUST identify the full relative lens:
+- `reference_idea_id`
+- `usage`
+- `scope`
+- `axis`
+- `timeframe`
+
+For relative-rank snapshots, `axis` MUST use the relative axis vocabulary:
+- `important_to_reference`
+- `important_for_reference`
+
+For universal-rank snapshots, `axis` MUST use the universal orientation vocabulary:
+- `important_to_current_individual`
+- `important_for_current_individual`
+- `important_to_collective`
+- `important_for_collective`
+
 Deterministic tie-breaking rules MUST be specified and stable.
 
 ---
@@ -687,10 +762,13 @@ Snapshots MUST record the active rulebook set deterministically.
 
 ## A3. Canonical event envelope (applies to all events) [anchor: a3_canonical_event_envelope_applies_to_all_events]
 
-This section defines the **canonical event envelope** shared by all canonical events in the protocol.
-The event envelope provides authorship, integrity, ordering, and validation guarantees independent of event payload semantics.
+This section defines the two-layer **canonical event envelope** shared by all canonical events in the protocol.
+The envelope separates the human-authored signed candidate from the publication-derived wrapper that gives the candidate canonical order.
 
-Every canonical event defined later in this appendix MUST be wrapped in an envelope conforming exactly to this section.
+Every canonical event defined later in this appendix MUST be represented as:
+
+1. an authored event candidate conforming to `canonical-event-authorship-and-signature-profile-v0.md`; and
+2. a published canonical event wrapper supplied by valid canonical publication.
 
 Fields not explicitly defined here are FORBIDDEN at the envelope level.
 
@@ -698,58 +776,66 @@ Fields not explicitly defined here are FORBIDDEN at the envelope level.
 
 ### A3.1 Event envelope fields [anchor: a3_1_event_envelope_fields]
 
-All canonical events MUST include the following envelope fields.
+Ordinary human-authored candidates MUST include the following candidate fields unless an event-family schema explicitly marks one conditional.
 
 #### A3.1.1 Required fields [anchor: a3_1_1_required_fields]
 
 REQUIRED:
 
-- `event_id`  
-  Canonical identifier (UUIDv7 string) for the event.  
-  MUST be globally unique and immutable.
+- `signature_profile`
+  Signature profile identifier. For Profile v0 this MUST be exactly `ed25519_v0`.
 
-- `event_type`  
+- `event_id`
+  Canonical UUIDv7 identifier for the authored candidate.
+  MUST be immutable. It does not determine canonical order.
+
+- `event_type`
   String identifier naming the canonical event type.  
   MUST match one of the event types defined in Section A4.
 
-- `author_identity_id`  
+- `author_identity_id`
   Canonical identity of the event author.  
-  MUST reference a verified human identity for human-authored events. For mechanically emitted boundary events, MUST reference the reserved `system_boundary_emitter` identity.
+  MUST reference an eligible verified human identity for ordinary human-authored events. For mechanically emitted boundary events, MUST reference the reserved `system_boundary_emitter` identity under the applicable boundary-event profile.
 
-- `created_at`  
-  Descriptive timestamp supplied by the author or client.  
-  This field is **non-authoritative** and MUST NOT be used for ordering, validation, replay, or epoch derivation.
+- `public_key_ref`
+  Hash32 reference to the public key descriptor used to verify `signature`, as defined by `canonical-event-authorship-and-signature-profile-v0.md`.
 
-- `ordering_ref`  
-  Canonical ordering reference, expressed as either:
-  - an explicit `prev_event_ref`, or
-  - an implicit position derived from block inclusion rules, if blocks are used.
-
-  The ordering mechanism MUST be deterministic and globally consistent.
-
-- `payload_hash`  
+- `payload_hash`
   Cryptographic hash of the canonical payload bytes after deterministic encoding.
 
-- `signature`  
-  Cryptographic signature over the canonical envelope and payload hash.
+- `payload` or `payload_ref`
+  The payload itself or a canonical payload reference according to the applicable event schema. Validation MUST recompute `payload_hash` from the canonical payload bytes.
 
-- `public_key_ref`  
-  Reference to the public key associated with `author_identity_id` used to verify `signature`.
+- `payload_binding_mode`
+  Either `embedded_payload` or `payload_ref`, matching the candidate's payload representation.
+
+- `signature`
+  Profile-v0 Ed25519 signature over the exact authored-candidate signed bytes. The `signature` field itself is excluded from the signed bytes.
 
 #### A3.1.2 Optional fields [anchor: a3_1_2_optional_fields]
 
 OPTIONAL:
+
+- `speaker_identity_id`
+  Canonical represented speaker when the schema permits or requires a speaker distinct from the author.
+  MUST be absent when not applicable.
+
+- `author_observed_at`
+  Optional descriptive wall-clock value supplied by the author when an event schema permits or requires it.
+  This field is **non-authoritative** and MUST NOT be used for ordering, validation windows, replay position, cycle derivation, or epoch derivation.
 
 - `client_info`  
   Non-authoritative metadata describing the originating client or software version.  
   This field MUST NOT affect validation, replay, ordering, or canonical state.
   This field MUST NOT include network identifiers (e.g., IP addresses, routing headers, transport metadata, or device fingerprints).
 
+Published canonical event wrappers MAY include finalized canonical position, exposed `(block_height, event_index)`, finalized-prefix-certificate reference, active rulebook reference set, safety or payload classification, publication chain references, and other publication-derived metadata required by the active publication profile. These wrapper fields are not signed by the human author.
+
 ---
 
 ### A3.2 Event payload determinism [anchor: a3_2_event_payload_determinism]
 
-All event payloads MUST be encoded deterministically prior to hashing and signing.
+All event payloads MUST be encoded deterministically prior to hashing. Ordinary human-authorship signatures bind the resulting `payload_hash` and payload binding fields through the authored-candidate signed bytes.
 
 #### A3.2.1 Canonical encoding [anchor: a3_2_1_canonical_encoding]
 
@@ -774,7 +860,7 @@ Binary encodings MAY be used if and only if the encoding rules are fully determi
 
 `payload_hash` MUST be computed over the exact canonical byte sequence produced by deterministic encoding.
 
-Any discrepancy in encoding MUST result in a different hash and therefore a different signature.
+Any discrepancy in encoding MUST result in a different hash and therefore a different authored-candidate signature.
 
 Nodes MUST NOT attempt to reinterpret or normalize payloads after hashing.
 
@@ -789,8 +875,8 @@ Failure at any step MUST cause the event to be rejected.
 
 Nodes MUST:
 
-- verify that `signature` is valid for the signed bytes,
-- verify that `public_key_ref` corresponds to `author_identity_id`,
+- verify that `signature` is valid for the Profile-v0 signed authored-candidate bytes,
+- verify that `public_key_ref` corresponds to an active key owned by `author_identity_id`,
 - verify that the author identity is eligible to author canonical events.
 
 Events with invalid or unverifiable signatures MUST be rejected.
@@ -845,6 +931,13 @@ It is the **single source of truth** for events that may mutate canonical state.
 
 No canonical state transition may occur except through events defined in this section.
 Events not listed here MUST be rejected by conformant nodes.
+Canonical event names use the exact Appendix A spelling. Older prose aliases such as
+`idea_created`, `connection_created`, `challenge_opened`, `verdict_reached`,
+`identity_created`, `identity_verified`, and `snapshot_created` are non-authoritative.
+Implementation validators SHOULD NOT accept undocumented aliases as canonical Protocol v5 events.
+`genesis`, `noop`, `vote_session_open`, `canonical_writer_grant`, and
+`canonical_writer_revoke` are not Protocol v5 canonical event types unless a future Appendix A
+revision explicitly adds them.
 
 Each event type defined below:
 - uses the canonical event envelope defined in Section A3,
@@ -864,10 +957,12 @@ Creates a new canonical identity.
 REQUIRED payload fields:
 - `identity_id`
 - `initial_public_key_ref`
+- `initial_public_key_descriptor`
 - `verification_reference` (interface-level pointer)
 
 Effects:
 - Creates a new identity object.
+- Registers the initial identity key state if `initial_public_key_ref` equals the hash32 of `initial_public_key_descriptor` under `canonical-event-authorship-and-signature-profile-v0.md`.
 - Identity is inactive for canonical authorship until verified.
 
 ---
@@ -905,14 +1000,23 @@ Effects:
 
 Manages cryptographic keys associated with an identity.
 
-REQUIRED payload fields:
+REQUIRED payload fields for `identity_key_rotate`:
 - `identity_id`
-- `key_ref`
-- `action` (`rotate` or `revoke`)
+- `new_public_key_ref`
+- `new_public_key_descriptor`
+- `authorization_public_key_ref`
+
+REQUIRED payload fields for `identity_key_revoke`:
+- `identity_id`
+- `revoked_public_key_ref`
+- `authorization_public_key_ref`
+- `recovery_process_ref` when required to preserve a canonical recovery path
 
 Effects:
-- Updates key validity for future signatures.
-- Does not invalidate past events.
+- A valid rotation registers `new_public_key_ref` as active for `identity_id` at the event's finalized canonical position.
+- A valid revocation makes `revoked_public_key_ref` inactive for future authored candidates at the event's finalized canonical position.
+- Rotation or revocation MUST be authorized by an active key for the same identity or by a separately specified canonical recovery process.
+- Key revocation is non-retroactive and does not invalidate canonical events that were validly signed and finalized before revocation became effective.
 
 ---
 
@@ -930,6 +1034,12 @@ REQUIRED payload fields:
 
 CONDITIONAL:
 - If `idea_type` is `truth_claim`, `truth_subtype` MUST be present.
+- If the event uses the narrow Tempo lane, `tempo_lane` metadata MUST be present:
+  - `tempo_profile_hash`
+  - `tempo_mana_spend`
+  - `tempo_lane_operation`
+    Enum: `target_time_claim_create` or `tempo_evidence_claim_create`.
+  Low-threshold `tempo_contributor` authors may use this lane only for valid target-bound time truth claims or explicitly permitted Tempo-context evidence truth claims.
 
 Effects:
 - Creates a new idea object.
@@ -1100,6 +1210,13 @@ REQUIRED payload fields:
 CONDITIONAL:
 - If `connection_type` is `relative_importance`, all required metadata
   (`usage`, `axis`, `timeframe`, `scope`) MUST be present.
+- If the event uses the narrow Tempo lane, `tempo_lane` metadata MUST be present:
+  - `tempo_profile_hash`
+  - `tempo_mana_spend`
+  - `tempo_lane_operation`
+    Enum: `tempo_evidence_for_connection`, `tempo_evidence_against_connection`, or `tempo_same_as_connection`.
+  Low-threshold `tempo_contributor` authors may use this lane only when the connection is explicitly permitted by the active Tempo profile and every referenced idea is in the relevant Tempo context.
+  A Tempo-context evidence connection MUST be rejected with `ERR_TEMPO_EVIDENCE_CONNECTION_INVALID` when it claims to use `evidence_for`, `evidence_against`, or `same_as` for Tempo replay but fails required target, claim, or schema validation. This includes references to a non-existent target claim; references to an idea that is not valid evidence under the current schema; `evidence_for` or `evidence_against` without a valid target-bound time truth claim when required; `same_as` between claims with incompatible `tempo_claim` target keys, anchors, target kinds, duration values, or Tempo profile hashes; attempts to make an external URL/hash/payload count directly as evidence without an identity-authored idea describing it; attempts to treat a derived `tempo_target` or derived beacon as an authored idea; and attempts to create Tempo certainty outside ordinary evidence-placement and certainty-band challenge flow.
 
 Effects:
 - Creates a new connection object.
@@ -1161,6 +1278,7 @@ REQUIRED payload fields:
 CONDITIONAL payload fields:
 - `subject_idea_ids` (required for idea-targeted challenges)
 - `subject_rail_ids` (required for rail-targeted representation challenges)
+- If a future rulebook permits a narrowly scoped Tempo challenge capability, `tempo_lane` metadata MUST identify the active profile, operation, mana spend, and target-bound time claim. Until such a capability is explicitly adopted, time-related challenges use ordinary challenge eligibility.
 
 Effects:
 - Creates a challenge object in draft state.
@@ -1448,6 +1566,46 @@ REQUIRED payload fields:
 
 ---
 
+### A4.8.4 `blocked_submission` [anchor: a4_8_4_blocked_submission]
+
+Records that a proposed canonical submission was rejected for payload safety or legality reasons
+under the active safety rulebook.
+
+REQUIRED payload fields:
+- `submission_hash`
+  Canonical hash of the attempted submission payload or event envelope.
+- `blocked_reason_code`
+  Deterministic rulebook-defined reason code.
+- `blocked_by_identity`
+  Verified human or authorized verifier identity responsible for the block record.
+- `safe_summary_ref`
+  Reference to an identity-authored safe summary or placeholder representation that contains no
+  illegal payload bytes.
+- `classifier_profile_ref`
+  Reference to the classifier/rulebook profile used for the determination.
+- `rulebook_ref`
+  Active safety rulebook reference that authorized the block.
+
+OPTIONAL payload fields:
+- `reference_event_id`
+  Event ID of a related attempted event, if a safe reference may be retained.
+- `wrongful_block_challenge_ref`
+  Reference to the challenge path for disputing the block.
+
+Effects:
+- Records an accountability artifact for a blocked submission.
+- MUST NOT admit or distribute the blocked payload.
+- MUST NOT contribute to truth certainty, importance, POD, POINT, governance authority, Tempo
+  certainty, cycle certification, authorization-frontier advancement, ordinary mana, or rate-limit
+  authority.
+- MUST remain challengeable through the ordinary challenge system.
+
+Implementation note:
+- Open-core public validation requires the Appendix A metadata fields for `blocked_submission`.
+  Replay treats the event as accountability metadata only and MUST NOT assign semantic effects.
+
+---
+
 ## A4.9 Snapshot artifacts and commit event (MUST) [anchor: a4_9_snapshot_events_must]
 
 Snapshots are deterministic replay checkpoints derived from the canonical event log. Snapshot artifacts are accelerators, not authorities. Canonical truth remains what is reconstructible from replay of the ordered event log under the active protocol/rulebooks.
@@ -1540,18 +1698,440 @@ Records the canonical boundary between cycle `r` and cycle `r+1`.
 `cycle_close` is a mechanically emitted boundary event and MUST be authored by `system_boundary_emitter`.
 
 REQUIRED payload fields:
-- `cycle_index`
-- `closure_kind`  
+- `cycle_index_closed`
+  The cycle index being closed.
+- `next_cycle_index`
+  MUST equal `cycle_index_closed + 1`.
+- `boundary_type`
   Enum: `deliberative` or `forced`.
-- `forced_seal`  
-  Boolean that MUST match `closure_kind`.
-- `closure_boundary_ref`  
+- `trigger`
+  Enum: `dmin_plus_work_target`, `dmax_forced`, or `dmax_structural_liveness_forced`.
+- `W_score`
+  Fixed-point integer work score at the closure replay prefix.
+- `W_target`
+  Fixed-point integer active work target at the closure replay prefix.
+- `dmin_target_key`
+  MUST equal `tempo_target(cycle_index_closed, dmin)`.
+- `dmax_target_key`
+  MUST equal `tempo_target(cycle_index_closed, dmax)`.
+- `dmin_certainty_band`
+  Diagnostic operative canonical truth-certainty band for the selected Dmin target-bound time claim or target state at the closure replay prefix. This field does not decide `T_allow`.
+- `dmin_contradiction_band`
+  Highest operative canonical certainty band for contradictory Dmin target-bound claims at the closure replay prefix, or null.
+- `dmin_eligible_human_support`
+  Count of eligible current human support stances for the Dmin target at the closure replay prefix.
+- `dmin_eligible_human_opposition`
+  Count of eligible current human opposition stances for the Dmin target at the closure replay prefix.
+- `dmin_passive_evidence_units`
+  Capped passive evidence contribution for the Dmin target at the closure replay prefix.
+- `dmin_structural_support_units`
+  Deterministic structural-support units for the Dmin target at the closure replay prefix.
+- `dmin_structural_readiness`
+  Boolean Dmin structural readiness derived from human stance, margin, capped passive evidence, `T_allow`, and blockers.
+- `dmax_certainty_band`
+  Diagnostic operative canonical truth-certainty band for the selected Dmax target-bound time claim or target state at the closure replay prefix. This field does not decide `T_allow`.
+- `dmax_contradiction_band`
+  Highest operative canonical certainty band for contradictory Dmax target-bound claims at the closure replay prefix, or null.
+- `dmax_eligible_human_support`
+  Count of eligible current human support stances for the Dmax target at the closure replay prefix.
+- `dmax_eligible_human_opposition`
+  Count of eligible current human opposition stances for the Dmax target at the closure replay prefix.
+- `dmax_passive_evidence_units`
+  Capped passive evidence contribution for the Dmax target at the closure replay prefix.
+- `dmax_structural_support_units`
+  Deterministic structural-support units for the Dmax target at the closure replay prefix.
+- `dmax_structural_readiness`
+  Boolean Dmax structural readiness derived from human stance, margin, capped passive evidence, `T_allow`, and blockers.
+- `structural_dmax_liveness_predicate`
+  Derived structural Dmax liveness predicate status at the closure replay prefix. Enum: `true`, `false`, or `blocked`.
+- `liveness_claim_id`
+  Required when `trigger = dmax_structural_liveness_forced`; otherwise null.
+- `liveness_target_key`
+  Required when `trigger = dmax_structural_liveness_forced`; MUST equal `dmax_target_key`; otherwise null.
+- `blocking_contradiction_claim_ids`
+  Deterministically ordered claim IDs that block structural Dmax liveness, if any.
+- `blocking_challenge_ids`
+  Deterministically ordered unresolved blocking truth challenge IDs, if any.
+- `liveness_trigger_allowed_for`
+  Required when `trigger = dmax_structural_liveness_forced`; MUST equal `forced_cycle_close_only`.
+- `tempo_profile_hash`
+  Hash of the active Tempo profile used for target, predicate, and closure derivation.
+- `authorization_frontier_before`
+  The authorization frontier value immediately before applying this structural boundary.
+- `derived_state_commitment`
+  Canonical hash commitment to the derived target, predicate, work-score, and mode state used to validate this boundary.
+- `closure_boundary_ref`
   Deterministic boundary reference (block height `H_close`, or equivalent deterministic boundary reference when block heights are unavailable).
+
+LEGACY COMPATIBILITY FIELDS:
+- `cycle_index`
+  If present, MUST equal `cycle_index_closed`.
+- `closure_kind`  
+  If present, MUST equal `boundary_type`.
+- `forced_seal`  
+  Legacy compatibility boolean that MUST be `true` when `boundary_type = forced` and `false` when `boundary_type = deliberative`.
 
 Invariants:
 - Valid only at the earliest canonical log position where cycle closure predicates are satisfied under Cycle Specification rules.
 - Any later `cycle_close` for the same cycle index is invalid.
 - MUST NOT be authored by human identities.
+- A `cycle_close` boundary is structural only. It is not cycle certification, a derived beacon, authorization-frontier advancement, payout authority, governance authority, ordinary mana spendability, POD authority, or POINT authority.
+- If `cycle_age_ge_dmin` is true and `W_score >= W_target`, replay MUST emit a deliberative close with `trigger = dmin_plus_work_target`.
+- Else if `cycle_age_ge_dmax` is true and `W_score < W_target`, replay MUST emit a forced close with `trigger = dmax_forced`.
+- Else if `structural_dmax_liveness_predicate = true` and `W_score < W_target`, replay MUST emit a forced close with `trigger = dmax_structural_liveness_forced`.
+- A forced boundary remains forced forever. Later certification can certify the required Dmax target but MUST NOT reclassify the boundary or grant authority.
+- `dmax_structural_liveness_forced` MUST NOT be used for Dmin, deliberative closure, beacon elevation, certification, authorization-frontier advancement, ordinary mana or rate-limit authority, POD, POINT, governance, lifecycle, final rank, token effects, ordinary challenge authority, or ordinary canonical writing.
+- The earliest-valid-boundary rule applies. A later valid-looking boundary for the same cycle is invalid.
+
+---
+
+### A4.9.4 Tempo profile schema (rulebook profile, not event) [anchor: a4_9_4_tempo_profile_schema_rulebook_profile_not_event]
+
+The active Tempo profile is governance/rulebook configuration. It is not a canonical event type and not a canonical authored object.
+
+REQUIRED profile fields:
+- `Dmin`
+- `Dmax`
+- `K`
+- `required_human_support_dmin`
+- `required_human_margin_dmin`
+- `required_human_support_dmax`
+- `required_human_margin_dmax`
+- `survivor_dmax_min_human_support`
+- `T_allow`
+- `passive_evidence_cap`
+- `passive_source_dedup_policy`
+- `passive_source_class_policy`
+- `passive_outlier_policy`
+- `contradiction_block_band`
+- `T_beacon`
+- `T_beacon_revoke`
+- `beacon_minimum_certainty_band`
+- `minimum_beacon_identities`
+- `minimum_independence_domains`
+- `beacon_stability_cycles`
+- `beacon_challenge_survival_cycles`
+- `authorization_lag_k`
+- `tempo_mana_cap`
+- `tempo_mana_recharge`
+- `time_claim_create_cost`
+- `tempo_evidence_claim_create_cost`
+- `tempo_evidence_connection_cost`
+- `tempo_same_as_connection_cost`
+- `time_challenge_cost`
+- `certainty_band_order`
+- `structural_dmax_liveness_rule`
+- `constrained_mode_allowlist`
+- `profile_hash`
+
+Profile rules:
+- `certainty_band_order` is the canonical ordinary truth-certainty band order for this profile. Its deterministic integer encoding is the zero-based index in the listed order. Floating-point truth certainty is forbidden.
+- `contradiction_block_band`, `T_beacon`, `T_beacon_revoke`, and `beacon_minimum_certainty_band` refer to ordered canonical certainty bands or deterministic integer encodings of that band order.
+- `T_allow` is a structural-support threshold. It is not a certainty band and MUST NOT be compared with ordinary truth-certainty bands.
+- `passive_evidence_cap < T_allow`.
+- `Dmax` MUST be greater than or equal to `Dmin` under the same duration unit/profile.
+- `T_beacon_revoke <= T_beacon`.
+- Profile changes activate only at scheduled cycle boundaries through ordinary governance.
+- The applicable profile reference and eligibility basis freeze at target derivation time. Later profile changes MUST NOT alter historical target evaluation.
+- `K`, `T_beacon`, `T_beacon_revoke`, `minimum_beacon_identities`, `minimum_independence_domains`, and `beacon_stability_cycles` MUST NOT automatically adapt downward under low participation, partition, or collapse.
+- `time_challenge_cost` applies only if the actor also has ordinary challenge eligibility. It does not create a low-threshold challenge lane.
+- `structural_dmax_liveness_rule` MUST identify the Dmax-only, structural-only idea-based liveness rule. It MUST NOT create ordinary truth certainty, beacon status, cycle certification, authorization, Dmin deliberative closure, challenge authority, or any consequential authority.
+
+---
+
+### A4.9.5 Derived Tempo target view [anchor: a4_9_5_derived_tempo_target_view]
+
+Dmin/Dmax targets are derived replay aggregation keys:
+
+- `tempo_target(cycle_index, dmin)`
+- `tempo_target(cycle_index, dmax)`
+
+They are not canonical authored objects, not canonical events, not ideas, and not connection types. User interfaces MAY render them as target cards or questions, but human-authored time truth claims reference them by deterministic key.
+
+Derived target view fields:
+- `target_key`
+- `cycle_index`
+- `anchor_event_id`
+- `target_kind`
+  Enum: `dmin` or `dmax`.
+- `relation`
+  Enum: `elapsed_greater_than_or_equal`.
+- `duration_value`
+- `duration_unit_profile`
+- `tempo_profile_hash`
+
+Replay derives Dmin/Dmax target views at cycle start and whenever a profile activation changes the derivation for future cycles.
+
+---
+
+### A4.9.6 Derived Tempo eligibility predicates [anchor: a4_9_6_derived_tempo_eligibility_predicates]
+
+Replay MUST derive:
+
+- `tempo_contributor(identity_id, cycle_index, tempo_profile_hash) -> boolean`
+- `beacon_qualified_identity(identity_id, cycle_index, tempo_profile_hash) -> boolean`
+
+Rules:
+- `tempo_contributor` is the low-threshold lane for target-bound time truth claims and, only if explicitly allowed by the active Tempo profile, Tempo-context evidence truth claims and `evidence_for`, `evidence_against`, or `same_as` connections.
+- `tempo_contributor` does not grant arbitrary canonical idea creation, evidence creation outside the Tempo context, connection creation outside the Tempo context, challenge opening, challenge voting, verdict finalization, governance, POD, POINT, token, or ordinary mana authority.
+- Opening time-related truth challenges and voting still require ordinary challenge eligibility unless a future explicit `tempo_challenger` capability is adopted.
+- `beacon_qualified_identity` affects beacon diversity only.
+- Verification and independence may determine eligibility and diversity. They MUST NOT weight one eligible person's claim, evidence, challenge, vote, or Tempo contribution more than another.
+
+---
+
+### A4.9.7 Derived Tempo replay state schemas [anchor: a4_9_7_derived_tempo_replay_state_schemas]
+
+Derived Tempo replay state is computed from canonical inputs and active rulebooks. These derived schemas are not authored canonical object types.
+
+`tempo_mana_balance.v1` fields:
+- `identity_id`
+- `cycle_index`
+- `balance_before_recharge`
+- `recharge_amount`
+- `cap`
+- `balance_after_recharge`
+- `valid_spends`
+- `balance_after_spends`
+- `tempo_profile_hash`
+
+Tempo mana processing order:
+1. Recharge at structural cycle boundary.
+2. Apply cap.
+3. Apply valid spends in canonical order.
+4. Reject invalid events without spending mana.
+5. Forced cycles MUST NOT create unlimited banked Tempo mana.
+
+Valid Tempo mana spends are attached to existing canonical event families only: target-bound `idea_create` events, explicitly allowed Tempo-context evidence `idea_create` events, explicitly allowed Tempo-context `connection_create` events, and time-related challenge participation only when ordinary challenge eligibility or a future explicit Tempo-only capability is also satisfied.
+
+`tempo_target_certainty_band_state.v1` fields:
+- `target_key`
+- `contributing_claim_ids`
+- `equivalent_claim_ids`
+- `contradictory_claim_ids`
+- `evidence_for_connection_ids`
+- `evidence_against_connection_ids`
+- `placement_challenge_ids`
+- `certainty_band_challenge_ids`
+- `operative_certainty_band`
+- `highest_contradiction_certainty_band`
+- `contradiction_blocked`
+- `tempo_profile_hash`
+
+Certainty rules:
+- Equivalent claims group by `target_key`.
+- Evidence is represented by identity-authored ideas connected with existing `relative_importance` usages such as `evidence_for` and `evidence_against`.
+- Evidence-placement challenges determine where actual evidence belongs on the potential-evidence spectrum.
+- Certainty-band challenges assign the operative certainty band for a time claim.
+- Nodes MUST NOT infer certainty from equivalent-claim counts, raw author counts, external links alone, hidden weights, model scores, timestamps, block height, or heuristics.
+- If a contradictory claim has operative certainty at or above `T_contradiction_block`, predicate and beacon status are blocked.
+
+`tempo_passive_evidence_state.v1` fields:
+- `target_key`
+- `source_id`
+- `source_class`
+- `source_epoch`
+- `observation_interval`
+- `canonical_provenance`
+- `admissible`
+- `dedup_group_key`
+- `outlier_status`
+- `raw_support_units`
+- `capped_support_units`
+- `tempo_profile_hash`
+
+Passive evidence rules:
+- Passive evidence is weak structural-support evidence only. It is not ordinary truth certainty and never determines canonical event order.
+- A passive source is admissible only when it is identically available to all replaying nodes and committed by canonical or canonically anchored data allowed by the active Tempo profile.
+- Direct inputs from uncommitted database timestamps, HTTP receipt time, node clock during replay, scheduler execution time, cache timestamps, filesystem modification time, local-only device metadata, implementation-specific server logs, node-divergent values, and non-admitted snapshot approximate timestamps are invalid.
+- Replay MUST normalize timestamp format, precision, uncertainty interval, source identifier, source class, target key, source epoch or observation interval, canonical provenance, admissibility, deduplication, outlier handling, and cap by profile rule.
+- At minimum, passive evidence deduplicates by `(source_id, target_key, source_epoch)`. Equivalent source classes are capped together under the profile.
+- Passive contribution MUST be capped below `T_allow` and MUST NOT satisfy any Tempo predicate without profile-required eligible human participation.
+
+`tempo_structural_support_state.v1` fields:
+- `target_key`
+- `target_kind`
+- `tempo_profile_hash`
+- `eligible_human_support`
+- `eligible_human_opposition`
+- `eligible_human_margin`
+- `current_stance_by_identity`
+- `human_support_units`
+- `passive_support_units_capped`
+- `structural_support_units`
+- `T_allow`
+- `contradiction_block_band`
+- `structural_readiness`
+  Enum: `true`, `false`, or `blocked`.
+- `blocking_claim_ids`
+- `blocking_verdict_ids`
+
+Structural-support rules:
+- Replay derives at most one current structural stance per eligible human identity per target: `support`, `oppose`, or `none`.
+- Later valid stance by the same identity supersedes the earlier stance for current structural counting only; historical statements remain preserved.
+- Repeated equivalent claims, evidence ideas, or connections from one identity MUST NOT multiply that identity's structural support.
+- `cycle_age_ge_dmin` requires `required_human_support_dmin`, `required_human_margin_dmin`, `structural_support_units >= T_allow`, and no opposing target-bound claim at or above `contradiction_block_band`.
+- `cycle_age_ge_dmax` requires `required_human_support_dmax`, `required_human_margin_dmax`, `structural_support_units >= T_allow`, and no opposing target-bound claim at or above `contradiction_block_band`.
+- An unresolved open challenge alone does not automatically block structural readiness. A finalized adverse verdict, opposing target-bound claim at the blocking band, or loss of required support/margin may block readiness.
+
+`tempo_predicate_state.v1` fields:
+- `cycle_index`
+- `dmin_target_key`
+- `dmax_target_key`
+- `cycle_age_ge_dmin`
+- `cycle_age_ge_dmax`
+- `dmin_certainty_band`
+- `dmin_contradiction_band`
+- `dmin_structural_support_units`
+- `dmin_structural_readiness`
+- `dmax_certainty_band`
+- `dmax_contradiction_band`
+- `dmax_structural_support_units`
+- `dmax_structural_readiness`
+- `structural_dmax_liveness_predicate`
+- `liveness_claim_id`
+- `liveness_target_key`
+- `blocking_contradiction_claim_ids`
+- `blocking_challenge_ids`
+- `liveness_predicate_status`
+  Enum: `true`, `false`, or `blocked`.
+- `liveness_trigger_allowed_for`
+  MUST equal `forced_cycle_close_only` when `liveness_predicate_status = true`.
+- `tempo_profile_hash`
+
+Predicate rules:
+- `cycle_age_ge_dmin` is true only when the Dmin target structural-support state satisfies the active profile's required human support, required human margin, capped passive evidence rules, `T_allow`, and contradiction blocking rules.
+- `cycle_age_ge_dmax` is true only when the Dmax target structural-support state satisfies the active profile's required human support, required human margin, capped passive evidence rules, `T_allow`, and contradiction blocking rules.
+- Dmax mechanically implies structural Dmin for the same anchor/profile.
+- `structural_dmax_liveness_predicate` is a separate Dmax-only structural predicate. It may be `true` only when at least `survivor_dmax_min_human_support` eligible humans participate, at least one valid Dmax target-bound claim or stance exists, required capped passive plausibility evidence exists, ordinary Dmax support requirements cannot be met, constrained/time-repair conditions apply, and there is no accepted contradictory target-bound time claim, no unresolved blocking truth challenge, and no existing certainty-band verdict contradicting the claim at or above `contradiction_block_band`.
+- If any accepted contradictory target-bound time claim or unresolved blocking truth challenge exists, `liveness_predicate_status` MUST be `blocked` unless the active rulebook explicitly defines a deterministic non-authoritative tie behavior.
+- `structural_dmax_liveness_predicate` may be consumed only for `dmax_structural_liveness_forced` cycle closure when `W_score < W_target`. It does not create `cycle_age_ge_dmin`, ordinary Dmax structural readiness, beacon status, certification, authorization-frontier advancement, or consequential authority.
+- Predicate truth permits structural boundary evaluation only. It does not imply authority, beacon status, payout eligibility, governance activation, POD, POINT, lifecycle finality, final rank authority, ordinary mana authority, or rate-limit reset authority.
+
+`derived_tempo_beacon_state.v1` fields:
+- `target_key`
+- `representative_claim_id`
+- `contributing_claim_ids`
+- `operative_certainty_band`
+- `highest_contradiction_certainty_band`
+- `distinct_qualified_supporters`
+- `independence_score`
+- `first_eligible_cycle`
+- `elevated_cycle`
+- `status`
+  Enum: `not_eligible`, `eligible_pending_stability`, `elevated`, `contested`, `revoked`.
+- `derivation_profile_hash`
+
+Beacon rules:
+- There is one derived beacon state per `target_key`.
+- Multiple beacons may coexist across different targets, cycles, or anchors.
+- Conflicting claims within one target contribute to contradiction evaluation for that target.
+- `representative_claim_id` is display-only and MUST be selected by deterministic rule without granting authority to its author.
+- Beacon elevation requires `T_beacon`, minimum qualified identities, minimum independence domains, stability cycles, contradiction checks, and challenge survivability.
+- Revocation stops future authorization-frontier advancement but does not rewrite already authorized history.
+
+`cycle_certification_state.v1` fields:
+- `cycle_index`
+- `boundary_type`
+- `required_certification_target_key`
+- `status`
+  Enum: `pending`, `certified`, `contested`, `revoked`.
+- `certified_at_cycle`
+- `certification_beacon_status`
+- `tempo_profile_hash`
+
+Certification rules:
+- Deliberative boundary requires Dmin target certification.
+- Forced boundary requires Dmax target certification.
+- Beacon coverage may cover one target, multiple consecutive targets, or a structured elapsed-time relation that deterministically entails multiple targets. Coverage MUST be explicit, replay-verifiable, structured, and independent of natural-language interpretation.
+- Certification does not reclassify forced boundaries and does not create authority by itself.
+
+`authorization_frontier_state.v1` fields:
+- `current_cycle`
+- `K`
+- `initial_authorization_frontier`
+- `previous_frontier`
+- `largest_contiguous_certified_cycle`
+- `eligible_by_lag`
+- `candidate_frontier`
+- `authorization_frontier`
+- `blocking_gap_cycle`
+- `tempo_profile_hash`
+
+Frontier rules:
+- `initial_authorization_frontier = -1`.
+- `eligible_by_lag = current_cycle - K`.
+- `candidate_frontier = min(largest_contiguous_certified_cycle, eligible_by_lag)`.
+- `authorization_frontier = max(previous_frontier, candidate_frontier)`.
+- The frontier is contiguous and monotonic. Gaps stop advancement.
+- Early cycles remain constrained until lag and certification coverage authorize effects.
+- Later certification may finalize explicit pending outputs only.
+- Later certification MUST NOT retroactively validate forbidden actions.
+- No ordinary mana or rate-limit backfill is permitted.
+
+`tempo_mode_state.v1` fields:
+- `current_cycle`
+- `mode`
+  Enum: `normal`, `constrained`, `record_only`.
+- `substate`
+  Optional enum such as `time_repair_priority`.
+- `authorization_frontier`
+- `constrained_mode_allowlist`
+- `blocked_action_classes`
+- `tempo_profile_hash`
+
+Mode rules:
+- `time_repair_priority` is a constrained-mode substate or reason code, not an independent global authority mode.
+- `time-only mode` is a deprecated historical alias for constrained time-repair behavior.
+- `record_only` produces no Dmin readiness, Dmax readiness, survivor Dmax liveness, universal `cycle_close`, certification, or authorization-frontier movement.
+
+`downstream_output_status.v1` fields:
+- `output_id`
+- `output_class`
+  Enum: `POD`, `POINT`, `governance_activation`, `lifecycle_transition`, `final_rank`, `ordinary_mana`, `ordinary_rate_limit`, `other`.
+- `source_cycle`
+- `status`
+  Enum: `provisional`, `pending`, `authorized`, `blocked`.
+- `authorization_frontier`
+- `reason_code`
+
+---
+
+### A4.9.9 Tempo/Cycle deterministic rejection codes [anchor: a4_9_9_tempo_cycle_deterministic_rejection_codes]
+
+The following rejection codes are reserved for Tempo/Cycle replay and conformance:
+
+- `ERR_TEMPO_CLAIM_NOT_TRUTH_CLAIM`
+- `ERR_TEMPO_CLAIM_INVALID_SUBTYPE`
+- `ERR_TEMPO_CLAIM_MISSING_METADATA`
+- `ERR_TEMPO_CLAIM_TARGET_KEY_MISMATCH`
+- `ERR_TEMPO_CLAIM_PROFILE_MISMATCH`
+- `ERR_TEMPO_CLAIM_UNAUTHORIZED_AUTHOR`
+- `ERR_TEMPO_EVIDENCE_CONNECTION_INVALID`
+- `ERR_TEMPO_MANA_INSUFFICIENT`
+- `ERR_TEMPO_HIDDEN_CLOCK_INPUT`
+- `ERR_TEMPO_BLOCK_HEIGHT_AUTHORITY`
+- `ERR_TEMPO_PASSIVE_EVIDENCE_SOURCE_INVALID`
+- `ERR_TEMPO_PASSIVE_EVIDENCE_CAP_EXCEEDED`
+- `ERR_TEMPO_PASSIVE_EVIDENCE_WITHOUT_HUMAN_SUPPORT`
+- `ERR_TEMPO_STRUCTURAL_SUPPORT_INSUFFICIENT`
+- `ERR_TEMPO_ZERO_HUMAN_RECORD_ONLY`
+- `ERR_TEMPO_AI_AUTHORITY`
+- `ERR_CYCLE_CLOSE_NOT_EARLIEST_VALID`
+- `ERR_CYCLE_CLOSE_TRIGGER_MISMATCH`
+- `ERR_CYCLE_CLOSE_PAYLOAD_MISMATCH`
+- `ERR_CYCLE_FORCED_AUTHORITY_ATTEMPT`
+- `ERR_STRUCTURAL_DMAX_LIVENESS_USED_FOR_DMIN`
+- `ERR_STRUCTURAL_DMAX_LIVENESS_USED_FOR_DELIBERATIVE_CLOSE`
+- `ERR_STRUCTURAL_DMAX_LIVENESS_AUTHORITY_ATTEMPT`
+- `ERR_STRUCTURAL_DMAX_LIVENESS_BLOCKED_BY_CONTRADICTION`
+- `ERR_STRUCTURAL_DMAX_LIVENESS_BEACON_REQUIREMENT_REDUCTION`
+- `ERR_FRONTIER_NON_CONTIGUOUS`
+- `ERR_FRONTIER_DECREASE`
+- `ERR_AUTHORITY_BACKFILL_ATTEMPT`
+- `ERR_COLLAPSE_THRESHOLD_SHRINK_ATTEMPT`
+
+These names define deterministic conformance surfaces only. They do not require any particular runtime exception class or API error format.
 
 
 ---
@@ -2042,11 +2622,13 @@ identity creation → idea creation → connection → challenge → voting → 
 
 
 {
+  "signature_profile": "ed25519_v0",
   "event_id": "0191f3d1-2a3b-7c4d-8e5f-1234567890ab",
   "event_type": "identity_create",
   "author_identity_id": "0191f3d1-2a3b-7c4d-8e5f-abcdef123456",
-  "ordering_ref": { "block_height": 1, "index": 0 },
+  "public_key_ref": "hash32(key_descriptor)",
   "payload_hash": "hash(identity_create)",
+  "payload_binding_mode": "embedded_payload",
   "signature": "sig(identity_create)"
 }
 
@@ -2305,8 +2887,3 @@ then the system MAY:
 
 Any such trigger MUST be implemented as a visibility / process recommendation and MUST NOT rewrite canonical outcomes.
 ```
-
-
-
-
-

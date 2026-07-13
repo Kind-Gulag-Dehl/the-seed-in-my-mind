@@ -99,6 +99,16 @@ export interface CanonicalEventLogEvent {
   block_height: string;
   block_event_index: string;
   event_type: string;
+  authorship_status: string;
+  author_identity_id?: string | null;
+  speaker_identity_id?: string | null;
+  signature_profile?: string | null;
+  signature?: string | null;
+  public_key_ref?: string | null;
+  payload_hash?: string | null;
+  payload_binding_mode?: string | null;
+  authored_candidate_hash_v0?: string | null;
+  publication_profile?: string | null;
 }
 
 export interface CanonicalEventLogBlockBand {

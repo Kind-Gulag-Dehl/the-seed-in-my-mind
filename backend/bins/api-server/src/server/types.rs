@@ -194,7 +194,11 @@ pub(crate) struct CanonicalBlockedSubmissionPayload {
     pub(crate) submission_hash: String,
     pub(crate) blocked_reason_code: String,
     pub(crate) blocked_by_identity: String,
+    pub(crate) safe_summary_ref: String,
+    pub(crate) classifier_profile_ref: String,
+    pub(crate) rulebook_ref: String,
     pub(crate) reference_event_id: Option<String>,
+    pub(crate) wrongful_block_challenge_ref: Option<String>,
     pub(crate) event_id: Option<String>,
     pub(crate) author_signature: Option<String>,
 }

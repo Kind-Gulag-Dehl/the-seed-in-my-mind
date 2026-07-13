@@ -1,6 +1,7 @@
 use std::process::Command;
 
 use axum::http::{Method, StatusCode};
+use common::test_db_guard::require_disposable_database_url;
 use uuid::Uuid;
 
 use super::tests::{
@@ -365,7 +366,10 @@ async fn verifier_can_record_blocked_submission() {
         serde_json::json!({
             "submission_hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
             "blocked_reason_code": "unsafe_payload",
-            "blocked_by_identity": owner_identity_id
+            "blocked_by_identity": owner_identity_id,
+            "safe_summary_ref": "00000000-0000-7000-8000-00000000d349",
+            "classifier_profile_ref": "safety-profile:test",
+            "rulebook_ref": "safety-rulebook:test"
         }),
         Some(&format!("Bearer {}", owner_session.token)),
     )
@@ -987,6 +991,13 @@ fn psql_scalar(sql: &str) -> Option<String> {
             return None;
         }
     };
+    match require_disposable_database_url(&database_url) {
+        Ok(database_name) => eprintln!("TEST_DB: {database_name} differs_from_seed_dev=true"),
+        Err(err) => {
+            eprintln!("SKIP: DATABASE_URL rejected by test DB guard: {err}");
+            return None;
+        }
+    }
     let output = match Command::new("psql")
         .arg(database_url)
         .arg("-At")
@@ -1022,6 +1033,13 @@ fn psql_exec(sql: &str) -> bool {
             return false;
         }
     };
+    match require_disposable_database_url(&database_url) {
+        Ok(database_name) => eprintln!("TEST_DB: {database_name} differs_from_seed_dev=true"),
+        Err(err) => {
+            eprintln!("SKIP: DATABASE_URL rejected by test DB guard: {err}");
+            return false;
+        }
+    }
     let output = match Command::new("psql")
         .arg(database_url)
         .arg("-v")

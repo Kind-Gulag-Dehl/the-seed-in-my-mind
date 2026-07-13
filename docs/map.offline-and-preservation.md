@@ -3,7 +3,7 @@ doc_id: map_offline_and_preservation
 title: Map: Offline and Preservation
 status: derived
 version: v0
-last_reviewed: 2026-03-26
+last_reviewed: 2026-06-22
 
 scope:
   - Navigation map for the offline and preservation documents included in this public repo.

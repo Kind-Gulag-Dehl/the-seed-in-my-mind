@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Context, Result};
 use encoding::payload::payload_hash_hex;
-use event_log::validation::validate_event;
+use event_log::validation::validate_legacy_import_event;
 use event_log::Event;
 use event_log::{SYSTEM_BOUNDARY_EMITTER_ID_STR, SYSTEM_BOUNDARY_EMITTER_TITLE};
 use serde::Deserialize;
@@ -234,7 +234,7 @@ async fn main() -> Result<()> {
             speaker_identity_id: event.speaker_identity_id,
         };
 
-        validate_event(&stage0_event)
+        validate_legacy_import_event(&stage0_event)
             .map_err(|err| anyhow!("event validation failed event_id={} {}", event.id, err))?;
 
         insert_event(&mut tx, 1, event_index, &stage0_event).await?;

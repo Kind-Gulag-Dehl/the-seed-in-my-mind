@@ -10,7 +10,9 @@ use api_types_canonical::{
     CanonicalIdentityCreateResponse, CanonicalTempoStatus, CanonicalTempoStatusResponse,
     CanonicalVerificationStatus, CanonicalVerificationStatusResponse,
     CanonicalVerifierGrantResponse, CanonicalVerifierRevokeResponse, CanonicalVoteCastResponse,
-    CanonicalVoteSessionPullResponse,
+    CanonicalVoteSessionPullResponse, SignedCanonicalEventSubmitEvent,
+    SignedCanonicalEventSubmitObject, SignedCanonicalEventSubmitRequest,
+    SignedCanonicalEventSubmitResponse,
 };
 #[cfg(feature = "full")]
 use axum::Extension;
@@ -29,6 +31,7 @@ use common::security_limits::{
 use replay::ReplayDriver;
 use serde::Serialize;
 use std::collections::{HashMap, HashSet};
+use storage::SignedCanonicalCandidateInput;
 #[cfg(feature = "full")]
 use storage::{
     screen_text_for_secrets, CanonicalBlockedSubmissionInput, CanonicalConnectionCreateInput,
@@ -41,7 +44,6 @@ use uuid::Uuid;
 use crate::server::coordinates::{
     project_slots, CoordinatePoint, CoordinateScatterConfig, CoordinateSlotInput, DEFAULT_SPACING,
 };
-#[cfg(feature = "full")]
 use crate::server::errors::canonical_write_error_response;
 use crate::server::errors::json_error;
 #[cfg(feature = "full")]
@@ -102,6 +104,15 @@ struct EventLogEventRow {
     event_index: i32,
     event_id: Uuid,
     event_type: String,
+    speaker_identity_id: Option<Uuid>,
+    author_identity_id: Option<Uuid>,
+    signature: Option<String>,
+    signature_profile: Option<String>,
+    public_key_ref: Option<String>,
+    payload_hash: Option<String>,
+    payload_binding_mode: Option<String>,
+    authored_candidate_hash_v0: Option<String>,
+    publication_profile: Option<String>,
 }
 
 #[derive(sqlx::FromRow)]
@@ -201,7 +212,16 @@ pub(crate) async fn canonical_event_log(State(state): State<AppState>) -> Respon
           block_height,
           event_index,
           event_id,
-          event_type
+          event_type,
+          speaker_identity_id,
+          author_identity_id,
+          signature,
+          signature_profile,
+          public_key_ref,
+          payload_hash,
+          payload_binding_mode,
+          authored_candidate_hash_v0,
+          publication_profile
         FROM events
         ORDER BY block_height ASC, event_index ASC
         "#,
@@ -288,6 +308,20 @@ pub(crate) async fn canonical_event_log(State(state): State<AppState>) -> Respon
             block_height: row.block_height.to_string(),
             block_event_index: row.event_index.to_string(),
             event_type: row.event_type.clone(),
+            authorship_status: if row.signature_profile.as_deref() == Some("ed25519_v0") {
+                "profile_v0_signed".to_string()
+            } else {
+                "legacy_or_unsigned".to_string()
+            },
+            author_identity_id: row.author_identity_id.map(|value| value.to_string()),
+            speaker_identity_id: row.speaker_identity_id.map(|value| value.to_string()),
+            signature_profile: row.signature_profile.clone(),
+            signature: row.signature.clone(),
+            public_key_ref: row.public_key_ref.clone(),
+            payload_hash: row.payload_hash.clone(),
+            payload_binding_mode: row.payload_binding_mode.clone(),
+            authored_candidate_hash_v0: row.authored_candidate_hash_v0.clone(),
+            publication_profile: row.publication_profile.clone(),
         });
 
         let next_block_height = events
@@ -347,6 +381,79 @@ pub(crate) async fn canonical_event_log(State(state): State<AppState>) -> Respon
             events: events_response,
             blocks,
             cycles,
+        }),
+    )
+        .into_response()
+}
+
+pub(crate) async fn canonical_submit_signed_event(
+    State(state): State<AppState>,
+    Json(request): Json<SignedCanonicalEventSubmitRequest>,
+) -> Response {
+    let event_id = match parse_uuid_v7_field(request.candidate.event_id.trim(), "event_id") {
+        Ok(value) => value,
+        Err(response) => return response,
+    };
+    let author_identity_id = match parse_uuid_v7_field(
+        request.candidate.author_identity_id.trim(),
+        "author_identity_id",
+    ) {
+        Ok(value) => value,
+        Err(response) => return response,
+    };
+    let speaker_identity_id = match request.candidate.speaker_identity_id.as_deref() {
+        Some(value) => match parse_uuid_v7_field(value.trim(), "speaker_identity_id") {
+            Ok(value) => Some(value),
+            Err(response) => return response,
+        },
+        None => None,
+    };
+    let payload_ref = request
+        .candidate
+        .payload_ref
+        .as_ref()
+        .map(|_| Vec::<u8>::new());
+
+    let input = SignedCanonicalCandidateInput {
+        signature_profile: request.candidate.signature_profile.trim().to_string(),
+        event_id,
+        event_type: request.candidate.event_type.trim().to_string(),
+        author_identity_id,
+        speaker_identity_id,
+        public_key_ref: request.candidate.public_key_ref.trim().to_string(),
+        payload_hash: request.candidate.payload_hash.trim().to_string(),
+        payload_binding_mode: request.candidate.payload_binding_mode.trim().to_string(),
+        payload_ref,
+        author_observed_at: request
+            .candidate
+            .author_observed_at
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty()),
+        signature: request.candidate.signature.trim().to_string(),
+        payload: request.payload,
+    };
+
+    let result = match state.storage.submit_signed_canonical_candidate(input).await {
+        Ok(result) => result,
+        Err(err) => return canonical_write_error_response(err),
+    };
+
+    (
+        StatusCode::OK,
+        Json(SignedCanonicalEventSubmitResponse {
+            event: SignedCanonicalEventSubmitEvent {
+                event_id: result.event_id.to_string(),
+                event_type: result.event_type,
+                block_height: result.block_height.to_string(),
+                event_index: result.event_index.to_string(),
+                authored_candidate_hash_v0: result.authored_candidate_hash_v0,
+                publication_profile: result.publication_profile,
+                idempotent: result.idempotent,
+            },
+            object: SignedCanonicalEventSubmitObject {
+                object_type: result.object_type,
+                object_id: result.object_id.to_string(),
+            },
         }),
     )
         .into_response()
@@ -754,7 +861,21 @@ pub(crate) async fn canonical_blocked_submission(
     if let Err(response) = reject_secret_text(payload.blocked_by_identity.as_str()) {
         return response;
     }
+    if let Err(response) = reject_secret_text(payload.safe_summary_ref.as_str()) {
+        return response;
+    }
+    if let Err(response) = reject_secret_text(payload.classifier_profile_ref.as_str()) {
+        return response;
+    }
+    if let Err(response) = reject_secret_text(payload.rulebook_ref.as_str()) {
+        return response;
+    }
     if let Err(response) = reject_secret_optional_text(payload.reference_event_id.as_deref()) {
+        return response;
+    }
+    if let Err(response) =
+        reject_secret_optional_text(payload.wrongful_block_challenge_ref.as_deref())
+    {
         return response;
     }
     if let Err(response) = reject_secret_optional_text(payload.event_id.as_deref()) {
@@ -776,6 +897,13 @@ pub(crate) async fn canonical_blocked_submission(
         },
         None => None,
     };
+    let wrongful_block_challenge_ref = match payload.wrongful_block_challenge_ref.as_deref() {
+        Some(value) => match parse_uuid_v7_field(value.trim(), "wrongful_block_challenge_ref") {
+            Ok(value) => Some(value),
+            Err(response) => return response,
+        },
+        None => None,
+    };
     let event_id = match payload.event_id.as_deref() {
         Some(value) => match parse_uuid_v7_field(value.trim(), "event_id") {
             Ok(value) => Some(value),
@@ -789,7 +917,11 @@ pub(crate) async fn canonical_blocked_submission(
         submission_hash: payload.submission_hash.trim().to_string(),
         blocked_reason_code: payload.blocked_reason_code.trim().to_string(),
         blocked_by_identity,
+        safe_summary_ref: payload.safe_summary_ref.trim().to_string(),
+        classifier_profile_ref: payload.classifier_profile_ref.trim().to_string(),
+        rulebook_ref: payload.rulebook_ref.trim().to_string(),
         reference_event_id,
+        wrongful_block_challenge_ref,
         author_signature: normalize_optional_text(payload.author_signature),
     };
     let result = match state

@@ -3,7 +3,7 @@ doc_id: snapshot_format_v0
 title: Snapshot Format v0
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Defines snapshot artifacts, metadata, and verification rules.
@@ -277,8 +277,9 @@ Optional derived-view sections in v0 (MAY be present):
 - `0x000C` safety_classifications
 - `0x000D` token_balances
 - `0x000E` idea_tags
+- `0x000F` tempo_cycle_state
 
-Performance indexes and derived views (rankings, token balances, safety classifications) MAY be included for convenience or historical record but are explicitly excluded from `state_root_hash` computation.
+Performance indexes and derived views (rankings, token balances, safety classifications, Tempo/Cycle state) MAY be included for convenience or historical record but are explicitly excluded from `state_root_hash` computation.
 
 ### 4.1.1 derived state packs: ranks
 
@@ -292,6 +293,25 @@ Implementations MAY emit optional **rank packs** or **rank history packs** keyed
 Rank packs MUST be reproducible from deterministic replay and MUST validate against the snapshot's existing commitments (including `state_root_hash` and `active_rulebook_set_hash`) using the same ordering and encoding rules recorded in the pack metadata. No new cryptographic commitments are introduced by this section.
 
 Multiple resolutions and tiers are permitted. Frequent, small snapshots MAY omit rank materialization entirely. Less frequent, higher-tier snapshots MAY include full universal ranks and/or relative ranks. Regardless of inclusion, ranks are uniquely determined for any snapshot height by deterministic replay.
+
+### 4.1.2 derived state packs: Tempo/Cycle
+
+Snapshots MAY include materialized Tempo/Cycle derived state for read performance and historical inspection. This pack is optional, derived, and excluded from `state_root_hash`.
+
+If present, a Tempo/Cycle derived-state pack MAY expose:
+- current cycle index,
+- active Dmin/Dmax target keys,
+- predicate status,
+- `structural_dmax_liveness_predicate` status,
+- cycle certification status,
+- authorization frontier,
+- Tempo operating mode,
+- beacon summaries,
+- provisional/pending/authorized/blocked downstream-output status.
+
+The pack MUST NOT expose private identity details beyond public canonical rules. It MUST NOT include node-local clocks, server time, client timestamps, receipt time, block-height time claims, scheduler observations, local uncommitted observations, AI observations, or private verification material as Tempo authority.
+
+Tempo/Cycle packs MUST be reproducible from deterministic replay and MUST validate against the snapshot's existing commitments using the Appendix A Tempo/Cycle schemas. Snapshot `block_height` remains a packaging/address key only and MUST NOT substitute for Dmin/Dmax certainty, beacon state, cycle certification, or the lagged authorization frontier.
 
 Extension sections MUST use IDs in the range `0x8000`-`0xFFFF`.
 
@@ -740,8 +760,6 @@ Schema additions required for Stage 1+ (not part of Stage 0):
 - challenges
 - verdicts
 - rulebook_set
-
-
 
 
 

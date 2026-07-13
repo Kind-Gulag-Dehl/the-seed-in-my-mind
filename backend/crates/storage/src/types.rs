@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::Serialize;
+use serde_json::Value;
 use sqlx::{FromRow, PgPool};
 use uuid::Uuid;
 
@@ -279,6 +280,35 @@ pub struct CanonicalConnectionCreateResult {
 }
 
 #[derive(Debug, Clone)]
+pub struct SignedCanonicalCandidateInput {
+    pub signature_profile: String,
+    pub event_id: Uuid,
+    pub event_type: String,
+    pub author_identity_id: Uuid,
+    pub speaker_identity_id: Option<Uuid>,
+    pub public_key_ref: String,
+    pub payload_hash: String,
+    pub payload_binding_mode: String,
+    pub payload_ref: Option<Vec<u8>>,
+    pub author_observed_at: Option<String>,
+    pub signature: String,
+    pub payload: Value,
+}
+
+#[derive(Debug, Clone)]
+pub struct SignedCanonicalWriteResult {
+    pub event_id: Uuid,
+    pub event_type: String,
+    pub block_height: i64,
+    pub event_index: i32,
+    pub authored_candidate_hash_v0: String,
+    pub object_type: String,
+    pub object_id: Uuid,
+    pub idempotent: bool,
+    pub publication_profile: String,
+}
+
+#[derive(Debug, Clone)]
 pub struct CanonicalImportanceChallengeCreateInput {
     pub challenge_id: Uuid,
     pub event_id: Option<Uuid>,
@@ -394,7 +424,11 @@ pub struct CanonicalBlockedSubmissionInput {
     pub submission_hash: String,
     pub blocked_reason_code: String,
     pub blocked_by_identity: Uuid,
+    pub safe_summary_ref: String,
+    pub classifier_profile_ref: String,
+    pub rulebook_ref: String,
     pub reference_event_id: Option<Uuid>,
+    pub wrongful_block_challenge_ref: Option<Uuid>,
     pub author_signature: Option<String>,
 }
 

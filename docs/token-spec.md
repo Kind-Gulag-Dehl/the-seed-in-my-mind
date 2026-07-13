@@ -3,7 +3,7 @@ doc_id: token_spec
 title: Token Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Defines POD and POINT semantics, issuance, and constraints.
@@ -1108,7 +1108,7 @@ POINT is always subordinate to POD:
 
 ### 9.2 Cycle-based base minting from POD (canonical) [anchor: cycle_based_base_minting_from_pod_canonical]
 
-At each cycle boundary (anchored by `cycle_close` at block height `H_close`), the system computes the total active POD using the replay prefix through and including `H_close`. Minting applies only to balances after that boundary and MUST NOT retroactively change prior cycles.
+At each structural cycle boundary (anchored by `cycle_close` at the deterministic replay prefix, addressable by `H_close` where block heights are exposed), the system computes the total active POD using the replay prefix through and including `cycle_close`. Block height is an address for the replay prefix, not a source of time legitimacy. Minting applies only to balances after that boundary and MUST NOT retroactively change prior cycles.
 
 \[
 \text{TotalPOD} = \sum_{u} \text{POD}_u
@@ -1134,6 +1134,19 @@ Each identity \( u \) receives newly minted POINT proportional to their POD shar
 \]
 
 Minting is performed only at cycle boundaries and is fully replay-derived.
+
+### 9.2A Authorization-Frontier Token States [anchor: authorization_frontier_token_states]
+
+Token-derived effects MUST be classified during replay as:
+
+- **provisional**: computed from structural cycle data but not yet cycle-certified through the lagged authorization frontier;
+- **pending**: eligible for later finalization if certification and frontier conditions are satisfied;
+- **authorized**: finalized because the required certified cycle is at or behind the authorization frontier;
+- **blocked**: unavailable because certification failed, contradiction blocks certification, or the effect was forbidden when attempted.
+
+POD may be provisional while cycle certification is pending. POINT minting, distribution, spendability, melt, and redistribution remain pending or paused until the lagged authorization frontier authorizes the relevant cycle. Ordinary mana and rate-limit authority likewise remain pending or blocked outside the constrained allowlist.
+
+Forced cycles do not create token value extraction. Later certification MAY finalize outputs that were explicitly pending or provisional. Later certification MUST NOT retroactively validate forbidden actions, make ineligible votes valid, create ordinary mana or rate-limit burst capacity, or backfill missed POINT/POD effects beyond those explicitly preserved as pending outputs.
 
 ---
 
@@ -1695,18 +1708,19 @@ All emergency response is forward-only.
 
 ### 11.8 Relationship between cycles, blocks, and snapshots (normative) [anchor: relationship_between_cycles_blocks_and_snapshots_normative]
 
-Cycles define **economic time** for the token system.
+Cycles define structural recomputation points for the token system. The lagged authorization frontier controls when consequential token effects become final.
 
 Blocks and snapshots serve different roles:
 - **Blocks** group events for hashing and transport efficiency.
 - **Snapshots** accelerate replay and provide cryptographic anchors.
-- **Cycles** determine when token state changes occur.
+- **Cycles** determine when token state is structurally recomputed.
+- **The authorization frontier** determines when consequential token state becomes finalized.
 
 Blocks and snapshots MUST NOT be treated as substitutes for cycles in token computation.
 Cycle membership is derived independently during replay and MAY span multiple blocks or partial blocks.
 
 Snapshots MAY coincide with cycle boundaries, but this is an optimization, not a requirement.
-Token correctness depends only on deterministic cycle derivation, not on snapshot frequency.
+Token correctness depends only on deterministic cycle derivation, cycle certification, and the lagged authorization frontier, not on snapshot frequency, block height, publication count, local clocks, or server/client timestamps.
 
 ## 12. Governance interaction and operational rulebooks [anchor: 12_governance_interaction_and_operational_rulebooks]
 

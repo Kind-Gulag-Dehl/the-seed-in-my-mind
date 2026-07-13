@@ -3,7 +3,7 @@ doc_id: deterministic_replay_and_merge_spec
 title: Deterministic Replay and Merge Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Defines deterministic replay rules and merge semantics that preserve conflicts explicitly.
@@ -91,7 +91,7 @@ The single, ordered sequence of canonical events that defines the authoritative 
 A protocol-defined **block-height boundary** used for ordering, accounting, governance activation, or snapshot generation. If blocks exist, they provide an ordering container only; semantics remain event-defined.
 
 **cycle boundary (`cycle_close`, `H_close`)**
-A protocol-defined boundary anchored by a canonical `cycle_close` event at block height `H_close`. All cycle-based derived outputs (rankings, POD, POINT mint/melt, mana) are recomputed at `H_close` using the replay prefix through and including the `cycle_close` event. Events after `H_close` MUST NOT affect the cycle outputs for that boundary.
+A protocol-defined structural boundary anchored by a canonical `cycle_close` event at a deterministic replay prefix, addressable by block height `H_close` where block heights are exposed. Cycle-based derived outputs (rankings, POD, POINT mint/melt, mana) may be structurally recomputed at `H_close` using the replay prefix through and including the `cycle_close` event, but consequential effects remain provisional or pending until cycle certification and the lagged authorization frontier authorize them. Events after `H_close` MUST NOT affect structural cycle outputs for that boundary.
 
 **deterministic replay**
 The process by which canonical state is reconstructed by applying canonical events in canonical order, under the active rulebook set, using only deterministic algorithms and canonical inputs.
@@ -133,20 +133,77 @@ A breach occurs when a rulebook or event violates Protocol v5 Section 0 invarian
 - a deterministic state hash or checksum representing that state
 - an optional replay audit log (non-canonical, local-only, discardable)
 
+### 1.2A Tempo/Cycle Replay Obligations [anchor: tempo_cycle_replay_obligations]
+
+Replay MUST reproduce the following Tempo/Cycle derived outputs using the Appendix A Tempo/Cycle schemas:
+
+- derived Dmin/Dmax target keys;
+- ordinary `truth_claim` ideas with conditional `tempo_claim` metadata;
+- Tempo-context potential evidence ideas and actual evidence ideas;
+- `evidence_for`, `evidence_against`, and `same_as` connections in Tempo context;
+- evidence-placement and certainty-band challenge outcomes;
+- Tempo mana balances;
+- target-level certainty-band state;
+- immutable Tempo profile references;
+- current eligible-human structural stances;
+- passive evidence normalization, deduplication, outlier, and capped structural contribution state;
+- target-level structural-support state;
+- Dmin/Dmax predicates;
+- structural Dmax liveness predicate state;
+- derived beacon states;
+- structural cycle boundaries;
+- cycle certification status;
+- lagged authorization frontier, initialized as `initial_authorization_frontier = -1`;
+- normal, constrained, and record-only operating modes, with time-repair substate/reason codes;
+- provisional, pending, authorized, and blocked downstream outputs.
+
+Replay MUST NOT create or infer new top-level canonical object types for evidence, attestations, time claims, targets, or beacons. Evidence, observations, attestations, testimony, source statements, arguments, and measurements are identity-authored ideas in roles, connected by existing connection usages and adjudicated through ordinary challenge verdicts.
+
+Replay MUST reject or ignore, according to Appendix A rejection rules, any input that attempts to derive Tempo truth certainty from node-local clocks, server time, client timestamps, receipt time, block height, scheduler observations, local uncommitted observations, AI-generated observations, or publication volume unless that input is represented as valid canonical ideas and connections under explicit protocol rules.
+
+Tempo/Cycle replay MUST use deterministic certainty-band ordering or its canonical integer encoding for ordinary truth certainty only. `T_allow` is a separate structural-support threshold. Floating-point truth certainty, local clocks, server clocks, client timestamps, block-height time authority, passive evidence as event ordering authority, and AI observations as authority are forbidden.
+
+Replay order for Tempo/Cycle state:
+
+1. At genesis, set `initial_authorization_frontier = -1` and derive the immutable bootstrap basis if one is explicitly present in genesis data. Otherwise begin constrained.
+2. At each structural cycle start, derive and freeze the active Tempo profile reference and derive `tempo_target(cycle_index, dmin)` and `tempo_target(cycle_index, dmax)` from the anchor event, cycle index, and frozen profile.
+3. Validate target-bound time claims as ordinary `truth_claim` ideas with conditional `tempo_claim` metadata. Reject mismatched target keys, profiles, durations, non-target-bound low-threshold claims, and unauthorized authors.
+4. Validate Tempo-context evidence ideas and `evidence_for`, `evidence_against`, or `same_as` connections using the ordinary idea and connection schemas plus Tempo-lane eligibility and mana rules. Invalid Tempo-context evidence connections deterministically reject with `ERR_TEMPO_EVIDENCE_CONNECTION_INVALID` and do not contribute to placement challenges, certainty-band derivation, predicates, beacons, certification, or frontier state.
+5. At each structural boundary, recharge Tempo mana, cap it, then process valid Tempo-lane spends in canonical order. Invalid events do not spend mana.
+6. Aggregate equivalent target-bound claims by `target_key` while preserving separate authorship and visible contradictions.
+7. Apply evidence-placement challenge verdicts to determine where actual evidence ideas belong against potential evidence ideas.
+8. Apply certainty-band challenge verdicts to derive each target-bound time claim's operative truth-certainty band. Verdict effects do not delete claims.
+9. Apply contradiction blocking when contradictory time claims reach the profile's `contradiction_block_band`.
+10. Derive current eligible-human structural stances (`support`, `oppose`, `none`) per identity and target from ordinary canonical evidence/stance records. Later valid stances supersede earlier stances for current structural counting only.
+11. Normalize passive evidence, deduplicate by profile rule, apply deterministic outlier handling, and cap passive contribution below `T_allow`.
+12. Derive structural-support state for Dmin and Dmax from eligible-human support, eligible-human margin, capped passive contribution, `T_allow`, and contradiction blockers. Passive evidence alone cannot satisfy any predicate.
+13. Derive `cycle_age_ge_dmin` and `cycle_age_ge_dmax` from structural-support state. Dmax mechanically implies structural Dmin for the same anchor/profile.
+14. Derive `structural_dmax_liveness_predicate` for the current Dmax target from nonzero eligible-human survivor support, valid target-bound Dmax claims or stances, required capped passive plausibility evidence, Tempo mana spend acceptance, accepted contradictory target-bound claims, unresolved blocking truth challenges, contradictory certainty-band verdicts, and constrained/time-repair conditions. The status is `true`, `false`, or `blocked`; it is not ordinary truth certainty.
+15. Evaluate the earliest-valid structural boundary: close deliberatively when Dmin is true and `W_score >= W_target`; otherwise close forcibly when Dmax is true and `W_score < W_target`; otherwise close forcibly with `trigger = dmax_structural_liveness_forced` when `structural_dmax_liveness_predicate == true` and `W_score < W_target`. Zero eligible-human record-only state emits no universal `cycle_close`.
+16. Derive beacon status from ordinary time-claim certainty bands, diversity, independence, stability, contradiction checks, and challenge survivability. The structural Dmax liveness predicate and passive evidence alone do not contribute to beacon status.
+17. Derive deterministic beacon coverage and cycle certification: deliberative boundaries require Dmin target certification; forced boundaries require Dmax target certification. A `dmax_structural_liveness_forced` boundary remains pending until normal Dmax beacon certification exists and remains forced permanently.
+18. Derive the contiguous lagged authorization frontier:
+    `eligible_by_lag = current_cycle - K`;
+    `candidate_frontier = min(largest_contiguous_certified_cycle, eligible_by_lag)`;
+    `authorization_frontier = max(previous_frontier, candidate_frontier)`.
+19. Derive `normal`, `constrained`, or `record_only` mode, with optional `time_repair_priority` constrained substate, from current frontier coverage, constrained allowlist, certification gaps, beacon coverage, publication availability, and human repair availability.
+20. Classify downstream outputs as `provisional`, `pending`, `authorized`, or `blocked`. Later certification may finalize explicit pending outputs only and MUST NOT retroactively validate forbidden actions or backfill ordinary mana/rate-limit authority.
+
 All conformant implementations MUST produce identical outputs from identical inputs.
 Replay height corresponds to a finalized canonical sequence boundary. When snapshots or APIs surface `block_height`, that height is the derived packaging address defined in snapshot-format-v0.md and `pod-consensus-and-canonical-publication-spec.md`. State reconstruction at snapshot boundaries uses the specified `state_root_hash`, `title_sentence_payload_root` (equal to `pocket_map_payload_root`), and derived `shared_map_commitment`.
 
 ### 1.3 Deterministic serialization and hashing dependencies [anchor: deterministic_serialization_and_hashing_dependencies]
 
-All deterministic replay, state hashing, snapshot verification, and signature checks depend on **canonical serialization and hashing rules**.
+All deterministic replay, state hashing, snapshot verification, and authorship-signature checks depend on **canonical serialization, hashing, and authored-candidate signature rules**.
 
-This specification defers all low-level encoding, canonical byte ordering, hashing algorithms, and signature formats to the **Canonical Encoding and Hashing Specification (v0)**.
+This specification defers low-level encoding, canonical byte ordering, hashing algorithms, and primitive field formats to the **Canonical Encoding and Hashing Specification (v0)**. It defers ordinary human-authored event candidates, `signature_profile`, exact signed bytes, `public_key_ref`, and replay-derived identity key state to **`canonical-event-authorship-and-signature-profile-v0.md`**.
 
 Implementations MUST:
 
 - use the canonical byte formats defined in the Canonical Encoding and Hashing Specification (v0)
 - use only the hash function(s) specified in the Canonical Encoding and Hashing Specification (v0)
 - reject any event, snapshot, or package that does not conform to those definitions
+- reject any ordinary human-authored event candidate that does not conform to `canonical-event-authorship-and-signature-profile-v0.md`
 
 No implementation MAY substitute alternate encodings, hashes, or serialization shortcuts, even if functionally equivalent.
 
@@ -314,8 +371,9 @@ Envelope validation verifies that an event is structurally admissible before ins
 Each event envelope MUST satisfy all of the following:
 
 - **Signature verification**
-  - The event MUST carry a valid cryptographic signature.
-  - The signature MUST verify against the claimed author identity using the canonical signature scheme defined in the Canonical Encoding and Hashing Specification (v0).
+  - An ordinary human-authored event candidate MUST carry a valid cryptographic `signature`.
+  - The signature MUST verify against the claimed `author_identity_id` using the Profile-v0 signed bytes and replay-derived identity key state defined in `canonical-event-authorship-and-signature-profile-v0.md`.
+  - Publication-derived fields such as `event_index`, block height, finalized-prefix-certificate data, and local receipt metadata MUST NOT be required to reconstruct the human-authorship signed bytes.
 
 - **Author identity verification**
   - The author identity referenced by the event MUST exist in canonical state at the time of application.
@@ -871,6 +929,7 @@ The pipeline is:
 
 2. **Publication ordering**
    - Offline events become canonical **only when included in a finalized prefix certificate through the canonical publication mechanism**.
+   - A valid signed authored candidate remains non-canonical until publication finality binds the exact candidate bytes to canonical order.
    - Their canonical order is determined solely by finalized publication order and any derived block mapping, not by when or where the events were authored offline.
 
 3. **Handling cases**
@@ -1119,6 +1178,25 @@ Replay test vectors MUST include:
 - canonical event log slices
 - the active rulebook set
 - expected deterministic state hashes at specified heights
+- Tempo/Cycle vectors covering:
+  - time claims remain ordinary `truth_claim` ideas with `tempo_claim` metadata;
+  - rejection of `time_claim`, `tempo_target`, `beacon`, `evidence`, `attestation`, `testimony`, or `source` idea types;
+  - valid low-threshold target-bound Tempo claim creation by `tempo_contributor`;
+  - Tempo evidence represented only as ordinary ideas plus `evidence_for` / `evidence_against` connections;
+  - rejection of arbitrary canonical idea creation, challenge opening, challenge voting, or verdict finalization by `tempo_contributor` lacking ordinary eligibility;
+  - rejection of AI/non-human Tempo claim, evidence, challenge, vote, verdict, beacon, cycle, governance, POD, POINT, or token authority;
+  - invalid target key, target/profile mismatch, and insufficient Tempo mana rejection;
+  - no certainty from raw author counts, equivalent-claim counts, hidden weights, model scores, external links alone, or heuristics;
+  - evidence-placement and certainty-band challenge verdicts assigning Tempo certainty;
+  - local/server/client time, receipt time, block height, scheduler observations, publication volume, and AI observations failing to affect certainty;
+  - Dmax mechanically implying structural Dmin;
+  - Dmin plus `W_target` closing deliberatively;
+  - Dmax closing forcibly when `W_target` is unmet;
+  - forced cycles producing no POD, POINT, governance, lifecycle, ordinary mana, ordinary rate-limit, or final-rank authority;
+  - `K` and beacon requirements remaining fixed under collapse;
+  - authorization frontier stopping at a certification gap;
+  - later certification finalizing explicit pending outputs only;
+  - replay reproducing targets, predicates, beacon state, certification, frontier, modes, and output status.
 Replay height corresponds to block height as defined in snapshot-format-v0.md. State reconstruction at snapshot boundaries uses the specified `state_root_hash`, `title_sentence_payload_root` (equal to `pocket_map_payload_root`), and derived `shared_map_commitment`.
 
 These vectors allow independent implementations to verify replay correctness.
@@ -1178,5 +1256,6 @@ These vectors ensure that breach detection and lineage continuity are implemente
 
 - Event with invalid signature
 - Expected: Full rejection, no state change
+- Profile-v0 authorship-signature vectors, including altered payload hash, altered event type, wrong key owner, unknown key, revoked key, and publication-wrapper mutation, are required by `canonical-event-authorship-and-signature-profile-v0.md`.
 
 (Provide 5-6 vectors with input events, pack formats, and expected outcomes/hashes.)

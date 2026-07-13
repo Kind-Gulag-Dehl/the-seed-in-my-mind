@@ -3,7 +3,7 @@ doc_id: offline_and_mindseed_spec
 title: Offline and Mindseed Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Defines offline workspaces, mindseed packages, and reintegration rules.
@@ -14,9 +14,11 @@ authoritative_for:
 
 not_authoritative_for:
   - Snapshot format details (see snapshot-format-v0.md).
+  - Canonical authored-candidate signed bytes, signature profiles, or public-key-reference construction.
 
 depends_on:
   - protocol v5.md
+  - canonical-event-authorship-and-signature-profile-v0.md
   - deterministic-replay-and-merge-spec.md
   - cycle-spec.md
   - tempo-spec.md
@@ -93,7 +95,7 @@ Such payloads:
 - MUST NOT affect deterministic replay, event validity, governance activation, token issuance, or canonical IDs,
 - MUST be fully ignorable without changing any canonical outcome.
 
-All canonical behavior MUST be determined solely by the canonical payload: Protocol v5 events, snapshots, deltas, anchors, and signatures, under the active rulebooks.
+All canonical behavior MUST be determined solely by the canonical payload: Protocol v5 events, signed authored candidates, snapshots, deltas, anchors, and signatures, under the active rulebooks.
 
 Private drafts are explicitly **out of protocol conformance scope**.
 
@@ -226,7 +228,7 @@ An offline workspace MUST have the following properties:
 
 - an **append-only local event log** containing Protocol v5 events intended for later canonical publication,
 - **deterministic local replay** using the same semantics and ordering rules as canonical replay,
-- **local cycle derivation** using the same cycle rules defined in Protocol v5 §3,
+- **provisional local cycle simulation** for planning and pacing, using the same cycle rules defined in Protocol v5 §3 where local inputs permit,
 - **local rate-limit and mana enforcement** using the same per-identity caps and rules defined in Protocol v5 §3,
 - **local snapshot generation** to support performance, inspection, and recovery,
 - the ability to be **shared or transferred** physically or digitally among trusted participants (e.g., files, removable media, direct device transfer).
@@ -239,6 +241,10 @@ Local state derived within an offline workspace is non-authoritative and remains
 Offline operation MUST NOT be used to obtain additional canonical throughput. Offline execution speed MUST NOT create additional valid canonical actions beyond what the same identities could have produced under the Protocol v5 cycle and rate-limit rules.
 
 Offline systems MAY compute provisional local cycles for user experience, local gating, and planning purposes; however, such cycles are strictly non-authoritative and MUST NOT be treated as canonical time.
+
+Offline systems MAY create canonical-structured target-bound time truth claims and Tempo-context evidence ideas/connections for later publication. These records are inert until they pass ordinary canonical validation, Tempo contributor validation, Tempo mana checks, and deterministic replay after publication.
+
+Offline systems MUST NOT import local time verdicts, local cycle simulations, local AI maps, local timestamps, local scheduler observations, local block counts, or uncommitted observations as canonical time authority.
 
 During reintegration, canonical cycle derivation and canonical per-identity limits determine which published events are immediately effective. Any excess events remain preserved in the canonical log but non-effective until later canonical cycles make them effective, as defined in §3.5.
 
@@ -273,7 +279,7 @@ Offline group operation MUST NOT introduce:
 - shared-author events,
 - alternative authorship semantics.
 
-All authorship rules defined in Protocol v5 apply identically offline.
+All authorship rules defined in Protocol v5 and `canonical-event-authorship-and-signature-profile-v0.md` apply identically offline.
 
 In group workspaces, all per-identity rate limits, mana pools, earning caps, and action costs MUST remain strictly per-identity.
 
@@ -299,7 +305,7 @@ Each event in the local event log MUST include:
 - an event payload identical in structure and semantics to the corresponding online Protocol v5 event,
 - a locally recorded wall-clock timestamp for user-interface and evidentiary purposes only.
 
-Local timestamps are **non-authoritative** and MUST NOT be treated as canonical ordering signals during reintegration.
+Local timestamps are **non-authoritative** and MUST NOT be treated as canonical ordering signals, Tempo truth-certainty inputs, or Tempo structural-support inputs during reintegration. They have no canonical effect unless separately represented through valid canonical ideas/connections or through a profile-admitted passive-evidence field that is canonically committed and identically replayable.
 
 Offline systems MAY store additional non-canonical artifacts (including drafts, annotations, prompts, UI state, or speculative actions) for user-experience purposes.
 
@@ -382,7 +388,7 @@ Offline operation MUST preserve the canonical pacing and rate-limit properties o
 
 An offline workspace:
 
-- MUST derive cycle boundaries using the Protocol v5 cycle rules from its local event log,
+- MAY derive provisional local cycle-boundary simulations using the Protocol v5 cycle rules from its local event log,
 - MUST enforce per-identity action limits and mana rules using the same rules as a canonical node,
 - MUST reject or prevent creation of Protocol v5 events that would be invalid under Protocol v5 §3 at the current derived local cycle index.
 
@@ -393,6 +399,7 @@ In particular:
 - Cycle advancement MUST NOT increase per-cycle allowances except as permitted by the Protocol v5 scaling rules.
 - Mana pools MUST persist across cycles and MUST respect maximum caps exactly as defined in Protocol v5.
 - Challenge creation MUST remain gated by deliberation mana earned via voting, subject to per-cycle earning caps and persistence rules.
+- Low-threshold `tempo_contributor` status permits only target-bound time truth claims and explicitly allowed Tempo-context evidence ideas/connections. Time-related challenge creation, voting, and verdict finalization remain governed by ordinary challenge eligibility unless a later authoritative rulebook explicitly defines a `tempo_challenger` capability.
 
 Offline-derived cycles exist only to enforce pacing constraints while disconnected.
 They MUST NOT be interpreted as canonical time and MUST NOT be used to claim entitlement to canonical actions.
@@ -428,7 +435,10 @@ Deferred effectiveness MUST be:
 This rule guarantees that offline operation cannot:
 - accelerate canonical cycles,
 - exceed per-identity throughput,
-- or retroactively alter canonical pacing.
+- retroactively alter canonical pacing,
+- stockpile ordinary mana or rate-limit resets,
+- backfill token effects, or
+- validate actions that were forbidden when attempted.
 
 
 
@@ -472,7 +482,7 @@ rather than raw identity documents or raw credential payloads.
 
 ### 4.2 multi-author workspaces [anchor: multi_author_workspaces]
 
-Each Protocol v5 event authored offline MUST name **exactly one** `speaker_identity`.
+Each Protocol v5 event authored offline MUST name **exactly one** `author_identity_id` and MAY include `speaker_identity_id` only where the event schema permits a represented speaker distinct from the author.
 
 Offline group workspaces MAY contain events authored by multiple identities, but:
 
@@ -490,7 +500,7 @@ Group deliberation arises through interaction between independently authored eve
 
 Offline users MAY create local pre-publication events anonymously or under a pseudonymous identity.
 
-Upon publication into the canonical universe, canonical authorship rules apply: canonical events MUST be signed by a verified-human identity, and anonymously authored material remains in the outer layer until explicitly adopted by a verified-human identity.
+Upon publication into the canonical universe, canonical authorship rules apply: ordinary human-authored candidates MUST carry a valid Profile-v0 signature from an eligible verified-human identity, and anonymously authored material remains in the outer layer until explicitly adopted by a verified-human identity.
 See Privacy and High-Risk Submission Spec §6 (Anonymous Outer-Layer Semantics) and §7.4 (Store-and-Forward / Offline Publication Profile).
 
 When such events are reintegrated into the canonical universe:
@@ -962,7 +972,7 @@ Incomplete syncs are expected and normal.
 * no globally reachable online nodes exist,
 * the system operates entirely through offline and P2P interaction.
 
-UPM is a **degraded but valid** operating mode.
+UPM is a **degraded local-coordination** operating mode. It may preserve work and repair material for later publication, but it does not advance universal canonical cycles or consequential authority by itself.
 
 ---
 
@@ -971,9 +981,10 @@ UPM is a **degraded but valid** operating mode.
 Under UPM:
 
 * events MAY continue to be authored,
-* challenges MAY progress locally,
-* votes MAY be cast with limited pools,
-* cycles advance approximately using agreed time bounds.
+* challenges MAY progress locally only as provisional records that remain subject to ordinary canonical challenge eligibility and replay,
+* votes MAY be cast with limited pools but remain provisional until canonical replay validates ordinary voting eligibility,
+* target-bound time truth claims and Tempo-context evidence ideas/connections MAY be prepared for later publication,
+* partition-local cycle simulations MAY be used for coordination but MUST NOT be treated as universal canonical cycles, Tempo truth certainty, Tempo structural support, cycle certification, or authorization-frontier advancement,
 * P2P exchange MUST NOT require civil identity disclosure; default attribution remains the pseudonymous author identity plus a non-identifying verification level.
 
 All outcomes remain **provisional** until later convergence.
@@ -1009,11 +1020,12 @@ No retroactive rewriting occurs.
 
 During partition:
 
-* participants MAY emit cycle boundary claims,
-* claims are later clustered and evaluated,
-* quorum receipts establish approximate alignment.
+* participants MAY emit target-bound time truth claims and Tempo-context evidence ideas/connections for later publication,
+* participants MAY record partition-local candidate boundary notes for coordination,
+* such notes are not canonical cycle boundaries, are not authored beacon objects, and do not grant authority,
+* quorum receipts establish approximate local alignment only.
 
-Cycle boundaries are reconciled deterministically during merge.
+Canonical cycle boundaries are derived only during canonical merge and replay from valid canonical inputs, including derived Dmin/Dmax target certainty, `structural_dmax_liveness_predicate` where applicable, and the earliest-valid structural boundary rule.
 
 ---
 
@@ -1025,6 +1037,8 @@ Partition-local finality:
 * does not grant global authority.
 
 Offline events may accumulate in authored state and, where the active publication profile supports it, MAY also accumulate availability attestations. Neither state grants global canonical order.
+
+Partition-local finality MUST NOT finalize POD, POINT, governance activation, lifecycle transitions, final ranks, ordinary mana, ordinary rate-limit resets, Tempo beacons, cycle certification, or the lagged authorization frontier.
 
 Conflicts escalate to governance challenges upon reintegration.
 
@@ -1106,13 +1120,15 @@ There is no fork resolution, averaging, reconciliation of state, or negotiation 
 
 Offline partitions MAY independently publish overlapping or conflicting event histories. Canonical nodes MUST ingest each publication deterministically; conflicts are preserved as explicit competing claims and MUST be resolved through ordinary challenge mechanisms rather than by any reintegration-time merge negotiation.
 
-Publication consists solely of submitting authored Protocol v5 events for canonical evaluation under the currently active rulebooks.
+Publication consists solely of submitting signed authored Protocol v5 event candidates for canonical evaluation under the currently active rulebooks.
 
 Offline-produced events may therefore exist in three distinct states during reintegration:
 
-- `authored` while only the signed event bytes exist,
+- `authored` while only the signed authored-candidate bytes exist,
 - `availability-certified` once the active publication profile’s witness threshold is met,
 - `canonical` only after inclusion in a finalized prefix certificate.
+
+A valid offline signature does not make a candidate canonical. Canonical order comes only from the finalized prefix certificate that binds the exact signed candidate bytes to publication order.
 
 Offline systems MUST support multiple **publication packaging modes** to serve different node storage classes:
 
@@ -1494,6 +1510,3 @@ This specification composes with and is subordinate to the following documents. 
 Defines P2P meetup attestations and P2P state/log witness artifacts (including custody manifests and state witness attestations) used by offline groups to reconcile and evidence replication without conferring authority.
 
 This specification introduces no independent canonical semantics. It specifies offline packaging, local execution, and reintegration behavior that MUST remain semantically equivalent to Protocol v5 under the constraints defined by the specifications above.
-
-
-

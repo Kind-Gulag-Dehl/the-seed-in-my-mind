@@ -3,7 +3,7 @@ doc_id: governance_spec
 title: Governance Specification
 status: authoritative
 version: v0
-last_reviewed: 2026-01-27
+last_reviewed: 2026-06-22
 
 scope:
   - Defines governance processes, rulebooks, and modification procedures.
@@ -355,22 +355,74 @@ by the universal system.
 
 ### 2.3 rulebook invariants (non-overrideable) [anchor: rulebook_invariants_non_overrideable]
 
-
-- human-first authorship of all canonical events,
-
 - human-first authorship of all canonical events,
 - equality of governance voting (one human = one vote, except when using
   equal-weight juror pools),
 - non-transferability of POD,
 - immutable canonical history,
 - deterministic replay rules,
-- immutable canonical history,
 - prohibition on AI authority or AI governance participation,
 - system-wide safety floors on globally illegal or harmful payloads,
 - challengeability of all propositions and rule changes.
 
-These invariants are permanently fixed unless changed through a multi-stage,
-### 2.4 activation at cycle boundaries [anchor: activation_at_snapshot_boundaries]
+These invariants are non-overrideable by ordinary rulebooks, emergency procedures, deployment settings, or implementation convenience.
+
+### 2.3A Tempo Profile Governance Boundary [anchor: tempo_profile_governance_boundary]
+
+Governance owns the active Tempo profile as rulebook configuration. Governance MAY set and amend bounded parameters such as:
+
+- `Dmin`;
+- `Dmax`;
+- lag `K`;
+- `required_human_support_dmin`;
+- `required_human_margin_dmin`;
+- `required_human_support_dmax`;
+- `required_human_margin_dmax`;
+- `survivor_dmax_min_human_support`;
+- `T_allow`;
+- `passive_evidence_cap`;
+- `passive_source_dedup_policy`;
+- `passive_source_class_policy`;
+- `passive_outlier_policy`;
+- `contradiction_block_band`;
+- `T_beacon`;
+- `T_beacon_revoke`;
+- `beacon_minimum_certainty_band`;
+- `minimum_beacon_identities`;
+- `minimum_independence_domains`;
+- `beacon_stability_cycles`;
+- `beacon_challenge_survival_cycles`;
+- `authorization_lag_k`;
+- `tempo_mana_cap`;
+- `tempo_mana_recharge`;
+- `time_claim_create_cost`;
+- `tempo_evidence_claim_create_cost`;
+- `tempo_evidence_connection_cost`;
+- `tempo_same_as_connection_cost`;
+- `time_challenge_cost`;
+- `certainty_band_order`;
+- `structural_dmax_liveness_rule`;
+- `constrained_mode_allowlist`;
+- `profile_hash`.
+
+Governance MAY define structural-support units for `T_allow`, but it MUST NOT redefine `T_allow` as truth certainty. Passive evidence parameters MUST remain deterministic, canonically committed, and capped below `T_allow`.
+
+Governance MUST NOT override:
+
+- no trusted clock authority;
+- human-only canonical authorship;
+- idea-only deliberative content: evidence, arguments, attestations, observations, source statements, and time claims remain identity-authored ideas in roles;
+- ordinary truth-claim and truth-challenge semantics for target-bound time claims;
+- certainty-band challenge semantics for Tempo claims;
+- the separation between `T_allow` structural support and ordinary truth certainty;
+- the Dmax-only and forced-closure-only limits of `structural_dmax_liveness_predicate`;
+- verification and independence as eligibility/diversity gates only, not weights;
+- forced-cycle non-authority;
+- anti-collapse threshold non-shrinkage;
+- no backfill or retroactive authority;
+- AI non-authority.
+
+Tempo profile changes MUST activate only through ordinary governance lifecycle and cycle-anchored activation. Governance MUST NOT use block height, publication count, server time, client timestamps, scheduler observations, or AI-generated observations as Tempo authority.
 
 ### 2.4 activation at cycle boundaries [anchor: activation_at_snapshot_boundaries]
 
@@ -1236,9 +1288,9 @@ All verification evidence is public unless restricted by safety rulebooks for pr
 Identity verification within governance operates on two distinct, challengeable truth-claim tracks:
 
 
-Each track yields a deterministic certainty value in the range \[0,1\], derived from evidence objects and their challenge status. These certainty values are mapped into discrete verification tiers used solely for **eligibility gating**, never for vote weighting, authority, or reputation.
+Each track yields a deterministic certainty value in the range \[0,1\], derived from evidence ideas and their challenge status. These certainty values are mapped into discrete verification tiers used solely for **eligibility gating**, never for vote weighting, authority, or reputation.
 
-Each track yields a deterministic certainty value in the range \[0,1\], derived from evidence objects and their challenge status. These certainty values are mapped into discrete verification tiers used solely for **eligibility gating**, never for vote weighting, authority, or reputation.
+Each track yields a deterministic certainty value in the range \[0,1\], derived from evidence ideas and their challenge status. These certainty values are mapped into discrete verification tiers used solely for **eligibility gating**, never for vote weighting, authority, or reputation.
 
 Governance MUST NOT authorize or require storage of raw personally identifiable information (PII) in the canonical event log.
 
@@ -1716,6 +1768,8 @@ Deterministic replay and governance verification operate over:
 - and any cryptographic anchoring and snapshotting mechanisms used for performance and distribution.
 
 Blocks (hash-chained event bundles) and snapshots (including tiered snapshots) MAY be used as cryptographic anchors and replay accelerators, but MUST NOT be treated as semantic activation boundaries.
+
+Cycle scheduling defines when a governance decision or rulebook version is eligible to become active. Where a governance effect is consequential authority under Protocol v5/Cycle semantics, replay MUST also respect cycle certification and the lagged authorization frontier before finalizing that effect. A structural `cycle_close` alone is not governance activation authority, and forced boundaries do not create missing deliberative reward or control manifests.
 
 Replay MUST treat curated, summarized, or export-oriented artifacts as non-authoritative.
 

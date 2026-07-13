@@ -3,6 +3,7 @@ use encoding::canonical::{
 };
 use encoding::hash::{hash_bytes, hash_with_domain};
 use encoding::merkle::{compute_root_with_tags, empty_payload_root};
+use encoding::payload::{canonical_json_payload_bytes, canonical_json_payload_hash_hex};
 
 fn to_hex(bytes: &[u8]) -> String {
     let mut out = String::with_capacity(bytes.len() * 2);
@@ -42,6 +43,33 @@ fn payload_canonicalization_lf() {
     let input = b"Hello\r\nWorld";
     let canonical = canonicalize_utf8(input).expect("canonicalization should succeed");
     assert_eq!(canonical, b"Hello\nWorld");
+}
+
+#[test]
+fn canonical_json_orders_keys_and_normalizes_strings() {
+    let value = serde_json::json!({
+        "z": "Cafe\u{301}",
+        "a": true,
+        "nested": {
+            "b": null,
+            "a": "line\r\nbreak"
+        }
+    });
+    let bytes = canonical_json_payload_bytes(&value).expect("canonical JSON");
+    assert_eq!(
+        String::from_utf8(bytes).unwrap(),
+        "{\"a\":true,\"nested\":{\"a\":\"line\\nbreak\",\"b\":null},\"z\":\"Caf\u{e9}\"}"
+    );
+}
+
+#[test]
+fn canonical_json_payload_hash_is_order_independent() {
+    let first = serde_json::json!({"b": "two", "a": "one"});
+    let second = serde_json::json!({"a": "one", "b": "two"});
+    assert_eq!(
+        canonical_json_payload_hash_hex(&first).unwrap(),
+        canonical_json_payload_hash_hex(&second).unwrap()
+    );
 }
 
 #[test]

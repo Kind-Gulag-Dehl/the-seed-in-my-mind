@@ -1,0 +1,2609 @@
+{
+  "fixture_version": "tempo-cycle-fixtures.v1",
+  "status": "spec_fixture_only_not_runtime_implementation",
+  "model": {
+    "deliberative_content_model": "identity_authored_ideas_only",
+    "time_claim_model": "ordinary_truth_claim_with_tempo_claim_metadata",
+    "evidence_model": "ordinary_ideas_connected_by_existing_relative_importance_usages",
+    "certainty_model": "evidence_placement_and_certainty_band_challenge_verdicts",
+    "forbidden_idea_types": [
+      "time_claim",
+      "tempo_target",
+      "beacon",
+      "evidence",
+      "attestation",
+      "testimony",
+      "source"
+    ],
+    "forbidden_time_authority": [
+      "node_local_clock",
+      "server_time",
+      "client_timestamp",
+      "receipt_time",
+      "block_height",
+      "scheduler_observation",
+      "local_uncommitted_observation",
+      "ai_observation",
+      "external_link_alone"
+    ]
+  },
+  "tempo_profile": {
+    "profile_id": "tempo_profile_test_v1",
+    "test_only": true,
+    "Dmin": 2,
+    "Dmax": 5,
+    "K": 2,
+    "certainty_band_order": [
+      "none",
+      "hypothetical",
+      "low",
+      "medium",
+      "high",
+      "beacon"
+    ],
+    "T_allow": 2,
+    "required_human_support_dmin": 1,
+    "required_human_margin_dmin": 1,
+    "required_human_support_dmax": 1,
+    "required_human_margin_dmax": 1,
+    "survivor_dmax_min_human_support": 1,
+    "structural_support_unit_per_human": 1,
+    "passive_evidence_cap": 1,
+    "passive_source_dedup_policy": "source_id_target_key_source_epoch",
+    "passive_source_class_policy": "shared_upstream_source_class_capped_together",
+    "passive_outlier_policy": "test_profile_interval_outlier_rejection_v1",
+    "contradiction_block_band": "medium",
+    "beacon_minimum_certainty_band": "high",
+    "beacon_minimum_distinct_humans": 2,
+    "beacon_challenge_survival_cycles": 1,
+    "authorization_lag_k": 2,
+    "T_contradiction_block": "medium",
+    "T_beacon": "high",
+    "T_beacon_revoke": "medium",
+    "minimum_beacon_identities": 2,
+    "minimum_independence_domains": 2,
+    "beacon_stability_cycles": 1,
+    "tempo_mana_cap": 3,
+    "tempo_mana_recharge": 2,
+    "time_claim_create_cost": 1,
+    "tempo_evidence_claim_create_cost": 1,
+    "tempo_evidence_connection_cost": 1,
+    "tempo_same_as_connection_cost": 1,
+    "time_challenge_cost": 2,
+    "structural_dmax_liveness_rule": "single_valid_dmax_truth_claim_no_blockers_for_forced_close_only",
+    "constrained_mode_allowlist": [
+      "idea_create.truth_claim.tempo_claim",
+      "idea_create.truth_claim.tempo_evidence",
+      "connection_create.relative_importance.evidence_for",
+      "connection_create.relative_importance.evidence_against",
+      "connection_create.same_as"
+    ],
+    "profile_hash": "hash_tempo_profile_test_v1"
+  },
+  "identities": [
+    {
+      "identity_id": "id_human_alpha",
+      "actor_kind": "human",
+      "verification_level": 1,
+      "tempo_contributor": true,
+      "beacon_qualified_identity": true,
+      "independence_domain": "domain_alpha",
+      "ordinary_canonical_writer": false,
+      "ordinary_challenge_eligible": false
+    },
+    {
+      "identity_id": "id_human_beta",
+      "actor_kind": "human",
+      "verification_level": 3,
+      "tempo_contributor": true,
+      "beacon_qualified_identity": true,
+      "independence_domain": "domain_beta",
+      "ordinary_canonical_writer": true,
+      "ordinary_challenge_eligible": true
+    },
+    {
+      "identity_id": "id_human_gamma",
+      "actor_kind": "human",
+      "verification_level": 2,
+      "tempo_contributor": true,
+      "beacon_qualified_identity": false,
+      "independence_domain": "domain_alpha",
+      "ordinary_canonical_writer": true,
+      "ordinary_challenge_eligible": true
+    },
+    {
+      "identity_id": "id_ai_delta",
+      "actor_kind": "ai",
+      "verification_level": 0,
+      "tempo_contributor": false,
+      "beacon_qualified_identity": false,
+      "independence_domain": "none",
+      "ordinary_canonical_writer": false,
+      "ordinary_challenge_eligible": false
+    },
+    {
+      "identity_id": "id_human_zeta",
+      "actor_kind": "human",
+      "verification_level": 1,
+      "tempo_contributor": false,
+      "beacon_qualified_identity": false,
+      "independence_domain": "domain_zeta",
+      "ordinary_canonical_writer": false,
+      "ordinary_challenge_eligible": false
+    },
+    {
+      "identity_id": "system_boundary_emitter",
+      "actor_kind": "system_boundary_emitter",
+      "verification_level": 0,
+      "tempo_contributor": false,
+      "beacon_qualified_identity": false,
+      "independence_domain": "system",
+      "ordinary_canonical_writer": false,
+      "ordinary_challenge_eligible": false
+    }
+  ],
+  "genesis": {
+    "genesis_event_id": "evt_genesis_0000",
+    "initial_cycle_index": 0,
+    "initial_authorization_frontier": -1,
+    "bootstrap_basis": null,
+    "active_tempo_profile_hash": "hash_tempo_profile_test_v1",
+    "initial_W_target": 2
+  },
+  "shared_setup": {
+    "cycle0_dmin_target": {
+      "target_key": "tempo_target(0, dmin)",
+      "cycle_index": 0,
+      "anchor_event_id": "evt_genesis_0000",
+      "target_kind": "dmin",
+      "relation": "elapsed_greater_than_or_equal",
+      "duration_value": 2,
+      "duration_unit_profile": "test_cycles_elapsed_v1",
+      "tempo_profile_hash": "hash_tempo_profile_test_v1"
+    },
+    "cycle0_dmax_target": {
+      "target_key": "tempo_target(0, dmax)",
+      "cycle_index": 0,
+      "anchor_event_id": "evt_genesis_0000",
+      "target_kind": "dmax",
+      "relation": "elapsed_greater_than_or_equal",
+      "duration_value": 5,
+      "duration_unit_profile": "test_cycles_elapsed_v1",
+      "tempo_profile_hash": "hash_tempo_profile_test_v1"
+    }
+  },
+  "fixtures": [
+    {
+      "fixture_id": "TCF-001-valid-target-bound-time-truth-claim",
+      "title": "Valid target-bound time truth claim",
+      "purpose": "Accept an ordinary truth_claim with valid tempo_claim metadata.",
+      "initial_state": {
+        "cycle_index": 0,
+        "tempo_mana": {
+          "id_human_alpha": 3
+        }
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf001_claim",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf001_dmin_alpha",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf001_claim"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "created_idea_type": "truth_claim",
+        "target_key": "tempo_target(0, dmin)",
+        "operative_certainty_band": "none",
+        "forbidden_idea_types_created": []
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {
+        "authorization_frontier": -1,
+        "consequential_authority": false
+      },
+      "notes": [
+        "Creation alone carries no certainty or authority."
+      ]
+    },
+    {
+      "fixture_id": "TCF-002-rejected-unrelated-idea-through-tempo-lane",
+      "title": "Rejected unrelated idea through narrow Tempo lane",
+      "purpose": "Reject low-threshold attempts to create unrelated content through the Tempo lane.",
+      "initial_state": {
+        "cycle_index": 0,
+        "tempo_mana": {
+          "id_human_alpha": 3
+        }
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf002_unrelated_truth",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf002_unrelated",
+            "idea_type": "truth_claim",
+            "truth_subtype": "relation_or_pattern",
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf002_concept",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "idea_tcf002_concept",
+            "idea_type": "conceptual_idea",
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [],
+      "expected_rejections": [
+        {
+          "event_id": "evt_tcf002_unrelated_truth",
+          "code": "ERR_TEMPO_CLAIM_MISSING_METADATA",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf002_concept",
+          "code": "ERR_TEMPO_CLAIM_NOT_TRUTH_CLAIM",
+          "code_status": "appendix_a_final"
+        }
+      ],
+      "expected_derived_outputs": {
+        "tempo_mana_spent": 0
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Invalid events do not spend Tempo mana."
+      ]
+    },
+    {
+      "fixture_id": "TCF-003-two-equivalent-target-bound-time-claims",
+      "title": "Two identities create equivalent target-bound time claims",
+      "purpose": "Show equivalent claims share a target key while preserving separate authorship.",
+      "initial_state": {
+        "cycle_index": 0
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf003_claim_alpha",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf003_alpha",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf003_claim_beta",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "claim_tcf003_beta",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf003_same_as",
+          "event_type": "connection_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "connection_id": "conn_tcf003_same_as",
+            "from_idea_id": "claim_tcf003_beta",
+            "to_idea_id": "claim_tcf003_alpha",
+            "connection_type": "same_as"
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf003_claim_alpha",
+        "evt_tcf003_claim_beta",
+        "evt_tcf003_same_as"
+      ],
+      "expected_rejections": [],
+    "expected_derived_outputs": {
+      "equivalent_claim_ids": [
+        "claim_tcf003_alpha",
+        "claim_tcf003_beta"
+      ],
+      "separate_authorship_preserved": true,
+      "same_as_grants_authority": false,
+      "dmin_eligible_human_support": 2,
+      "dmin_structural_support_units": 2,
+      "dmin_structural_readiness": true,
+      "cycle_age_ge_dmin": true,
+      "operative_certainty_band": "none",
+      "structural_support_changes_truth_certainty": false
+    },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Equivalent claims do not create certainty by count alone."
+      ]
+    },
+    {
+      "fixture_id": "TCF-004-contradictory-target-bound-time-claims",
+      "title": "Contradictory target-bound time claims",
+      "purpose": "Represent contradictory claims as ordinary visible truth claims.",
+      "initial_state": {
+        "cycle_index": 0
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf004_claim_elapsed",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "claim_tcf004_elapsed",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf004_claim_not_elapsed",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_gamma",
+          "payload": {
+            "idea_id": "claim_tcf004_not_elapsed",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_contradiction": {
+              "contradicts_target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "proposition": "Dmin has not elapsed"
+            }
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf004_claim_elapsed",
+        "evt_tcf004_claim_not_elapsed"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "contradictory_claim_ids": [
+          "claim_tcf004_not_elapsed"
+        ],
+        "predicate_without_certainty_verdict": false
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Contradiction remains visible and challengeable."
+      ]
+    },
+    {
+      "fixture_id": "TCF-005-potential-evidence-spectrum-ideas",
+      "title": "Potential evidence spectrum consists entirely of ideas",
+      "purpose": "Represent potential evidence as hypothetical evidence ideas.",
+      "initial_state": {
+        "cycle_index": 0
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf005_potential_low",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "idea_tcf005_potential_low",
+            "idea_type": "truth_claim",
+            "truth_subtype": "test_or_validation",
+            "proposition": "A replayable source-chunk claim consistent with the anchor would be low evidence for Dmin."
+          }
+        },
+        {
+          "event_id": "evt_tcf005_potential_high",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "idea_tcf005_potential_high",
+            "idea_type": "truth_claim",
+            "truth_subtype": "test_or_validation",
+            "proposition": "Two independent canonical source-chunk claims plus consistency checks would be high evidence for Dmin."
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf005_potential_low",
+        "evt_tcf005_potential_high"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "potential_evidence_is_ideas": true,
+        "certainty_effect_without_placement": false
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Potential evidence ideas define a spectrum but do not place actual evidence by themselves."
+      ]
+    },
+    {
+      "fixture_id": "TCF-006-actual-evidence-ideas-only",
+      "title": "Actual evidence consists entirely of ideas",
+      "purpose": "Create actual Tempo-context evidence as ordinary truth_claim ideas.",
+      "initial_state": {
+        "cycle_index": 0
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf006_claim",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf006_dmin",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf006_evidence",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "evidence_idea_tcf006_observed_elapsed",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "proposition": "I observed a replayable local record consistent with Dmin elapsed.",
+            "provenance_refs": [
+              "payload_hash_tcf006_record"
+            ],
+            "tempo_lane": {
+              "tempo_lane_operation": "tempo_evidence_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf006_claim",
+        "evt_tcf006_evidence"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "actual_evidence_is_idea": true,
+        "evidence_connected": false,
+        "certainty_effect_without_connection": false
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Evidence ideas require explicit connections and challenge outcomes before affecting certainty."
+      ]
+    },
+    {
+      "fixture_id": "TCF-007-evidence-connection-validation",
+      "title": "Evidence_for and evidence_against connection validation",
+      "purpose": "Use existing relative_importance connections to place evidence ideas in evidential roles.",
+      "initial_state": {
+        "cycle_index": 0,
+        "required_prior_fixtures": [
+          "TCF-004-contradictory-target-bound-time-claims",
+          "TCF-006-actual-evidence-ideas-only"
+        ]
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf007_evidence_for",
+          "event_type": "connection_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "connection_id": "conn_tcf007_for",
+            "from_idea_id": "evidence_idea_tcf006_observed_elapsed",
+            "to_idea_id": "claim_tcf006_dmin",
+            "connection_type": "relative_importance",
+            "usage": "evidence_for",
+            "axis": "important_for_reference",
+            "timeframe": "current_cycle",
+            "scope": "universal",
+            "tempo_lane": {
+              "tempo_lane_operation": "tempo_evidence_for_connection",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf007_evidence_against",
+          "event_type": "connection_create",
+          "author_identity_id": "id_human_gamma",
+          "payload": {
+            "connection_id": "conn_tcf007_against",
+            "from_idea_id": "claim_tcf004_not_elapsed",
+            "to_idea_id": "claim_tcf006_dmin",
+            "connection_type": "relative_importance",
+            "usage": "evidence_against",
+            "axis": "important_for_reference",
+            "timeframe": "current_cycle",
+            "scope": "universal"
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf007_evidence_for",
+        "evt_tcf007_evidence_against"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "evidence_for_connection_ids": [
+          "conn_tcf007_for"
+        ],
+        "evidence_against_connection_ids": [
+          "conn_tcf007_against"
+        ],
+        "certainty_effect_without_challenge_verdict": false
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Connections define evidential role; they do not assign certainty by themselves."
+      ]
+    },
+    {
+      "fixture_id": "TCF-008-placement-challenge-orders-actual-evidence",
+      "title": "Placement challenge orders actual evidence against potential evidence",
+      "purpose": "Assign an evidence placement using ordinary challenge events.",
+      "initial_state": {
+        "cycle_index": 0,
+        "required_prior_fixtures": [
+          "TCF-005-potential-evidence-spectrum-ideas",
+          "TCF-006-actual-evidence-ideas-only",
+          "TCF-007-evidence-connection-validation"
+        ]
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf008_challenge",
+          "event_type": "challenge_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf008_placement",
+            "challenge_domain": "truth",
+            "challenge_subtype": "evidence_placement",
+            "subject_idea_ids": [
+              "evidence_idea_tcf006_observed_elapsed",
+              "idea_tcf005_potential_low",
+              "idea_tcf005_potential_high"
+            ],
+            "framing_representation_ref": "rep_tcf008_frame"
+          }
+        },
+        {
+          "event_id": "evt_tcf008_vote",
+          "event_type": "vote_cast",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf008_placement",
+            "ballot": "place_between_low_and_high"
+          }
+        },
+        {
+          "event_id": "evt_tcf008_verdict",
+          "event_type": "challenge_finalize_verdict",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf008_placement",
+            "verdict": "evidence_placed_low"
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf008_challenge",
+        "evt_tcf008_vote",
+        "evt_tcf008_verdict"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "placement_for_evidence_idea_tcf006_observed_elapsed": "low",
+        "certainty_band_assigned": false
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Placement is explicit challenge history, not heuristic scoring."
+      ]
+    },
+    {
+      "fixture_id": "TCF-009-certainty-band-does-not-assign-tallow",
+    "title": "Certainty-band challenge does not assign T_allow",
+    "purpose": "Assign a low certainty band to a Dmin claim through ordinary challenge verdicts without treating that verdict as structural support.",
+      "initial_state": {
+      "cycle_index": 0,
+      "required_prior_fixtures": [
+        "TCF-006-actual-evidence-ideas-only"
+      ]
+    },
+      "input_events": [
+        {
+          "event_id": "evt_tcf009_challenge",
+          "event_type": "challenge_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf009_certainty",
+            "challenge_domain": "truth",
+            "challenge_subtype": "certainty_band",
+            "subject_idea_ids": [
+              "claim_tcf006_dmin"
+            ],
+            "proposed_certainty_band": "low",
+            "framing_representation_ref": "rep_tcf009_frame"
+          }
+        },
+        {
+          "event_id": "evt_tcf009_vote",
+          "event_type": "vote_cast",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf009_certainty",
+            "ballot": "accept_low"
+          }
+        },
+        {
+          "event_id": "evt_tcf009_verdict",
+          "event_type": "challenge_finalize_verdict",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf009_certainty",
+            "verdict": "certainty_band_assigned",
+            "assigned_certainty_band": "low"
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf009_challenge",
+        "evt_tcf009_vote",
+        "evt_tcf009_verdict"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+      "claim_id": "claim_tcf006_dmin",
+      "operative_certainty_band": "low",
+      "cycle_age_ge_dmin": false,
+      "dmin_structural_readiness": false,
+      "structural_support_changes_truth_certainty": false,
+      "beacon_status": "not_eligible"
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {
+        "consequential_authority": false
+      },
+    "notes": [
+      "T_allow is structural support, not an ordinary certainty band."
+    ]
+    },
+    {
+      "fixture_id": "TCF-010-high-certainty-diverse-beacon-status",
+      "title": "Higher certainty plus diversity and stability gives beacon status",
+      "purpose": "Derive beacon status from an ordinary time claim after high certainty and diversity requirements are met.",
+      "initial_state": {
+        "cycle_index": 1,
+        "required_prior_fixtures": [
+          "TCF-003-two-equivalent-target-bound-time-claims"
+        ]
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf010_supporting_evidence_beta",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "evidence_idea_tcf010_beta",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "proposition": "I independently inspected the target-bound claim and supporting source ideas.",
+            "provenance_refs": [
+              "claim_tcf003_beta"
+            ]
+          }
+        },
+        {
+          "event_id": "evt_tcf010_connect_beta",
+          "event_type": "connection_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "connection_id": "conn_tcf010_beta_for",
+            "from_idea_id": "evidence_idea_tcf010_beta",
+            "to_idea_id": "claim_tcf003_alpha",
+            "connection_type": "relative_importance",
+            "usage": "evidence_for",
+            "axis": "important_for_reference",
+            "timeframe": "current_cycle",
+            "scope": "universal"
+          }
+        },
+        {
+          "event_id": "evt_tcf010_certainty_challenge",
+          "event_type": "challenge_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf010_certainty",
+            "challenge_domain": "truth",
+            "challenge_subtype": "certainty_band",
+            "subject_idea_ids": [
+              "claim_tcf003_alpha"
+            ],
+            "proposed_certainty_band": "high",
+            "framing_representation_ref": "rep_tcf010_frame"
+          }
+        },
+        {
+          "event_id": "evt_tcf010_certainty_vote",
+          "event_type": "vote_cast",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf010_certainty",
+            "ballot": "accept_high"
+          }
+        },
+        {
+          "event_id": "evt_tcf010_certainty_verdict",
+          "event_type": "challenge_finalize_verdict",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf010_certainty",
+            "verdict": "certainty_band_assigned",
+            "assigned_certainty_band": "high",
+            "subject_idea_ids": [
+              "claim_tcf003_alpha"
+            ]
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf010_supporting_evidence_beta",
+        "evt_tcf010_connect_beta",
+        "evt_tcf010_certainty_challenge",
+        "evt_tcf010_certainty_vote",
+        "evt_tcf010_certainty_verdict"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "representative_claim_id": "claim_tcf003_alpha",
+        "operative_certainty_band": "high",
+        "distinct_qualified_supporters": [
+          "id_human_alpha",
+          "id_human_beta"
+        ],
+        "independence_domains": [
+          "domain_alpha",
+          "domain_beta"
+        ],
+        "beacon_status_after_stability": "elevated",
+        "representative_claim_authority": false
+      },
+      "expected_cycle_outputs": {
+        "cycle_certification_status": "certified"
+      },
+      "expected_authorization_outputs": {
+        "authorization_requires_lag_K": true
+      },
+      "notes": [
+        "Beacon status is derived status of an ordinary time truth claim."
+      ]
+    },
+    {
+      "fixture_id": "TCF-011-one-person-structural-liveness-no-beacon",
+      "title": "One-person structural liveness without one-person beacon authority",
+      "purpose": "Use the Dmax-only structural liveness predicate to force a boundary without creating authority.",
+      "initial_state": {
+        "cycle_index": 6,
+        "W_score": 0,
+        "W_target": 2,
+        "active_humans": [
+          "id_human_alpha"
+        ],
+        "structural_dmax_liveness_rule": "single_valid_dmax_truth_claim_no_blockers_for_forced_close_only"
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf011_survivor_claim",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf011_dmax_survivor",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(6, dmax)",
+              "anchor_event_id": "evt_cycle_5_close",
+              "anchor_cycle_index": 6,
+              "target_kind": "dmax",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 5,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf011_cycle_close",
+          "event_type": "cycle_close",
+          "author_identity_id": "system_boundary_emitter",
+          "payload": {
+            "cycle_index_closed": 6,
+            "next_cycle_index": 7,
+            "boundary_type": "forced",
+            "trigger": "dmax_structural_liveness_forced",
+            "W_score": 0,
+            "W_target": 2,
+            "dmin_target_key": "tempo_target(6, dmin)",
+            "dmax_target_key": "tempo_target(6, dmax)",
+            "dmin_certainty_band": "none",
+            "dmin_contradiction_band": null,
+            "dmax_certainty_band": "none",
+            "dmax_contradiction_band": null,
+            "structural_dmax_liveness_predicate": "true",
+            "liveness_claim_id": "claim_tcf011_dmax_survivor",
+            "liveness_target_key": "tempo_target(6, dmax)",
+            "blocking_contradiction_claim_ids": [],
+            "blocking_challenge_ids": [],
+            "liveness_trigger_allowed_for": "forced_cycle_close_only",
+            "tempo_profile_hash": "hash_tempo_profile_test_v1",
+            "authorization_frontier_before": -1,
+            "derived_state_commitment": "hash_tcf011_state"
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf011_survivor_claim",
+        "evt_tcf011_cycle_close"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "structural_dmax_liveness_predicate": "true",
+        "liveness_claim_id": "claim_tcf011_dmax_survivor",
+        "liveness_target_key": "tempo_target(6, dmax)",
+        "blocking_contradiction_claim_ids": [],
+        "blocking_challenge_ids": [],
+        "cycle_age_ge_dmax": false,
+        "ordinary_dmax_certainty_created": false,
+        "one_person_beacon_status": "not_eligible",
+        "beacon_diversity_satisfied": false,
+        "one_person_authority_unlocked": false
+      },
+      "expected_cycle_outputs": {
+        "boundary_type": "forced",
+        "trigger": "dmax_structural_liveness_forced",
+        "certification_status": "pending",
+        "forced_remains_forced": true
+      },
+      "expected_authorization_outputs": {
+        "authorization_frontier": -1,
+        "POD": "blocked",
+        "POINT": "blocked",
+        "governance": "blocked",
+        "ordinary_mana": "constrained",
+        "ordinary_rate_limits": "blocked"
+      },
+      "notes": [
+        "The Dmax survivor path is structural only and does not assign certainty."
+      ]
+    },
+    {
+      "fixture_id": "TCF-021-one-person-dmin-deliberative-shortcut-rejected",
+      "title": "One-person Dmin deliberative shortcut rejected",
+      "purpose": "Reject attempts to use the survivor Dmax liveness rule for Dmin or deliberative closure.",
+      "initial_state": {
+        "cycle_index": 7,
+        "W_score": 2,
+        "W_target": 2,
+        "active_humans": [
+          "id_human_alpha"
+        ]
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf021_dmin_claim",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf021_dmin_survivor",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(7, dmin)",
+              "anchor_event_id": "evt_cycle_6_close",
+              "anchor_cycle_index": 7,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        }
+      ],
+      "harness_actions": [
+        {
+          "attempt_id": "attempt_tcf021_dmin_shortcut_close",
+          "attempt_type": "cycle_close",
+          "payload": {
+            "cycle_index_closed": 7,
+            "boundary_type": "deliberative",
+            "trigger": "dmin_plus_work_target",
+            "structural_dmax_liveness_predicate": "true",
+            "liveness_claim_id": "claim_tcf021_dmin_survivor"
+          }
+        }
+      ],
+      "expected_acceptance": [
+        "evt_tcf021_dmin_claim"
+      ],
+      "expected_rejections": [
+        {
+          "event_id": "attempt_tcf021_dmin_shortcut_close",
+          "code": "ERR_STRUCTURAL_DMAX_LIVENESS_USED_FOR_DMIN",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "attempt_tcf021_dmin_shortcut_close",
+          "code": "ERR_STRUCTURAL_DMAX_LIVENESS_USED_FOR_DELIBERATIVE_CLOSE",
+          "code_status": "appendix_a_final"
+        }
+      ],
+      "expected_derived_outputs": {
+        "cycle_age_ge_dmin": false,
+        "ordinary_dmin_certainty_created": false,
+        "structural_dmax_liveness_predicate": "false"
+      },
+      "expected_cycle_outputs": {
+        "deliberative_close_allowed": false
+      },
+      "expected_authorization_outputs": {
+        "consequential_authority": false
+      },
+      "notes": [
+        "A single Dmin claim remains a challengeable idea but cannot close deliberatively without ordinary certainty-band verdict history."
+      ]
+    },
+    {
+      "fixture_id": "TCF-022-contradiction-blocks-one-person-dmax-liveness",
+      "title": "Contradiction blocks one-person Dmax liveness",
+      "purpose": "A contradictory target-bound claim pauses the structural Dmax liveness path until ordinary resolution.",
+      "initial_state": {
+        "cycle_index": 8,
+        "W_score": 0,
+        "W_target": 2
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf022_dmax_elapsed_claim",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf022_dmax_elapsed",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(8, dmax)",
+              "anchor_event_id": "evt_cycle_7_close",
+              "anchor_cycle_index": 8,
+              "target_kind": "dmax",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 5,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf022_dmax_not_elapsed_claim",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "claim_tcf022_dmax_not_elapsed",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "proposition": "Dmax has not elapsed since cycle 8 began.",
+            "tempo_claim": {
+              "target_key": "tempo_target(8, dmax)",
+              "anchor_event_id": "evt_cycle_7_close",
+              "anchor_cycle_index": 8,
+              "target_kind": "dmax",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 5,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": false,
+              "provenance_refs": []
+            },
+            "contradicts_target_key": "tempo_target(8, dmax)",
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        }
+      ],
+      "harness_actions": [
+        {
+          "attempt_id": "attempt_tcf022_liveness_close_despite_contradiction",
+          "attempt_type": "cycle_close",
+          "payload": {
+            "cycle_index_closed": 8,
+            "boundary_type": "forced",
+            "trigger": "dmax_structural_liveness_forced",
+            "liveness_claim_id": "claim_tcf022_dmax_elapsed",
+            "blocking_contradiction_claim_ids": [
+              "claim_tcf022_dmax_not_elapsed"
+            ]
+          }
+        }
+      ],
+      "expected_acceptance": [
+        "evt_tcf022_dmax_elapsed_claim",
+        "evt_tcf022_dmax_not_elapsed_claim"
+      ],
+      "expected_rejections": [
+        {
+          "event_id": "attempt_tcf022_liveness_close_despite_contradiction",
+          "code": "ERR_STRUCTURAL_DMAX_LIVENESS_BLOCKED_BY_CONTRADICTION",
+          "code_status": "appendix_a_final"
+        }
+      ],
+      "expected_derived_outputs": {
+        "structural_dmax_liveness_predicate": "blocked",
+        "liveness_claim_id": "claim_tcf022_dmax_elapsed",
+        "blocking_contradiction_claim_ids": [
+          "claim_tcf022_dmax_not_elapsed"
+        ],
+        "blocking_challenge_ids": []
+      },
+      "expected_cycle_outputs": {
+        "cycle_close_emitted": false
+      },
+      "expected_authorization_outputs": {
+        "consequential_authority": false
+      },
+      "notes": [
+        "Replay does not silently choose between contradictory time claims."
+      ]
+    },
+    {
+      "fixture_id": "TCF-023-survivor-path-cannot-certify-beacon",
+      "title": "Survivor path cannot certify beacon",
+      "purpose": "Repeated structural Dmax liveness closures preserve structure but do not satisfy beacon diversity or advance authority.",
+      "initial_state": {
+        "active_humans": [
+          "id_human_alpha"
+        ],
+        "survivor_forced_cycles": [
+          6,
+          7,
+          8
+        ],
+        "closure_trigger": "dmax_structural_liveness_forced"
+      },
+      "input_events": [],
+      "harness_actions": [
+        {
+          "attempt_id": "attempt_tcf023_reduce_beacon_requirements",
+          "attempt_type": "profile_or_frontier_mutation",
+          "requested_effects": [
+            "minimum_beacon_identities_1",
+            "minimum_independence_domains_1",
+            "advance_authorization_frontier"
+          ]
+        }
+      ],
+      "expected_acceptance": [],
+      "expected_rejections": [
+        {
+          "event_id": "attempt_tcf023_reduce_beacon_requirements",
+          "code": "ERR_STRUCTURAL_DMAX_LIVENESS_BEACON_REQUIREMENT_REDUCTION",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "attempt_tcf023_reduce_beacon_requirements",
+          "code": "ERR_COLLAPSE_THRESHOLD_SHRINK_ATTEMPT",
+          "code_status": "appendix_a_final"
+        }
+      ],
+      "expected_derived_outputs": {
+        "beacon_status": "not_eligible",
+        "distinct_qualified_supporters": 1,
+        "minimum_beacon_identities": 2,
+        "minimum_independence_domains": 2
+      },
+      "expected_cycle_outputs": {
+        "forced_boundaries_remain_forced": true,
+        "cycle_certification_status": "pending"
+      },
+      "expected_authorization_outputs": {
+        "authorization_frontier": -1,
+        "POD": "blocked",
+        "POINT": "blocked",
+        "governance": "blocked"
+      },
+      "notes": [
+        "One human can keep structural repair moving but cannot certify a beacon or move the frontier alone."
+      ]
+    },
+    {
+      "fixture_id": "TCF-024-later-normal-certification-finalizes-pending-only",
+      "title": "Later normal certification finalizes pending outputs only",
+      "purpose": "Normal multi-identity evidence/challenge/certainty process can later certify timing without validating forbidden constrained-mode actions.",
+      "initial_state": {
+        "current_cycle": 10,
+        "K": 2,
+        "required_prior_fixtures": [
+          "TCF-011-one-person-structural-liveness-no-beacon",
+          "TCF-010-high-certainty-diverse-beacon-status"
+        ],
+        "pending_outputs": [
+          "pod_pending_cycle_6",
+          "point_pending_cycle_6"
+        ],
+        "forbidden_actions_attempted": [
+          "governance_activation_during_constrained_cycle_6"
+        ]
+      },
+      "input_events": [],
+      "harness_actions": [
+        {
+          "attempt_id": "attempt_tcf024_retroactive_forbidden_action",
+          "attempt_type": "retroactive_authority_validation",
+          "requested_effects": [
+            "validate_governance_activation_during_constrained_cycle_6",
+            "backfill_ordinary_mana",
+            "backfill_rate_limit_reset"
+          ]
+        }
+      ],
+      "expected_acceptance": [],
+      "expected_rejections": [
+        {
+          "event_id": "attempt_tcf024_retroactive_forbidden_action",
+          "code": "ERR_AUTHORITY_BACKFILL_ATTEMPT",
+          "code_status": "appendix_a_final"
+        }
+      ],
+      "expected_derived_outputs": {
+        "cycle_6_certification_status": "certified_after_normal_beacon",
+        "authorization_frontier_advances_if_contiguous_and_lag_satisfied": true
+      },
+      "expected_cycle_outputs": {
+        "forced_boundary_reclassified": false
+      },
+      "expected_authorization_outputs": {
+        "pod_pending_cycle_6": "authorized_if_frontier_passes",
+        "point_pending_cycle_6": "authorized_if_frontier_passes",
+        "governance_activation_during_constrained_cycle_6": "blocked",
+        "ordinary_mana_backfill": 0,
+        "rate_limit_backfill": 0
+      },
+      "notes": [
+        "Later certification may finalize explicit pending outputs only."
+      ]
+    },
+    {
+      "fixture_id": "TCF-012-dmin-deliberative-close",
+      "title": "Dmin deliberative close",
+      "purpose": "Close structurally when Dmin is true and W_score meets W_target.",
+    "initial_state": {
+      "cycle_index": 0,
+      "W_score": 2,
+      "W_target": 2,
+      "required_prior_fixtures": [
+        "TCF-003-two-equivalent-target-bound-time-claims"
+      ]
+    },
+      "input_events": [
+        {
+          "event_id": "evt_tcf012_cycle_close",
+          "event_type": "cycle_close",
+          "author_identity_id": "system_boundary_emitter",
+          "payload": {
+            "cycle_index_closed": 0,
+            "next_cycle_index": 1,
+            "boundary_type": "deliberative",
+            "trigger": "dmin_plus_work_target",
+            "W_score": 2,
+            "W_target": 2,
+            "dmin_target_key": "tempo_target(0, dmin)",
+            "dmax_target_key": "tempo_target(0, dmax)",
+        "dmin_certainty_band": "low",
+        "dmin_contradiction_band": null,
+        "dmin_eligible_human_support": 2,
+        "dmin_eligible_human_opposition": 0,
+        "dmin_passive_evidence_units": 0,
+        "dmin_structural_support_units": 2,
+        "dmin_structural_readiness": true,
+        "dmax_certainty_band": "none",
+        "dmax_contradiction_band": null,
+            "structural_dmax_liveness_predicate": "false",
+            "liveness_claim_id": null,
+            "liveness_target_key": null,
+            "blocking_contradiction_claim_ids": [],
+            "blocking_challenge_ids": [],
+            "liveness_trigger_allowed_for": null,
+            "tempo_profile_hash": "hash_tempo_profile_test_v1",
+            "authorization_frontier_before": -1,
+            "derived_state_commitment": "hash_tcf012_state"
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf012_cycle_close"
+      ],
+      "expected_rejections": [],
+  "expected_derived_outputs": {
+    "cycle_age_ge_dmin": true,
+    "dmin_structural_readiness": true,
+    "cycle_age_ge_dmax": false
+  },
+      "expected_cycle_outputs": {
+        "boundary_type": "deliberative",
+        "certification_status": "pending"
+      },
+      "expected_authorization_outputs": {
+        "authorization_frontier": -1,
+        "consequential_authority": false
+      },
+      "notes": [
+        "Structural close is not certification."
+      ]
+    },
+    {
+      "fixture_id": "TCF-013-dmax-forced-close",
+      "title": "Dmax forced close",
+      "purpose": "Close structurally when Dmax is true and W_target is unmet.",
+      "initial_state": {
+        "cycle_index": 0,
+        "W_score": 0,
+        "W_target": 2
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf013_dmax_claim",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "claim_tcf013_dmax",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmax)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmax",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 5,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "passive_timestamp_evidence": {
+              "source_id": "clock_source_tcf013_event_envelope",
+              "source_category": "signed_human_event_envelope_timestamp",
+              "source_class": "human_device_clock",
+              "target_key": "tempo_target(0, dmax)",
+              "source_epoch": "tcf013-envelope-epoch-0",
+              "normalized_timestamp": "2026-06-22T00:00:00Z",
+              "precision": "second",
+              "uncertainty_interval": {
+                "start": "2026-06-21T23:59:00Z",
+                "end": "2026-06-22T00:01:00Z"
+              },
+              "canonical_provenance_ref": "evt_tcf013_dmax_claim",
+              "committed_by_signature": true,
+              "support_units": 1
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf013_certainty_challenge",
+          "event_type": "challenge_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf013_certainty",
+            "challenge_domain": "truth",
+            "challenge_subtype": "certainty_band",
+            "subject_idea_ids": [
+              "claim_tcf013_dmax"
+            ],
+            "proposed_certainty_band": "low",
+            "framing_representation_ref": "rep_tcf013_frame"
+          }
+        },
+        {
+          "event_id": "evt_tcf013_certainty_vote",
+          "event_type": "vote_cast",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf013_certainty",
+            "ballot": "accept_low"
+          }
+        },
+        {
+          "event_id": "evt_tcf013_certainty_verdict",
+          "event_type": "challenge_finalize_verdict",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf013_certainty",
+            "verdict": "certainty_band_assigned",
+            "assigned_certainty_band": "low",
+            "subject_idea_ids": [
+              "claim_tcf013_dmax"
+            ]
+          }
+        },
+        {
+          "event_id": "evt_tcf013_cycle_close",
+          "event_type": "cycle_close",
+          "author_identity_id": "system_boundary_emitter",
+          "payload": {
+            "cycle_index_closed": 0,
+            "next_cycle_index": 1,
+            "boundary_type": "forced",
+            "trigger": "dmax_forced",
+            "W_score": 0,
+            "W_target": 2,
+            "dmin_target_key": "tempo_target(0, dmin)",
+            "dmax_target_key": "tempo_target(0, dmax)",
+            "dmin_certainty_band": "structurally_implied_by_dmax",
+            "dmin_contradiction_band": null,
+        "dmax_certainty_band": "low",
+        "dmax_contradiction_band": null,
+        "dmax_eligible_human_support": 1,
+        "dmax_eligible_human_opposition": 0,
+        "dmax_passive_evidence_units": 1,
+        "dmax_structural_support_units": 2,
+        "dmax_structural_readiness": true,
+        "structural_dmax_liveness_predicate": "false",
+            "liveness_claim_id": null,
+            "liveness_target_key": null,
+            "blocking_contradiction_claim_ids": [],
+            "blocking_challenge_ids": [],
+            "liveness_trigger_allowed_for": null,
+            "tempo_profile_hash": "hash_tempo_profile_test_v1",
+            "authorization_frontier_before": -1,
+            "derived_state_commitment": "hash_tcf013_state"
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf013_dmax_claim",
+        "evt_tcf013_certainty_challenge",
+        "evt_tcf013_certainty_vote",
+        "evt_tcf013_certainty_verdict",
+        "evt_tcf013_cycle_close"
+      ],
+      "expected_rejections": [],
+  "expected_derived_outputs": {
+    "cycle_age_ge_dmax": true,
+    "dmax_eligible_human_support": 1,
+    "dmax_passive_evidence_units": 1,
+    "dmax_structural_support_units": 2,
+    "dmax_structural_readiness": true,
+    "dmax_structurally_implies_dmin": true
+  },
+      "expected_cycle_outputs": {
+        "boundary_type": "forced",
+        "forced_remains_forced": true
+      },
+      "expected_authorization_outputs": {
+        "consequential_authority": false
+      },
+      "notes": [
+        "Dmax implies structural Dmin only."
+      ]
+    },
+    {
+      "fixture_id": "TCF-014-forced-cycles-never-authorize",
+      "title": "Forced cycles never authorize POD, POINT, or governance",
+      "purpose": "Reject attempts to treat forced cycles as authority or to backfill allowances.",
+      "initial_state": {
+        "cycle_index": 3,
+        "forced_cycles": [
+          0,
+          1,
+          2
+        ]
+      },
+      "input_events": [],
+      "harness_actions": [
+        {
+          "attempt_id": "attempt_tcf014_forced_authority",
+          "attempt_type": "downstream_authority_from_forced_cycles",
+          "requested_effects": [
+            "POD_finalize",
+            "POINT_mint",
+            "governance_activate",
+            "ordinary_mana_backfill",
+            "rate_limit_burst"
+          ]
+        }
+      ],
+      "expected_acceptance": [],
+      "expected_rejections": [
+        {
+          "event_id": "attempt_tcf014_forced_authority",
+          "code": "ERR_CYCLE_FORCED_AUTHORITY_ATTEMPT",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "attempt_tcf014_forced_authority",
+          "code": "ERR_AUTHORITY_BACKFILL_ATTEMPT",
+          "code_status": "appendix_a_final"
+        }
+      ],
+      "expected_derived_outputs": {
+        "forced_cycles_accumulate_legitimacy": false,
+        "tempo_mana_balance_capped": true
+      },
+      "expected_cycle_outputs": {
+        "forced_boundaries_remain_forced": true
+      },
+      "expected_authorization_outputs": {
+        "POD": "blocked",
+        "POINT": "blocked",
+        "governance": "blocked",
+        "ordinary_mana_backfill": 0,
+        "rate_limit_burst": 0
+      },
+      "notes": [
+        "Harness-only mutation attempts are not canonical events."
+      ]
+    },
+    {
+      "fixture_id": "TCF-015-certainty-contradiction-blocks-predicate",
+      "title": "Certainty contradiction blocks predicate",
+      "purpose": "A contradictory claim at the contradiction threshold blocks Dmin predicate truth.",
+      "initial_state": {
+        "cycle_index": 0,
+        "required_prior_fixtures": [
+          "TCF-004-contradictory-target-bound-time-claims"
+        ]
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf015_contradiction_challenge",
+          "event_type": "challenge_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf015_contradiction",
+            "challenge_domain": "truth",
+            "challenge_subtype": "certainty_band",
+            "subject_idea_ids": [
+              "claim_tcf004_not_elapsed"
+            ],
+            "proposed_certainty_band": "medium",
+            "framing_representation_ref": "rep_tcf015_frame"
+          }
+        },
+        {
+          "event_id": "evt_tcf015_contradiction_vote",
+          "event_type": "vote_cast",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf015_contradiction",
+            "ballot": "accept_medium"
+          }
+        },
+        {
+          "event_id": "evt_tcf015_contradiction_verdict",
+          "event_type": "challenge_finalize_verdict",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf015_contradiction",
+            "verdict": "certainty_band_assigned",
+            "assigned_certainty_band": "medium",
+            "subject_idea_ids": [
+              "claim_tcf004_not_elapsed"
+            ]
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf015_contradiction_challenge",
+        "evt_tcf015_contradiction_vote",
+        "evt_tcf015_contradiction_verdict"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "highest_contradiction_certainty_band": "medium",
+        "contradiction_blocked": true,
+        "cycle_age_ge_dmin": false
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {
+        "consequential_authority": false
+      },
+      "notes": [
+        "Contradiction at threshold blocks structural predicate truth."
+      ]
+    },
+    {
+      "fixture_id": "TCF-016-certification-gap-blocks-frontier",
+      "title": "Certification gap blocks frontier",
+      "purpose": "Authorization frontier remains contiguous and cannot skip an uncertified cycle.",
+      "initial_state": {
+        "current_cycle": 5,
+        "K": 2,
+        "cycle_certification": {
+          "0": "certified",
+          "1": "pending",
+          "2": "certified"
+        },
+        "previous_frontier": -1
+      },
+      "input_events": [],
+      "harness_actions": [],
+      "expected_acceptance": [],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "largest_contiguous_certified_cycle": 0,
+        "eligible_by_lag": 3,
+        "candidate_frontier": 0,
+        "blocking_gap_cycle": 1
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {
+        "authorization_frontier": 0,
+        "frontier_skips_gap": false
+      },
+      "notes": [
+        "Cycles 0 and 2 certified is insufficient while cycle 1 is pending."
+      ]
+    },
+    {
+      "fixture_id": "TCF-017-external-link-alone-no-certainty",
+      "title": "External link alone has no certainty effect",
+      "purpose": "Reject direct certainty from a URL/hash without identity-authored evidence ideas and challenge outcomes.",
+      "initial_state": {
+        "cycle_index": 0
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf017_claim_with_url",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf017_dmin_url",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": [
+                "https://example.invalid/time-report",
+                "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              ]
+            }
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf017_claim_with_url"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "external_link_certainty_effect": "none",
+        "operative_certainty_band": "none",
+        "cycle_age_ge_dmin": false
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Provenance refs do not replace authored evidence ideas."
+      ]
+    },
+    {
+      "fixture_id": "TCF-018-source-document-and-chunk-ideas-support-after-placement",
+      "title": "Source-document/source-chunk ideas may support after connection and placement",
+      "purpose": "Show external-source representation as ideas plus explicit connections and challenge outcomes.",
+      "initial_state": {
+        "cycle_index": 0,
+        "required_prior_fixtures": [
+          "TCF-017-external-link-alone-no-certainty"
+        ]
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf018_source_doc",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "source_doc_idea_tcf018",
+            "idea_type": "truth_claim",
+            "truth_subtype": "existence_or_boundary",
+            "proposition": "A source document with hash sha256:bbbb exists at archived URL https://example.invalid/archive/time-report."
+          }
+        },
+        {
+          "event_id": "evt_tcf018_source_chunk",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "source_chunk_idea_tcf018",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "proposition": "Section 3 of source_doc_idea_tcf018 reports that the referenced anchor preceded the observed event.",
+            "provenance_refs": [
+              "source_doc_idea_tcf018",
+              "payload_hash_tcf018_section_3"
+            ]
+          }
+        },
+        {
+          "event_id": "evt_tcf018_claim_about_source",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "evidence_idea_tcf018_source_says_elapsed",
+            "idea_type": "truth_claim",
+            "truth_subtype": "relation_or_pattern",
+            "proposition": "The source chunk supports that Dmin elapsed for tempo_target(0, dmin).",
+            "provenance_refs": [
+              "source_chunk_idea_tcf018"
+            ]
+          }
+        },
+        {
+          "event_id": "evt_tcf018_connect",
+          "event_type": "connection_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "connection_id": "conn_tcf018_for",
+            "from_idea_id": "evidence_idea_tcf018_source_says_elapsed",
+            "to_idea_id": "claim_tcf017_dmin_url",
+            "connection_type": "relative_importance",
+            "usage": "evidence_for",
+            "axis": "important_for_reference",
+            "timeframe": "current_cycle",
+            "scope": "universal"
+          }
+        },
+        {
+          "event_id": "evt_tcf018_placement_challenge",
+          "event_type": "challenge_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf018_placement",
+            "challenge_domain": "truth",
+            "challenge_subtype": "evidence_placement",
+            "subject_idea_ids": [
+              "evidence_idea_tcf018_source_says_elapsed"
+            ],
+            "framing_representation_ref": "rep_tcf018_frame"
+          }
+        },
+        {
+          "event_id": "evt_tcf018_placement_vote",
+          "event_type": "vote_cast",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf018_placement",
+            "ballot": "place_low"
+          }
+        },
+        {
+          "event_id": "evt_tcf018_placement_verdict",
+          "event_type": "challenge_finalize_verdict",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "challenge_id": "challenge_tcf018_placement",
+            "verdict": "evidence_placed_low",
+            "subject_idea_ids": [
+              "evidence_idea_tcf018_source_says_elapsed"
+            ]
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf018_source_doc",
+        "evt_tcf018_source_chunk",
+        "evt_tcf018_claim_about_source",
+        "evt_tcf018_connect",
+        "evt_tcf018_placement_challenge",
+        "evt_tcf018_placement_vote",
+        "evt_tcf018_placement_verdict"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "external_url_is_provenance_only": true,
+        "source_represented_by_ideas": true,
+        "evidence_connection_required": true,
+        "placement_required": true
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Certainty still requires a certainty-band challenge verdict."
+      ]
+    },
+    {
+      "fixture_id": "TCF-019-ai-created-canonical-evidence-time-claims-rejected",
+      "title": "AI-created canonical evidence and time claims are rejected",
+      "purpose": "Reject AI attempts to create canonical Tempo content or challenge authority.",
+      "initial_state": {
+        "cycle_index": 0
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf019_ai_claim",
+          "event_type": "idea_create",
+          "author_identity_id": "id_ai_delta",
+          "payload": {
+            "idea_id": "claim_tcf019_ai_dmin",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf019_ai_evidence",
+          "event_type": "idea_create",
+          "author_identity_id": "id_ai_delta",
+          "payload": {
+            "idea_id": "evidence_idea_tcf019_ai",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "proposition": "AI observation says Dmin elapsed."
+          }
+        },
+        {
+          "event_id": "evt_tcf019_ai_vote",
+          "event_type": "vote_cast",
+          "author_identity_id": "id_ai_delta",
+          "payload": {
+            "challenge_id": "challenge_tcf019",
+            "ballot": "accept_high"
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [],
+      "expected_rejections": [
+        {
+          "event_id": "evt_tcf019_ai_claim",
+          "code": "ERR_TEMPO_AI_AUTHORITY",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf019_ai_evidence",
+          "code": "ERR_TEMPO_AI_AUTHORITY",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf019_ai_vote",
+          "code": "ERR_TEMPO_AI_AUTHORITY",
+          "code_status": "appendix_a_final"
+        }
+      ],
+      "expected_derived_outputs": {
+        "ai_certainty_contribution": "none",
+        "ai_beacon_diversity_contribution": 0
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {
+        "ai_authority_granted": false
+      },
+      "notes": [
+        "A human may later adopt AI-assisted material as a human-authored idea, but the AI is not the canonical author."
+      ]
+    },
+    {
+      "fixture_id": "TCF-020-offline-local-ideas-advisory-until-validation",
+      "title": "Offline/local ideas remain advisory until canonical validation",
+      "purpose": "Local target-bound ideas and cycle simulations have no canonical authority until published and replayed.",
+      "initial_state": {
+        "local_realm": "offline_pack_tcf020",
+        "canonical_cycle_index": 0
+      },
+      "input_events": [],
+      "harness_actions": [
+        {
+          "attempt_id": "attempt_tcf020_import_local_claim",
+          "attempt_type": "offline_import",
+          "local_material": [
+            "local_time_truth_claim",
+            "local_evidence_idea",
+            "local_cycle_simulation"
+          ]
+        }
+      ],
+      "expected_acceptance": [],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "local_material_status_before_canonical_validation": "advisory",
+        "local_cycle_simulation_authority": false,
+        "requires_canonical_publication_and_replay": true
+      },
+      "expected_cycle_outputs": {
+        "canonical_cycle_advanced_by_local_simulation": false
+      },
+      "expected_authorization_outputs": {
+        "POD": "unchanged",
+        "POINT": "unchanged",
+        "governance": "unchanged"
+      },
+      "notes": [
+        "Offline material must pass ordinary canonical validation and deterministic replay."
+      ]
+    },
+    {
+      "fixture_id": "TCF-025-rejection-matrix-tempo-cycle-validation",
+      "title": "Tempo/Cycle rejection matrix",
+      "purpose": "Cover remaining deterministic rejection surfaces before runtime replay harness implementation.",
+      "initial_state": {
+        "cycle_index": 0,
+        "W_score": 0,
+        "W_target": 2,
+        "authorization_frontier": -1,
+        "shared_setup_refs": [
+          "genesis",
+          "cycle0_dmin_target",
+          "cycle0_dmax_target"
+        ]
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf025_invalid_target_key",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf025_invalid_target_key",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(99, dmax)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf025_profile_mismatch",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf025_profile_mismatch",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_wrong_profile",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_wrong_profile"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf025_unauthorized_author",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_zeta",
+          "payload": {
+            "idea_id": "claim_tcf025_unauthorized_author",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf025_hidden_clock_authority",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf025_hidden_clock",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "forbidden_direct_time_authority": {
+              "server_time": "2026-06-22T12:00:00Z",
+              "client_timestamp": "2026-06-22T12:00:00Z",
+              "receipt_time": "2026-06-22T12:00:01Z"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf025_block_height_authority",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf025_block_height",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "forbidden_direct_time_authority": {
+              "block_height": "500"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf025_invalid_evidence_connection",
+          "event_type": "connection_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "connection_id": "conn_tcf025_invalid_evidence",
+            "connection_type": "relative_importance",
+            "usage": "evidence_for",
+            "source_idea_id": "missing_evidence_idea_tcf025",
+            "target_idea_id": "missing_target_claim_tcf025",
+            "tempo_lane": {
+              "tempo_lane_operation": "tempo_evidence_connection_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf025_non_earliest_close",
+          "event_type": "cycle_close",
+          "author_identity_id": "system_boundary_emitter",
+          "payload": {
+            "cycle_index_closed": 0,
+            "next_cycle_index": 1,
+            "boundary_type": "forced",
+            "trigger": "dmax_forced",
+            "W_score": 0,
+            "W_target": 2,
+            "dmin_target_key": "tempo_target(0, dmin)",
+            "dmax_target_key": "tempo_target(0, dmax)",
+            "dmin_certainty_band": "none",
+            "dmin_contradiction_band": null,
+            "dmax_certainty_band": "none",
+            "dmax_contradiction_band": null,
+            "structural_dmax_liveness_predicate": "false",
+            "liveness_claim_id": null,
+            "liveness_target_key": null,
+            "blocking_contradiction_claim_ids": [],
+            "blocking_challenge_ids": [],
+            "liveness_trigger_allowed_for": null,
+            "tempo_profile_hash": "hash_tempo_profile_test_v1",
+            "authorization_frontier_before": -1,
+            "derived_state_commitment": "hash_tcf025_non_earliest"
+          }
+        },
+        {
+          "event_id": "evt_tcf025_trigger_mismatch",
+          "event_type": "cycle_close",
+          "author_identity_id": "system_boundary_emitter",
+          "payload": {
+            "cycle_index_closed": 0,
+            "next_cycle_index": 1,
+            "boundary_type": "deliberative",
+            "trigger": "dmax_structural_liveness_forced",
+            "W_score": 2,
+            "W_target": 2,
+            "dmin_target_key": "tempo_target(0, dmin)",
+            "dmax_target_key": "tempo_target(0, dmax)",
+            "dmin_certainty_band": "none",
+            "dmin_contradiction_band": null,
+            "dmax_certainty_band": "none",
+            "dmax_contradiction_band": null,
+            "structural_dmax_liveness_predicate": "true",
+            "liveness_claim_id": "claim_tcf025_missing_liveness",
+            "liveness_target_key": "tempo_target(0, dmax)",
+            "blocking_contradiction_claim_ids": [],
+            "blocking_challenge_ids": [],
+            "liveness_trigger_allowed_for": "forced_cycle_close_only",
+            "tempo_profile_hash": "hash_tempo_profile_test_v1",
+            "authorization_frontier_before": -1,
+            "derived_state_commitment": "hash_tcf025_trigger_mismatch"
+          }
+        },
+        {
+          "event_id": "evt_tcf025_payload_mismatch",
+          "event_type": "cycle_close",
+          "author_identity_id": "system_boundary_emitter",
+          "payload": {
+            "cycle_index_closed": 0,
+            "next_cycle_index": 2,
+            "boundary_type": "forced",
+            "trigger": "dmax_structural_liveness_forced",
+            "W_score": 0,
+            "W_target": 2,
+            "dmin_target_key": "tempo_target(0, dmin)",
+            "dmax_target_key": "tempo_target(1, dmax)",
+            "dmin_certainty_band": "none",
+            "dmin_contradiction_band": null,
+            "dmax_certainty_band": "none",
+            "dmax_contradiction_band": null,
+            "structural_dmax_liveness_predicate": "true",
+            "liveness_claim_id": "claim_tcf025_missing_liveness",
+            "liveness_target_key": "tempo_target(1, dmax)",
+            "blocking_contradiction_claim_ids": [],
+            "blocking_challenge_ids": [],
+            "liveness_trigger_allowed_for": "forced_cycle_close_only",
+            "tempo_profile_hash": "hash_tempo_profile_test_v1",
+            "authorization_frontier_before": -1,
+            "derived_state_commitment": "hash_tcf025_payload_mismatch"
+          }
+        }
+      ],
+      "harness_actions": [
+        {
+          "attempt_id": "attempt_tcf025_structural_liveness_authority",
+          "attempt_type": "structural_dmax_liveness_authority_mutation",
+          "requested_effects": [
+            "certify_cycle",
+            "advance_authorization_frontier",
+            "finalize_POD",
+            "mint_POINT",
+            "ordinary_mana_backfill"
+          ]
+        },
+        {
+          "attempt_id": "attempt_tcf025_structural_liveness_beacon_certification",
+          "attempt_type": "structural_dmax_liveness_beacon_or_certification_mutation",
+          "requested_effects": [
+            "elevate_beacon_from_liveness_claim",
+            "certify_cycle_from_liveness_claim"
+          ]
+        },
+        {
+          "attempt_id": "attempt_tcf025_structural_liveness_threshold_shrink",
+          "attempt_type": "structural_dmax_liveness_threshold_shrink_mutation",
+          "requested_effects": [
+            "reduce_K",
+            "reduce_minimum_beacon_identities",
+            "reduce_minimum_independence_domains",
+            "reduce_beacon_stability_cycles"
+          ]
+        },
+        {
+          "attempt_id": "attempt_tcf025_frontier_non_contiguous",
+          "attempt_type": "authorization_frontier_mutation",
+          "requested_frontier": 2,
+          "cycle_certification": {
+            "0": "certified",
+            "1": "pending",
+            "2": "certified"
+          }
+        },
+        {
+          "attempt_id": "attempt_tcf025_frontier_decrease",
+          "attempt_type": "authorization_frontier_mutation",
+          "previous_frontier": 1,
+          "requested_frontier": 0
+        }
+      ],
+      "expected_acceptance": [],
+      "expected_rejections": [
+        {
+          "event_id": "evt_tcf025_invalid_target_key",
+          "code": "ERR_TEMPO_CLAIM_TARGET_KEY_MISMATCH",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf025_profile_mismatch",
+          "code": "ERR_TEMPO_CLAIM_PROFILE_MISMATCH",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf025_unauthorized_author",
+          "code": "ERR_TEMPO_CLAIM_UNAUTHORIZED_AUTHOR",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf025_hidden_clock_authority",
+          "code": "ERR_TEMPO_HIDDEN_CLOCK_INPUT",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf025_block_height_authority",
+          "code": "ERR_TEMPO_BLOCK_HEIGHT_AUTHORITY",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf025_invalid_evidence_connection",
+          "code": "ERR_TEMPO_EVIDENCE_CONNECTION_INVALID",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf025_non_earliest_close",
+          "code": "ERR_CYCLE_CLOSE_NOT_EARLIEST_VALID",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf025_trigger_mismatch",
+          "code": "ERR_CYCLE_CLOSE_TRIGGER_MISMATCH",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "evt_tcf025_payload_mismatch",
+          "code": "ERR_CYCLE_CLOSE_PAYLOAD_MISMATCH",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "attempt_tcf025_structural_liveness_authority",
+          "code": "ERR_STRUCTURAL_DMAX_LIVENESS_AUTHORITY_ATTEMPT",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "attempt_tcf025_structural_liveness_beacon_certification",
+          "code": "ERR_STRUCTURAL_DMAX_LIVENESS_BEACON_REQUIREMENT_REDUCTION",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "attempt_tcf025_structural_liveness_threshold_shrink",
+          "code": "ERR_COLLAPSE_THRESHOLD_SHRINK_ATTEMPT",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "attempt_tcf025_frontier_non_contiguous",
+          "code": "ERR_FRONTIER_NON_CONTIGUOUS",
+          "code_status": "appendix_a_final"
+        },
+        {
+          "event_id": "attempt_tcf025_frontier_decrease",
+          "code": "ERR_FRONTIER_DECREASE",
+          "code_status": "appendix_a_final"
+        }
+      ],
+      "expected_derived_outputs": {
+        "invalid_events_affect_certainty": false,
+        "structural_dmax_liveness_predicate": "false",
+        "authorization_frontier_mutated": false
+      },
+      "expected_cycle_outputs": {
+        "cycle_close_accepted": false
+      },
+      "expected_authorization_outputs": {
+        "POD": "blocked",
+        "POINT": "blocked",
+        "governance": "blocked",
+        "ordinary_mana_backfill": 0,
+        "rate_limit_backfill": 0
+      },
+      "notes": [
+        "Invalid canonical input events remain Appendix A event families; direct derived-state mutations are harness actions."
+      ]
+    },
+    {
+      "fixture_id": "TCF-026-passive-evidence-alone-cannot-cross-tallow",
+      "title": "Passive evidence alone cannot cross Tallow",
+      "purpose": "Record admissible passive timestamp evidence without any human structural stance and show it cannot satisfy structural readiness.",
+      "initial_state": {
+        "cycle_index": 0,
+        "W_score": 2,
+        "W_target": 2
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf026_passive_only",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "evidence_tcf026_passive_only",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "proposition": "A signed envelope timestamp appears consistent with elapsed time, without any target-bound human stance.",
+            "passive_timestamp_evidence": {
+              "source_id": "clock_source_tcf026",
+              "source_category": "signed_human_event_envelope_timestamp",
+              "source_class": "human_device_clock",
+              "target_key": "tempo_target(0, dmin)",
+              "source_epoch": "tcf026-envelope-epoch-0",
+              "normalized_timestamp": "2026-06-22T00:00:00Z",
+              "precision": "second",
+              "uncertainty_interval": {
+                "start": "2026-06-21T23:59:00Z",
+                "end": "2026-06-22T00:01:00Z"
+              },
+              "canonical_provenance_ref": "evt_tcf026_passive_only",
+              "committed_by_signature": true,
+              "support_units": 1
+            }
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf026_passive_only"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "dmin_eligible_human_support": 0,
+        "dmin_passive_evidence_units": 1,
+        "dmin_structural_support_units": 1,
+        "dmin_structural_readiness": false,
+        "passive_evidence_alone_crosses_tallow": false,
+        "cycle_age_ge_dmin": false
+      },
+      "expected_cycle_outputs": {
+        "cycle_close_emitted": false
+      },
+      "expected_authorization_outputs": {
+        "consequential_authority": false
+      },
+      "notes": [
+        "The passive evidence is admissible derived input, but no human stance exists."
+      ]
+    },
+    {
+      "fixture_id": "TCF-027-passive-plus-human-support-can-reach-tallow",
+      "title": "Passive evidence plus human support can reach Tallow",
+      "purpose": "Show a required human stance plus capped passive evidence reaching structural readiness without changing ordinary truth certainty.",
+      "initial_state": {
+        "cycle_index": 0,
+        "required_prior_fixtures": [
+          "TCF-026-passive-evidence-alone-cannot-cross-tallow"
+        ]
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf027_human_dmin_claim",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_alpha",
+          "payload": {
+            "idea_id": "claim_tcf027_dmin",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "tempo_claim": {
+              "target_key": "tempo_target(0, dmin)",
+              "anchor_event_id": "evt_genesis_0000",
+              "anchor_cycle_index": 0,
+              "target_kind": "dmin",
+              "relation": "elapsed_greater_than_or_equal",
+              "duration_value": 2,
+              "duration_unit_profile": "test_cycles_elapsed_v1",
+              "tempo_profile_hash": "hash_tempo_profile_test_v1",
+              "asserted_value": true,
+              "provenance_refs": []
+            },
+            "tempo_lane": {
+              "tempo_lane_operation": "target_time_claim_create",
+              "tempo_mana_spend": 1,
+              "tempo_profile_hash": "hash_tempo_profile_test_v1"
+            }
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf027_human_dmin_claim"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "dmin_eligible_human_support": 1,
+        "dmin_passive_evidence_units": 1,
+        "dmin_structural_support_units": 2,
+        "dmin_structural_readiness": true,
+        "cycle_age_ge_dmin": true,
+        "operative_certainty_band": "none",
+        "structural_support_changes_truth_certainty": false
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {
+        "consequential_authority": false
+      },
+      "notes": [
+        "Tallow permits structural readiness while ordinary truth certainty remains none."
+      ]
+    },
+    {
+      "fixture_id": "TCF-028-passive-source-dedup-prevents-amplification",
+      "title": "Passive source dedup prevents amplification",
+      "purpose": "Repeated passive observations from the same source, target, and epoch count once.",
+      "initial_state": {
+        "cycle_index": 0
+      },
+      "input_events": [
+        {
+          "event_id": "evt_tcf028_passive_a",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_beta",
+          "payload": {
+            "idea_id": "evidence_tcf028_passive_a",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "proposition": "First committed passive timestamp observation.",
+            "passive_timestamp_evidence": {
+              "source_id": "clock_source_tcf028",
+              "source_category": "signed_human_event_envelope_timestamp",
+              "source_class": "human_device_clock",
+              "target_key": "tempo_target(0, dmin)",
+              "source_epoch": "shared-epoch",
+              "normalized_timestamp": "2026-06-22T00:00:00Z",
+              "precision": "second",
+              "uncertainty_interval": {
+                "start": "2026-06-21T23:59:00Z",
+                "end": "2026-06-22T00:01:00Z"
+              },
+              "canonical_provenance_ref": "evt_tcf028_passive_a",
+              "committed_by_signature": true,
+              "support_units": 1
+            }
+          }
+        },
+        {
+          "event_id": "evt_tcf028_passive_b",
+          "event_type": "idea_create",
+          "author_identity_id": "id_human_gamma",
+          "payload": {
+            "idea_id": "evidence_tcf028_passive_b",
+            "idea_type": "truth_claim",
+            "truth_subtype": "observation_or_measurement",
+            "proposition": "Second committed passive timestamp observation from the same source epoch.",
+            "passive_timestamp_evidence": {
+              "source_id": "clock_source_tcf028",
+              "source_category": "signed_human_event_envelope_timestamp",
+              "source_class": "human_device_clock",
+              "target_key": "tempo_target(0, dmin)",
+              "source_epoch": "shared-epoch",
+              "normalized_timestamp": "2026-06-22T00:00:10Z",
+              "precision": "second",
+              "uncertainty_interval": {
+                "start": "2026-06-21T23:59:00Z",
+                "end": "2026-06-22T00:01:00Z"
+              },
+              "canonical_provenance_ref": "evt_tcf028_passive_b",
+              "committed_by_signature": true,
+              "support_units": 1
+            }
+          }
+        }
+      ],
+      "harness_actions": [],
+      "expected_acceptance": [
+        "evt_tcf028_passive_a",
+        "evt_tcf028_passive_b"
+      ],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "dmin_passive_evidence_units": 1,
+        "dmin_passive_evidence_duplicate_ids": [
+          "evidence_tcf028_passive_b"
+        ],
+        "dmin_structural_support_units": 1,
+        "dmin_structural_readiness": false
+      },
+      "expected_cycle_outputs": {},
+      "expected_authorization_outputs": {},
+      "notes": [
+        "Deduplication key is source_id, target_key, and source_epoch."
+      ]
+    },
+    {
+      "fixture_id": "TCF-029-zero-human-record-only",
+      "title": "Zero humans enters record-only",
+      "purpose": "With zero participating eligible humans, replay remains readable but emits no universal cycle close.",
+      "initial_state": {
+        "cycle_index": 9,
+        "W_score": 0,
+        "W_target": 2,
+        "active_humans": []
+      },
+      "input_events": [],
+      "harness_actions": [],
+      "expected_acceptance": [],
+      "expected_rejections": [],
+      "expected_derived_outputs": {
+        "tempo_mode": "record_only",
+        "cycle_age_ge_dmin": false,
+        "cycle_age_ge_dmax": false,
+        "structural_dmax_liveness_predicate": "false"
+      },
+      "expected_cycle_outputs": {
+        "cycle_close_emitted": false
+      },
+      "expected_authorization_outputs": {
+        "consequential_authority": false
+      },
+      "notes": [
+        "Machine-only operation cannot create universal structural progression."
+      ]
+    }
+  ]
+}

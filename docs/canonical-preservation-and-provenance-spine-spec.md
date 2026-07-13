@@ -1134,7 +1134,7 @@ The spine is designed to make such attacks **detectable, legible, and recoverabl
 The system makes the following minimal trust assumptions:
 
 - cryptographic hash functions remain collision-resistant,
-- digital signatures correctly bind events to identities,
+- digital signatures correctly bind ordinary human-authored event candidates to identities under `canonical-event-authorship-and-signature-profile-v0.md`,
 - at least one honest copy of important data survives somewhere,
 - deterministic replay rules are public and inspectable.
 

@@ -564,7 +564,25 @@ impl Storage {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use common::test_db_guard::require_disposable_database_url;
     use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn guarded_database_url() -> Option<String> {
+        let database_url = match std::env::var("DATABASE_URL") {
+            Ok(url) if !url.trim().is_empty() => url,
+            _ => return None,
+        };
+        match require_disposable_database_url(&database_url) {
+            Ok(database_name) => {
+                eprintln!("TEST_DB: {database_name} differs_from_seed_dev=true");
+                Some(database_url)
+            }
+            Err(err) => {
+                eprintln!("SKIP: DATABASE_URL rejected by test DB guard: {err}");
+                None
+            }
+        }
+    }
 
     #[test]
     fn session_token_hash_is_stable_and_not_plaintext() {
@@ -605,9 +623,8 @@ mod tests {
 
     #[tokio::test]
     async fn session_lookup_uses_hashed_storage_only() -> Result<()> {
-        let database_url = match std::env::var("DATABASE_URL") {
-            Ok(url) if !url.trim().is_empty() => url,
-            _ => return Ok(()),
+        let Some(database_url) = guarded_database_url() else {
+            return Ok(());
         };
 
         let storage = Storage::new(&database_url).await?;

@@ -1,0 +1,683 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://seed.example.invalid/schemas/tempo-cycle-fixtures.schema.v1.json",
+  "title": "Tempo/Cycle conformance fixtures v1",
+  "type": "object",
+  "required": [
+    "fixture_version",
+    "status",
+    "model",
+    "tempo_profile",
+    "identities",
+    "genesis",
+    "shared_setup",
+    "fixtures"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "fixture_version": {
+      "const": "tempo-cycle-fixtures.v1"
+    },
+    "status": {
+      "type": "string"
+    },
+    "model": {
+      "type": "object",
+      "required": [
+        "deliberative_content_model",
+        "time_claim_model",
+        "evidence_model",
+        "certainty_model",
+        "forbidden_idea_types",
+        "forbidden_time_authority"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "forbidden_idea_types": {
+          "type": "array",
+          "contains": {
+            "const": "time_claim"
+          },
+          "items": {
+            "type": "string"
+          }
+        },
+        "forbidden_time_authority": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tempo_profile": {
+      "type": "object",
+      "required": [
+        "profile_id",
+        "test_only",
+        "Dmin",
+        "Dmax",
+        "K",
+        "certainty_band_order",
+        "T_allow",
+        "required_human_support_dmin",
+        "required_human_margin_dmin",
+        "required_human_support_dmax",
+        "required_human_margin_dmax",
+        "survivor_dmax_min_human_support",
+        "structural_support_unit_per_human",
+        "passive_evidence_cap",
+        "passive_source_dedup_policy",
+        "passive_source_class_policy",
+        "passive_outlier_policy",
+        "contradiction_block_band",
+        "beacon_minimum_certainty_band",
+        "beacon_minimum_distinct_humans",
+        "beacon_challenge_survival_cycles",
+        "authorization_lag_k",
+        "T_contradiction_block",
+        "T_beacon",
+        "T_beacon_revoke",
+        "minimum_beacon_identities",
+        "minimum_independence_domains",
+        "beacon_stability_cycles",
+        "tempo_mana_cap",
+        "tempo_mana_recharge",
+        "time_claim_create_cost",
+        "tempo_evidence_claim_create_cost",
+        "tempo_evidence_connection_cost",
+        "tempo_same_as_connection_cost",
+        "time_challenge_cost",
+        "structural_dmax_liveness_rule",
+        "constrained_mode_allowlist",
+        "profile_hash"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "type": "string"
+        },
+        "test_only": {
+          "const": true
+        },
+        "Dmin": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "Dmax": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "K": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "certainty_band_order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "T_allow": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "required_human_support_dmin": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "required_human_margin_dmin": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "required_human_support_dmax": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "required_human_margin_dmax": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "survivor_dmax_min_human_support": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "structural_support_unit_per_human": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "passive_evidence_cap": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passive_source_dedup_policy": {
+          "type": "string"
+        },
+        "passive_source_class_policy": {
+          "type": "string"
+        },
+        "passive_outlier_policy": {
+          "type": "string"
+        },
+        "contradiction_block_band": {
+          "type": "string"
+        },
+        "beacon_minimum_certainty_band": {
+          "type": "string"
+        },
+        "beacon_minimum_distinct_humans": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "beacon_challenge_survival_cycles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "authorization_lag_k": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "T_contradiction_block": {
+          "type": "string"
+        },
+        "T_beacon": {
+          "type": "string"
+        },
+        "T_beacon_revoke": {
+          "type": "string"
+        },
+        "minimum_beacon_identities": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "minimum_independence_domains": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "beacon_stability_cycles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tempo_mana_cap": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tempo_mana_recharge": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "time_claim_create_cost": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tempo_evidence_claim_create_cost": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tempo_evidence_connection_cost": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tempo_same_as_connection_cost": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "time_challenge_cost": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "structural_dmax_liveness_rule": {
+          "type": "string"
+        },
+        "constrained_mode_allowlist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "profile_hash": {
+          "type": "string"
+        }
+      }
+    },
+    "identities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "identity_id",
+          "actor_kind",
+          "verification_level",
+          "tempo_contributor",
+          "beacon_qualified_identity",
+          "independence_domain",
+          "ordinary_canonical_writer",
+          "ordinary_challenge_eligible"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "identity_id": {
+            "type": "string"
+          },
+          "actor_kind": {
+            "enum": [
+              "human",
+              "ai",
+              "system_boundary_emitter"
+            ]
+          },
+          "verification_level": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tempo_contributor": {
+            "type": "boolean"
+          },
+          "beacon_qualified_identity": {
+            "type": "boolean"
+          },
+          "independence_domain": {
+            "type": "string"
+          },
+          "ordinary_canonical_writer": {
+            "type": "boolean"
+          },
+          "ordinary_challenge_eligible": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "genesis": {
+      "type": "object",
+      "required": [
+        "genesis_event_id",
+        "initial_cycle_index",
+        "initial_authorization_frontier",
+        "bootstrap_basis",
+        "active_tempo_profile_hash",
+        "initial_W_target"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "genesis_event_id": {
+          "type": "string"
+        },
+        "initial_cycle_index": {
+          "type": "integer"
+        },
+        "initial_authorization_frontier": {
+          "const": -1
+        },
+        "bootstrap_basis": true,
+        "active_tempo_profile_hash": {
+          "type": "string"
+        },
+        "initial_W_target": {
+          "type": "integer"
+        }
+      }
+    },
+    "shared_setup": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/derived_target"
+      }
+    },
+    "fixtures": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/fixture"
+      }
+    }
+  },
+  "$defs": {
+    "fixture": {
+      "type": "object",
+      "required": [
+        "fixture_id",
+        "title",
+        "purpose",
+        "initial_state",
+        "input_events",
+        "harness_actions",
+        "expected_acceptance",
+        "expected_rejections",
+        "expected_derived_outputs",
+        "expected_cycle_outputs",
+        "expected_authorization_outputs",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "fixture_id": {
+          "type": "string",
+          "pattern": "^TCF-[0-9]{3}-[a-z0-9-]+$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "initial_state": {
+          "type": "object"
+        },
+        "input_events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/input_event"
+          }
+        },
+        "harness_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/harness_action"
+          }
+        },
+        "expected_acceptance": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "expected_rejections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/expected_rejection"
+          }
+        },
+        "expected_derived_outputs": {
+          "type": "object"
+        },
+        "expected_cycle_outputs": {
+          "type": "object"
+        },
+        "expected_authorization_outputs": {
+          "type": "object"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "input_event": {
+      "type": "object",
+      "required": [
+        "event_id",
+        "event_type",
+        "author_identity_id",
+        "payload"
+      ],
+      "additionalProperties": false,
+      "not": {
+        "required": [
+          "stance"
+        ]
+      },
+      "properties": {
+        "event_id": {
+          "type": "string"
+        },
+        "event_type": {
+          "enum": [
+            "idea_create",
+            "connection_create",
+            "challenge_create",
+            "vote_cast",
+            "challenge_finalize_verdict",
+            "cycle_close"
+          ]
+        },
+        "author_identity_id": {
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/payload"
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "superseded_attestation_id"
+            ]
+          },
+          {
+            "required": [
+              "latest_effective_stance"
+            ]
+          },
+          {
+            "required": [
+              "human_stance_unit_score"
+            ]
+          },
+          {
+            "required": [
+              "support_score_by_identity"
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "idea_type": {
+          "not": {
+            "enum": [
+              "time_claim",
+              "tempo_target",
+              "beacon",
+              "evidence",
+              "attestation",
+              "testimony",
+              "source"
+            ]
+          }
+        },
+        "tempo_claim": {
+          "$ref": "#/$defs/tempo_claim"
+        },
+        "structural_dmax_liveness_predicate": {
+          "enum": [
+            "true",
+            "false",
+            "blocked"
+          ]
+        },
+        "liveness_claim_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "liveness_target_key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^tempo_target\\([0-9]+, dmax\\)$"
+        },
+        "blocking_contradiction_claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocking_challenge_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "liveness_trigger_allowed_for": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "forced_cycle_close_only",
+            null
+          ]
+        }
+      }
+    },
+    "tempo_claim": {
+      "type": "object",
+      "required": [
+        "target_key",
+        "anchor_event_id",
+        "anchor_cycle_index",
+        "target_kind",
+        "relation",
+        "duration_value",
+        "duration_unit_profile",
+        "tempo_profile_hash",
+        "asserted_value"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "target_key": {
+          "type": "string",
+          "pattern": "^tempo_target\\([0-9]+, (dmin|dmax)\\)$"
+        },
+        "anchor_event_id": {
+          "type": "string"
+        },
+        "anchor_cycle_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "target_kind": {
+          "enum": [
+            "dmin",
+            "dmax"
+          ]
+        },
+        "relation": {
+          "const": "elapsed_greater_than_or_equal"
+        },
+        "duration_value": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duration_unit_profile": {
+          "type": "string"
+        },
+        "tempo_profile_hash": {
+          "type": "string"
+        },
+        "asserted_value": {
+          "type": "boolean"
+        },
+        "uncertainty_bound": true,
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "derived_target": {
+      "type": "object",
+      "required": [
+        "target_key",
+        "cycle_index",
+        "anchor_event_id",
+        "target_kind",
+        "relation",
+        "duration_value",
+        "duration_unit_profile",
+        "tempo_profile_hash"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "target_key": {
+          "type": "string",
+          "pattern": "^tempo_target\\([0-9]+, (dmin|dmax)\\)$"
+        },
+        "cycle_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "anchor_event_id": {
+          "type": "string"
+        },
+        "target_kind": {
+          "enum": [
+            "dmin",
+            "dmax"
+          ]
+        },
+        "relation": {
+          "const": "elapsed_greater_than_or_equal"
+        },
+        "duration_value": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duration_unit_profile": {
+          "type": "string"
+        },
+        "tempo_profile_hash": {
+          "type": "string"
+        }
+      }
+    },
+    "harness_action": {
+      "type": "object",
+      "required": [
+        "attempt_id",
+        "attempt_type"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "attempt_id": {
+          "type": "string"
+        },
+        "attempt_type": {
+          "type": "string"
+        }
+      }
+    },
+    "expected_rejection": {
+      "type": "object",
+      "required": [
+        "event_id",
+        "code",
+        "code_status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^ERR_[A-Z0-9_]+$"
+        },
+        "code_status": {
+          "enum": [
+            "appendix_a_final"
+          ]
+        }
+      }
+    }
+  }
+}

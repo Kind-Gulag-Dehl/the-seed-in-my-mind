@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 use encoding::hash::hash_bytes;
-use event_log::validation::validate_event;
+use event_log::validation::validate_stage0_internal_event;
 use event_log::Event;
 use event_log::SYSTEM_BOUNDARY_EMITTER_ID_STR;
 use serde_json::Value;

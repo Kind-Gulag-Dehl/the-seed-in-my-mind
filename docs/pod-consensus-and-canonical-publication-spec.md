@@ -3,7 +3,7 @@ doc_id: pod_consensus_and_canonical_publication_spec
 title: Staged Canonical Publication Specification
 status: authoritative
 version: v1
-last_reviewed: 2026-03-05
+last_reviewed: 2026-06-22
 
 scope:
   - Defines staged canonical publication profiles for single-node bootstrap, witnessed single-publisher operation, and full multi-node prefix finality.
@@ -17,11 +17,12 @@ authoritative_for:
 
 not_authoritative_for:
   - Truth, importance, action, governance, safety, token, or challenge semantics beyond assigning canonical publication order.
-  - Cycle derivation, rulebook activation timing, or snapshot contents.
+  - Cycle derivation, Tempo certainty, cycle certification, authorization-frontier advancement, rulebook activation timing, or snapshot contents.
 
 depends_on:
   - protocol v5.md
   - protocol v5-appendix-a.md
+  - canonical-event-authorship-and-signature-profile-v0.md
   - deterministic-replay-and-merge-spec.md
   - node-and-conformance-spec.md
   - canonical-encoding-and-hashing-spec.md
@@ -86,7 +87,7 @@ This specification does not:
 ## 2. Definitions and terminology [anchor: definitions_and_terminology]
 
 - **AuthoredEvent**
-  A canonical event authored and signed by a verified human identity according to Protocol v5 Appendix A.
+  The exact signed authored event candidate bytes and payload binding produced before canonical publication according to Protocol v5 Appendix A and `canonical-event-authorship-and-signature-profile-v0.md`.
 
 - **AvailabilityAttestation**
   A signed statement by an eligible witness that it possesses the exact canonical bytes for one `AuthoredEvent`.
@@ -122,14 +123,15 @@ This specification does not:
 
 ### 3.1 AuthoredEvent [anchor: authored_event]
 
-`AuthoredEvent` is the existing canonical event envelope plus payload defined by Protocol v5 Appendix A.
+`AuthoredEvent` is the exact signed authored candidate plus payload binding defined by Protocol v5 Appendix A and `canonical-event-authorship-and-signature-profile-v0.md`.
 
 Normative requirements:
 
-- canonical bytes, hash, and signature verification are defined exclusively by Protocol v5 Appendix A and the Canonical Encoding and Hashing Specification,
+- primitive encodings and hashes are defined by the Canonical Encoding and Hashing Specification,
+- authored-candidate bytes, signature verification, `public_key_ref`, and candidate hashes are defined by `canonical-event-authorship-and-signature-profile-v0.md`,
 - authored events are human-authored only,
 - an authored event is **not canonical** merely because it is validly signed,
-- an authored event becomes canonical only when included in a valid finalized `PrefixCertificate`.
+- an authored event becomes canonical only when the exact signed candidate bytes are included in a valid finalized `PrefixCertificate`.
 
 ### 3.2 AvailabilityAttestation [anchor: availability_attestation]
 
@@ -140,7 +142,7 @@ Normative requirements:
 3. `basis_certificate_hash` (`hash32`)
 4. `event_hash` (`hash32`)
 5. `attestor_identity_id` (`id`)
-6. `public_key_ref` (`id`)
+6. `public_key_ref` (`hash32`)
 7. `statement_kind` (`u8`) = `1` for `have_exact_event_bytes_v1`
 
 The attestation hash is:
@@ -154,7 +156,7 @@ The signature is a valid signature by `public_key_ref` over `availability_attest
 
 Validation rules:
 
-- `event_hash` MUST match the canonical event hash of the referenced `AuthoredEvent`,
+- `event_hash` MUST match the authored candidate hash or enclosing event-record hash of the referenced exact signed `AuthoredEvent`,
 - `basis_certificate_hash` MUST reference the finalized prefix view against which the attestor claims availability,
 - `attestor_identity_id` MUST be a verified human identity eligible to witness under the active profile,
 - `public_key_ref` MUST be an authorized key for `attestor_identity_id` at `basis_certificate_hash`,
@@ -193,7 +195,7 @@ The full `PrefixCertificate` additionally contains ordered signer tuples:
 1. `signer_count` (`u16`)
 2. `signer_tuples` in canonical committee order, where each tuple is:
    - `signer_identity_id` (`id`)
-   - `public_key_ref` (`id`)
+   - `public_key_ref` (`hash32`)
    - `signature` (`bytes`)
 
 Each signer signs `prefix_certificate_hash`.
@@ -375,11 +377,13 @@ For parent certificate `P`, compute the candidate frontier from all non-canonica
 
 An event is eligible for the ready frontier only if:
 
-- its canonical bytes and signature are valid,
+- its exact signed authored candidate bytes and signature are valid,
 - it satisfies the profile-specific availability requirement,
 - it is not already canonical,
 - it is not invalid under replay against parent state,
 - and all explicit dependencies are either canonical in `P` or are also candidates for earlier placement.
+
+Publication-derived positions, block addresses, and certificate references are assigned by the finalized publication wrapper. They MUST NOT change the signed authored candidate bytes and MUST NOT be required inputs to the ordinary human-authorship signature.
 
 ### 7.2 Ordering constraints [anchor: ordering_constraints]
 
@@ -395,6 +399,8 @@ Within each finalized extension, nodes MUST preserve the following precedence co
 Mechanical boundary events are not discretionary.
 
 If replay of parent state plus already-selected extension events reaches the earliest point at which a mechanical boundary event becomes valid, that boundary event MUST be inserted before any later-ready non-boundary event.
+
+For `cycle_close`, "earliest valid" means the earliest replay prefix at which the Cycle and Tempo rules derive a structural boundary from valid canonical inputs, including Dmin/Dmax target certainty and work-target state. Publication participants do not choose, certify, or authorize the cycle boundary; they only include the mechanically required boundary event at the replay-valid position.
 
 ### 7.4 Readiness ordinal [anchor: readiness_ordinal]
 
@@ -638,7 +644,9 @@ Canonical order is assigned only when offline events are included in finalized c
 - **Cycles / tempo**
   - remain replay-derived and challengeable,
   - do not schedule certificates by clock,
-  - may determine when `cycle_close` becomes mechanically insertable.
+  - determine when `cycle_close` becomes mechanically insertable under the earliest-valid structural boundary rule,
+  - are not certified or authorized by publication block height, bundle height, certificate count, publication volume, ready-frontier size, local timeout policy, or availability timing.
+  - require Tempo certainty, cycle certification, and the lagged authorization frontier for consequential authority.
 
 - **Snapshots**
   - remain derived verification checkpoints,

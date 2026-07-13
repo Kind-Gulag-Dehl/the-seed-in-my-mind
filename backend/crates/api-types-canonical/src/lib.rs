@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Serialize)]
@@ -244,6 +244,25 @@ pub struct CanonicalEventLogEvent {
     pub block_height: String,
     pub block_event_index: String,
     pub event_type: String,
+    pub authorship_status: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub author_identity_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub speaker_identity_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub signature_profile: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub signature: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub public_key_ref: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub payload_hash: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub payload_binding_mode: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub authored_candidate_hash_v0: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub publication_profile: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -287,6 +306,50 @@ pub struct CanonicalConnectionCreateResponse {
     pub event_id: String,
     pub cycle_index: String,
     pub remaining_build_mana: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SignedCanonicalCandidate {
+    pub signature_profile: String,
+    pub event_id: String,
+    pub event_type: String,
+    pub author_identity_id: String,
+    pub speaker_identity_id: Option<String>,
+    pub public_key_ref: String,
+    pub payload_hash: String,
+    pub payload_binding_mode: String,
+    pub payload_ref: Option<String>,
+    pub author_observed_at: Option<String>,
+    pub signature: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SignedCanonicalEventSubmitRequest {
+    pub candidate: SignedCanonicalCandidate,
+    pub payload: serde_json::Value,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct SignedCanonicalEventSubmitEvent {
+    pub event_id: String,
+    pub event_type: String,
+    pub block_height: String,
+    pub event_index: String,
+    pub authored_candidate_hash_v0: String,
+    pub publication_profile: String,
+    pub idempotent: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct SignedCanonicalEventSubmitObject {
+    pub object_type: String,
+    pub object_id: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct SignedCanonicalEventSubmitResponse {
+    pub event: SignedCanonicalEventSubmitEvent,
+    pub object: SignedCanonicalEventSubmitObject,
 }
 
 #[derive(Debug, Clone, Serialize)]

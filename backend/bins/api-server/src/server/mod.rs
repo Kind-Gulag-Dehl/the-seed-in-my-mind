@@ -20,6 +20,8 @@ mod tests_limits;
 #[cfg(test)]
 mod tests_roles;
 #[cfg(test)]
+mod tests_signed_ingress;
+#[cfg(test)]
 mod tests_stage1_flow;
 
 pub(crate) use startup::run;
