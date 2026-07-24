@@ -553,12 +553,14 @@ Individuals MAY maintain **personal-scope maps** offline.
 
 Personal-scope judgments:
 
-- reference public canonical ideas,
-- use the same challenge, voting, and importance mechanics defined in Protocol v5,
-- are anchored to a single owning identity,
-- are subject to the same cycle-based pacing and rate-limit rules defined in Protocol v5 §3.
+- MAY reference private or public canonical ideas according to local permissions,
+- use the ten-axis reference-relative meaning defined in Protocol v5,
+- are anchored to and controlled by a single owner,
+- are ordered directly by that owner without canonical challenges, jurors, or votes,
+- remain noncanonical and outside deterministic public replay, and
+- include no private universal-importance rank.
 
-Personal-scope judgments MAY be published as canonical personal-scope events if allowed by Protocol v5 rulebooks.
+Private importance positions are not canonical events, and sharing a view does not convert owner-selected positions into challenge verdicts. A person may separately publish ordinary ideas, connections, or arguments through valid canonical paths.
 
 Personal scope MUST support the following visibility modes:
 
@@ -566,34 +568,31 @@ Personal scope MUST support the following visibility modes:
    Visible only to the owning identity.  
    No other identity may view, interact with, or mutate the map.
 
-2. **public-readable personal map**  
-   The map and its contents are publicly viewable.  
-   Only the owning identity may:
-   - create challenges,
-   - vote,
-   - modify rank lists within the personal scope.
+2. **public-readable personal map**
+   An owner-selected projection of the map is publicly viewable.
+   The owner continues to modify private rank state directly. Public visibility does not create a challenge, vote, verdict, or canonical rank list.
 
-3. **fully public personal map (optional)**  
-   The owner MAY additionally allow public challenge participation against objects shown in the map, subject to applicable rulebooks.  
-   Voting and rank mutation remain owner-controlled unless a rulebook explicitly defines a different eligibility model for personal scope.
+3. **shared permissioned personal map (optional)**
+   The owner MAY grant selected readers access to a projection or collaboration surface under private-product policy. Such collaboration remains noncanonical unless participants separately use an explicit canonical publication path.
 
 In all cases:
 
-- the underlying ideas referenced by a personal map are ordinary public ideas,
-- those ideas remain universally challengeable in universal scope under normal Protocol v5 rules,
-- personal scope never shields ideas from universal scrutiny.
+- private ideas remain private according to owner permissions,
+- referenced canonical ideas remain publicly challengeable in their canonical universal or relative contexts,
+- private rank positions cannot alter universal, public-relative, or tribe-relative state,
+- sharing does not silently publish private rank data as canonical history.
 
 Offline operation MUST preserve these distinctions exactly.
 
-When offline personal-scope content is published into the canonical universe, clients MUST preserve canonical explainability requirements.
+If an owner separately publishes an ordinary idea, connection, or argument through a valid canonical path, clients MUST preserve canonical explainability requirements without treating the prior private ordering as a collective verdict.
 
-In particular, when any personal-scope object is excluded or altered in default views, clients MUST be able to present "why am I seeing this?" diagnostics that distinguish:
+When any shared/private projection is excluded or altered in default views, clients SHOULD present diagnostics that distinguish:
 - safety-based abstraction or redaction,
 - jurisdictional or regulatory visibility lenses,
 - derived exclusions (e.g., lifecycle_state exclusion such as rotted/burned, or taint-derived exclusions),
 - and user-applied filters.
 
-Offline packaging MAY include private personal drafts and local-only annotations, but once a personal-scope event is published canonically, it is subject to the same explainability, safety, and lens semantics as any other canonical event.
+Offline packaging MAY include private drafts, owner-selected relative positions, and local-only annotations. Merge or publication tooling MUST NOT convert those positions into canonical importance events.
 
 
 ### 5.3 tribe scope (public overlay) [anchor: tribe_scope_public_overlay]

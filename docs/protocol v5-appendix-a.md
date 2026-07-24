@@ -620,6 +620,10 @@ CONDITIONAL:
 
   Universal importance orientation values (`important_to_current_individual`, `important_for_current_individual`, `important_to_collective`, `important_for_collective`) are not valid `axis` values for `relative_importance` connection metadata unless a future rulebook explicitly defines a deterministic projection.
 
+  A `relative_importance` connection uses reference-relative semantics even when its `scope` is `universal`. In that field, `universal` identifies the globally eligible public participation scope; it does not change the connection into the distinct 20-axis universal-importance rank product. Implementations MUST NOT infer universal importance from `to_idea_id`, an idea title, or a universal-looking reference concept.
+
+  For `usage = general`, `scope = universal` and `scope = tribe` may feed their matching canonical rank contexts. `scope = personal` is permitted only for an authored projection or argument connection and MUST NOT feed a canonical rank snapshot or importance challenge. Owner-selected private ordering is not a canonical connection object.
+
   OPTIONAL:
   - `value_representation`
   - `certainty_band`
@@ -692,6 +696,43 @@ REQUIRED:
 - `created_by_identity_id`
 - `lifecycle_state`
 
+For `challenge_domain = importance_challenge`, `subject_idea_ids` MUST contain exactly two candidate ideas and the challenge MUST also contain:
+
+- `importance_context`
+- `challenger_idea_id`
+- `target_idea_id`
+
+`challenger_idea_id` and `target_idea_id` MUST be the two members of `subject_idea_ids`. The reference idea or universal pole is context, not a contestant.
+
+`importance_context.rank_kind` MUST be exactly one of:
+
+- `universal`
+- `relative`
+
+If `rank_kind = universal`, REQUIRED context fields are:
+
+- `universal_orientation`, one of:
+  - `important_to_current_individual`
+  - `important_for_current_individual`
+  - `important_to_collective`
+  - `important_for_collective`
+- `timeframe`
+- `scope = universal`
+
+If `rank_kind = relative`, REQUIRED context fields are:
+
+- `reference_idea_id`
+- `usage = general`
+- `axis`, one of:
+  - `important_to_reference`
+  - `important_for_reference`
+- `timeframe`
+- `scope`, one of:
+  - `universal`
+  - `tribe`
+
+For `scope = tribe`, `scope_anchor_id` is REQUIRED and MUST equal `reference_idea_id`, which MUST identify the tribe anchor. Canonical `importance_challenge` objects MUST NOT use `scope = personal` or represent individual-private ordering.
+
 #### A2.5.2 Optional and conditional fields [anchor: a2_5_2_optional_and_conditional_fields]
 
 OPTIONAL:
@@ -751,13 +792,14 @@ If stored, rank snapshots MUST conform to the following schema.
 
 REQUIRED:
 - `snapshot_id`
+- `rank_kind`
 - `ranking_scope`
 - `axis`
 - `timeframe`
 - `ordered_idea_ids`
 - `created_event_id`
 
-For relative-rank snapshots, `ranking_scope` MUST identify the full relative lens:
+For relative-rank snapshots, `rank_kind` MUST equal `relative` and `ranking_scope` MUST identify the full relative lens:
 - `reference_idea_id`
 - `usage`
 - `scope`
@@ -768,13 +810,21 @@ For relative-rank snapshots, `axis` MUST use the relative axis vocabulary:
 - `important_to_reference`
 - `important_for_reference`
 
-For universal-rank snapshots, `axis` MUST use the universal orientation vocabulary:
+For universal-axis snapshots, `rank_kind` MUST equal `universal`, `ranking_scope` MUST equal `universal`, and `axis` MUST use the universal orientation vocabulary:
 - `important_to_current_individual`
 - `important_for_current_individual`
 - `important_to_collective`
 - `important_for_collective`
 
 Deterministic tie-breaking rules MUST be specified and stable.
+
+An implementation that stores the derived overall universal ordering MUST also expose, for each idea:
+
+- `universal_position_sum`, the exact integer sum of its twenty one-based universal-axis positions;
+- `universal_position_mean`, represented exactly as `universal_position_sum / 20` or an equivalent lossless rational; and
+- `overall_universal_rank`, the one-based ordinal position after sorting by ascending sum and the active deterministic tie-break.
+
+These aggregate fields are derived outputs. They MUST NOT be accepted as authored rank mutations or direct importance-challenge targets.
 
 ---
 
@@ -1476,6 +1526,11 @@ REQUIRED payload fields:
 CONDITIONAL payload fields:
 - `subject_idea_ids` (required for idea-targeted challenges)
 - `subject_ordering_ids` (required for ordering-targeted representation challenges)
+- For `challenge_domain = importance_challenge`:
+  - `importance_context`
+  - `challenger_idea_id`
+  - `target_idea_id`
+  - all rank-kind-specific context fields required by A2.5.1
 - If a future rulebook permits a narrowly scoped Tempo challenge capability, `tempo_lane` metadata MUST identify the active profile, operation, mana spend, and target-bound time claim. Until such a capability is explicitly adopted, time-related challenges use ordinary challenge eligibility.
 
 Effects:
@@ -1537,6 +1592,8 @@ If the verdict applies a governance/rulebook change, REQUIRED payload metadata f
 Effects:
 - Locks verdict outcome.
 - Enables downstream state transformations.
+- For a winning `importance_challenge`, if the challenger is still below the target in the exact declared context, deterministic replay MUST remove the challenger from its current position and insert it immediately above the target while preserving the relative order of all other ideas. A losing challenge, or a challenger that is no longer below the target at application time, has no rank-mutation effect under the base rule.
+- Universal aggregate fields MUST be recomputed only after affected universal-axis state is updated. A verdict MUST NOT directly author an aggregate universal value.
 - For `representation_challenge` verdicts, deterministic replay MUST update canonical representation pointer selection for the target (`idea` or `ordering`) slot by selecting exactly one canonical representation and superseding prior selection without deleting history.
 - Canonical representation pointers MUST NOT be updated by `representation_create` or `idea_update_representation`.
 
@@ -1605,6 +1662,8 @@ OPTIONAL (rulebook-controlled):
 
 If present, `context_challenge_id` MUST reference an existing canonical challenge object.
 If absent, the argument is interpreted as a general-purpose argument attached to the subject idea(s), and challenge UIs MAY choose to display it when relevant.
+
+An `importance_argument` placement explains why a candidate should rank higher or lower. It MUST NOT add the argument idea to the challenge's `usage = general` rank list, change either candidate's position, or create a vote. Those effects require the separately valid importance challenge and verdict.
 
 ### A4.5.2 Evidence placement (truth challenges) [anchor: a4_5_2_evidence_placement_truth_challenges]
 
@@ -2679,7 +2738,9 @@ A challenge instance is uniquely defined by the tuple:
 - `challenge_domain`, and
 - the complete set of domain-specific subject anchors, including:
   - subject idea identifiers, and
-  - for importance challenges: axis, timeframe, and scope.
+  - for importance challenges: `rank_kind`, challenger, target, timeframe, and scope;
+  - for universal importance challenges: `universal_orientation`; and
+  - for relative importance challenges: `reference_idea_id`, `usage`, relative axis, and `scope_anchor_id` when applicable.
 
 For the purposes of this rule, a challenge is considered **non-finalized** if its lifecycle state is any of:
 
@@ -3163,4 +3224,3 @@ then the system MAY:
 - make a re-challenge eligible under reduced friction, as defined by the rulebook.
 
 Any such trigger MUST be implemented as a visibility / process recommendation and MUST NOT rewrite canonical outcomes.
-```

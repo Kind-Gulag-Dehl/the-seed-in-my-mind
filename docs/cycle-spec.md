@@ -153,7 +153,8 @@ All cycle-based recomputations MUST occur at the boundary replay prefix (`H_clos
 * POD recomputation,
 * POINT mint/redistribution/melt,
 * mana recharge,
-* eligibility rollovers.
+* only those eligibility or capacity transitions independently authorized for that
+  boundary type.
 
 When block heights are exposed, `H_close` is an address for the replay prefix, not a time source. `cycle_close` records structural closure only; legitimacy gating and the authorization frontier control whether downstream effects are finalized or remain provisional/deferred.
 
@@ -202,6 +203,45 @@ This distinction is fundamental.
 
 Boundary creation MAY occur without legitimacy.
 Boundary consequences MUST NOT authorize economic or governance power unless legitimacy conditions are met.
+
+### 1.4A Profile-v0 admission-capacity boundary consequences [anchor: profile_v0_admission_capacity_boundary_consequences]
+
+A **qualifying capacity period** is a capacity period closed by a properly certified
+human-deliberative boundary under this specification and the active admission rulebook.
+It requires both a deliberative boundary and the applicable human-deliberative
+certification. Wall-clock passage, cron activity, AI activity, system-emitter activity,
+Dmax alone, forced, degraded, survivor, record-only, and machine-only boundaries are
+non-qualifying unless they independently meet those two requirements.
+
+At each qualifying capacity period, every inviter-eligible and unsuspended human
+identity MUST receive at least one spendable invitation-capacity unit. Rulebooks may set
+higher rates, finite caps, carryover, expiration, maturation, restoration, and
+prospective abuse controls, but MUST NOT assign zero capacity indefinitely to an
+otherwise inviter-eligible, unsuspended human. Capacity is integer-valued,
+identity-bound, replay-derived, non-transferable, non-saleable, non-delegable, and is
+not money, a token, reputation, certainty, truth weight, importance weight, or vote
+weight.
+
+Inviter eligibility is a separate lane from ordinary writing, voting, governance, Tempo,
+economics, and current capacity balance. It must be generally attainable by humans under
+the same objective rulebook conditions; no founder, operator, institution, expert, or
+genesis class may retain permanent invitation privilege.
+
+For each active admission profile and rulebook, replay derives
+`admission_liveness_blocked` for the current capacity period. It is `true` exactly when
+no qualifying capacity period can be produced from the applicable canonical boundary
+state. While true, no new invitation capacity is generated, maturation does not advance,
+new inviter eligibility does not activate, and invitation suspension is not restored.
+Admission may proceed only by spending already valid capacity. This status is public,
+rulebook-scoped, period-scoped, deterministic, and snapshot-explainable.
+
+Previously generated capacity remains spendable during a stall unless the identity is
+suspended, the capacity expired under a rule applicable before the stall, a canonical
+emergency rule freezes spending, or another explicit constitutional restriction applies.
+A stall MUST NOT silently destroy it. Profile v0 defines no operator, AI,
+system-emitter, wall-clock, or machine-only emergency capacity-minting path. An
+authorized restoration outcome becomes effective only at the qualifying activation
+boundary required by the active rulebook.
 
 ---
 
@@ -597,7 +637,9 @@ A forced boundary MUST NOT, by itself, authorize:
 * POD recomputation finalization,
 * POINT minting or distribution,
 * irreversible governance effects,
-* burn/rot execution with permanent effect.
+* burn/rot execution with permanent effect,
+* invitation-capacity generation, maturation advancement, new inviter-eligibility
+  activation, invitation-suspension restoration, or carryover-cap increase.
 
 These consequences are gated by legitimacy rules defined in §7.
 
@@ -614,6 +656,12 @@ A forced boundary MAY:
 * allow the system to re-enter normal closure behavior after adjustment.
 
 Forced closure MUST NOT mint authority. It exists to preserve liveness and to allow adaptive targets to recalibrate under collapse conditions. Repeated forced closures do not accumulate legitimacy and later certification does not reclassify a forced boundary as deliberative.
+
+The same Profile-v0 no-admission-authority result applies to degraded, survivor,
+record-only, and machine-only boundaries. A forced boundary may preserve canonical
+ordering, historical state, previously valid capacity debits, and liveness bookkeeping;
+it becomes capacity-generating only when it independently satisfies the qualifying
+human-deliberative requirements in Section 1.4A.
 
 
 ### 5.6 Design Rationale [anchor: design_rationale]

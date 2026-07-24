@@ -802,8 +802,9 @@ Verdict finalization events map to deterministic state transformations based on 
 - No truth object is deleted; status changes are forward-only.
 
 **Importance challenges**
-- Introduce, modify, or supersede `relative_importance` connections and their permitted metadata.
-- Derived ordering inputs (e.g., rank computation inputs) are updated accordingly.
+- Apply the Protocol v5 immediate-above bubble-up rule to the exact declared universal or relative rank context.
+- Preserve the challenge, ordinary idea-based arguments, ballots, verdict, eligible connection metadata, and prior ordering history.
+- Recompute derived universal aggregate state only when a universal axis changes.
 - No new connection types are introduced.
 
 **Action challenges**
@@ -825,9 +826,11 @@ Importance rankings are **derived state**, computed deterministically from canon
 
 The inputs to importance ranking derivation are limited to:
 
-- `relative_importance` connections and their metadata (usage, axis, timeframe, scope)
-- verdict outputs from importance challenges
-- aggregation and weighting rules defined by the active rulebook set
+- the declared `rank_kind` and complete rank-context fields,
+- eligible `relative_importance` connections and their metadata for relative contexts,
+- verdict outputs from importance challenges,
+- deterministic baseline and tie rules defined by the active rulebook set,
+- the Protocol v5 exact twenty-axis universal aggregation rule.
 
 No other inputs (e.g., popularity metrics, UI behavior, AI inference) MAY influence rankings.
 
@@ -835,7 +838,13 @@ No other inputs (e.g., popularity metrics, UI behavior, AI inference) MAY influe
 
 The ranking algorithm MUST satisfy the following:
 
-- Rankings are computed **per axis, timeframe, and scope** as defined by Protocol v5.
+- Universal-axis rankings are computed per `(rank_kind = universal, universal_orientation, timeframe, scope = universal)`.
+- Relative rankings are computed per `(rank_kind = relative, reference_idea_id, usage = general, relative_axis, timeframe, scope, scope_anchor_id_if_any)`.
+- For each successful verdict, a challenger that remains below its target is removed from its current position and inserted immediately above the target. Every other idea preserves relative order.
+- A loss or a challenger that is no longer below the target produces no movement under the base rule.
+- After all affected universal-axis lists are replayed, each idea's exact integer `universal_position_sum`, exact mean `sum / 20`, and `overall_universal_rank` are recomputed.
+- Public-relative and tribe-relative lists MUST NOT contribute to the universal aggregate.
+- Individual-private rank state MUST NOT enter canonical replay.
 - All lists MUST be generated using a deterministic ordering procedure.
 - Tie-breaking MUST follow explicit, deterministic rules defined by rulebook.
 - If rank movement history fields are stored, they MUST be derived deterministically from prior rankings and verdicts.
@@ -1065,7 +1074,8 @@ The following conflict types MAY arise during replay or reintegration:
 
 - **Competing importance relations**
   - Multiple `relative_importance` connections assert incompatible orderings.
-  - These relations coexist and are reconciled only through importance challenges and deterministic aggregation.
+  - These relations coexist and are reconciled only through importance challenges in their complete relative contexts.
+  - Universal aggregation occurs only after the twenty universal-axis lists are replayed; it does not reconcile arbitrary relative relations.
 
 - **Competing scoped overlay writes**
   - Multiple overlay events may target the same overlay merge key while disconnected.

@@ -382,6 +382,8 @@ Private ideas may refer to canonical ideas. For example, a user may privately co
 
 These private relationships must not alter canonical connections, ranks, or certainty. The canonical idea serves as a stable public reference, while the private relationship belongs only to the user’s map.
 
+Private importance uses the ten-axis reference-relative meaning (`important_to_reference` and `important_for_reference` across five timeframes), but the owner selects and revises the private order directly. Private ranking does not require a canonical challenge, juror panel, vote, or verdict. A private map has no universal-importance rank: the 20-axis universal product and its derived overall rank exist only in the canonical public process. Sharing, AI assistance, or simulation does not change those boundaries.
+
 Private Maps may also contain content adopted from the AI Commons. Such adoption creates a private record owned by the adopting user. The public artifact remains separate and may later be withdrawn, archived, or deleted according to AI Commons lifecycle rules.
 
 A private adoption should retain enough provenance to identify the public artifact or model output from which it originated. However, the private idea must remain usable if the public artifact later disappears.

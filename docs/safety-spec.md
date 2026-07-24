@@ -1277,8 +1277,9 @@ To preserve the epistemic integrity of the reasoning universe:
 
 2. **Rankings remain canonical**  
    Safety settings SHALL NOT influence:
-   - universal importance ranking,  
-   - personal or tribe rankings,  
+   - universal-axis positions or `overall_universal_rank`,
+   - public-relative or tribe-relative canonical rankings,
+   - owner-selected private relative rankings,
    - truth judgments,  
    - action structure.
 
@@ -1385,7 +1386,7 @@ A node or client SHALL be declared **non-conformant** if it:
    - fails to display their presence in any view.
 
 2. **Alters ranks**  
-   - modifies universal or personal importance rankings based on safety settings,  
+   - modifies universal, public-relative, tribe-relative, or owner-selected private importance rankings based on safety settings,
    - reorders lists due to emotional-load or jurisdiction restrictions.
 
 3. **Re-exposes illegal specificity**  
@@ -1542,4 +1543,3 @@ Informative guidance MAY explore:
 - alternative safe-summary algorithms.
 
 These proposals SHALL NOT constrain the current version of the protocol but MAY inform later revisions.
-

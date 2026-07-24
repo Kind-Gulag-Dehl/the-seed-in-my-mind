@@ -274,9 +274,24 @@ Each challenge domain imposes strict anchoring rules:
 
 #### 2.3.2 Importance challenges [anchor: importance_challenges]
 - MUST reference exactly two ideas whose relative importance is being evaluated.
-- MUST declare the axis, timeframe, and scope under which comparison occurs.
-- For relative-importance challenges, `axis` MUST be either `important_to_reference` or `important_for_reference`, and `timeframe` MUST be one of `near_term`, `mid_term`, `long_term`, `very_long_term`, or `trans_generational`.
+- MUST declare `rank_kind`, timeframe, participation scope, challenger, and target.
+- The two subject ideas are candidate contestants. The reference idea or universal pole defines the question and MUST NOT be encoded as a third contestant.
+- `challenger_idea_id` MUST currently be below `target_idea_id` in the complete declared context.
+- For `rank_kind = universal`, `scope` MUST be `universal` and `universal_orientation` MUST be one of `important_to_current_individual`, `important_for_current_individual`, `important_to_collective`, or `important_for_collective`.
+- For `rank_kind = relative`, `reference_idea_id` and `usage = general` are REQUIRED, and `axis` MUST be either `important_to_reference` or `important_for_reference`.
+- For relative `scope = universal`, the eligible public is the potential electorate. For relative `scope = tribe`, `scope_anchor_id` MUST equal the tribe `reference_idea_id` and only eligible tribe members form the potential electorate.
+- `timeframe` MUST be one of `near_term`, `mid_term`, `long_term`, `very_long_term`, or `trans_generational`.
+- Canonical importance challenges MUST NOT use personal/private scope. An individual directly orders private relative rank state outside this engine.
 - MUST NOT attempt to set absolute importance values.
+
+Universal importance and reference-relative importance are distinct rank products that reuse this challenge lifecycle. A public relative connection to an idea named "humanity", "the individual", or "the collective" does not become universal importance by title or reference alone.
+
+Examples:
+
+- **Universal axis:** if lower-ranked idea B challenges idea A in `(rank_kind = universal, universal_orientation = important_for_collective, timeframe = long_term)`, eligible public jurors compare B with A. If B wins, B moves immediately above A in that one axis list. The other nineteen universal axes do not move; the exact overall universal aggregate is then recomputed.
+- **Public relative:** if B challenges A in `(rank_kind = relative, reference_idea_id = R, axis = important_for_reference, timeframe = long_term, scope = universal)`, R frames what "important for" means but is not a contestant. Eligible public jurors decide between B and A.
+- **Tribe relative:** the same relative challenge with `scope = tribe` uses R as both reference and tribe anchor. Only eligible members of R's tribe may vote, while the resulting tribe-relative ordering remains public.
+- **Individual private:** an owner may place B above A in the equivalent ten-axis private context directly. That edit creates no challenge, ballot, canonical verdict, or universal rank.
 
 #### 2.3.3 Action challenges [anchor: action_challenges]
 - MUST reference exactly one `action` or `actionable_idea`.
@@ -318,6 +333,8 @@ Arguments and evidence are:
 - never embedded or duplicated inside the challenge object.
 
 This separation preserves immutability and replay determinism.
+
+For importance challenges, an argument MAY support either candidate. It is an ordinary idea attached with a `relative_importance` connection whose `usage = importance_argument`. A present `context_challenge_id` scopes it to this challenge; absence makes it a reusable general argument. The argument edge is explanatory only: it MUST NOT enter the candidates' `usage = general` rank list or move rank without a verdict.
 
 ---
 
@@ -833,7 +850,7 @@ Votes are immutable once cast.
 Each challenge domain defines the semantic interpretation of votes:
 
 - **Truth challenges**: votes express support for predefined outcome options (e.g., upheld, overturned, uncertain).
-- **Importance challenges**: votes express preference between the framed alternatives.
+- **Importance challenges**: votes express which of the two candidate ideas should rank higher in the complete declared context. The reference or universal pole is not a vote option.
 - **Action challenges**: votes express approval, rejection, or selection as defined by framing.
 - **Representation challenges**: votes select among competing representations.
 
@@ -944,12 +961,16 @@ A truth challenge verdict MUST NOT:
 
 #### 6.2.2 Importance challenge effects [anchor: importance_challenge_effects]
 An importance challenge verdict MUST:
-- create, update, or supersede a `relative_importance` connection between the framed ideas,
-- apply only within the declared axis, timeframe, and scope.
+- apply only within the exact declared rank kind, orientation/reference, usage, axis, timeframe, and scope;
+- if the challenger wins and remains below the target, remove it from its current position and insert it immediately above the target while preserving the relative order of every other idea;
+- preserve the list when the challenger loses or is no longer below the target under the base conflict rule;
+- trigger recomputation of universal aggregate state only when a universal axis changed.
 
 Importance challenge verdicts MUST NOT:
 - set absolute importance values,
 - affect unrelated axes or scopes,
+- directly author `universal_position_sum`, `universal_position_mean`, or `overall_universal_rank`,
+- use POD, POINT, popularity, model confidence, reputation, or weighted ballots to determine movement,
 - bypass future importance challenges.
 
 #### 6.2.3 Action challenge effects [anchor: action_challenge_effects]
@@ -1188,14 +1209,17 @@ This ensures truth-state remains a product of deliberation rather than direct wr
 
 An importance challenge verdict MUST produce its effects by:
 
-- creating, updating, or superseding a `relative_importance` connection between the challenged ideas,
-- scoped strictly to the axis, timeframe, and scope defined in the challenge framing.
+- applying the Protocol v5 immediate-above bubble-up rule to the exact universal or relative context declared in the challenge;
+- preserving the relative order of all non-challenger ideas;
+- retaining every argument, ballot, verdict, and prior ordering state in history.
 
-Importance challenge verdicts MAY influence derived ranking computations and downstream POD routing according to the active rulebooks.
+For a universal-axis change, replay MUST recompute the affected idea's exact twenty-position sum/mean and the overall universal order. That arithmetic is downstream derived state and is not a challenge target. Relative verdicts affect only their declared public-relative or tribe-relative context.
 
 Importance challenge verdicts MUST NOT:
 - set absolute importance values,
 - alter unrelated axes or scopes,
+- reinterpret a reference idea as a contestant,
+- convert private owner ordering into canonical state,
 - bypass future importance challenges.
 
 ---

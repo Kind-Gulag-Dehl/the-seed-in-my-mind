@@ -65,6 +65,11 @@ This specification normatively owns:
 
 This specification does not own cycle progression metrics, cycle boundary emission, authorization-frontier advancement, ordinary mana issuance, POD, POINT, governance activation, or lifecycle effects.
 
+This specification also does not grant admission, restricted-verification, inviter, or
+invitation-capacity authority. Tempo eligibility is a distinct replay-derived lane;
+admission alone, sponsorship, structural-root membership, inviter eligibility, and
+invitation-capacity generation do not grant Tempo participation or influence.
+
 Core invariants:
 
 1. Canonical time is claimed, not read from a trusted clock.
@@ -252,6 +257,11 @@ An unresolved open challenge alone does not automatically block structural readi
 
 `tempo_contributor` does not grant arbitrary canonical idea creation, evidence creation outside Tempo context, connection creation outside Tempo context, challenge creation, challenge voting, verdict finalization, governance authority, POD, POINT, token authority, ordinary mana authority, ordinary rate-limit authority, or ordinary canonical-writer eligibility.
 
+The Profile-v0 restricted verification lane is not `tempo_contributor` eligibility and
+does not authorize Tempo claims, Tempo-context evidence, Tempo mana, or structural
+stances. Conversely, a qualifying capacity period or an invitation-capacity debit is not
+a Tempo reward, claim, influence input, or authority source.
+
 Tempo mana is a dedicated, capped, non-transferable capacity that rate-limits the allowed Tempo lane operations. It recharges deterministically at structural cycle boundaries, is capped by the active profile, and is spent only by valid events in canonical log order. Invalid events do not spend mana. Forced cycles and uncertified cycles cannot create an unlimited bank.
 
 The active Tempo profile defines:
@@ -399,6 +409,13 @@ The Cycle Specification may consume `T_allow` structural predicates derived duri
 - Dmax mechanically implies structural Dmin for the same anchor and profile.
 
 Same-cycle Tempo predicate consumption must not authorize economic, governance, lifecycle, token, final-rank, POD, POINT, ordinary-mana, ordinary-rate-limit, or other irreversible effects.
+
+Tempo predicates, Dmax, forced/survivor structural closure, certification, and the
+authorization frontier MUST NOT generate Profile-v0 invitation capacity, advance inviter
+maturation, activate new inviter eligibility, restore invitation suspension, or mint
+emergency admission authority unless the boundary independently qualifies under the
+Cycle Specification's human-deliberative capacity rule. Tempo does not provide a
+machine, operator, or AI fallback for admission liveness.
 
 Consequential authority requires beacon-level certification and the Cycle Specification's contiguous lagged authorization frontier. Later certification may finalize explicitly pending outputs only. It must not validate actions that were forbidden when attempted or create stockpiles of unused ordinary mana allowances or rate-limit resets.
 

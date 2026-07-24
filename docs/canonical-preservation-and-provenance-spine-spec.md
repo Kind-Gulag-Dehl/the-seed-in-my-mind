@@ -484,8 +484,8 @@ Every payload pack is defined along two orthogonal dimensions:
 **Breadth** — which ideas (and orderings, where applicable) are included:
 - all ideas across all history,
 - only ideas in the current living map,
-- top-ranked ideas by universal importance across all history,
-- top-ranked ideas by universal importance in the living map,
+- top-ranked ideas by replay-derived `overall_universal_rank` across all history,
+- top-ranked ideas by replay-derived `overall_universal_rank` in the living map,
 - ideas added or modified within a specific cycle range.
 
 **Depth** - which description tiers are included:
@@ -1399,14 +1399,14 @@ Governance MAY introduce additional pack profiles, but MUST NOT modify the defin
 #### A5.1 Core Library Pack [anchor: a5_1_core_library_pack]
 
 Breadth:
-- Includes payloads associated with ideas whose universal importance exceeds a governance-defined Core Library threshold at the snapshot block height.
+- Includes payloads associated with ideas whose replay-derived `overall_universal_rank` satisfies the governance-defined Core Library threshold at the snapshot block height.
 - Includes payloads required to interpret those ideas (e.g., descriptions, arguments, evidence).
 
 Depth:
 - Includes all description tiers (sentence, paragraph, full; all complexity levels).
 
 Ordering:
-- Sorted by descending universal importance.
+- Sorted by ascending one-based `overall_universal_rank` (position `1` first), with the underlying twenty-axis profile and exact position sum available as rank provenance.
 - Ties are broken by canonical event order (block height, event_index).
 
 Cadence:
@@ -1422,7 +1422,7 @@ Depth:
 - Paragraph-level descriptions MAY be included if governance enables them explicitly.
 
 Ordering:
-- Sorted by descending relative importance within the living map.
+- Sorted by the declared relative rank context within the living map. The reference idea, relative axis, timeframe, usage, and public/tribe scope MUST be identified; no context-free relative score is permitted.
 - Ties are broken by canonical event order (block height, event_index).
 
 Cadence:

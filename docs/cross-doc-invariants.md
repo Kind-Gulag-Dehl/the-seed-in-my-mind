@@ -198,7 +198,7 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 - enforcement: conformance fixtures separating structural readiness from certainty-band verdicts and beacon/certification outputs
 
 ### 5.8 importance challenge duplicate uniqueness
-- statement: Stage 1 importance duplicate uniqueness key is `(domain=importance, context_key, ordered target tuple)`; identical active keys are forbidden, while same pairs in different contexts/domains may coexist.
+- statement: importance duplicate uniqueness uses the complete rank context plus ordered challenger/target tuple. A universal key includes `(domain=importance, rank_kind=universal, universal_orientation, timeframe, scope=universal, challenger, target)`. A relative key includes `(domain=importance, rank_kind=relative, reference_idea_id, usage=general, relative_axis, timeframe, scope, scope_anchor_id_if_any, challenger, target)`. Identical active keys are forbidden, while the same candidates in distinct contexts may coexist.
 - canonical home: `challenge-engine-spec.md` (`uniqueness_of_concurrent_challenges_no_duplicate_instances`, `parallel_challenges_on_distinct_instances`)
 - scope: challenge, replay/merge, API validation
 - enforcement: deterministic duplicate challenge rejection keyed by canonical tuple
@@ -236,7 +236,7 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 - enforcement: event/schema validation + replay conformance checks
 
 ### 7.2 overlays-only scopes
-- statement: `personal`, `tribe`, and `universal` scopes are overlays only. Scoped state is limited to overlay surfaces (relative_importance overlays and scoped display overrides) keyed by deterministic scope identifiers.
+- statement: canonical tribe and globally eligible public relative contexts are overlays over the one canonical substrate. `scope = universal` in a relative context names the globally eligible public participation scope; it does not by itself identify the distinct universal-importance rank kind. Personal/private rank state is noncanonical owner-controlled state, not a canonical one-person challenge overlay. A shared personal display remains a projection unless an explicit future canonical adoption transition says otherwise.
 - canonical home: `protocol v5.md` (`canonical_substrate_and_scoped_overlays`, `scoped_display_overrides_normative`)
 - scope: protocol, tribe, challenge, governance, replay/merge, api docs
 - enforcement: scope-key validation + deterministic replay of overlay events
@@ -264,6 +264,42 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 - canonical home: `protocol v5.md`, `identity-admission-and-invitation-capacity-spec-v0.md`
 - scope: protocol, admission, verification, cycle, replay/merge, snapshots, node/conformance, API contracts, privacy, offline, implementation status
 - enforcement: replay-derived admission-state checks, capacity-debit tests, cycle-liveness conformance vectors, and public-read consistency checks
+
+### 7.7 universal and relative importance are distinct rank products
+- statement: universal importance is the public 20-axis rank product formed by four universal orientations across five timeframes. Relative importance is the 10-axis product formed by `important_to_reference` and `important_for_reference` across the same five timeframes for a declared reference idea. They reuse pairwise challenge and bubble-up semantics but MUST remain distinct in schemas, snapshots, replay keys, APIs, and labels.
+- canonical home: `protocol v5.md` (`universal_importance_and_the_20_axis_foundation`, `scoped_importance_universal_tribal_and_personal_contexts`), `protocol v5-appendix-a.md` (`a2_5_1_required_fields`, `a2_7_rank_snapshots_importance_state_objects`)
+- scope: protocol, appendices, challenge, tribe, token, replay/merge, snapshots, conformance, API and UI docs
+- enforcement: rank-kind discriminators, axis-vocabulary validation, cross-document fixture assertions
+
+### 7.8 universal aggregate is derived from pairwise axis positions
+- statement: every universal axis is an ordinal list produced by pairwise verdicts. For each complete idea profile, `universal_position_sum` is the exact integer sum of the twenty one-based axis positions and the exact mean is that sum divided by twenty. `overall_universal_rank` is derived by ascending sum plus the active deterministic tie-break. The aggregate is not directly challenged and never decides an axis verdict.
+- canonical home: `protocol v5.md` (`universal_importance_and_the_20_axis_foundation`, `derived_universal_ranks_and_rank_history`)
+- scope: protocol, token, replay/merge, snapshots, node/conformance, bundles, preservation, API and UI docs
+- enforcement: exact-integer aggregation fixtures, tie-break fixtures, rejection of authored aggregate mutations
+
+### 7.9 canonical importance context and bubble-up
+- statement: a universal challenge is keyed by universal orientation, timeframe, and public scope. A relative challenge is keyed by reference, usage, relative axis, timeframe, and public or tribe scope. The reference or universal pole defines the comparison and is not a contestant. A valid challenger begins below the target; on a winning verdict it moves immediately above the target while all other ideas preserve relative order. A loss or no-longer-below challenger produces no movement under the base rule.
+- canonical home: `protocol v5.md` (`importance_challenges`), `challenge-engine-spec.md` (`importance_challenges`, `importance_challenge_effects`)
+- scope: protocol, appendices, challenge, replay/merge, node/conformance, API
+- enforcement: framing validation, duplicate-key validation, replay/conformance bubble-up fixtures
+
+### 7.10 public, tribe, and individual decision procedures
+- statement: universal-axis and public-relative challenges draw jurors from the eligible public. Tribe-relative challenges draw jurors only from eligible members of the tribe anchored by the reference idea, while results remain public. Individual-private relative rankings are selected directly by the owner without canonical challenges or votes, remain permissioned/noncanonical, and include no private universal rank. "Voted on by the public/tribe" names the eligible electorate; the deterministic small-panel vote-session procedure remains controlling.
+- canonical home: `protocol v5.md` (`scoped_importance_universal_tribal_and_personal_contexts`, `importance_challenges`, `voter_eligibility_juror_selection_and_rate_limited_vote_sessions`), `tribe-spec.md`
+- scope: protocol, challenge, tribe, offline/private integration, AI/product docs
+- enforcement: electorate eligibility fixtures, private-event rejection, privacy-boundary tests
+
+### 7.11 importance arguments are explanatory ordinary ideas
+- statement: importance arguments are ordinary ideas attached to either candidate through `relative_importance` connections with `usage = importance_argument`. `context_challenge_id` makes an argument challenge-specific; absence makes it reusable. An importance-argument edge does not enter the `usage = general` candidate list and cannot move rank without a valid verdict.
+- canonical home: `protocol v5.md` (`importance_challenges`), `protocol v5-appendix-a.md` (`a4_5_1_argument_as_idea_mandatory_model`)
+- scope: protocol, appendices, challenge, replay/merge, API and UI docs
+- enforcement: connection-usage validation and no-effect fixtures
+
+### 7.12 tokens and AI cannot author canonical importance
+- statement: POD/POINT formulas may consume replay-derived importance state but never create ranks, weight ballots, or choose verdicts. AI may draft, analyze, or simulate rankings but cannot author canonical challenges, votes, verdicts, or rank mutations under the human-first protocol. Private or simulated AI/robot maps have no private universal rank.
+- canonical home: `protocol v5.md`, `token-spec.md`, `ai-boundaries-spec.md`
+- scope: protocol, token, AI, private integration, conformance, API and UI docs
+- enforcement: token-separation assertions, human-authorship validation, AI-event rejection fixtures
 
 ---
 

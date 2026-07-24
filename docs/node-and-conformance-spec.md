@@ -1058,7 +1058,11 @@ A conformant node MUST:
 
 2. **Recompute certainty, importance, and rankings exactly**
    - Re-run all successful challenge verdicts.
-   - Apply the bubble-up rule for importance challenges.
+   - Maintain separate universal-axis and reference-relative context keys.
+   - Apply the immediate-above bubble-up rule only within the exact declared context.
+   - Recompute each complete universal profile's exact twenty-position sum/mean and `overall_universal_rank`.
+   - Never mix public-relative or tribe-relative positions into universal aggregation.
+   - Exclude individual-private and simulated AI ranks from canonical replay.
    - Apply certainty-band changes from truth challenges.
    - Apply representation merges or equivalence results.
 
@@ -2344,8 +2348,23 @@ This appendix SHOULD include step-by-step examples of deterministic replay:
    - Generating snapshot_0
 
 2. **Importance Challenge Replay**
-   - Reproducing bubble-up ranking
+   - Reproducing bubble-up separately for a universal axis, public-relative context, and tribe-relative context
+   - Verifying that the reference or universal pole is context rather than a contestant
    - Ensuring identical list ordering across implementations
+   - Deriving exact universal position sums/means and overall rank
+   - Proving that private ordering, token state, and AI simulation output have no canonical effect
+
+   Conformance vectors MUST also reject:
+   - a universal orientation in a relative context;
+   - a relative axis in a universal context;
+   - a relative challenge without `reference_idea_id`;
+   - a tribe-relative challenge whose scope anchor and reference differ;
+   - a private/personal canonical importance challenge;
+   - a tribe ballot from an ineligible nonmember;
+   - a challenger that is not below its target at valid creation time;
+   - framing that treats the reference anchor as a contestant;
+   - an event that directly authors a universal aggregate value; and
+   - any token-, reputation-, status-, or model-weighted importance ballot.
 
 3. **Truth Challenge Replay**
    - Reconstructing evidence rails
@@ -2449,12 +2468,12 @@ This appendix SHOULD demonstrate how a tribe node is expected to operate:
   - accepts canonical events
   - rejects invalid forks
 
-- **Maintains tribe-local rulebooks**
-  - applies only to tribe-level importance challenges
-  - never override universal governance
+- **Applies protocol-defined tribe eligibility**
+  - restricts tribe-relative challenge participation to replay-derived eligible members
+  - uses no tribe-local rulebook and never overrides universal governance
 
 - **Publishes tribe maps**
-  - tribe importance rankings
+  - public ten-axis tribe-relative importance rankings
   - internal deliberations
   - internal action proposals
 

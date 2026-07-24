@@ -1079,7 +1079,7 @@ Within the canonical universe, tribes MAY:
 Within the canonical universe, tribes MAY:
 
 - form around any idea via membership connections,
-- maintain tribe-scoped **importance maps** (public overlays where only tribe members may vote or attach certain importance edges),
+- maintain ten-axis tribe-relative **importance maps** anchored to the tribe idea (public overlays where only eligible tribe members may enter challenge/vote procedures),
 - open challenges whose voter eligibility is limited to members of the tribe (for tribe-scoped decisions),
 - record tribe decisions, norms, or leadership choices as ordinary ideas,
 - attach arguments expressing tribe endorsements or objections to universal proposals.
@@ -1093,9 +1093,9 @@ Within the canonical universe, tribes MAY NOT:
 - override safety floors or identity rules,
 - create private canonical ideas that only the tribe can see.
 
-All tribe activity that touches the canonical universe remains public, challengeable, and structurally identical to universal activity; only **eligibility scopes** and **importance overlays** differ.
+All tribe activity that touches the canonical universe remains public and challengeable and uses the same Protocol v5 event/challenge primitives. Tribe-relative ranking remains distinct from 20-axis universal importance: it uses a declared tribe reference, the ten relative axes, and a member-restricted electorate.
 
-For avoidance of doubt, public visibility of tribe or personal overlays does not grant authority to write those overlays. Write authority MUST be derived from scope-constrained eligibility predicates, not from readability.
+For avoidance of doubt, public visibility of a tribe overlay does not grant authority to write it. Write authority MUST be derived from scope-constrained membership eligibility, not from readability. Individual-private rank state is noncanonical owner-controlled state and is not governed through a one-person canonical challenge overlay.
 
 A tribe’s “internal rules” (who they consider leaders, how they decide things off-chain, what processes they follow in meetings) are not a separate rulebook family. They are simply **ideas** that describe how the tribe claims to operate. If the tribe wants these internal rules to be visible in the system, they MUST record them as ideas and connect them using the same ontology as any other content.
 
@@ -1896,7 +1896,7 @@ Governance occurs only through:
 - public voting,  
 - public implementation actions.
 
-Tribes cannot run private governance inside the canonical universe. Tribe-local rulebooks and tribe-scoped governance processes are fully public canonical objects, visible and challengeable by any participant. They may influence only tribe-level importance rankings or internal tribe procedures and are subject to universal-scope challenges or supersession if they attempt broader effects.  
+Tribes cannot run private governance or adopt tribe-local rulebooks inside the canonical universe. Tribe-relative challenges and eligibility-restricted coordination remain public canonical processes under protocol-level rulebooks. Their verdicts may affect only the declared tribe-relative context and cannot alter universal importance or global governance.
 Secret committees or weighted councils cannot exist canonically.
 
 There are no hidden levers of power.

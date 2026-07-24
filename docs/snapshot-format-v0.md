@@ -564,11 +564,26 @@ Fields:
 - `subject_ordering_ids` (id list, sorted, if present)
 - `created_by_identity_id` (id)
 - `lifecycle_state` (u8)
+- `importance_context_present` (bool)
+- `importance_rank_kind` (u8, if present)
+- `challenger_idea_id` (id, if present)
+- `target_idea_id` (id, if present)
+- `importance_scope` (string, if present)
+- `importance_reference_idea_id_present` (bool, if importance context is present)
+- `importance_reference_idea_id` (id, if present)
+- `importance_scope_anchor_id_present` (bool, if importance context is present)
+- `importance_scope_anchor_id` (id, if present)
+- `importance_usage_present` (bool, if importance context is present)
+- `importance_usage` (string, if present)
+- `importance_axis` (string, if importance context is present)
+- `importance_timeframe` (string, if importance context is present)
 - `opened_event_id` (id)
 - `closed_event_id_present` (bool)
 - `closed_event_id` (id, if present)
 - `verdict_id_present` (bool)
 - `verdict_id` (id, if present)
+
+When `importance_context_present = true`, the fields MUST encode exactly the Appendix A universal or relative challenge context. For universal challenges, reference, scope anchor, and usage are absent and `importance_axis` is a universal orientation. For relative challenges, reference and `usage = general` are present and `importance_axis` uses the relative vocabulary. Private individual ordering MUST NOT be encoded as a canonical challenge.
 
 #### 4.3.9 verdicts (`0x0009`)
 Primary key: `verdict_id`
@@ -581,14 +596,53 @@ Fields:
 - `finalization_event_id` (id)
 
 #### 4.3.10 rankings (`0x000A`)
-Primary key: (`ranking_scope`, `axis`, `timeframe`)
+Primary key: canonical `rank_context_key`
 
 Fields:
-- `ranking_scope` (string)
-- `axis` (string)
-- `timeframe` (string)
+- `ranking_record_kind` (u8: `axis_list` or `universal_overall`)
+- `rank_kind` (u8: `universal` or `relative`)
+- `scope` (string)
+- `reference_idea_id_present` (bool)
+- `reference_idea_id` (id, if present)
+- `scope_anchor_id_present` (bool)
+- `scope_anchor_id` (id, if present)
+- `usage_present` (bool)
+- `usage` (string, if present)
+- `axis_present` (bool)
+- `axis` (string, if present)
+- `timeframe_present` (bool)
+- `timeframe` (string, if present)
 - `ordered_idea_count` (u32)
 - `ordered_idea_ids` (id list, ordered)  // order is semantically significant
+- `universal_position_sums_present` (bool)
+- `universal_position_sums` (u64 list aligned with `ordered_idea_ids`, if present)
+
+For a universal `axis_list`:
+
+- `rank_kind = universal`;
+- `scope = universal`;
+- reference, scope anchor, and usage are absent;
+- `axis` is one universal orientation;
+- timeframe is present; and
+- aggregate sums are absent.
+
+For a relative `axis_list`:
+
+- `rank_kind = relative`;
+- reference, usage, relative axis, timeframe, and scope are present;
+- `axis` is `important_to_reference` or `important_for_reference`;
+- `scope = tribe` additionally requires `scope_anchor_id = reference_idea_id`; and
+- aggregate sums are absent.
+
+For `universal_overall`:
+
+- `rank_kind = universal`;
+- `scope = universal`;
+- axis and timeframe are absent;
+- `ordered_idea_ids` are sorted by ascending exact twenty-axis position sum plus the active deterministic tie-break; and
+- `universal_position_sums` is present. The exact displayed mean is each sum divided by twenty and need not be separately encoded.
+
+Private individual and simulated AI ranks MUST NOT appear in canonical snapshot sections. A rank-context key MUST encode the discriminators above and MUST NOT depend on an idea title or UI label.
 
 #### 4.3.11 rulebook_set (`0x000B`)
 Primary key: (`governance_domain`, `rulebook_id`)

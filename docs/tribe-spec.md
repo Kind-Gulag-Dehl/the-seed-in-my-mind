@@ -87,7 +87,7 @@ Tribes are coordination filters, not governing bodies.
 
 ## 1. Definition of a Tribe
 
-A tribe is not a distinct entity type. A tribe is the **interpretation of an idea as a coordination anchor**, derived from importance alignment between identities and that idea.
+A tribe is not a distinct entity type. A tribe is the **interpretation of an idea as a coordination anchor**. Every tribe-relative importance context is anchored to that public idea, while participation eligibility is derived from public membership state.
 
 Every idea in the system implicitly defines a tribe. This is a fundamental invariant.
 
@@ -102,7 +102,7 @@ Every idea defines an **open tribe**.
 The open tribe:
 - Always exists.
 - Is publicly visible.
-- Has membership derived automatically from importance alignment.
+- Has publicly declared/replay-derived membership plus the creator exemption.
 - Cannot be disabled, hidden, or replaced.
 - Serves as the canonical public context for the idea.
 
@@ -120,7 +120,7 @@ A gatekept overlay:
 Gatekeeping decisions are made using ordinary challenges, arguments, and votes, with eligibility limited to members of the gatekept overlay. No special voting weights, offices, or permanent roles exist.
 
 Gatekept overlays:
-- Cannot waive importance alignment requirements.
+- Cannot waive public membership requirements.
 - Cannot bypass time-weighted membership activation.
 - Cannot override protocol-level invariants.
 
@@ -137,8 +137,7 @@ This creator invariant is permanent and immutable. The creator is always recorde
 
 At creation time:
 - The creator is automatically a member of the open tribe.
-- The tribe anchor is automatically added to the creator's "important to me" list (at least in the immediate timeframe).
-- This automatic inclusion does **not** consume a top-X importance slot.
+- No private importance position is authored, inferred, or exposed.
 - This automatic inclusion does **not** count against tribe membership limits.
 
 This exemption exists solely to prevent penalizing idea creation. It does not grant permanent authority, governance rights, or immunity from later loss of status.
@@ -166,46 +165,44 @@ Legacy references to "tribe-only ideas" or "mirroring into public ideas" are DEP
 
 ## 2. Tribe Membership: Core Concepts
 
-Tribe membership expresses **alignment of importance**, not affiliation by choice, invitation, or belief. An identity belongs to a tribe because the idea anchoring that tribe is important to them, as represented in the canonical importance graph.
+Tribe membership expresses a person's **publicly attributable alignment** with the idea that anchors the tribe. It is recorded through the ordinary canonical membership connection, not inferred from the person's private importance map.
 
-Membership is therefore descriptive rather than declarative. The system does not provide a "join tribe" or "leave tribe" action. All membership states are derived, recomputed, and auditable.
+The system does not need separate "join tribe" or "leave tribe" object types: creating or ending the protocol-defined membership relationship expresses that transition. Active membership state is then derived, replayed, and audited from those public events and the applicable activation or decay rules.
 
 ### 2.1 Membership as a graph property
 
-An identity's relationship to a tribe is determined entirely by:
-- Relative importance connections between the identity and ideas
-- Time-weighted ranking of those ideas across defined timeframes
+An identity's eligibility relationship to a tribe is determined entirely by:
 
-There are no social contracts, charters, or agreements required for tribe membership. Membership reflects what an identity actually prioritizes, not what they claim allegiance to.
+- public canonical membership relationships to the tribe anchor,
+- their activation, decay, or termination history, and
+- the protocol and rulebooks active at the relevant cycle.
+
+Relative-importance rankings may explain why a person cares about the tribe, but they do not create or revoke membership. No private map, hidden invitation, social contract, charter, or off-log agreement can substitute for public canonical membership state.
 
 ### 2.2 Explicit vs derived membership (high-level)
 
 The system distinguishes between two structurally different kinds of membership:
 
-- **Explicit membership**: scarce, importance-derived membership that grants the ability to act within a tribe.
+- **Explicit membership**: public canonical membership state that grants the ability to act within a tribe after applicable activation rules.
 - **Derived membership**: automatically implied membership required for structural context and continuity, which does not consume membership capacity.
 
 This section defines the conceptual distinction only. The detailed mechanics of explicit membership are specified in Section 6, and the mechanics of derived membership are specified in Section 11.
 
-### 2.3 No manual enrollment
+### 2.3 Explicit public enrollment
 
-There is no manual enrollment mechanism.
+An identity joins an open tribe by authoring the protocol's ordinary public membership relationship to the tribe anchor, subject to rate limits and activation rules. This is an attributable public action, not a disclosure of the identity's private relative-importance map.
 
-Identities cannot:
-- Request to join a tribe
-- Invite others to a tribe
-- Accept or reject tribe membership directly
-
-All such effects, when they exist, emerge indirectly from importance alignment and, in the case of gatekept overlays, from restricted interaction eligibility.
+Gatekept admission may add member-restricted eligibility checks, but no hidden invitation, private rank inference, or off-log decision may create canonical membership.
 
 ### 2.4 Membership is continuously recomputed
 
 Tribe membership is not fixed at creation time and is not stored as a static flag.
 
 Instead:
-- Membership states are recomputed as importance rankings change.
-- Time-weighted activation and decay apply.
-- All membership transitions are deterministic and replayable.
+
+- membership states are recomputed from canonical membership events,
+- time-weighted activation and decay apply, and
+- all membership transitions are deterministic and replayable.
 
 This ensures that tribes remain reflective of ongoing priorities rather than historical artifacts.
 
@@ -272,11 +269,11 @@ This applies equally to:
 All structure is interpreted relative to a **reference idea**.
 
 Examples include:
-- The collective as the reference idea for global structure
+- Any public idea as the reference for a public-relative rank context
 - A tribe anchor as the reference idea for a tribe map
 - An actionable idea as the reference idea for execution context
 
-The same idea may occupy different structural positions depending on the reference idea used. There is no single absolute rank or tier.
+The same idea may occupy different structural positions depending on the reference idea used. These 10-axis relative contexts are distinct from the public 20-axis universal-importance product and its derived overall universal rank.
 
 ### 3.3 Local coherence and global embedding
 
@@ -346,7 +343,7 @@ The following matrix is normative.
 | Tribe overlay challenge participation (arguments/votes) | Eligibility for the same (scope_kind=tribe, anchor_id) overlay | Voter and argument eligibility MUST be derived and replay-deterministic |
 
 Gatekept overlays MAY restrict eligible identities further, but MUST NOT:
-- Grant eligibility to identities lacking required importance alignment.
+- Grant eligibility to identities lacking required public membership state.
 - Accelerate or bypass time-weighted activation.
 - Override protocol-level constraints.
 
@@ -428,6 +425,19 @@ All tribe-scoped overlay state:
 - MAY connect to multiple ideas within the map when those connections remain protocol-valid.
 
 Any item that cannot be meaningfully connected to the tribe anchor via valid overlay state does not belong in that tribe map.
+
+### 5.3A Tribe-relative rank lists [anchor: tribe_relative_rank_lists]
+
+Every public idea may serve as a tribe anchor. The tribe's importance map ranks public candidate ideas relative to that anchor on ten axes:
+
+- `important_to_reference` across the five protocol timeframes; and
+- `important_for_reference` across the five protocol timeframes.
+
+Each axis is an ordinal list. A valid lower-ranked candidate may challenge a higher-ranked candidate in the same complete context. The tribe anchor is the reference and is not a contestant. Eligible tribe members may contribute arguments and enter the deterministic juror-selection process; nonmembers may inspect the public challenge and resulting rank history but may not vote.
+
+If the challenger wins and remains below the target when the verdict applies, it moves immediately above the target. No token balance, tribe mana, status, or popularity measure weights a ballot or supplies a rank score.
+
+Tribe-relative rank state is a public overlay over the canonical substrate. It does not alter the 20-axis universal product, the derived overall universal rank, a public-relative context outside the tribe, or another tribe's rank state.
 
 ### 5.4 Tier formation within a tribe map
 
@@ -514,47 +524,47 @@ Restriction applies only to **who may modify the structure**, never to who may o
 This preserves the system's foundational ethic: coordination without concealment.
 
 
-## 6. Importance-Derived Tribe Membership
+## 6. Public Tribe Membership and Private-Rank Separation
 
-Explicit tribe membership is derived entirely from **importance alignment**, not from manual joining, invitations, or declarations. An identity belongs to a tribe because the tribe's anchor idea is important to them, as expressed through relative importance rankings.
+Tribe challenge eligibility MUST be derived from public canonical membership state, never from an individual's private importance map.
 
-This rule is global, deterministic, and recomputed continuously as importance changes.
+An identity may express public alignment with a tribe through the protocol's ordinary `membership` connection to the tribe anchor. That public act is distinct from privately judging the anchor important. A node MUST NOT inspect, publish, or infer private rank positions to determine tribe membership.
 
-### 6.1 Importance lists as the sole membership signal
+Membership state and any activation/decay metadata are replay-derived from canonical membership events and the active protocol rules. A private owner may rank the same anchor highly, lowly, or not at all without changing public membership.
 
-Each identity maintains ranked lists of ideas they consider important across the system's defined timeframes. These importance lists are canonical, publicly inspectable, and subject to challenge like all other importance claims.
+### 6.1 Membership as the sole eligibility signal
 
-For each timeframe:
-- Ideas are ranked by relative importance to the identity.
-- Only the top X ideas in that timeframe are eligible to grant **explicit tribe membership**.
-- X is a protocol-level parameter and applies uniformly across the system.
+For tribe-scoped challenge creation, arguments, and voting, the eligibility signal is:
 
-There is no other mechanism for explicit tribe membership.
+- an active canonical membership connection from the identity to the tribe anchor; or
+- the narrowly defined creator exemption below.
+
+There is no eligibility path based on private top-X lists, shared screenshots, AI inference, token balances, popularity, or hidden account state.
 
 ### 6.2 Explicit membership definition
 
 An identity is an explicit member of a tribe anchored at idea T if and only if at least one of the following is true:
 
-- T appears in the identity's top-X importance list for at least one timeframe, or
-- The identity is the creator of T (creator exemption).
+- an active canonical membership connection links the identity to T; or
+- the identity is the creator of T under the creator exemption.
 
 Explicit membership:
 - Grants the right to perform tribe-scoped actions in the open tribe.
 - Is required for participation in gatekept overlays associated with the tribe.
 - Is required to perform tribe-scoped overlay writes within the tribe map.
 
-Explicit membership is intentionally scarce. An identity cannot meaningfully belong to many tribes at once without diluting what they claim is important to them.
+Membership rate limits and activation rules MAY bound opportunistic mass joining, but membership scarcity MUST NOT be inferred from or enforced by exposing a private importance map.
 
 ### 6.3 Creator exemption
 
-When an identity creates an idea, that idea is automatically treated as important to the creator for purposes of tribe membership.
+When an identity creates an idea, canonical provenance grants the creator the narrow membership exemption for the open tribe anchored by that idea. This does not author or reveal a private rank.
 
 This grants the creator:
 - Explicit membership in the corresponding open tribe.
 - Eligibility to perform tribe-scoped actions.
-- Exemption from consuming a top-X importance slot for that idea.
+- No requirement to publish a private importance judgment.
 
-The creator exemption is **permanent with respect to the open tribe anchor**. The creator does not lose explicit membership in the tribe they created due to later reprioritization.
+The creator exemption is **permanent with respect to the open tribe anchor**. Private reprioritization has no effect on it.
 
 However, the exemption:
 - Does not grant eligibility for gatekept overlays.
@@ -564,38 +574,25 @@ However, the exemption:
 Creator status persists solely as structural provenance and minimal participation eligibility in the open tribe.
 
 
-### 6.4 Multi-timeframe qualification
+### 6.4 Membership commitment metadata
 
-An identity may qualify for explicit membership in the same tribe through multiple timeframes simultaneously.
-
-When this occurs:
-- The identity is considered an explicit member via all qualifying timeframes.
-- Any privileges or delays associated with membership are governed by the **most conservative** qualifying timeframe.
-
-This prevents short-term reordering from overriding long-term commitment constraints.
+An active rulebook MAY attach public commitment-horizon or activation metadata to a canonical membership connection. Such metadata is membership state, not a copy of an individual's private ten-axis ranking. If multiple public commitment conditions apply, the most conservative applicable activation condition governs.
 
 ### 6.5 Loss of explicit membership
 
-Explicit membership is continuously recomputed.
-
-If an idea T falls out of the identity's top-X list for all timeframes:
-- Explicit membership in the tribe anchored at T is revoked.
-- All tribe-scoped privileges cease.
-- Associated tribe mana pools are deactivated.
-
-There is no grace period beyond the decay rules defined in the next section.
+Explicit membership is continuously replay-derived. It ends only through a valid membership-removal, suspension, lifecycle, or decay transition defined by the protocol. Private rank changes MUST NOT revoke it.
 
 ---
 
 ## 7. Time-Weighted Joining and Leaving
 
-Importance alignment alone is not sufficient to grant immediate tribal power. Tribe membership is **time-weighted** to prevent rapid cycling, opportunistic capture, and short-term manipulation.
+Creating a public membership connection need not grant immediate tribe-scoped power. Tribe membership MAY be **time-weighted** to prevent rapid cycling, opportunistic capture, and short-term manipulation.
 
 Time-weighting applies uniformly to all tribes and is enforced at the protocol level.
 
 ### 7.1 Activation dwell time
 
-For each timeframe, the protocol defines a minimum dwell duration that must elapse after an idea enters an identity's top-X list before explicit membership privileges become active.
+The protocol defines a minimum dwell duration that may begin when the canonical membership connection becomes effective.
 
 In general:
 - Shorter timeframes have shorter dwell times.
@@ -607,7 +604,7 @@ Until the dwell time has elapsed:
 
 ### 7.2 Decay and removal time
 
-Similarly, when an idea leaves an identity's top-X list, explicit membership does not vanish instantly.
+Similarly, when a valid public membership-removal or expiry transition occurs, explicit membership need not vanish instantly.
 
 Each timeframe defines a minimum decay duration:
 - During decay, membership remains visible but is marked as expiring.
@@ -620,17 +617,17 @@ This asymmetry ensures that:
 ### 7.3 Transparency requirements
 
 All tribe-scoped actions MUST display:
-- The timeframe through which the actor qualifies for membership.
-- The duration the tribe anchor idea has continuously remained in that timeframe's top-X list.
+- The public membership basis through which the actor qualifies.
+- The canonical duration for which that membership has remained active.
 
-This makes opportunistic behavior legible rather than forbidden and allows observers to judge credibility based on time-depth.
+This makes opportunistic behavior legible without exposing the actor's private importance map.
 
 ### 7.4 Interaction with gatekept overlays
 
 Time-weighting applies before any gatekeeping logic.
 
 An identity must:
-- First satisfy importance alignment.
+- First hold the required public membership state.
 - Then satisfy dwell-time requirements.
 - Only then may participate in gatekept tribe overlays.
 
@@ -645,7 +642,7 @@ There is no mechanism by which:
 
 All time-weighting behavior is protocol-defined, deterministic, and challengeable only through changes to the protocol itself.
 
-This ensures that tribe membership reflects sustained importance, not momentary alignment.
+This ensures that action-eligible membership reflects sustained public commitment, not a momentary or hidden signal.
 
 
 ## 8. Gatekept Tribes and Restricted Interaction
@@ -659,7 +656,7 @@ Everything remains publicly visible at all times.
 Every idea defines an open tribe.
 
 In an open tribe:
-- Membership is derived automatically from importance alignment.
+- Membership is derived from public canonical membership state plus the creator exemption.
 - Any explicit member may perform tribe-scoped actions.
 - No additional admission or approval exists.
 
@@ -704,11 +701,11 @@ It MUST NOT restrict:
 
 ### 8.5 Loss of eligibility
 
-If an identity loses explicit membership in the open tribe (due to importance re-evaluation):
+If an identity loses explicit membership in the open tribe through a valid membership transition:
 - They immediately lose eligibility for all associated gatekept tribes.
 - No gatekept decision can override this loss.
 
-Gatekeeping is always subordinate to importance alignment.
+Gatekeeping is always subordinate to public membership eligibility.
 
 ### 8.6 Failure, stagnation, and decay
 
@@ -921,7 +918,7 @@ Derived membership:
 
 Explicit membership:
 - Is limited and scarce.
-- Is derived directly from importance alignment (Section 6).
+- Is derived from public canonical membership state (Section 6).
 - Grants the ability to perform tribe-scoped actions.
 
 This distinction preserves both scarcity and structural coherence.
@@ -1095,8 +1092,8 @@ The tribe system is designed to resist capture, fragmentation, and covert coordi
 ### 14.1 Anti-brigading guarantees
 
 The system resists brigading through:
-- Importance-derived membership.
-- Top-X scarcity.
+- Rate-limited public membership actions.
+- Replay-derived activation and eligibility.
 - Time-weighted activation and decay.
 - Tribe mana throttling.
 - Mandatory upward membership chaining.
@@ -1106,7 +1103,7 @@ Rapid influxes of coordinated identities cannot instantly acquire tribe control.
 ### 14.2 Anti-sockpuppet properties
 
 Sockpuppet amplification is constrained because:
-- Importance alignment must be sustained.
+- Public membership and activation requirements must be sustained.
 - Membership slots are scarce.
 - Tribe mana limits throughput.
 - Identity verification affects capacity but not authority.
@@ -1307,7 +1304,7 @@ The tribe system enforces the following non-negotiable invariants:
 
 - Every idea implicitly defines an open tribe.
 - Every tribe has a creator recorded immutably.
-- Tribe membership is derived from importance, not declaration.
+- Tribe membership is replay-derived from public canonical membership state, never from private importance rank.
 - Tribe activity in canonical state is overlay-only (relative_importance + scoped display overrides).
 - Tribe overlays are publicly readable and auditable.
 - Restricted interaction never implies secrecy.
@@ -1330,5 +1327,3 @@ The following semantics no longer apply as active protocol behavior in this spec
 - Mana spending rules tied to creating tribe-only objects.
 
 Historical records MAY still contain this terminology. Such records MUST be interpreted as legacy context and MUST NOT override the overlay-only tribe model defined in this document.
-
-

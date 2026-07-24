@@ -344,7 +344,7 @@ Lane assignment and lane-specific costs:
 
 Scope-specific mana source constraints:
 - Tribe mana MUST apply only to tribe-scoped Lane O overlay actions and associated tribe-scoped challenge participation.
-- Personal overlays MUST consume personal mana under Lane O.
+- Canonically published personal projection or display-overlay writes MUST consume personal mana under Lane O. Direct edits to noncanonical private rank state are outside token accounting and consume no protocol mana.
 - Universal substrate creation under Lane U MUST consume universal creation capacity as defined by rulebooks and MUST NOT be reclassified as a tribe-only object-creation lane.
 
 Legacy terminology that treats "tribe-only object creation" as a distinct mana cost class is DEPRECATED and MUST NOT define active cost semantics.
@@ -771,7 +771,7 @@ POD routes through the **alive importance structure** defined by:
 - alive relative_importance connections,
 - active scope/axis/timeframe selections.
 
-Routing is evaluated independently for each scope, axis, and timeframe and then aggregated according to Protocol v5 rules for universal importance.
+Routing reads canonical importance state only after that state has been replayed. Universal routing inputs use the distinct 20-axis universal product and its derived `overall_universal_rank`. Eligible `relative_importance` edges may define local paths, but public-relative and tribe-relative positions MUST NOT be arithmetically folded into universal importance. Private and simulated ranks are never routing inputs.
 
 ---
 
@@ -779,14 +779,15 @@ Routing is evaluated independently for each scope, axis, and timeframe and then 
 
 ### 6.3 The downhill rule (mandatory constraint) [anchor: the_downhill_rule_mandatory_constraint]
 
-POD routing MUST satisfy the downhill rule:
+POD routing MUST satisfy the downhill rule. Because one-based position `1` is the highest overall universal rank:
 
 \[
-U(\text{source}) > U(\text{destination})
+\operatorname{overall\_universal\_rank}(\text{source})
+<
+\operatorname{overall\_universal\_rank}(\text{destination})
 \]
 
-Where:
-- \( U(x) \) is the universal importance rank or score of idea \( x \) at the current cycle boundary.
+The routing comparison uses the replay-derived overall universal ordinal position after sorting ideas by ascending `universal_position_sum` and the active deterministic tie-break. `universal_position_mean = universal_position_sum / 20` MAY be displayed, but no floating-point display value, token balance, or private/tribe-relative rank may replace the ordinal comparison.
 
 If the inequality is not satisfied, the routing path is invalid and MUST be excluded from computation.
 
@@ -885,11 +886,12 @@ Within a routing neighborhood:
 
 If two or more outgoing edges are tied under the relative importance ordering, ties MUST be broken deterministically using the following sequence:
 
-1. **Higher relative-importance strength** (if a numeric strength exists under the active rulebook).
-
-3. **Lexicographic ascending order of the canonical edge identifier**.
+1. **Earlier ordinal position in the complete canonical relative context**, when the edges are distinguishable there.
+2. **Lexicographic ascending order of the canonical edge identifier**.
 
 If a tie-breaking field is unavailable, the implementation MUST skip that criterion and proceed to the next without introducing nondeterminism.
+
+No numeric relative-importance strength exists in the base protocol. A token rulebook MUST NOT introduce one as a substitute for pairwise challenge history.
 
 ---
 
@@ -1543,7 +1545,7 @@ Cycle boundaries MUST be derived using the Protocol v5 cycle derivation rules (i
 At each cycle boundary, conformant nodes MUST perform the following operations in the exact order listed:
 
 1. **Importance recomputation**  
-   Recompute universal importance rankings from the current living map.
+   Replay all twenty universal-axis orderings from the current living map, compute each idea's exact position sum/mean, and derive `overall_universal_rank`.
 
 2. **Lifecycle evaluation**  
    Apply rot and burn rules to ideas and eligible connections.
@@ -2135,7 +2137,7 @@ Upon importing a mindseed, a conformant node MUST execute the following determin
    Identify the most recent completed cycle boundary contained within the mindseed. Partial or provisional boundaries MUST NOT be treated as authoritative.
 
 3. **Importance recomputation**  
-   Recompute universal importance rankings from the alive graph as of the identified cycle boundary.
+   Replay all twenty universal-axis orderings from the alive graph at the identified cycle boundary, then derive the exact position sums/means and `overall_universal_rank`.
 
 4. **Lifecycle evaluation**  
    Re-evaluate lifecycle_state (alive, rotting, burned) for all ideas and eligible connections using the rulebooks effective at that boundary.
@@ -2468,5 +2470,5 @@ The token layer functions as the circulatory system of a collective mind: alive,
 ## Rationale (Short)
 
 - The Lane U / Lane O split aligns mana cost semantics with the universal-substrate versus scoped-overlay architecture while remaining rulebook-controlled.
-- Explicit tribe and personal overlay constraints prevent reintroduction of tribe-only object creation as an active cost class.
+- Explicit tribe and published-personal-overlay constraints prevent reintroduction of tribe-only object creation as an active cost class without treating private owner ordering as canonical token activity.
 - Deterministic lane assignment preserves replay equivalence across conformant nodes and avoids discretionary cost behavior.

@@ -132,7 +132,7 @@ Default offline encyclopedia for ordinary users.
 **Required contents**
 
 * Tier 0 contents.
-* Paragraph-tier descriptions for the top-K ideas by universal importance at H.
+* Paragraph-tier descriptions for the top-K ideas by replay-derived `overall_universal_rank` at H. That ordering is derived from each idea's twenty pairwise-produced universal-axis positions through the exact Protocol v5 position sum/mean and deterministic tie-break; public-relative and tribe-relative ranks are not inputs.
 * Paragraph-tier descriptions for top-K truth claims (across truth subtypes).
 * Minimal reasoning summaries (deterministically selected tiers, not full history).
 
@@ -388,6 +388,5 @@ the system ensures that:
 * and carry that knowledge forward even when infrastructure fails.
 
 This completes the bridge between **proof of reasoning** and **shared human meaning**.
-
 
 
