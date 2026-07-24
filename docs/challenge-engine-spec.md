@@ -138,7 +138,7 @@ Protocol v5 defines **exactly four challenge domains**:
    Evaluates whether an action or actionable idea should proceed, be recognized, or be accepted under defined criteria.
 
 4. **Representation Challenge**  
-   Evaluates which description or representation of a target object (`idea` or `rail`) should be canonical.
+   Evaluates which description or representation of a target object (`idea` or `ordering`) should be canonical.
 
 No additional challenge domains may be introduced by rulebooks, implementations, or applications.
 
@@ -283,7 +283,7 @@ Each challenge domain imposes strict anchoring rules:
 - MUST declare the decision being evaluated (e.g., recognition, authorization, acceptance).
 
 #### 2.3.4 Representation challenges [anchor: representation_challenges]
-- MUST reference exactly one target object whose representation is contested (`idea` or `rail`).
+- MUST reference exactly one target object whose representation is contested (`idea` or `ordering`).
 - MUST reference two or more competing representations already present in canonical history.
 - Competing representations MUST be canonical representation objects (created via the Appendix A representation creation path) and not informal/off-log submissions.
 - MAY include an optional `scope_key = (scope_kind, anchor_id)` in challenge framing.
@@ -339,7 +339,7 @@ Accordingly:
 - For a **truth challenge**, a challenge instance is uniquely identified by:
   - the challenged truth-claim identifier.
 - For a **representation challenge**, a challenge instance is uniquely identified by:
-  - the target object identifier (`idea_id` or `rail_id`),
+  - the target object identifier (`idea_id` or `ordering_id`),
   - the target `(tier_length, tier_complexity)` slot,
   - and the resolved representation scope key.
 
@@ -965,7 +965,7 @@ Action challenge verdicts MUST NOT:
 
 #### 6.2.4 Representation challenge effects [anchor: representation_challenge_effects]
 A representation challenge verdict MUST:
-- select exactly one representation outcome for the referenced target (`idea` or `rail`) and the challenge's resolved representation scope,
+- select exactly one representation outcome for the referenced target (`idea` or `ordering`) and the challenge's resolved representation scope,
 - become effective only when replay applies the corresponding `challenge_finalize_verdict` event,
 - supersede any previously active representation without deleting history.
 
@@ -1221,7 +1221,7 @@ This preserves the separation between *importance*, *recognition*, and *normativ
 
 A representation challenge verdict MUST:
 
-- select exactly one representation outcome for the referenced target (`idea` or `rail`) and the challenge's resolved representation scope,
+- select exactly one representation outcome for the referenced target (`idea` or `ordering`) and the challenge's resolved representation scope,
 - activate that representation deterministically only when replay applies `challenge_finalize_verdict`,
 - supersede prior canonical representations without deleting or rewriting them.
 

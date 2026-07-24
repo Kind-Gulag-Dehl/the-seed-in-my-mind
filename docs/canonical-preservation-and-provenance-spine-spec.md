@@ -394,7 +394,7 @@ Immutability is cryptographic and mechanical, not social or institutional.
 
 ### 5.1 Description tiers [anchor: description_tiers]
 
-Each idea and rail in the system may have multiple description tiers, which are independent textual payloads.
+Each idea and ordering in the system may have multiple description tiers, which are independent textual payloads.
 
 Two orthogonal dimensions are defined:
 
@@ -481,7 +481,7 @@ Payload packs exist to:
 
 Every payload pack is defined along two orthogonal dimensions:
 
-**Breadth** — which ideas (and rails, where applicable) are included:
+**Breadth** — which ideas (and orderings, where applicable) are included:
 - all ideas across all history,
 - only ideas in the current living map,
 - top-ranked ideas by universal importance across all history,
@@ -621,7 +621,7 @@ Given a valid seed bundle, a user MUST be able to:
 
 - verify all included data against hashes and commitments,
 - reconstruct derived state via deterministic replay,
-- browse ideas, rails, descriptions, and provenance,
+- browse ideas, orderings, descriptions, and provenance,
 - interact with the system locally within the limits of offline operation.
 
 No trusted third party is required for local verification.

@@ -3,7 +3,7 @@ use super::*;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum TargetKind {
     Idea,
-    Rail,
+    Ordering,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -15,8 +15,10 @@ pub(super) enum TierEnum {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum RailKind {
+pub(super) enum OrderingProfile {
     Vine,
+    EvidenceRail,
+    ActionRail,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -124,7 +126,7 @@ pub(super) struct WriterVerificationState {
 #[derive(Debug)]
 pub(super) struct ApplyResult {
     pub(super) ideas: Vec<ReplayIdeaRow>,
-    pub(super) rails: Vec<ReplayRailRow>,
+    pub(super) orderings: Vec<ReplayOrderingRow>,
     pub(super) connections: Vec<ReplayConnectionRow>,
     pub(super) payloads: Vec<ReplayPayloadRow>,
     pub(super) cycle_status: ReplayCycleStatus,

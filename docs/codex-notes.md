@@ -34,3 +34,32 @@ Documentation-only coordination work does not require a notes entry unless it ch
   - Completed the protected-database isolation proof after the external writer exited: every required Rust package test was rerun with a fresh disposable database and preserved the protected `seed_dev` all-table count signature.
   - Executed the signed-ingress HTTP/database suite with no `SKIP` paths; valid signed `idea_create` and `connection_create`, negative validation, atomicity, idempotency, replay rebuild, and legacy migration cases passed against disposable databases.
   - Proved the generated open-core export and smoke build using only `seed_export_smoke`; `seed_dev` was unchanged, while the export reset/import/snapshot steps were confined to the disposable export-smoke database.
+
+- 2026-07-13 17:10:34 -04:00 - TEMPO-005D-R3-P2
+  - Added pure Profile-v0 admission cryptographic primitives and typed validators for sponsored `identity_create`, direct key rotation, and restricted direct-key revocation. The implementation includes canonical admission/root payload bytes, reduced authorization commitments, strict Ed25519 applicant/replacement proofs, completed-payload sponsor signature validation, and fixed public crypto fixtures.
+  - This is not ingress or state application: legacy self/speaker and account-coupled identity paths remain unchanged until the P3 stateful storage and compatibility-quarantine slice. No database or network access is involved in the new module.
+
+- 2026-07-13 18:22:07 -04:00 - TEMPO-005D-R3-P3
+  - Added storage-only Profile-v0 sponsored-admission persistence with append-only provenance, direct-key history/state, structural-root, lineage, capacity-debit, and explicitly transitional replay-bridge records.
+  - Removed legacy one-source-event uniqueness constraints that prevented an admission from creating four roots and three memberships, replacing them with source-event indexes. Public ingress, replay, snapshots, API/DTOs, capacity generation, and verification eligibility remain deferred.
+
+- 2026-07-13 19:13:00 -04:00 - TEMPO-005D-R3-P4
+  - Added a database-free Profile-v0 admission replay projector for sponsored identity creation, direct-key rotation/revocation, and manifest-only compatibility verification records. It derives human identity/provenance, keys, the complete structural-root set, memberships, sponsor lineage, restricted initial authority, and exactly one immutable capacity-debit fact from canonical candidates.
+  - Added a deterministic Profile-v0 admission snapshot pack that commits identity/provenance, roots, key history, lineage, debit facts, compatibility records, lanes, and honest not-yet-derived capacity/liveness statuses. Existing database-backed replay and Stage-0 snapshot flows remain unchanged pending API/integration work.
+
+- 2026-07-23 20:42:40 -04:00 - TEMPO-005D-R3-P3-DBV
+  - Test-only disposable PostgreSQL isolation now uses the exact `seed_admission_p3_test_` prefix in the P3 storage helper, and `common::test_db_guard` recognizes that prefix.
+  - The helper refuses cleanup for any name outside that prefix and emits `ISOLATED_DB_CLEANUP` status. This does not change application, migration, replay, or admission semantics.
+
+- 2026-07-23 20:42:40 -04:00 - TEMPO-005D-R3-P3-DBV corrective update
+  - Isolated admission tests now use fallible checks inside their asynchronous bodies, so `db.cleanup().await` runs before a failure is surfaced by the outer test. This preserves task-prefixed cleanup evidence even when a test condition fails.
+  - The atomic test asserts one new identity relative to its fixture baseline. The 64-byte corrupted-proof case uses the established `applicant_proof_binding_mismatch` boundary; malformed proof encoding remains the separate invalid-proof path.
+
+- 2026-07-23 22:00:29 -04:00 - TEMPO-005D-R3-P3-DBV validation complete
+  - The authenticated guarded PostgreSQL matrix passed 10/10. All fourteen task-prefixed databases reported `differs_from_seed_dev=true` and matching `ISOLATED_DB_CLEANUP ... dropped=true` lines. No missing-admin skip occurred.
+
+- 2026-07-24 09:45:00 -04:00 - INTEGRATION-ORDERING-001 / OPENCORE-ORDERING-001
+  - Replaced the live authored Rail substrate with native `Ordering` validation, encoding/hashing, storage, replay, snapshot, import/export, verification, API/DTO, frontend-contract, and conformance surfaces.
+  - Authored events are `ordering_create` and `ordering_fork`; profiles are `vine`, `evidence_rail`, and `action_rail`. Representation pointers remain in the snapshot representation index and outside the authored Ordering state root.
+  - Added migration `0024_native_ordering_cutover.sql`, native Ordering conformance fixtures/harness, deterministic replay/snapshot/API/importer tests, and reviewer-facing implementation/conformance documentation.
+  - Historical migrations and negative conformance cases retain old tokens only to document or prove rejection; there is no live compatibility layer.

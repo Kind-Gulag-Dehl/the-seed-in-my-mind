@@ -1,4 +1,4 @@
-﻿# Protocol v5 – Appendix A  
+# Protocol v5 – Appendix A
 
 *(Normative appendix — subordinate to Protocol v5 Sections 0–11)*
 
@@ -41,7 +41,7 @@ This appendix defines schemas for the following canonical object classes:
 - **challenge**
 - **argument** (either as a distinct object or as an idea with constrained semantics, as specified herein)
 - **description / representation artifacts** (where distinct from ideas)
-- **rail** (ordered sequence object; vines are rail specializations)
+- **ordering** (ordered sequence object; vines are ordering specializations)
 - **block**
 - **snapshot**
 - **rulebook reference objects** (interface only; rulebook content is governed elsewhere)
@@ -306,7 +306,7 @@ All fields not explicitly listed are FORBIDDEN.
 For representation semantics in this appendix, the following terms are normative:
 
 - **representation object**
-  A separate canonical object that references one textual payload for one target object (`idea` or `rail`) at one `(tier_length, tier_complexity)` slot.
+  A separate canonical object that references one textual payload for one target object (`idea` or `ordering`) at one `(tier_length, tier_complexity)` slot.
 
 - **candidate representation** (also called **competing representation**)
   A representation object present in canonical history that is not currently selected by the canonical pointer for its slot.
@@ -331,12 +331,28 @@ REQUIRED:
 - `identity_id`  
   Canonical identifier (UUIDv7 string) for the identity.
 
-- `verification_status`  
-  A structured status indicator or reference proving that the identity corresponds to a verified real human agent.  
-  This field MAY be a reference or hash pointing to verification proof material defined outside this appendix.
+- `identity_kind`
+  Closed identity-kind classification encoded as `u8`. Profile-v0 `identity_create`
+  produces only `0x01 = human`; other values require a later explicitly versioned
+  profile. This classification is not VH, VI, human uniqueness, civil identity, or an
+  ordinary-authority grant.
+
+- `admission_provenance_class`
+  Closed provenance enum:
+  - `0x01 = genesis_admitted`
+  - `0x02 = legacy_operator_provisioned`
+  - `0x03 = event_derived`
+  - `0x04 = future_profile_derived`
+
+  `event_derived` is a replay effect of accepted Profile-v0 `identity_create`; it is
+  not an author-controlled payload value. The other classes require the explicit
+  versioned genesis/import/legacy or future-profile authority described in Section
+  A4.1.2.
 
 - `created_event_id`  
-  Reference to the canonical event that created this identity.
+  Reference to the accepted event that created this identity when event-derived, or to
+  the explicit versioned genesis/import manifest event or record when compatibility
+  provenance defines one.
 
 #### A2.1.2 Optional fields [anchor: a2_1_2_optional_fields]
 
@@ -351,9 +367,36 @@ OPTIONAL:
   Non-authoritative descriptive metadata (e.g., biography text, links, avatar references).  
   This metadata MUST NOT affect canonical behavior, ranking, governance, or validation.
 
+- `identity_structural_roots`
+  The exact four-role root plan for an event-derived Profile-v0 human identity. It is
+  required for that provenance class and is absent or explicitly classified as
+  unavailable for compatibility identities until an authorized compatibility profile
+  establishes it. A migration MUST NOT fabricate roots or Anthill relationships.
+
+- `compatibility_manifest_ref`
+  Required for `genesis_admitted`, `legacy_operator_provisioned`, or
+  `future_profile_derived` when the governing compatibility/profile manifest is not the
+  `created_event_id` itself. It identifies provenance only and does not fabricate a
+  sponsor, possession proof, invitation debit, lineage edge, or verification claim.
+
+- `legacy_verification_status` (compatibility records only)
+  Closed historical enum encoded as `u8`:
+  - `0x00 = legacy_status_unknown`
+  - `0x01 = legacy_status_unverified`
+  - `0x02 = legacy_status_human_verified`
+
+  It records only the declared historical/import classification. It is not a VH or VI
+  truth result and directly activates no current eligibility lane.
+
 #### A2.1.3 Invariants [anchor: a2_1_3_invariants]
 
-- Only identities corresponding to **verified human agents** MAY author canonical events, except the reserved non-human identity `system_boundary_emitter` for mechanically emitted boundary events (`cycle_close`, and `snapshot_commit` if enabled by active profile/rulebooks).
+- Ordinary human-authored events require the event family's replay-derived eligible
+  human lane. Profile-v0 `identity_create` is authored by an eligible human sponsor;
+  the applicant is not the author. Appendix A may separately authorize restricted
+  verification and direct key-control event families for a `CanonicalAdmittedIdentity`
+  before ordinary-writer eligibility. The reserved non-human identity
+  `system_boundary_emitter` remains limited to mechanically emitted boundary events
+  (`cycle_close`, and `snapshot_commit` if enabled by active profile/rulebooks).
 - AI identities, if represented at all, MUST be explicitly marked as non-human and:
   - MUST NOT author canonical events,
   - MUST NOT vote,
@@ -489,7 +532,7 @@ REQUIRED:
 - `target_kind`
   Enumeration for representation target:
   - `idea`
-  - `rail`
+  - `ordering`
 - `target_object_id`
   Canonical identifier of the represented target object.
 - `tier_length`
@@ -588,39 +631,42 @@ CONDITIONAL:
 
 ---
 
-#### A2.4.3A Rail object (ordered sequence primitive) [anchor: a2_4_3a_rail_object_ordered_sequence_primitive]
+#### A2.4.3A Ordering object (ordered sequence primitive) [anchor: a2_4_3a_ordering_object_ordered_sequence_primitive]
 
-A rail is a first-class canonical object for ordered traversal context.
+An Ordering is the one first-class canonical authored-sequence object.
 
 REQUIRED:
-- `rail_id`
-  Canonical identifier (UUIDv7 string) for the rail.
-- `rail_kind`
+- `ordering_id`
+  Canonical identifier (UUIDv7 string) for the ordering.
+- `ordering_profile`
   Enumeration:
   - `vine`
+  - `evidence_rail`
+  - `action_rail`
 - `speaker_identity_id`
-  Identity that authors the rail object.
+  Identity that authors the ordering object.
 - `created_event_id`
-  Reference to the canonical event that created the rail.
+  Reference to the canonical event that created the ordering.
 - `canonical_representation_ids`
-  Deterministic mapping from `(tier_length, tier_complexity)` slots to the currently canonical `representation_id` values for this rail.
+  Deterministic mapping from `(tier_length, tier_complexity)` slots to the currently canonical `representation_id` values for this ordering.
 - `item_idea_ids`
   Ordered list of `idea_id` values.
 
 CONDITIONAL:
-- If `rail_kind = vine`, `vine_type` MUST be present and MUST be one of:
+- If `ordering_profile = vine`, `vine_type` MUST be present and MUST be one of:
   - `pathway_vine`
   - `narrative_vine`
+- If `ordering_profile = evidence_rail` or `ordering_profile = action_rail`, `vine_type` MUST be absent.
 
 OPTIONAL:
-- `base_rail_id`
-  Reference rail for a fork lineage.
+- `base_ordering_id`
+  Reference ordering for a fork lineage.
 - `step_meta`
   Ordered metadata aligned to adjacent steps. Each step metadata entry MAY include `via_connection_id`.
 
 Invariants:
-- Rails/vines MUST preserve item order exactly as recorded.
-- Rails/vines MUST NOT introduce new connection types or alter base connection semantics.
+- Orderings/vines MUST preserve item order exactly as recorded.
+- Orderings/vines MUST NOT introduce new connection types or alter base connection semantics.
 - For `pathway_vine`, each adjacent step MAY include optional `via_connection_id` provenance.
 - For `narrative_vine`, no underlying-edge requirement exists.
 
@@ -649,7 +695,7 @@ REQUIRED:
 #### A2.5.2 Optional and conditional fields [anchor: a2_5_2_optional_and_conditional_fields]
 
 OPTIONAL:
-- `subject_rail_ids`  (required for rail-targeted representation challenges)
+- `subject_ordering_ids`  (required for ordering-targeted representation challenges)
 - `framing_representation_id`
 - `eligibility_pool_ref`
 - `timeline_windows`
@@ -795,7 +841,11 @@ REQUIRED:
 
 - `author_identity_id`
   Canonical identity of the event author.  
-  MUST reference an eligible verified human identity for ordinary human-authored events. For mechanically emitted boundary events, MUST reference the reserved `system_boundary_emitter` identity under the applicable boundary-event profile.
+  MUST reference the eligible human identity required by the event family's replay-derived
+  lane for ordinary human-authored events. Profile-v0 `identity_create` uses the eligible
+  sponsor as author; it does not require the applicant to have an active author key. For
+  mechanically emitted boundary events, MUST reference the reserved
+  `system_boundary_emitter` identity under the applicable boundary-event profile.
 
 - `public_key_ref`
   Hash32 reference to the public key descriptor used to verify `signature`, as defined by `canonical-event-authorship-and-signature-profile-v0.md`.
@@ -868,8 +918,11 @@ Nodes MUST NOT attempt to reinterpret or normalize payloads after hashing.
 
 ### A3.3 Validation pipeline [anchor: a3_3_validation_pipeline]
 
-All conformant nodes MUST validate canonical events using the following pipeline, in the specified order.
-Failure at any step MUST cause the event to be rejected.
+All conformant nodes MUST validate canonical events using the following pipeline.
+Failure at any step MUST cause the event to be rejected. Section A7.2.4 supplies the
+more specific reported-error precedence for Profile-v0 identity admission and direct key
+lifecycle events; it controls where the general layers would otherwise yield more than
+one failure.
 
 #### A3.3.1 Signature verification [anchor: a3_3_1_signature_verification]
 
@@ -877,7 +930,8 @@ Nodes MUST:
 
 - verify that `signature` is valid for the Profile-v0 signed authored-candidate bytes,
 - verify that `public_key_ref` corresponds to an active key owned by `author_identity_id`,
-- verify that the author identity is eligible to author canonical events.
+- verify that the author identity has the replay-derived eligible human lane required by
+  the event family.
 
 Events with invalid or unverifiable signatures MUST be rejected.
 
@@ -952,33 +1006,164 @@ Fields not listed in a payload schema are FORBIDDEN.
 
 ### A4.1.1 `identity_create` [anchor: a4_1_1_identity_create]
 
-Creates a new canonical identity.
+Creates a new event-derived `CanonicalAdmittedIdentity` through the Profile-v0 sponsored
+human-admission profile. It is the sole normal post-genesis Profile-v0 identity-creation
+event. Local key preparation and non-canonical admission requests do not create this
+state.
 
-REQUIRED payload fields:
-- `identity_id`
-- `initial_public_key_ref`
-- `initial_public_key_descriptor`
-- `verification_reference` (interface-level pointer)
+#### A4.1.1.1 Author, speaker, and payload binding
 
-Effects:
-- Creates a new identity object.
-- Registers the initial identity key state if `initial_public_key_ref` equals the hash32 of `initial_public_key_descriptor` under `canonical-event-authorship-and-signature-profile-v0.md`.
-- Identity is inactive for canonical authorship until verified.
+The sponsor is the canonical author. The candidate MUST satisfy:
+
+```text
+event_type = "identity_create"
+signature_profile = "ed25519_v0"
+author_identity_id = sponsor_identity_id
+speaker_identity_id = absent
+payload_binding_mode = "embedded_payload"
+payload_ref = absent
+```
+
+The target applicant MUST differ from `author_identity_id`. The applicant is neither the
+author nor a speaker. The sponsor's ordinary Profile-v0 candidate signature is over the
+completed payload hash and therefore binds the applicant proof within the payload.
+
+#### A4.1.1.2 Exact payload fields and canonical order
+
+The payload has exactly the following fields in this canonical order. Fields not listed
+are forbidden.
+
+| Order | Field | Type and canonical encoding | Required | Validation |
+| ---: | --- | --- | ---: | --- |
+| 1 | `identity_id` | `id` | yes | UUIDv7; distinct from sponsor; absent from canonical identity state. |
+| 2 | `initial_key_descriptor` | `key_descriptor_bytes_v0` | yes | Section 5 of the authorship profile; owner equals `identity_id`; no private bytes. |
+| 3 | `initial_public_key_ref` | `hash32` | yes | Equals the domain-separated descriptor hash. |
+| 4 | `admission_profile_version` | `ascii` | yes | Exactly `sponsored_public_admission_v0`; this fixed profile derives `identity_kind = human`. |
+| 5 | `capacity_period_id` | `id` | yes | Canonical capacity-period identifier; existence and applicability are replay-validated. |
+| 6 | `rulebook_reference` | `id(rulebook_id) || ascii(rulebook_version) || hash32(rulebook_hash)` | yes | Exactly the Encoding Specification Section 7.5 reference. |
+| 7 | `admission_authorization_reference` | `hash32` | yes | Equals the reduced four-field commitment in Encoding Section 7.5. |
+| 8 | `verification_reference` | `optional_hash32` | no | `0x00` only when absent; `0x01 || hash32` when present. |
+| 9 | `identity_structural_roots` | fixed four-entry root list | yes | Exact Section 7.5 order and role values; all IDs are distinct, unclaimed UUIDv7 idea IDs. |
+| 10 | `identity_structural_root_membership_connection_ids` | fixed three-entry ID list | yes | Exact Section 7.5 order; all IDs are distinct, unclaimed UUIDv7 connection IDs. |
+| 11 | `initial_key_possession_proof` | `bytes64` | yes | Exact Section 5.2 authorship-profile Ed25519 proof. |
+
+`sponsor_identity_id` is represented once by `author_identity_id` in the signed
+candidate envelope and MUST be used as that value when constructing and validating the
+admission authorization reference and applicant proof. It MUST NOT be redundantly
+repeated in this payload. `identity_kind` is likewise a fixed profile invariant, not a
+free-form payload field. Any non-human target-kind assertion is rejected with
+`invalid_target_identity_kind`.
+
+`verification_reference`, when present, may reference only an existing canonical
+verification artifact, a privacy-safe canonical commitment to an applicant-authorized
+verification package, or another exact canonical verification commitment later
+authorized by the Verification and Privacy Specifications. It MUST NOT identify a
+private admission request, private evidence record, relay-local object, request-pool
+entry, contact record, private account, raw identity document, private communication,
+mutable private storage, or raw private evidence. Its inclusion has no admission, VH,
+VI, writer, inviter, voter, governance, Tempo, or economic effect.
+
+#### A4.1.1.3 Structural-root materialization
+
+Profile v0 uses explicit UUIDv7 materialization rather than a new derived identifier
+class. `identity_structural_roots` contains exactly these role/idea-ID pairs in the
+order and enum values defined by the Encoding Specification:
+
+1. `mindgarden` / `Mindgarden`;
+2. `backyard_of_relationships` / `Backyard of Relationships`;
+3. `self_tree` / `Self Tree`;
+4. `anthill` / `Anthill`.
+
+For each entry, successful application creates an ordinary canonical idea with the
+listed `idea_id`, `idea_type = conceptual_idea`, `speaker_identity_id = identity_id`,
+`created_event_id = event_id`, exact NFC UTF-8 title shown above, and
+`structural_role =` the same closed `u8` root-role value carried in the corresponding
+root-plan entry. No additional root title, identifier, or role payload field is allowed.
+The target identity is associated with each root by the identity's
+`identity_structural_roots` field and by that required speaker value; this does not
+introduce an identity-as-idea endpoint.
+
+Successful application also creates exactly three ordinary `membership` connections:
+
+```text
+Mindgarden -> Backyard of Relationships
+Mindgarden -> Self Tree
+Mindgarden -> Anthill
+```
+
+Their IDs are the three fixed-order payload IDs, their `created_by_event_id` is
+`event_id`, and their non-authoritative structural containment roles are derived by list
+position as `mindgarden_contains_backyard_of_relationships`,
+`mindgarden_contains_self_tree`, and `mindgarden_contains_anthill`, respectively. The
+role values are not separately author-supplied fields. These root ideas and connections
+organize identity information only. They do not establish verification, truth,
+importance, voting, governance, Tempo, invitation, or economic authority.
+
+All four root IDs and all three connection IDs MUST be pairwise distinct and absent from
+their respective canonical namespaces. A missing, duplicate, pre-existing, or
+incompatible root object or connection makes the complete admission transition fail
+with `incomplete_identity_structural_roots` or `structural_root_collision`; partial root
+creation is invalid.
+
+#### A4.1.1.4 Validation and effects
+
+At its finalized canonical application position, a candidate must pass the
+identity-admission validation precedence in Section A7.2.4. In particular, replay
+independently validates the sponsor's active author key, human sponsor classification,
+inviter eligibility, invitation suspension, period/rulebook applicability, remaining
+capacity, target uniqueness, global key non-reuse, structural-root feasibility, and
+applicant proof. The reduced authorization reference is a handshake commitment only;
+it is not a capacity reservation or proof of current state.
+
+A valid event atomically:
+
+1. creates the target identity with `identity_kind = human` and
+   `admission_provenance_class = event_derived`;
+2. records the event ID, canonical creation position, admission profile, sponsor, and
+   direct sponsor-to-admitted admission-lineage relation;
+3. registers and activates the accepted initial direct key at that position;
+4. creates the complete four-root set and three containment connections above;
+5. debits exactly one invitation-capacity unit from the sponsor;
+6. enables only the restricted verification and direct key-control lanes explicitly
+   authorized by later exact event-family rules.
+
+It MUST NOT establish VH, VI, human uniqueness, civil identity, ordinary writer or
+challenge eligibility, voter eligibility, governance eligibility, Tempo eligibility,
+inviter eligibility, invitation capacity, truth/importance weight, tokens, mana, POD,
+POINT, a private account, a session, or a verification attestation.
+
+An exact retry of an already accepted identical signed candidate returns its existing
+canonical result and performs no second identity, key, root, lineage, or capacity debit.
+The same `event_id` with different signed bytes or signature is a
+`conflicting_duplicate_event`; a distinct event for an existing identity is
+`identity_already_exists`.
 
 ---
 
 ### A4.1.2 `identity_verification_update` [anchor: a4_1_2_identity_verification_update]
 
-Updates the verification status of an identity.
+Compatibility-only historical record. It is not an ordinary post-genesis Profile-v0
+verification, VH, VI, writer, inviter, voter, governance, Tempo, or economic authority
+event. Ordinary ingress MUST reject it unless an explicit versioned genesis, import, or
+legacy manifest authorizes the compatibility record.
 
-REQUIRED payload fields:
-- `identity_id`
-- `verification_status`
-- `verification_reference`
+REQUIRED payload fields, in canonical order:
 
-Effects:
-- Updates verification status.
-- Enables or disables eligibility for canonical authorship.
+1. `identity_id` (`id`);
+2. `compatibility_provenance_class` (`u8`), which MUST be
+   `genesis_admitted`, `legacy_operator_provisioned`, or
+   `future_profile_derived` and MUST NOT be `event_derived`;
+3. `compatibility_manifest_ref` (`hash32`), referencing the versioned manifest that
+   admits this record;
+4. `legacy_verification_status` (`u8` closed historical-status enum);
+5. `legacy_verification_reference` (`optional_hash32`) when the manifest carries a
+   canonical historical reference.
+
+The record preserves historical compatibility provenance only. It MUST NOT masquerade
+as ordinary truth/evidence/challenge material, fabricate a sponsor, applicant proof,
+capacity debit, lineage edge, or verification attestation, or directly activate any
+ordinary eligibility lane. Replay integration, retirement, and migration treatment are
+owned by the replay/verification and compatibility reconciliation work.
 
 ---
 
@@ -998,25 +1183,56 @@ Effects:
 
 ### A4.1.4 `identity_key_rotate` / `identity_key_revoke` [anchor: a4_1_4_identity_key_rotate_identity_key_revoke]
 
-Manages cryptographic keys associated with an identity.
+Manages Profile-v0 direct signing keys. The direct-key model has one active direct
+signing key per identity. Both events are authored by the controlled identity itself,
+require `author_identity_id = identity_id`, require absent `speaker_identity_id`, and
+use the active current envelope `public_key_ref` as the authorizing key reference.
+`authorization_public_key_ref` is forbidden as a redundant payload field. Direct key
+control is independently authorized and does not require ordinary writer, challenge,
+voter, governance, Tempo, or inviter eligibility.
 
-REQUIRED payload fields for `identity_key_rotate`:
-- `identity_id`
-- `new_public_key_ref`
-- `new_public_key_descriptor`
-- `authorization_public_key_ref`
+#### A4.1.4.1 `identity_key_rotate`
 
-REQUIRED payload fields for `identity_key_revoke`:
-- `identity_id`
-- `revoked_public_key_ref`
-- `authorization_public_key_ref`
-- `recovery_process_ref` when required to preserve a canonical recovery path
+REQUIRED payload fields, in canonical order:
 
-Effects:
-- A valid rotation registers `new_public_key_ref` as active for `identity_id` at the event's finalized canonical position.
-- A valid revocation makes `revoked_public_key_ref` inactive for future authored candidates at the event's finalized canonical position.
-- Rotation or revocation MUST be authorized by an active key for the same identity or by a separately specified canonical recovery process.
-- Key revocation is non-retroactive and does not invalidate canonical events that were validly signed and finalized before revocation became effective.
+1. `identity_id` (`id`);
+2. `replacement_key_descriptor` (`key_descriptor_bytes_v0`);
+3. `replacement_public_key_ref` (`hash32`);
+4. `replacement_key_possession_proof` (`bytes64`).
+
+The authorizing envelope key must be the identity's active direct key immediately before
+the event's finalized position. The replacement descriptor owner must equal
+`identity_id`, its reference must recompute exactly, and the replacement proof must pass
+the Section 5.3 authorship-profile verification. A previously registered key or key
+reference cannot be reused, including after supersession or revocation.
+
+At successful application, the old active key becomes `superseded` and the replacement
+becomes `active` atomically. An exact retry is idempotent. A candidate signed by a
+superseded author key is rejected with `key_already_superseded`; a revoked author key is
+rejected with `author_key_revoked`; an invalid or wrong-owner author key is rejected
+with `key_rotation_authorization_invalid`. The transition is non-retroactive.
+
+#### A4.1.4.2 `identity_key_revoke`
+
+REQUIRED payload fields, in canonical order:
+
+1. `identity_id` (`id`);
+2. `revoked_public_key_ref` (`hash32`).
+
+The authorizing envelope key must be the identity's active direct key immediately before
+the event's finalized position. Profile v0 defines no recovery process and forbids
+revocation of the sole active direct key with `last_active_key_revocation_forbidden`.
+The narrow valid purpose of this event is to transition one of the identity's
+historically superseded direct keys to `revoked`, for example after compromise is
+discovered. A target that is already revoked is rejected with `key_already_revoked`.
+An exact retry of an already accepted direct-key rotation or revocation is idempotent
+under the general canonical event-idempotence rule; a distinct candidate that targets
+an already revoked key is not such a retry and is rejected with `key_already_revoked`.
+
+Neither supersession nor revocation invalidates signatures that were valid at their own
+earlier finalized positions. A later event signed by a superseded or revoked key is
+rejected. Future recovery, guardian recovery, keyless retirement, and duplicate-human
+consolidation require separate future-profile schemas.
 
 ---
 
@@ -1106,7 +1322,7 @@ Creates a new canonical candidate representation object.
 
 REQUIRED payload fields:
 - `representation_id`
-- `target_kind`  // enum: `idea`, `rail`
+- `target_kind`  // enum: `idea`, `ordering`
 - `target_object_id`
 - `tier_length`
 - `tier_complexity`
@@ -1121,77 +1337,59 @@ Effects:
 - Creates a new representation object in canonical history.
 - Associates that representation with the target object's representation set for deterministic replay.
 - DOES NOT update canonical representation pointers.
-- Canonical representation pointers for ideas and rails are updated only when replay applies a finalized representation challenge verdict (`challenge_finalize_verdict`).
+- Canonical representation pointers for ideas and orderings are updated only when replay applies a finalized representation challenge verdict (`challenge_finalize_verdict`).
 
 Invariants:
-- `representation_create` is the authoritative canonical path for creating candidate/competing representations for ideas and rails.
+- `representation_create` is the authoritative canonical path for creating candidate/competing representations for ideas and orderings.
 - Payload bytes are content-addressed blobs keyed by `payload_hash` and MAY be distributed independently of the event log.
 
 ---
 
-## A4.2B Rail events [anchor: a4_2b_rail_events]
+## A4.2B Ordering events [anchor: a4_2b_ordering_events]
 
-### A4.2B.1 `rail_create` [anchor: a4_2b_1_rail_create]
+### A4.2B.1 `ordering_create` [anchor: a4_2b_1_ordering_create]
 
-Creates a new rail object.
+Creates a new Ordering object.
 
 REQUIRED payload fields:
-- `rail_id`
-- `rail_kind`  // enum: `vine`
+- `ordering_id`
+- `ordering_profile`  // enum: `vine`, `evidence_rail`, `action_rail`
 - `speaker_identity_id`
 - `item_idea_ids` (ordered list)
 
 CONDITIONAL payload fields:
-- If `rail_kind = vine`, `vine_type` MUST be present and MUST be one of `pathway_vine`, `narrative_vine`.
+- If `ordering_profile = vine`, `vine_type` MUST be present and MUST be one of `pathway_vine`, `narrative_vine`.
 
 OPTIONAL payload fields:
 - `initial_representation_refs`
 - `step_meta` (ordered metadata aligned to adjacent steps; each entry MAY include `via_connection_id`)
 
 Effects:
-- Creates a new rail object with the ordered item list.
+- Creates a new Ordering object with the ordered item list.
+- `vine` is the open-ended authored profile. `evidence_rail` and `action_rail` are standardized profiles over the same Ordering substrate.
 - Does not create or modify base graph connections.
 
-### A4.2B.2 `rail_fork` [anchor: a4_2b_2_rail_fork]
+### A4.2B.2 `ordering_fork` [anchor: a4_2b_2_ordering_fork]
 
-Creates a new rail derived from an existing rail.
+Creates a new Ordering derived from an existing Ordering.
 
 REQUIRED payload fields:
-- `base_rail_id`
-- `rail_id`
+- `base_ordering_id`
+- `ordering_id`
+- `ordering_profile`
 - `speaker_identity_id`
 - `item_idea_ids` (full ordered replacement list)
 
 OPTIONAL payload fields:
-- `vine_type` (if omitted, inherits from base rail when base rail is a vine)
+- `vine_type` (valid only for `ordering_profile = vine`; if omitted, inherits from the base Ordering)
 - `step_meta`
 
 Effects:
-- Creates a new rail object in canonical history.
-- Records lineage through `base_rail_id`.
-- Fork-only mutation model: existing rails are not edited in place.
-
-### A4.2B.3 `rail_update_representation` [anchor: a4_2b_3_rail_update_representation]
-
-Deprecated compatibility alias of `representation_create` for rail targets.
-
-REQUIRED payload fields:
-- `representation_id`
-- `target_kind`  // MUST be `rail` for this alias
-- `target_object_id`
-- `tier_length`
-- `tier_complexity`
-- `payload_hash` (`hash32`)
-- `author_identity_id`
-
-OPTIONAL payload fields:
-- `language_locale`
-- `provenance`
-
-Effects:
-- Creates a new candidate/competing representation object for the target rail.
-- MUST NOT update canonical representation pointers.
-- Payload encoding and semantics are identical to `representation_create`.
+- Creates a new Ordering object in canonical history.
+- Records lineage through `base_ordering_id`.
+- `ordering_profile` MUST equal the base Ordering's profile.
+- Fork-only mutation model: existing Orderings are not edited in place.
+- `representation_create` with `target_kind = ordering` is the sole live path for creating an Ordering representation.
 
 ---
 
@@ -1277,7 +1475,7 @@ REQUIRED payload fields:
 
 CONDITIONAL payload fields:
 - `subject_idea_ids` (required for idea-targeted challenges)
-- `subject_rail_ids` (required for rail-targeted representation challenges)
+- `subject_ordering_ids` (required for ordering-targeted representation challenges)
 - If a future rulebook permits a narrowly scoped Tempo challenge capability, `tempo_lane` metadata MUST identify the active profile, operation, mana spend, and target-bound time claim. Until such a capability is explicitly adopted, time-related challenges use ordinary challenge eligibility.
 
 Effects:
@@ -1339,8 +1537,8 @@ If the verdict applies a governance/rulebook change, REQUIRED payload metadata f
 Effects:
 - Locks verdict outcome.
 - Enables downstream state transformations.
-- For `representation_challenge` verdicts, deterministic replay MUST update canonical representation pointer selection for the target (`idea` or `rail`) slot by selecting exactly one canonical representation and superseding prior selection without deleting history.
-- Canonical representation pointers MUST NOT be updated by `representation_create`, `idea_update_representation`, or `rail_update_representation`.
+- For `representation_challenge` verdicts, deterministic replay MUST update canonical representation pointer selection for the target (`idea` or `ordering`) slot by selecting exactly one canonical representation and superseding prior selection without deleting history.
+- Canonical representation pointers MUST NOT be updated by `representation_create` or `idea_update_representation`.
 
 ---
 
@@ -2504,6 +2702,76 @@ Once a challenge instance reaches a finalized terminal state (verdict finalized,
 
 This rule prevents vote-splitting, challenge spam, and ambiguity while preserving full revisability over time.
 
+---
+
+### A7.2.4 Profile-v0 identity-admission and direct-key rejection precedence [anchor: a7_2_4_profile_v0_identity_admission_and_direct_key_rejection_precedence]
+
+The general validation layers in Section A3 apply to every event. This subsection fixes
+the stable reported rejection for `identity_create`, `identity_key_rotate`,
+`identity_key_revoke`, and compatibility-only `identity_verification_update` when more
+than one condition fails. Implementations MUST use this order rather than database-query
+order, local arrival timing, or implementation convenience. Earlier failure stages win.
+
+| Precedence | Validation layer | `identity_create` result | Key-lifecycle result |
+| ---: | --- | --- | --- |
+| 1 | Envelope and canonical encoding | Generic envelope/canonical encoding error | Generic envelope/canonical encoding error |
+| 2 | Supported event/profile and compatibility authorization | `unsupported_admission_profile` | `compatibility_event_not_authorized` for an unauthorized compatibility event |
+| 3 | Required/forbidden fields and speaker rule | `malformed_identity_create_payload`, `invalid_target_identity_kind`, `self_sponsorship_forbidden`, or `speaker_not_permitted` | Event-specific malformed-payload error |
+| 4 | Payload hash and candidate signature | Existing payload-hash or signature-profile error | Existing payload-hash or signature-profile error |
+| 5 | Author existence, human classification, owner, and key state | `sponsor_not_human`, `author_key_inactive`, `key_already_superseded`, or `author_key_revoked` | `key_rotation_authorization_invalid`, `key_already_superseded`, or `author_key_revoked` |
+| 6 | Descriptor/reference and applicant or replacement proof | `malformed_initial_key_descriptor`, `initial_public_key_ref_mismatch`, `invalid_verification_reference`, `invalid_applicant_possession_proof`, or `applicant_proof_binding_mismatch` | `malformed_replacement_key_descriptor`, `replacement_public_key_ref_mismatch`, or `replacement_key_proof_invalid` |
+| 7 | Duplicate identity and global historical key uniqueness | `identity_already_exists`, `public_key_already_registered`, or `conflicting_duplicate_event` | `public_key_already_registered`, `key_already_revoked`, or `conflicting_duplicate_event` |
+| 8 | Admission-authorization structure and current applicability | `malformed_admission_authorization`, `invalid_admission_authorization`, or `stale_admission_authorization` | not applicable |
+| 9 | Inviter eligibility | `inviter_ineligible` | not applicable |
+| 10 | Invitation suspension | `inviter_suspended` | not applicable |
+| 11 | Available invitation capacity | `insufficient_invitation_capacity` | not applicable |
+| 12 | Structural-root feasibility or revocation last-key rule | `incomplete_identity_structural_roots` or `structural_root_collision` | `last_active_key_revocation_forbidden` |
+| 13 | Atomic application | Reject with the earliest invariant-specific code; no partial effect | Reject with the earliest invariant-specific code; no partial effect |
+
+The following terms are stable Profile-v0 errors:
+
+| Error | Exact condition |
+| --- | --- |
+| `unsupported_admission_profile` | A syntactically present declared admission profile is unsupported or is not `sponsored_public_admission_v0`; an absent or malformed field is `malformed_identity_create_payload`. |
+| `malformed_identity_create_payload` | A required field is missing, a forbidden/extra field is present, field order or type is non-canonical, or an exact fixed root-list shape is not present. |
+| `invalid_target_identity_kind` | A Profile-v0 candidate asserts, encodes, or otherwise attempts a target kind other than the fixed `human` profile invariant. |
+| `self_sponsorship_forbidden` | `identity_id` equals the sponsor `author_identity_id`. |
+| `identity_already_exists` | The target `identity_id` exists at the candidate's application position. |
+| `malformed_initial_key_descriptor` | The initial descriptor cannot be parsed as the exact supported descriptor or contains malformed/forbidden material. |
+| `initial_public_key_ref_mismatch` | The supplied initial public-key reference differs from the recomputed descriptor reference. |
+| `public_key_already_registered` | A descriptor, public key, or `public_key_ref` has ever been canonically registered and is proposed again where Profile-v0 global non-reuse forbids it. |
+| `invalid_applicant_possession_proof` | The 64-byte applicant proof fails strict Ed25519 verification after all bound values are reconstructed. |
+| `applicant_proof_binding_mismatch` | The proof is structurally valid but a bound event, target, descriptor, profile, sponsor, authorization reference, verification-reference state/value, or root plan differs. |
+| `invalid_verification_reference` | A present verification reference has a forbidden type, provenance, target, or encoding under Section A4.1.1.2. |
+| `speaker_not_permitted` | `speaker_identity_id` is present for Profile-v0 `identity_create`, `identity_key_rotate`, or `identity_key_revoke`. |
+| `malformed_admission_authorization` | The authorization reference is not exactly a `hash32` or its profile/period/rulebook components are malformed. |
+| `invalid_admission_authorization` | A well-formed authorization reference does not equal the recomputed reduced commitment. |
+| `stale_admission_authorization` | A matching reduced commitment names a closed/replaced period, inactive/replaced profile, inapplicable/replaced rulebook, invalidated reference, or expired canonical transition grace. |
+| `author_key_inactive` | The sponsor author key is known but not active at the application position for a reason other than supersession or revocation. |
+| `author_key_revoked` | The event author key is revoked at the application position. |
+| `sponsor_not_human` | The sponsor does not have the required human identity-kind classification at the application position. |
+| `inviter_ineligible` | The sponsor lacks the replay-derived inviter-eligibility lane at the application position. |
+| `inviter_suspended` | The sponsor has active invitation suspension at the application position. |
+| `insufficient_invitation_capacity` | The sponsor has fewer than one spendable capacity unit at the application position. |
+| `incomplete_identity_structural_roots` | The required four roots or three containment connections are absent, malformed, duplicated, or not the fixed plan. |
+| `structural_root_collision` | A required root idea ID or containment connection ID already exists or conflicts in canonical state. |
+| `key_rotation_authorization_invalid` | A key lifecycle candidate is not authored by the target identity's active direct key or its author key has the wrong owner. |
+| `malformed_replacement_key_descriptor` | The replacement descriptor cannot be parsed as the exact supported descriptor or contains malformed/forbidden material. |
+| `replacement_public_key_ref_mismatch` | The supplied replacement reference differs from the recomputed descriptor reference. |
+| `replacement_key_proof_invalid` | The replacement descriptor/reference is valid but its 64-byte proof fails strict Ed25519 verification. |
+| `key_already_superseded` | A key lifecycle candidate uses a known superseded author key. |
+| `key_already_revoked` | A revocation targets an already revoked key. |
+| `last_active_key_revocation_forbidden` | A Profile-v0 revocation targets the sole active direct key. |
+| `conflicting_duplicate_event` | An already used `event_id` is supplied with different signed candidate bytes or signature. |
+| `compatibility_event_not_authorized` | `identity_verification_update` lacks explicit versioned genesis/import/legacy manifest authority. |
+| `restricted_lane_scope_violation` | Reserved for a later exact restricted-verification event schema when an admitted identity attempts an event outside that schema's subject/object/rate scope. |
+
+`stale_admission_authorization` MUST NOT replace a specific author-key, inviter,
+suspension, capacity, duplicate-identity, or duplicate-key error. `identity_create`
+validation is evaluated at canonical position; a structurally valid candidate does not
+reserve capacity or preserve an earlier sponsor state.
+
+---
 
 ### A7.3 Forward compatibility and schema evolution [anchor: a7_3_forward_compatibility_and_schema_evolution]
 
@@ -2576,7 +2844,7 @@ A node MUST produce identical canonical state given identical input logs.
 A conformant client implementation MUST:
 
 - construct canonical events that satisfy all schema and envelope requirements,
-- bind authorship explicitly to a verified human identity,
+- bind authorship explicitly to the eligible human identity required by the event family,
 - present clear authorship and adoption boundaries,
 - prevent AI systems from authoring canonical events directly,
 - surface validation failures clearly prior to submission.
@@ -2605,18 +2873,22 @@ identity creation → idea creation → connection → challenge → voting → 
 #### A9.1.1 Event sequence (logical order) [anchor: a9_1_1_event_sequence_logical_order]
 
 1. `identity_create`
-2. `identity_verification_update`
-3. `idea_create` (truth claim)
-4. `idea_create` (counter-idea)
-5. `connection_create` (relative_importance argument)
-6. `challenge_create` (truth_challenge)
-7. `challenge_open_arguments`
-8. `challenge_close_arguments`
-9. `challenge_open_voting`
-10. `challenge_close_voting`
-11. `challenge_finalize_verdict`
-12. `cycle_close`
-13. `snapshot_commit`
+2. `idea_create` (ordinary verification truth claim when later authorized)
+3. `idea_create` (counter-idea)
+4. `connection_create` (relative_importance argument)
+5. `challenge_create` (truth_challenge)
+6. `challenge_open_arguments`
+7. `challenge_close_arguments`
+8. `challenge_open_voting`
+9. `challenge_close_voting`
+10. `challenge_finalize_verdict`
+11. `cycle_close`
+12. `snapshot_commit`
+
+This generic sequence is not a claim that admission alone authorizes the later ordinary
+idea or connection events. Those events require their own replay-derived event-family
+eligibility; the exact restricted verification catalog remains a later reconciliation
+item.
 
 #### A9.1.2 Example events (abridged) [anchor: a9_1_2_example_events_abridged]
 
@@ -2631,6 +2903,11 @@ identity creation → idea creation → connection → challenge → voting → 
   "payload_binding_mode": "embedded_payload",
   "signature": "sig(identity_create)"
 }
+
+This is an abridged envelope illustration, not a complete `identity_create` payload.
+In a complete Profile-v0 admission candidate, `speaker_identity_id` is omitted, the
+embedded payload follows Section A4.1.1.2 exactly, the applicant proof is already in
+that payload, and the sponsor signature covers its resulting payload hash.
 
 
 

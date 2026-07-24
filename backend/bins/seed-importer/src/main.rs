@@ -35,14 +35,14 @@ struct Options {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum TargetKind {
     Idea,
-    Rail,
+    Ordering,
 }
 
 impl TargetKind {
     fn as_i16(self) -> i16 {
         match self {
             TargetKind::Idea => 0,
-            TargetKind::Rail => 1,
+            TargetKind::Ordering => 1,
         }
     }
 }
@@ -67,14 +67,18 @@ impl TierEnum {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum RailKind {
+enum OrderingProfile {
     Vine,
+    EvidenceRail,
+    ActionRail,
 }
 
-impl RailKind {
+impl OrderingProfile {
     fn as_i16(self) -> i16 {
         match self {
-            RailKind::Vine => 0,
+            OrderingProfile::Vine => 0,
+            OrderingProfile::EvidenceRail => 1,
+            OrderingProfile::ActionRail => 2,
         }
     }
 }
@@ -207,19 +211,19 @@ async fn main() -> Result<()> {
     insert_blocks(&mut tx).await?;
 
     let mut seen_event_ids = HashSet::new();
-    let mut seen_rail_ids = HashSet::new();
+    let mut seen_ordering_ids = HashSet::new();
     let mut seen_representation_ids = HashSet::new();
     let mut idea_rows = Vec::new();
     let mut connection_rows = Vec::new();
-    let mut rail_rows = Vec::new();
-    let mut rail_item_rows = Vec::new();
+    let mut ordering_rows = Vec::new();
+    let mut ordering_item_rows = Vec::new();
     let mut representation_rows = Vec::new();
     let mut cycle_boundary_rows = Vec::new();
     let mut snapshot_commit_rows = Vec::new();
     let mut tempo_rows: Vec<(i64, i32, TempoPredicateInput)> = Vec::new();
     let mut representation_keys: HashMap<Uuid, RepresentationKey> = HashMap::new();
     let mut idea_pointer_updates: HashMap<Uuid, PointerState> = HashMap::new();
-    let mut rail_pointer_updates: HashMap<Uuid, PointerState> = HashMap::new();
+    let mut ordering_pointer_updates: HashMap<Uuid, PointerState> = HashMap::new();
 
     for (idx, event) in canonical_events.iter().enumerate() {
         if !seen_event_ids.insert(event.id) {
@@ -300,42 +304,47 @@ async fn main() -> Result<()> {
                     created_by_event_id: stage0_event.id,
                 });
             }
-            "rail_create" => {
+            "ordering_create" => {
                 let payload = payload_object(&stage0_event.payload)?;
-                let rail_id = parse_uuid_field(payload, "rail_id")?;
-                if !seen_rail_ids.insert(rail_id) {
-                    return Err(anyhow!("duplicate rail_id in seed file: {}", rail_id));
+                let ordering_id = parse_uuid_field(payload, "ordering_id")?;
+                if !seen_ordering_ids.insert(ordering_id) {
+                    return Err(anyhow!("duplicate ordering_id in seed file: {}", ordering_id));
                 }
 
-                let rail_kind = parse_rail_kind_field(payload, "rail_kind")?;
+                let ordering_profile = parse_ordering_profile_field(payload, "ordering_profile")?;
                 let vine_type = parse_vine_type_field(
                     payload,
                     "vine_type",
-                    matches!(rail_kind, RailKind::Vine),
+                    matches!(ordering_profile, OrderingProfile::Vine),
                 )?;
+                if ordering_profile != OrderingProfile::Vine && vine_type.is_some() {
+                    return Err(anyhow!(
+                        "vine_type is only valid for vine ordering_profile"
+                    ));
+                }
                 let speaker_identity_id = stage0_event
                     .speaker_identity_id
-                    .ok_or_else(|| anyhow!("missing speaker_identity_id for rail_create"))?;
+                    .ok_or_else(|| anyhow!("missing speaker_identity_id for ordering_create"))?;
                 let item_idea_ids = parse_uuid_array_field(payload, "item_idea_ids")?;
                 let step_meta = parse_step_meta(payload, item_idea_ids.len())?;
                 let initial_refs = parse_initial_representation_refs(payload)?;
 
-                rail_rows.push(RailRow {
-                    rail_id,
-                    rail_kind: rail_kind.as_i16(),
+                ordering_rows.push(OrderingRow {
+                    ordering_id,
+                    ordering_profile: ordering_profile.as_i16(),
                     vine_type: vine_type.map(VineType::as_i16),
                     speaker_identity_id,
                     created_block_height: 1,
                     created_event_index: event_index,
                     created_event_id: stage0_event.id,
-                    base_rail_id: None,
+                    base_ordering_id: None,
                     title_representation_id: initial_refs.title_representation_id,
                     sentence_representation_id: initial_refs.sentence_representation_id,
                 });
                 if initial_refs.title_representation_id.is_some()
                     || initial_refs.sentence_representation_id.is_some()
                 {
-                    rail_pointer_updates.insert(rail_id, initial_refs);
+                    ordering_pointer_updates.insert(ordering_id, initial_refs);
                 }
 
                 for (idx, idea_id) in item_idea_ids.into_iter().enumerate() {
@@ -344,52 +353,65 @@ async fn main() -> Result<()> {
                     } else {
                         step_meta.get(idx - 1).copied().flatten()
                     };
-                    rail_item_rows.push(RailItemRow {
-                        rail_id,
+                    ordering_item_rows.push(OrderingItemRow {
+                        ordering_id,
                         idx: idx as i32,
                         idea_id,
                         via_connection_id,
                     });
                 }
             }
-            "rail_fork" => {
+            "ordering_fork" => {
                 let payload = payload_object(&stage0_event.payload)?;
-                let rail_id = parse_uuid_field(payload, "rail_id")?;
-                if !seen_rail_ids.insert(rail_id) {
-                    return Err(anyhow!("duplicate rail_id in seed file: {}", rail_id));
+                let ordering_id = parse_uuid_field(payload, "ordering_id")?;
+                if !seen_ordering_ids.insert(ordering_id) {
+                    return Err(anyhow!("duplicate ordering_id in seed file: {}", ordering_id));
                 }
 
-                let base_rail_id = parse_uuid_field(payload, "base_rail_id")?;
-                let base = rail_rows
+                let base_ordering_id = parse_uuid_field(payload, "base_ordering_id")?;
+                let base = ordering_rows
                     .iter()
-                    .find(|row| row.rail_id == base_rail_id)
-                    .ok_or_else(|| anyhow!("rail_fork base_rail_id not found: {}", base_rail_id))?;
-                let vine_type = parse_vine_type_field(payload, "vine_type", false)?
+                    .find(|row| row.ordering_id == base_ordering_id)
+                    .ok_or_else(|| anyhow!("ordering_fork base_ordering_id not found: {}", base_ordering_id))?;
+                let ordering_profile =
+                    parse_ordering_profile_field(payload, "ordering_profile")?;
+                if ordering_profile.as_i16() != base.ordering_profile {
+                    return Err(anyhow!(
+                        "ordering_fork ordering_profile differs from base ordering"
+                    ));
+                }
+                let supplied_vine_type = parse_vine_type_field(payload, "vine_type", false)?;
+                if ordering_profile != OrderingProfile::Vine && supplied_vine_type.is_some() {
+                    return Err(anyhow!(
+                        "vine_type is only valid for vine ordering_profile"
+                    ));
+                }
+                let vine_type = supplied_vine_type
                     .map(VineType::as_i16)
                     .or(base.vine_type);
                 let speaker_identity_id = stage0_event
                     .speaker_identity_id
-                    .ok_or_else(|| anyhow!("missing speaker_identity_id for rail_fork"))?;
+                    .ok_or_else(|| anyhow!("missing speaker_identity_id for ordering_fork"))?;
                 let item_idea_ids = parse_uuid_array_field(payload, "item_idea_ids")?;
                 let step_meta = parse_step_meta(payload, item_idea_ids.len())?;
                 let initial_refs = parse_initial_representation_refs(payload)?;
 
-                rail_rows.push(RailRow {
-                    rail_id,
-                    rail_kind: RailKind::Vine.as_i16(),
+                ordering_rows.push(OrderingRow {
+                    ordering_id,
+                    ordering_profile: ordering_profile.as_i16(),
                     vine_type,
                     speaker_identity_id,
                     created_block_height: 1,
                     created_event_index: event_index,
                     created_event_id: stage0_event.id,
-                    base_rail_id: Some(base_rail_id),
+                    base_ordering_id: Some(base_ordering_id),
                     title_representation_id: initial_refs.title_representation_id,
                     sentence_representation_id: initial_refs.sentence_representation_id,
                 });
                 if initial_refs.title_representation_id.is_some()
                     || initial_refs.sentence_representation_id.is_some()
                 {
-                    rail_pointer_updates.insert(rail_id, initial_refs);
+                    ordering_pointer_updates.insert(ordering_id, initial_refs);
                 }
 
                 for (idx, idea_id) in item_idea_ids.into_iter().enumerate() {
@@ -398,15 +420,15 @@ async fn main() -> Result<()> {
                     } else {
                         step_meta.get(idx - 1).copied().flatten()
                     };
-                    rail_item_rows.push(RailItemRow {
-                        rail_id,
+                    ordering_item_rows.push(OrderingItemRow {
+                        ordering_id,
                         idx: idx as i32,
                         idea_id,
                         via_connection_id,
                     });
                 }
             }
-            "representation_create" | "rail_update_representation" => {
+            "representation_create" => {
                 let payload = payload_object(&stage0_event.payload)?;
                 let representation_id = parse_uuid_field(payload, "representation_id")?;
                 if !seen_representation_ids.insert(representation_id) {
@@ -486,17 +508,17 @@ async fn main() -> Result<()> {
                                 .or_default();
                             apply_pointer_update(pointers, &update);
                         }
-                        TargetKind::Rail => {
-                            if !rail_rows
+                        TargetKind::Ordering => {
+                            if !ordering_rows
                                 .iter()
-                                .any(|row| row.rail_id == update.target_object_id)
+                                .any(|row| row.ordering_id == update.target_object_id)
                             {
                                 return Err(anyhow!(
-                                    "challenge_finalize_verdict target rail missing: {}",
+                                    "challenge_finalize_verdict target ordering missing: {}",
                                     update.target_object_id
                                 ));
                             }
-                            let pointers = rail_pointer_updates
+                            let pointers = ordering_pointer_updates
                                 .entry(update.target_object_id)
                                 .or_default();
                             apply_pointer_update(pointers, &update);
@@ -589,8 +611,8 @@ async fn main() -> Result<()> {
         }
     }
 
-    for row in &mut rail_rows {
-        if let Some(pointers) = rail_pointer_updates.get(&row.rail_id) {
+    for row in &mut ordering_rows {
+        if let Some(pointers) = ordering_pointer_updates.get(&row.ordering_id) {
             if pointers.title_representation_id.is_some() {
                 row.title_representation_id = pointers.title_representation_id;
             }
@@ -622,17 +644,17 @@ async fn main() -> Result<()> {
     insert_representations(&mut tx, &representation_rows).await?;
     insert_ideas(&mut tx, &idea_rows).await?;
     insert_connections(&mut tx, &connection_rows).await?;
-    insert_rails(&mut tx, &rail_rows).await?;
-    insert_rail_items(&mut tx, &rail_item_rows).await?;
+    insert_orderings(&mut tx, &ordering_rows).await?;
+    insert_ordering_items(&mut tx, &ordering_item_rows).await?;
 
     tx.commit().await?;
 
     println!(
-        "seed-importer: imported events={} ideas={} connections={} rails={} representations={}",
+        "seed-importer: imported events={} ideas={} connections={} orderings={} representations={}",
         canonical_events.len(),
         idea_rows.len(),
         connection_rows.len(),
-        rail_rows.len(),
+        ordering_rows.len(),
         representation_rows.len()
     );
 
@@ -691,7 +713,7 @@ fn repo_root() -> Result<PathBuf> {
 
 async fn truncate_canonical_tables(tx: &mut Transaction<'_, Postgres>) -> Result<()> {
     sqlx::query(
-        "TRUNCATE TABLE identities_s0, tempo_predicates, cycle_boundaries, snapshot_commits, challenge_arguments, challenge_targets, challenge_context, challenges, rail_items, rails, representations, connections, ideas, events, snapshots, blocks RESTART IDENTITY CASCADE",
+        "TRUNCATE TABLE identities_s0, tempo_predicates, cycle_boundaries, snapshot_commits, challenge_arguments, challenge_targets, challenge_context, challenges, ordering_items, orderings, representations, connections, ideas, events, snapshots, blocks RESTART IDENTITY CASCADE",
     )
     .execute(&mut **tx)
     .await?;
@@ -862,22 +884,22 @@ struct RepresentationRow {
 }
 
 #[derive(Debug)]
-struct RailRow {
-    rail_id: Uuid,
-    rail_kind: i16,
+struct OrderingRow {
+    ordering_id: Uuid,
+    ordering_profile: i16,
     vine_type: Option<i16>,
     speaker_identity_id: Uuid,
     created_block_height: i64,
     created_event_index: i32,
     created_event_id: Uuid,
-    base_rail_id: Option<Uuid>,
+    base_ordering_id: Option<Uuid>,
     title_representation_id: Option<Uuid>,
     sentence_representation_id: Option<Uuid>,
 }
 
 #[derive(Debug)]
-struct RailItemRow {
-    rail_id: Uuid,
+struct OrderingItemRow {
+    ordering_id: Uuid,
     idx: i32,
     idea_id: Uuid,
     via_connection_id: Option<Uuid>,
@@ -1067,19 +1089,19 @@ async fn insert_representations(
     Ok(())
 }
 
-async fn insert_rails(tx: &mut Transaction<'_, Postgres>, rows: &[RailRow]) -> Result<()> {
+async fn insert_orderings(tx: &mut Transaction<'_, Postgres>, rows: &[OrderingRow]) -> Result<()> {
     for row in rows {
         sqlx::query(
             r#"
-            INSERT INTO rails (
-              rail_id,
-              rail_kind,
+            INSERT INTO orderings (
+              ordering_id,
+              ordering_profile,
               vine_type,
               speaker_identity_id,
               created_block_height,
               created_event_index,
               created_event_id,
-              base_rail_id,
+              base_ordering_id,
               title_representation_id,
               sentence_representation_id
             ) VALUES (
@@ -1087,14 +1109,14 @@ async fn insert_rails(tx: &mut Transaction<'_, Postgres>, rows: &[RailRow]) -> R
             )
             "#,
         )
-        .bind(row.rail_id)
-        .bind(row.rail_kind)
+        .bind(row.ordering_id)
+        .bind(row.ordering_profile)
         .bind(row.vine_type)
         .bind(row.speaker_identity_id)
         .bind(row.created_block_height)
         .bind(row.created_event_index)
         .bind(row.created_event_id)
-        .bind(row.base_rail_id)
+        .bind(row.base_ordering_id)
         .bind(row.title_representation_id)
         .bind(row.sentence_representation_id)
         .execute(&mut **tx)
@@ -1103,12 +1125,12 @@ async fn insert_rails(tx: &mut Transaction<'_, Postgres>, rows: &[RailRow]) -> R
     Ok(())
 }
 
-async fn insert_rail_items(tx: &mut Transaction<'_, Postgres>, rows: &[RailItemRow]) -> Result<()> {
+async fn insert_ordering_items(tx: &mut Transaction<'_, Postgres>, rows: &[OrderingItemRow]) -> Result<()> {
     for row in rows {
         sqlx::query(
             r#"
-            INSERT INTO rail_items (
-              rail_id,
+            INSERT INTO ordering_items (
+              ordering_id,
               idx,
               idea_id,
               via_connection_id
@@ -1117,7 +1139,7 @@ async fn insert_rail_items(tx: &mut Transaction<'_, Postgres>, rows: &[RailItemR
             )
             "#,
         )
-        .bind(row.rail_id)
+        .bind(row.ordering_id)
         .bind(row.idx)
         .bind(row.idea_id)
         .bind(row.via_connection_id)
@@ -1276,28 +1298,31 @@ fn parse_target_kind_field(
     match value {
         Value::String(value) => match value.as_str() {
             "idea" => Ok(TargetKind::Idea),
-            "rail" => Ok(TargetKind::Rail),
+            "ordering" => Ok(TargetKind::Ordering),
             _ => Err(anyhow!("invalid {}", field)),
         },
         Value::Number(value) => match value.as_u64() {
             Some(0) => Ok(TargetKind::Idea),
-            Some(1) => Ok(TargetKind::Rail),
+            Some(1) => Ok(TargetKind::Ordering),
             _ => Err(anyhow!("invalid {}", field)),
         },
         _ => Err(anyhow!("invalid {}", field)),
     }
 }
 
-fn parse_rail_kind_field(
+fn parse_ordering_profile_field(
     payload: &serde_json::Map<String, Value>,
     field: &str,
-) -> Result<RailKind> {
+) -> Result<OrderingProfile> {
     let value = payload
         .get(field)
         .ok_or_else(|| anyhow!("missing {}", field))?;
     match value {
-        Value::String(value) if value == "vine" => Ok(RailKind::Vine),
-        Value::Number(value) if value.as_u64() == Some(0) => Ok(RailKind::Vine),
+        Value::String(value) if value == "vine" => Ok(OrderingProfile::Vine),
+        Value::String(value) if value == "evidence_rail" => {
+            Ok(OrderingProfile::EvidenceRail)
+        }
+        Value::String(value) if value == "action_rail" => Ok(OrderingProfile::ActionRail),
         _ => Err(anyhow!("invalid {}", field)),
     }
 }
@@ -1323,11 +1348,6 @@ fn parse_vine_type_field(
         Value::String(value) => match value.as_str() {
             "pathway_vine" => Ok(Some(VineType::PathwayVine)),
             "narrative_vine" => Ok(Some(VineType::NarrativeVine)),
-            _ => Err(anyhow!("invalid {}", field)),
-        },
-        Value::Number(value) => match value.as_u64() {
-            Some(0) => Ok(Some(VineType::PathwayVine)),
-            Some(1) => Ok(Some(VineType::NarrativeVine)),
             _ => Err(anyhow!("invalid {}", field)),
         },
         _ => Err(anyhow!("invalid {}", field)),
@@ -1836,10 +1856,9 @@ fn enforce_seed_identity(events: &[SeedEvent], seed_identity_id: Uuid) -> Result
         match event.kind.as_str() {
             "idea_create"
             | "connection_create"
-            | "rail_create"
-            | "rail_fork"
+            | "ordering_create"
+            | "ordering_fork"
             | "representation_create"
-            | "rail_update_representation"
             | "challenge_create"
             | "challenge_open_arguments"
             | "challenge_close_arguments"
@@ -1977,5 +1996,27 @@ mod tests {
                 "space_of".to_string()
             )));
         }
+    }
+
+    #[test]
+    fn native_ordering_profile_fields_are_named_and_deterministic() {
+        let payload = json!({
+            "ordering_profile": "evidence_rail",
+            "vine_type": null
+        });
+        let fields = payload.as_object().expect("payload object");
+        assert_eq!(
+            parse_ordering_profile_field(fields, "ordering_profile").expect("profile"),
+            OrderingProfile::EvidenceRail
+        );
+        assert_eq!(
+            parse_vine_type_field(fields, "vine_type", false).expect("vine type"),
+            None
+        );
+
+        let numeric = json!({"ordering_profile": 1, "vine_type": 0});
+        let numeric_fields = numeric.as_object().expect("numeric payload object");
+        assert!(parse_ordering_profile_field(numeric_fields, "ordering_profile").is_err());
+        assert!(parse_vine_type_field(numeric_fields, "vine_type", false).is_err());
     }
 }

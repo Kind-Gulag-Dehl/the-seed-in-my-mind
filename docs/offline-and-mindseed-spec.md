@@ -269,7 +269,7 @@ A **group workspace**:
 
 Group workspaces do NOT imply collective authorship.
 
-- Every event retains a single speaker identity.
+- Every event has exactly one author and includes a speaker only where its event schema permits one.
 - No event is jointly authored.
 - Group deliberation emerges from interaction between identities, not from shared authorship objects.
 
@@ -494,13 +494,21 @@ All authorship rules defined in Protocol v5 apply identically offline.
 
 Group deliberation arises through interaction between independently authored events, not through shared or delegated authorship.
 
+### 4.2A Profile-v0 sponsored admission [anchor: profile_v0_sponsored_admission]
+
+Applicant identity preparation, key generation, and non-canonical admission-request transport MAY occur offline. The request remains non-canonical while offline and does not reserve capacity, establish an identity, or grant authority.
+
+The applicant possession proof for Profile-v0 `identity_create` binds the final selected event ID and final canonical admission fields. It therefore MUST NOT be finalized until the sponsor, profile, capacity period, rulebook reference, exact optional `verification_reference` representation, and event ID are fixed. The resulting canonical candidate is authored and signed by the eligible human sponsor; `speaker_identity_id` MUST be absent. The applicant proof does not make the applicant the author and the normal offline requirement for an already eligible ordinary author does not require the applicant to hold an active canonical author key.
+
+Relay-local acknowledgement, offline package acceptance, or a local signature check does not consume canonical capacity, establish canonical identity, or grant authority. On reintegration, a node MUST apply the ordinary Appendix A, signature-profile, and deterministic replay validation. A prepared candidate MAY be rejected if sponsor key state, eligibility, suspension, capacity, rulebook, or period applicability changed before canonical application. Rejection does not turn the request or applicant proof into canonical state.
+
 ---
 
 ### 4.3 anonymous and pseudonymous authorship [anchor: anonymous_and_pseudonymous_authorship]
 
 Offline users MAY create local pre-publication events anonymously or under a pseudonymous identity.
 
-Upon publication into the canonical universe, canonical authorship rules apply: ordinary human-authored candidates MUST carry a valid Profile-v0 signature from an eligible verified-human identity, and anonymously authored material remains in the outer layer until explicitly adopted by a verified-human identity.
+Upon publication into the canonical universe, canonical authorship rules apply: ordinary human-authored candidates MUST carry a valid Profile-v0 signature from an eligible author where that event family requires one, and anonymously authored material remains in the outer layer until explicitly adopted by an eligible human author. Profile-v0 sponsored `identity_create` is the narrow admission exception: the sponsor, rather than the applicant, is the canonical author.
 See Privacy and High-Risk Submission Spec §6 (Anonymous Outer-Layer Semantics) and §7.4 (Store-and-Forward / Offline Publication Profile).
 
 When such events are reintegrated into the canonical universe:
@@ -525,7 +533,7 @@ Offline systems MUST NOT require identity disclosure as a condition of authorshi
 
 ### 5.1 ideas [anchor: ideas]
 
-All ideas and rails in Protocol v5 are canonical public objects by default.
+All ideas and orderings in Protocol v5 are canonical public objects by default.
 
 Offline systems MAY create ideas locally and defer their publication, but:
 
@@ -791,11 +799,11 @@ Canonical payload is divided into two storage responsibility classes:
 
 ### 7A.2.1 Personal Custody Set (PCS) [anchor: 7a_2_1_personal_custody_set_pcs]
 
-A **Personal Custody Set (PCS)** is the subset of canonical ideas, rails, connections, challenges, and histories that an identity is primarily responsible for storing.
+A **Personal Custody Set (PCS)** is the subset of canonical ideas, orderings, connections, challenges, and histories that an identity is primarily responsible for storing.
 
 An identity’s PCS MUST include:
 
-* all ideas (and associated rails, where applicable) that the identity ranks above a configurable personal-importance threshold,
+* all ideas (and associated orderings, where applicable) that the identity ranks above a configurable personal-importance threshold,
 * all challenges, votes, and arguments authored by the identity,
 * all downstream structures required to replay those items deterministically.
 
@@ -811,7 +819,7 @@ PCS responsibility does **not** imply ownership, authority, or control—only cu
 
 ### 7A.2.2 Collective Custody Set (CCS) [anchor: 7a_2_2_collective_custody_set_ccs]
 
-A **Collective Custody Set (CCS)** consists of ideas, rails, and histories deemed highly important to the collective.
+A **Collective Custody Set (CCS)** consists of ideas, orderings, and histories deemed highly important to the collective.
 
 The CCS MUST include:
 

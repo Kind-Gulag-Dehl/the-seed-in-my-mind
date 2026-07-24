@@ -178,7 +178,7 @@ Every idea in the system is treated as a statement issued by a real agent. Even 
 
 For the canonical universe:
 
-- Every ordinary canonical event in the system—idea creation, description submission, connection formation, challenge creation, vote, action declaration, action completion claim, and allowed Tempo repair idea/connection submission—MUST originate from a unique, verified human identity, except for mechanically emitted boundary events authored by the reserved non-human identity `system_boundary_emitter` as defined below.
+- Every ordinary canonical event in the system - idea creation, description submission, connection formation, challenge creation, vote, action declaration, action completion claim, and allowed Tempo repair idea/connection submission - MUST originate from an eligible human identity, except for mechanically emitted boundary events authored by the reserved non-human identity `system_boundary_emitter` as defined below. Profile-v0 `identity_create` is a canonical admission event authored by an existing eligible human sponsor; the applicant's initial-key possession proof does not make the applicant the event author and does not require the applicant to already have an active canonical author key.
 - AI systems, institutions, corporations, governments, or other non-human entities MUST NOT directly author canonical events.  
 - AI MAY generate drafts in non-canonical layers, but canonical authorship ALWAYS requires a human adoption event.
 
@@ -203,6 +203,10 @@ Canonical access policy is invariant across protocol, API, and challenge subsyst
 
 2. **Canonical writes are verification-gated, not role-privileged.**  
    Ordinary canonical writes require the active ordinary canonical-writer verification requirement. The current deployment profile uses Seed verifier-issued verification level to satisfy this gate (`canonical_writer_level`), but the gate remains rulebook-defined and challengeable.
+
+   Profile-v0 identity admission is not ordinary writer eligibility for the target identity. A valid admission uses a sponsor-authored `identity_create` event, gives the target only restricted initial authority, and leaves exact applicant proof bytes, sponsor signature fields, event payloads, and encoding rules to Appendix A, the canonical encoding specification, and the Profile-v0 authorship/signature specification.
+
+   A `CanonicalAdmittedIdentity` MAY use narrowly authorized verification and key-control participation before ordinary writer eligibility only where exact event-family schemas define that lane. This restricted lane MUST NOT authorize arbitrary idea creation, arbitrary connections, general challenges, voting, governance, Tempo claims, inviter actions, invitation-capacity transfer, POD, POINT, or economic authority.
 
    Tempo repair has a narrow, enumerated exception: an eligible human `tempo_contributor` MAY submit only target-bound ordinary `truth_claim` ideas with valid `tempo_claim` metadata and, where the active Tempo profile explicitly permits it, Tempo-context evidence truth claims and `relative_importance` connections using existing `evidence_for`, `evidence_against`, or `same_as` usages. These are ordinary ideas and connections in a Tempo role, not separate Tempo content objects or non-idea support records. `tempo_contributor` status does not authorize arbitrary idea creation, evidence creation outside the Tempo context, connection creation outside the Tempo context, challenge creation, voting, verdict finalization, governance, POD, POINT, or any token authority.
 
@@ -1497,15 +1501,15 @@ interfere with deterministic replay.
 
 #### 2.8.3 Examples (Non-Exhaustive) [anchor: examples_non_exhaustive]
 
-The following structural roles are officially recognized:
+The following future-facing structural-root names are officially recognized for Profile-v0 identity roots. Exact structural-role constants, identifiers, encodings, and connection schemas remain delegated to Appendix A and structural-role reconciliation:
 
-backyard - personal root for ideas authored by an identity.
+Mindgarden - personal root for ideas authored by an identity.
 
-relationship_garden - container for relational structures.
+Backyard of Relationships - container for relational structures.
 
-self_tree - personal narrative tree of an identity; non-epistemic.
+Self Tree - personal narrative tree of an identity; non-epistemic.
 
-anthill - structural map of mutual interpersonal connections.
+Anthill - structural map of mutual interpersonal connections.
 
 shrub - root node for a bilateral relationship between identities.
 
@@ -1993,7 +1997,7 @@ When sealed via this path:
 
 Forced boundaries exist solely to guarantee structural liveness and forward progress and MUST NOT be interpreted as successful deliberative completion. A forced boundary remains forced forever. Repeated forced boundaries do not accumulate legitimacy and do not become authority by repetition, passage of structural cycles, survivor mode, or later certification.
 
-When the forced close uses `structural_dmax_liveness_predicate`, the boundary trigger MUST be `dmax_structural_liveness_forced`. That trigger does not create ordinary truth certainty, beacon status, cycle certification, authorization-frontier advancement, or authority over POD, POINT, governance, lifecycle, final rank, ordinary mana, ordinary rate limits, token effects, ordinary challenge powers, or ordinary canonical writing.
+When the forced close uses `structural_dmax_liveness_predicate`, the boundary trigger MUST be `dmax_structural_liveness_forced`. That trigger does not create ordinary truth certainty, beacon status, cycle certification, authorization-frontier advancement, or authority over POD, POINT, governance, lifecycle, final rank, ordinary mana, ordinary rate limits, token effects, ordinary challenge powers, ordinary canonical writing, invitation capacity, inviter maturation, inviter-eligibility activation, invitation-suspension restoration, or admission rewards.
 
 Tempo structural predicates at `T_allow` MAY be consumed in cycle `r` for structural boundary evaluation in cycle `r`. They MUST NOT assign ordinary truth certainty, create beacons, certify cycles, authorize economic effects, governance activation, lifecycle irreversibility, token effects, final rank effects, ordinary mana spendability, or any other consequential authority. Consequential authority is controlled only by beacon certification and the lagged authorization frontier.
 
@@ -2193,7 +2197,7 @@ Action costs and caps MUST be set such that:
 - heavy actions require accrual across multiple cycles,
 - rapid or forced cycle advancement cannot be exploited to bypass intended scarcity.
 
-Missed ordinary allowances from uncertified, constrained, or forced cycles MUST NOT accumulate into later burst capacity. No past ordinary rate-limit reset is backfilled. Later certification MAY finalize outputs that were explicitly pending or provisional, but it MUST NOT validate actions that were forbidden when attempted and MUST NOT create stockpiles of unused ordinary mana.
+Missed ordinary allowances from uncertified, constrained, or forced cycles MUST NOT accumulate into later burst capacity. No past ordinary rate-limit reset is backfilled. No invitation capacity, inviter maturation, carryover-cap increase, or suspension restoration is backfilled from a non-qualifying capacity period. Later certification MAY finalize outputs that were explicitly pending or provisional, but it MUST NOT validate actions that were forbidden when attempted and MUST NOT create stockpiles of unused ordinary mana or admission authority.
 
 ---
 
@@ -2318,17 +2322,17 @@ Truth-claim subtypes must be explicitly declared at creation and dictate which k
 
 ### 4.2 evidence rails and structural constraints [anchor: evidence_rails_and_structural_constraints]
 
-Every truth claim maintains its own evidence rail: a deterministic structure that records what evidence could, in principle, exist for the claim, what evidence has actually been provided, how those two sets compare, and which certainty band the claim should occupy given the current state of knowledge. Evidence rails do not define inference rules or directional epistemic flows between claim types. Instead, they provide a stable, replayable frame for evaluating certainty based on two spectra - the spectrum of potential evidence and the spectrum of actual evidence - and the gap that separates them. All conformant implementations MUST reconstruct identical evidence rails when replaying the same event history.
+Every truth claim maintains its own evidence rail: a deterministic structure that records what evidence could, in principle, exist for the claim, what evidence has actually been provided, how those two sets compare, and which certainty band the claim should occupy given the current state of knowledge. Evidence orderings do not define inference rules or directional epistemic flows between claim types. Instead, they provide a stable, replayable frame for evaluating certainty based on two spectra - the spectrum of potential evidence and the spectrum of actual evidence - and the gap that separates them. All conformant implementations MUST reconstruct identical evidence rails when replaying the same event history.
 
 For each truth-claim subtype, the protocol defines a spectrum of potential certainty, specifying the maximum certainty a claim of that subtype can reasonably achieve. Some subtypes allow high certainty (for example, measurement/state claims about present conditions), while others have inherently lower ceilings (for example, long-range predictions or complex model-level integrations). These ceilings and band definitions are maintained in a companion specification and MUST be identical across all conformant nodes at any cycle boundary.
 
-Each truth claim also possesses a spectrum of potential evidence, which consists of hypothetical evidence ideas representing the full range of what evidence for that specific claim could look like - from extremely weak and tentative up through moderate, strong, and ideal or near-conclusive patterns. This potential evidence is expressed explicitly as ideas in the graph - often as hypothetical observations, measurements, tests, replications, contradictory trials, or high-standards verifications - and MUST be generated before any actual evidence is considered or placed. For each truth-claim subtype, the potential-evidence spectrum describes, in increasing order of strength, the kinds of observations, tests, replications, mechanisms, or model outcomes that would gradually increase or decrease confidence in the claim. Potential evidence is not limited to raw data categories. It MAY also include robustness factors such as independent replication by multiple trusted third parties, observation by diverse groups, widely witnessed or live-streamed events, scrutiny by recognized experts, durable archival records, or high-visibility public confirmation. Together, these hypothetical evidence ideas define a neutral epistemic scaffold for the claim, covering weak through ideal evidence, and anchor the spectrum of potential certainty before any identity, agenda, or real-world data enters the rail.
+Each truth claim also possesses a spectrum of potential evidence, which consists of hypothetical evidence ideas representing the full range of what evidence for that specific claim could look like - from extremely weak and tentative up through moderate, strong, and ideal or near-conclusive patterns. This potential evidence is expressed explicitly as ideas in the graph - often as hypothetical observations, measurements, tests, replications, contradictory trials, or high-standards verifications - and MUST be generated before any actual evidence is considered or placed. For each truth-claim subtype, the potential-evidence spectrum describes, in increasing order of strength, the kinds of observations, tests, replications, mechanisms, or model outcomes that would gradually increase or decrease confidence in the claim. Potential evidence is not limited to raw data categories. It MAY also include robustness factors such as independent replication by multiple trusted third parties, observation by diverse groups, widely witnessed or live-streamed events, scrutiny by recognized experts, durable archival records, or high-visibility public confirmation. Together, these hypothetical evidence ideas define a neutral epistemic scaffold for the claim, covering weak through ideal evidence, and anchor the spectrum of potential certainty before any identity, agenda, or real-world data enters the ordering.
 
 Running in parallel is the spectrum of actual evidence, consisting of all evidence ideas that have actually been connected to the claim via a relative_importance connection whose usage is evidence_for or evidence_against. Each such evidence idea is itself a truth claim whose subtype determines its epistemic character (for example, observation, pattern, causal mechanism, prediction, test, model integration). No additional connection metadata is required to classify the kind of evidence; the evidence idea's subtype determines its epistemic role. Evidence is placed on the evidence spectrum by comparing each actual evidence idea to the predefined potential evidence. Placement is not automatic; it is determined through explicit placement challenges in which agents deliberate about how closely a given piece of evidence matches the strength, clarity, or robustness of the hypothetical ideal. The result is a replay-stable ordering of actual evidence along the same spectrum that defines the claim's potential evidence.
 
 The epistemic weight of a truth claim is derived from the relationship between these two spectra. The system compares the strongest actual evidence to the strongest potential evidence, evaluates how much of the ideal pattern has been instantiated, and measures the size of the remaining gaps. Once a stable relationship is formed, an agent MAY issue a certainty-band challenge, proposing that the claim be placed in a specific certainty band within its subtype's allowed spectrum. Voters in such a challenge MUST consider both spectra: the quality and diversity of actual evidence, the extent to which key robustness criteria have been met, and how closely the provided evidence approaches the idealized evidence templates. The outcome of the challenge assigns the claim's canonical certainty band until additional evidence or new challenges justify a change.
 
-Evidence rails are fully transparent and must be identical under replay. All elements - hypothetical potential evidence, actual evidence ideas, usage-tagged relative_importance connections identifying them as evidence, spectrum placements, and certainty-band challenge outcomes - are recorded as explicit events. Nodes MUST NOT infer new evidence, assign certainty automatically, generate placements implicitly, or apply implementation-specific heuristics. Invalid or irrelevant evidence edges remain visible in the historical record but exert no effect on the active spectrum of actual evidence. Only explicit placements and explicit certainty-band challenges determine the rail's operative structure.
+Evidence orderings are fully transparent and must be identical under replay. All elements - hypothetical potential evidence, actual evidence ideas, usage-tagged relative_importance connections identifying them as evidence, spectrum placements, and certainty-band challenge outcomes - are recorded as explicit events. Nodes MUST NOT infer new evidence, assign certainty automatically, generate placements implicitly, or apply implementation-specific heuristics. Invalid or irrelevant evidence edges remain visible in the historical record but exert no effect on the active spectrum of actual evidence. Only explicit placements and explicit certainty-band challenges determine the ordering's operative structure.
 
 This architecture ensures that certainty is a function of what the system could know, what it does know, and what agents judge to be the correct interpretation of the relationship between the two. It produces a stable, challengeable, and deterministic epistemic layer upon which higher-order reasoning, predictions, contradictions, and truth-governance decisions rest.
 
@@ -2370,7 +2374,7 @@ Prediction claims assert that a specific event, state, or measurement WILL occur
 
 A prediction claim MAY optionally include a `prediction_target_date`, representing the moment or interval after which evaluators expect the predicted condition to be testable. This field is not required for protocol correctness and does not affect epistemic semantics; it exists solely to help implementations surface predictions that are due for evaluation. When the target date passes - or when the predicted conditions otherwise become testable - agents MAY submit **test-result truth claims** that describe whether the predicted outcome did or did not occur. These test-result claims are ordinary truth claims that connect to the prediction via the evidence connection type.
 
-Prediction evaluation is governed by the same evidence-rail structure used for all truth claims. Each prediction contains a **spectrum of potential evidence** that defines what strong confirmation and strong disconfirmation would look like. Strong confirming potential evidence might include accurate measurements of the predicted outcome, independent replications, or widely observable events that align with the prediction's content. Strong disconfirming potential evidence might include robust observations showing the predicted event did not occur, failed tests, contradictory measurements, or replicated outcomes that conflict with the predicted state. These hypothetical templates anchor the prediction's certainty spectrum and define what constitutes a decisive outcome.
+Prediction evaluation is governed by the same evidence-ordering structure used for all truth claims. Each prediction contains a **spectrum of potential evidence** that defines what strong confirmation and strong disconfirmation would look like. Strong confirming potential evidence might include accurate measurements of the predicted outcome, independent replications, or widely observable events that align with the prediction's content. Strong disconfirming potential evidence might include robust observations showing the predicted event did not occur, failed tests, contradictory measurements, or replicated outcomes that conflict with the predicted state. These hypothetical templates anchor the prediction's certainty spectrum and define what constitutes a decisive outcome.
 
 When actual evidence arrives - typically as test-result claims or observations - it is placed along the **spectrum of actual evidence** through placement challenges. If the predicted event occurs clearly and measurably, the strongest actual evidence will align with the confirming potential evidence, raising the justification for a higher certainty band. If the event does not occur, or if evidence contradicts the prediction's content, the strongest actual evidence may fall near the disconfirming potential evidence, justifying movement to lower certainty bands. Predictions with partial fulfillment (for example, ambiguous or mixed outcomes) produce actual evidence spread across the spectrum, requiring deliberation to determine the correct certainty band.
 
@@ -2780,7 +2784,7 @@ Importance challenges evaluate the ordering between two ideas within a specific 
 
 Action challenges determine which actionable ideas - publicly proposed plans - should be endorsed, prioritized, postponed, coordinated, or rejected. They use relative_importance connections between actionable ideas, related truth and conceptual ideas, candidate executors, and potential or actual actions; rulebooks MAY further specialize some of these edges with dedicated usage values (for example, reusing importance_argument for reasons to endorse a plan, or introducing a future action_outcome usage for outcomes connected back to plans). **Action challenges operate on the spectrum of potential actions and the spectrum of proposed actions (§7.4), determining which proposals best instantiate the intended intervention. Action challenges MAY endorse, de-endorse, reprioritize, or supersede proposed actions, but they SHALL NOT assign execution to any identity, compel execution, or imply obligation. Verdicts specify only what the system judges should be done, not who must do it.** After an action challenge endorses an actionable idea, execution proceeds through the action-declaration and completion-claim pipeline; verification of completion is handled by truth challenges.
 
-Representation challenges determine how ideas are identified, distinguished, or merged, and which descriptions become canonical at each tier and complexity level. They include same_as challenges, which propose equivalence between ideas or between specific descriptions, and description-selection challenges, which choose the canonical default description for an idea or rail. Representation challenges modify identity mappings, canonical description pointers, and same_as metadata without altering the truth or importance status of any idea.
+Representation challenges determine how ideas are identified, distinguished, or merged, and which descriptions become canonical at each tier and complexity level. They include same_as challenges, which propose equivalence between ideas or between specific descriptions, and description-selection challenges, which choose the canonical default description for an idea or ordering. Representation challenges modify identity mappings, canonical description pointers, and same_as metadata without altering the truth or importance status of any idea.
 
 Each challenge domain relies on the same underlying challenge mechanism and lifecycle but emphasizes different uses of the core connection types. Truth challenges primarily read relative_importance connections with usage = evidence_for or evidence_against along the evidence rails. Importance and action challenges primarily manipulate and inspect relative_importance connections with usage = general and usage = importance_argument (and any future action-related usages defined by rulebooks). Representation challenges operate chiefly on same_as connections and description pointers. All four domains share the same event structure - challenge creation, argument attachment, voting, verdict, and state update - while differing only in what they consider valid arguments, how they interpret connections, and what state they update when a verdict is reached.
 
@@ -2830,15 +2834,15 @@ Under no circumstances MAY a challenge verdict reorder past events, reinterpret 
 
 ### 6.4 spectrum of potential actions and spectrum of proposed actions [anchor: spectrum_of_potential_actions_and_spectrum_of_proposed_actions]
 
-Actionable ideas use a two-rail structure that mirrors the evidence rails defined for truth claims. Instead of a spectrum of potential evidence and a spectrum of actual evidence, each actionable idea maintains a spectrum of potential actions and a spectrum of proposed actions. These rails provide a shared, deterministic frame for reasoning about how extreme, reversible, risky, or costly different courses of action are, and for comparing concrete proposals against the best-available alternatives that could, in principle, be taken.
+Actionable ideas use a two-ordering structure that mirrors the evidence rails defined for truth claims. Instead of a spectrum of potential evidence and a spectrum of actual evidence, each actionable idea maintains a spectrum of potential actions and a spectrum of proposed actions. These orderings provide a shared, deterministic frame for reasoning about how extreme, reversible, risky, or costly different courses of action are, and for comparing concrete proposals against the best-available alternatives that could, in principle, be taken.
 
 The spectrum of potential actions represents what could be done in principle about the situation the actionable idea addresses. It consists of hypothetical action templates and archetypes expressed as ideas in the graph, connected to the actionable idea using relative_importance connections whose usage is reserved (by rulebooks) for potential-action relationships (for example, potential_action_template). Together, these potential actions define a structured range from minimal, low-impact interventions through moderate and high-impact interventions up to extreme, hard-to-reverse interventions. They are not commitments to act and do not themselves trigger execution; they exist to make explicit the shape of the action space so that concrete proposals can be positioned relative to it.
 
 Running in parallel is the spectrum of proposed actions, which consists of concrete action proposals attached to the actionable idea via relative_importance connections whose usage is reserved for proposal relationships (for example, proposed_action). Each proposed action is a specific plan, advanced by one or more identities, that could be executed and later verified as an action idea. When a proposed action is introduced, the proposer MUST specify an initial placement along the actionable idea's potential-action spectrum: effectively a claim about which region of the potential-action rail this proposal occupies and how its impact, reversibility, risk, and resource use compare to the hypothetical options already defined.
 
-Disputes about how a proposal is positioned on this spectrum are resolved through action challenges. An action challenge MAY be opened to argue that a proposed action has been mispositioned relative to the spectrum of potential actions, or that the potential-action rail itself is incomplete or distorted (for example, by omitting obvious minimal interventions or clustering only around extremes). In the argument phase of such a challenge, participants reference the existing potential actions, introduce additional potential actions if needed, and compare the concrete proposal's characteristics to those reference points. The challenge's verdict yields a state transformation event that updates the canonical placement of the proposed action and, where justified, the ordering or composition of the potential-action spectrum for that actionable idea. All of these changes are recorded as forward-only events; earlier placements and rail configurations remain in history but are superseded for current-state derivation.
+Disputes about how a proposal is positioned on this spectrum are resolved through action challenges. An action challenge MAY be opened to argue that a proposed action has been mispositioned relative to the spectrum of potential actions, or that the potential-action rail itself is incomplete or distorted (for example, by omitting obvious minimal interventions or clustering only around extremes). In the argument phase of such a challenge, participants reference the existing potential actions, introduce additional potential actions if needed, and compare the concrete proposal's characteristics to those reference points. The challenge's verdict yields a state transformation event that updates the canonical placement of the proposed action and, where justified, the ordering or composition of the potential-action spectrum for that actionable idea. All of these changes are recorded as forward-only events; earlier placements and ordering configurations remain in history but are superseded for current-state derivation.
 
-The relationship between the spectrum of potential actions and the spectrum of proposed actions is used downstream by other action challenges that decide whether and when to endorse or execute proposals. Governance and safety rulebooks MAY impose additional ceremony, quorum, or evidence requirements for endorsing proposals that occupy more extreme, irreversible, or high-risk regions of the action spectrum, but such policies are defined elsewhere in this specification. The core protocol only requires that every actionable idea can host a spectrum of potential actions, that concrete proposals specify and maintain a placement on a spectrum of proposed actions tied to that potential spectrum, and that all disputes about these rails and placements are conducted through action challenges that are fully recorded and deterministically replayable across conformant nodes.
+The relationship between the spectrum of potential actions and the spectrum of proposed actions is used downstream by other action challenges that decide whether and when to endorse or execute proposals. Governance and safety rulebooks MAY impose additional ceremony, quorum, or evidence requirements for endorsing proposals that occupy more extreme, irreversible, or high-risk regions of the action spectrum, but such policies are defined elsewhere in this specification. The core protocol only requires that every actionable idea can host a spectrum of potential actions, that concrete proposals specify and maintain a placement on a spectrum of proposed actions tied to that potential spectrum, and that all disputes about these orderings and placements are conducted through action challenges that are fully recorded and deterministically replayable across conformant nodes.
 
 ### 6.5 voter eligibility, juror selection, and rate-limited vote sessions [anchor: voter_eligibility_juror_selection_and_rate_limited_vote_sessions]
 
@@ -3085,42 +3089,66 @@ Export pack metadata MUST always include cycle-boundary cadence context sufficie
 
 ### 8.1 human-first identity architecture [anchor: human_first_identity_architecture]
 
-The protocol maintains a strict human-first architecture for the canonical universe. Every canonical event - idea creation, description submission, connection creation, argument or evidence idea submission, challenge creation, vote, action declaration, or completion claim - MUST be authored and cryptographically signed by a unique, verified human identity, except for mechanically emitted boundary events by `system_boundary_emitter`. Verified-human status is necessary but not sufficient for every action: ordinary canonical writes require ordinary canonical-writer eligibility, and the narrow Tempo-only lane requires `tempo_contributor` eligibility and permits only target-bound time truth claims plus explicitly allowed Tempo-context evidence ideas/connections. Only eligible verified human identities MAY emit POD-eligible events or directly modify canonical rankings and challenge outcomes. AI systems, anonymous burners, and other non-verified actors MAY generate content in non-canonical layers, but such content has no canonical effect until explicitly adopted by a verified human identity.
+The protocol maintains a strict human-first architecture for the canonical universe. Ordinary canonical events - idea creation, description submission, connection creation, argument or evidence idea submission, challenge creation, vote, action declaration, or completion claim - MUST be authored and cryptographically signed by an eligible human identity, except for mechanically emitted boundary events by `system_boundary_emitter`. Verified-human status is necessary but not sufficient for every action: ordinary canonical writes require ordinary canonical-writer eligibility, and the narrow Tempo-only lane requires `tempo_contributor` eligibility and permits only target-bound time truth claims plus explicitly allowed Tempo-context evidence ideas/connections. Only eligible verified human identities MAY emit POD-eligible events or directly modify canonical rankings and challenge outcomes.
 
-The system conceptually distinguishes three layers: the **canonical universe**, an **anonymous outer layer**, and the **AI map**. The canonical universe is the PoD-bearing layer, backed by event logs and snapshots, where universal importance, challenge outcomes, POD flows, and long-term governance are defined. Only verified human identities MAY act directly in this layer. The anonymous outer layer is a non-canonical, web-facing space where ideas MAY be created and discussed under fully anonymous or burner-like handles without prior verification. This layer is intended to support whistleblowing, dissent, experimentation, and expression under threat, including use from within authoritarian regimes. Events in the anonymous layer are not POD-eligible and MUST NOT change canonical ranks or challenge results until they are explicitly adopted. The AI map is a separate sandbox in which AI agents MAY freely propose ideas, structures, and interpretations without any canonical authority.
+Profile-v0 identity admission follows this sequence:
+
+1. permissionless local identity and key preparation;
+2. a portable non-canonical admission request;
+3. a sponsor-authored canonical `identity_create`;
+4. a `CanonicalAdmittedIdentity` with restricted initial authority.
+
+Local preparation requires no canonical permission. Admission requests are non-canonical and portable. Only successful canonical event application creates identity state. The applicant MUST separately prove possession of the proposed initial key, but that proof does not make the applicant the canonical event author. The existing eligible human sponsor authors and signs the completed `identity_create` authored candidate. Exact proof bytes, proof fields, sponsor signature fields, payload schemas, and encodings are deferred to Appendix A, `canonical-encoding-and-hashing-spec.md`, and `canonical-event-authorship-and-signature-profile-v0.md`.
+
+The system conceptually distinguishes three layers: the **canonical universe**, an **anonymous outer layer**, and the **AI map**. The canonical universe is the POD-bearing layer, backed by event logs and snapshots, where universal importance, challenge outcomes, POD flows, and long-term governance are defined. Only identities with the relevant replay-derived event-family eligibility MAY act directly in this layer. A `CanonicalAdmittedIdentity` has only the restricted identity-scoped verification and key-control authority later defined by exact schemas; it does not have ordinary writing, challenge, voting, governance, Tempo, inviter, or economic authority merely because admission succeeded. The anonymous outer layer is a non-canonical, web-facing space where ideas MAY be created and discussed under fully anonymous or burner-like handles without prior verification. This layer is intended to support whistleblowing, dissent, experimentation, and expression under threat, including use from within authoritarian regimes. Events in the anonymous layer are not POD-eligible and MUST NOT change canonical ranks or challenge results until they are explicitly adopted. The AI map is a separate sandbox in which AI agents MAY freely propose ideas, structures, and interpretations without any canonical authority.
 Outer-layer content remains non-canonical until adopted by a verified-human identity, and such adoption preserves source anonymity by default and MUST NOT embed transport metadata (see `privacy-and-high-risk-submission-spec.md` §6§7).
-For clarity, the “anonymous outer layer” is non-canonical publication, while canonical authorship remains identity-signed pseudonymous (including anonymous-but-verified presentation where allowed).
+For clarity, the anonymous outer layer is non-canonical publication, while canonical authorship remains identity-signed pseudonymous, including anonymous-but-verified presentation where allowed.
 
-Canonical authorship is always grounded in a **user identity idea** that represents a real human. A single verified human identity MAY present itself through multiple visible pseudonyms or burner handles within the canonical universe and outer layer. These visible surfaces MAY obscure the underlying human's legal identity and MAY be created or discarded at will, but all canonical events emitted by those surfaces MUST route through the same underlying verified identity for the purposes of authorship, rate limits, POD assignment, and Sybil resistance. The mapping from visible handles to underlying identities MAY remain private and node-local, but replay and validation MUST treat all events from those handles as originating from one canonical human.
+Canonical authorship is always grounded in a canonical identity that represents a real human. A single verified human identity MAY present itself through multiple visible pseudonyms or burner handles within the canonical universe and outer layer. These visible surfaces MAY obscure the underlying human's legal identity and MAY be created or discarded at will, but all canonical events emitted by those surfaces MUST route through the same underlying identity for the purposes of authorship, rate limits, POD assignment, and Sybil resistance. The mapping from visible handles to underlying identities MAY remain private and node-local, but replay and validation MUST treat all events from those handles as originating from one canonical human identity.
 
-The protocol distinguishes between **identity existence** and **identity visibility**. A verified human identity MUST exist, with a unique cryptographic key and verification state, before emitting canonical events. However, the interface MAY present this identity as a pseudonym, a theme-based handle, or a fully redacted "anonymous" label. Anonymous participation in the canonical universe therefore means that the identity's public-facing label is hidden or pseudonymous, not that the underlying human is unknown to the protocol. Purely unlinked, unverifiable accounts MAY exist only in the anonymous outer layer; they MUST NOT act directly in the PoD-bearing canonical universe.
+The protocol distinguishes **identity existence**, **identity visibility**, **verification**, and **event-family eligibility**. A canonical identity may exist before VH or VI certainty has activated. However, the interface MAY present an identity as a pseudonym, a theme-based handle, or a fully redacted "anonymous" label. Anonymous participation in the canonical universe therefore means that the identity's public-facing label is hidden or pseudonymous, not that canonical event-family eligibility can bypass replay-derived identity rules. Purely unlinked, unverifiable accounts MAY exist only in the anonymous outer layer; they MUST NOT act directly in the POD-bearing canonical universe.
 
 Anonymous or burner submissions in the outer layer MAY be used as inputs to canonical reasoning. A verified human identity MAY adopt non-canonical content (whether from anonymous humans or AI agents) by explicitly submitting it as their own canonical statement. Adoption means: "I, this human identity, say X," even if the original author was anonymous. Once adopted, the idea becomes a canonical idea or description authored by the adopting human, and only then MAY it participate in canonical challenges, rankings, and POD flows. This adoption mechanism allows the system to ingest information from high-risk or anonymous contexts while keeping the canonical universe grounded in accountable human authorship.
 
-Each human identity is instantiated in the canonical universe through a fixed cluster of structural ideas: a USER identity idea (with idea_type = identity) and four attached user-space ideas with canonical idea_type = conceptual_idea and specific structural_role values: backyard, relationship_garden, self_tree, and anthill. These four user-space ideas MUST be created atomically at registration time and MUST be linked to the USER identity via canonical membership connections whose role fields identify their function (for example, has_backyard, has_relationship_garden, has_self_tree, and has_anthill). They MUST also link back to the USER identity through reciprocal membership connections. All conformant nodes MUST reconstruct the same identity structure under replay. None of these structural ideas MAY merge with any other idea, and the protocol MUST NOT automatically generate additional identity-root structural roles beyond this set without an explicit rulebook change.
-
-The BACKYARD anchors authored ideas, the RELATIONSHIP_GARDEN hosts interpersonal and intrapersonal relationship structures, the SELF_TREE represents the user’s narrative relationship with themselves, and the ANTHILL records mutually acknowledged human connections. In all cases, these are canonical only as structural anchors: they are ideas with idea_type = conceptual_idea and a structural_role that constrains how they are used. They SHALL NOT introduce new importance scopes, SHALL NOT participate directly in universal or tribe importance ranking, SHALL NOT receive POD, and SHALL NOT confer any governance privileges. Their semantics are limited to indexing drafts, memories, and peer relationships, and to anchoring personal and relational spaces in the UI. Implementations MAY build rich visual metaphors on top of them (for example, backyard navigation, a visual self-tree, or an anthill network), but MUST preserve their structural roles, MUST use only the canonical connection types defined in §2.7, and MUST NOT treat these roles as new canonical idea_type values.
+Each Profile-v0 canonical human identity MUST have the complete `identity_structural_roots` set: Mindgarden, Backyard of Relationships, Self Tree, and Anthill. A successful `identity_create` MUST atomically create or deterministically derive the complete root set; failure to establish any required root fails admission. Structural roots organize identity-related information and MUST NOT create verification, truth, importance, voting, governance, Tempo, invitation, POD, POINT, or economic authority.
 
 AI identities MAY exist as named agents within the AI map, but they SHALL NOT directly author canonical events. AI identities MAY generate candidate ideas, arguments, or descriptions, but these remain non-canonical until a verified human identity adopts them. When such adoption occurs, the resulting canonical event is entirely owned by the human identity, with any AI contribution treated as a tool-assisted draft. This preserves human responsibility and agency over all canonical claims, while still enabling extensive AI support and exploration in the non-canonical layers.
 
 ### 8.2 identity properties and verification states [anchor: identity_properties_and_verification_states]
 
-Each USER identity idea in the canonical universe MUST carry a minimal, deterministic set of properties sufficient for authorship, replay, POD assignment, tribe eligibility, and verification checks. These properties MUST be recorded in the event log and reproducible during deterministic replay. Nodes MUST NOT rely on external, non-replayable state when validating canonical events.
+Each canonical identity in the canonical universe MUST carry a minimal, deterministic set of replay-derived facts sufficient for authorship, admission provenance, key control, structural-root reconstruction, eligibility, POD assignment, tribe eligibility, and verification checks. These facts MUST be recorded in the event log or deterministically derived from it. Nodes MUST NOT rely on external, non-replayable state when validating canonical events.
 
-At minimum, a canonical human identity MUST include:
+Identity authority is not one mutable lifecycle status. Conformant replay MUST keep the following lanes or predicates separate:
+
+- canonical existence;
+- identity kind;
+- key control;
+- structural-root completeness;
+- verification state;
+- restricted verification eligibility;
+- ordinary writer eligibility;
+- ordinary challenge eligibility;
+- voter eligibility;
+- governance eligibility;
+- Tempo eligibility;
+- inviter eligibility;
+- invitation capacity;
+- invitation suspension;
+- dormancy or recovery.
+
+At minimum, a Profile-v0 canonical human identity MUST include:
+
+- **canonical admission facts:**
+  A canonical identity identifier, `identity_kind = human`, admission profile provenance, sponsor/admission provenance, and classification as a `CanonicalAdmittedIdentity` or a separate genesis/legacy/import provenance class. Profile-v0 admission alone does not establish VH, VI, human uniqueness, civil identity, trustworthiness, ordinary writing, ordinary challenges, voting, governance, Tempo eligibility, inviter eligibility, invitation capacity, POD, POINT, or economic authority.
 
 - **public key state and signature profile:**
-  Replay-derived identity key state sufficient to resolve active `public_key_ref` values under `canonical-event-authorship-and-signature-profile-v0.md`. Ordinary human-authored canonical events MUST carry a Profile-v0 `signature` over the exact authored-candidate bytes and MUST verify against an active key owned by `author_identity_id`. Nodes MUST reject events with missing signatures, invalid signatures, unknown keys, keys owned by another identity, revoked keys used after revocation, or unsupported signature profiles.
+  Replay-derived identity key state sufficient to resolve active `public_key_ref` values under `canonical-event-authorship-and-signature-profile-v0.md`. Ordinary human-authored canonical events MUST carry a Profile-v0 `signature` over the exact authored-candidate bytes and MUST verify against an active key owned by `author_identity_id`. Nodes MUST reject events with missing signatures, invalid signatures, unknown keys, keys owned by another identity, revoked keys used after revocation, or unsupported signature profiles. Profile-v0 identity admission also requires an applicant initial-key possession proof whose exact bytes are defined outside this root protocol document.
 
-- **verification state:**  
-  A state describing whether and how the identity has been verified as a unique human. The protocol defines the following canonical states:
-  - *unverified*: the identity and its structural-role ideas exist and MAY explore the interface and act in the anonymous outer layer, but MUST NOT author canonical events, MUST NOT vote, and MUST NOT receive POD;
-  - *verified-human*: the identity MAY become eligible for ordinary canonical events, canonical challenges, Tempo contribution, and POD according to the active action-specific rulebooks;
-  - *revoked*: the identity has been invalidated (for example, due to fraud or policy violations) and MUST NOT author further canonical events; historical events remain valid under replay;
-  - *deceased*: the human has died; no new canonical events may be authored, but historical authorship and POD remain intact;
-  - *transferred*: the identity has undergone a succession process (see §9.6), with clear markers of continuity and transfer.
+- **identity structural roots:**
+  The complete Profile-v0 `identity_structural_roots` set: Mindgarden, Backyard of Relationships, Self Tree, and Anthill. These roots MUST be created or derived atomically with successful admission and MUST persist for the lifetime of the identity. They are structural anchors only and do not confer verification or participation authority.
 
-  The specific mechanisms by which an identity transitions from unverified to verified-human (for example, peer verification, institutional checks, or multi-factor proofs) are implementation-dependent and MAY be governed by ideas and challenges within the system. For protocol purposes, only the resulting verification state matters.
+- **verification and eligibility lanes:**
+  Verification is derived from ordinary truth claims, evidence, contradictions, challenges, responses, and outcomes, followed by rulebook evaluation, derived VH and VI certainty, activation boundary, and event-family-specific eligibility. Verification certainty and tiers MUST NOT be used to weight votes, importance, governance power, truth certainty, challenge influence, Tempo influence, invitation capacity, POD, POINT, or economic authority. `verification_reference`, sponsorship, admission lineage, Anthill membership or degree, and structural-root membership are not verification by themselves.
 
 - **POD balance:**  
   The cumulative POD earned by the identity from canonical events. The POD balance MUST be updated at snapshot boundaries according to the token specification and MUST remain stable under replay. The balance does not decay retroactively, even if the influence of older POD is reweighted in later cycles.
@@ -3137,56 +3165,67 @@ At minimum, a canonical human identity MUST include:
 - **death or succession markers:**  
   When an identity is marked as deceased or when responsibilities and any ongoing entitlements are transferred to a successor identity, this MUST be recorded as a canonical event referencing both the original and successor identities. These markers ensure that replay can interpret historical authorship and POD flows consistently, even after death or succession.
 
-In addition to these properties on the USER identity idea, each identity MUST have the four structural-role ideas - BACKYARD, RELATIONSHIP_GARDEN, SELF_TREE, and ANTHILL - created and linked as described in §9.1. These structural ideas are part of the identity's canonical footprint and MUST persist for the entire lifetime of the identity. Verification state and key ownership DO NOT change the semantics of these structural ideas; they continue to serve as anchors for authored ideas, relationship memories, self-narrative, and peer connections, and SHALL NOT introduce new importance scopes, POD sources, or governance privileges. Non-canonical anonymous identities operating solely in the outer layer MAY have reduced or ephemeral property sets and MAY exist without verification. However, any transition from anonymous outer-layer activity to canonical authorship MUST pass through a verified-human identity, either by upgrading that actor to verified-human status or by adoption of content by an already-verified identity. Nodes MUST NOT treat outer-layer pseudonyms or burners as canonical identities unless and until they satisfy the properties and verification states defined above.
+Non-canonical anonymous identities operating solely in the outer layer MAY have reduced or ephemeral property sets and MAY exist without verification. However, any transition from anonymous outer-layer activity to canonical authorship MUST pass through an identity with the event-family eligibility required for the target canonical action, either by the identity becoming eligible through verification/rulebook activation or by adoption of content by an already eligible verified human identity. Nodes MUST NOT treat outer-layer pseudonyms, burners, private product accounts, or local identity candidates as canonical identities unless and until a valid canonical admission or legacy/genesis rule establishes them.
 
-Identity verification within this protocol is defined as a set of challengeable truth claims about an identity, not as an administrative or discretionary status.
-
-The protocol recognizes two distinct verification tracks:
-- **Verified Human (VH):** the claim that an account is operated by a real human (not automation).
-- **Verified Identity / Uniqueness (VI):** the claim that an account corresponds to a unique real-world person.
-
-Each track derives a deterministic certainty value from evidence and challenge outcomes. These certainty values map to discrete verification tiers used exclusively for gating permissions (e.g., eligibility pools, rate limits, invite rights).
-
-Verification certainty and tiers MUST NOT be used to weight votes, importance, or governance power. Detailed verification mechanics, evidence structures, and certainty derivation are defined in the identity verification specification and are normatively referenced here.
+Detailed verification mechanics, evidence structures, certainty derivation, and restricted verification lanes are defined in the identity verification and identity-admission specifications and are normatively referenced here.
 
 
-### 8.3 structural roles assigned at identity creation: mindgarden, backyard_of_relationships, self_tree, anthill, and shrubs [anchor: structural_roles_assigned_at_identity_creation_mindgarden_backyard_of_relationships_self_tree_anthill_and_shrubs]
+### 8.3 structural roles assigned at identity admission: Mindgarden, Backyard of Relationships, Self Tree, Anthill, and shrubs [anchor: structural_roles_assigned_at_identity_creation_mindgarden_backyard_of_relationships_self_tree_anthill_and_shrubs]
 
-Each verified human identity is accompanied by a fixed cluster of structural-role ideas that define its personal, relational, and narrative spaces. These ideas are canonical objects with idea_type = conceptual_idea and MUST be created atomically at registration: a MINDGARDEN, a BACKYARD_OF_RELATIONSHIPS, a SELF_TREE, and an ANTHILL. These structural-role ideas are NOT new canonical idea_type values; they are ordinary ideas whose semantics are defined entirely by their structural_role metadata and their connection rules. All conformant nodes MUST reconstruct this identity-root structure deterministically under replay.
+Each Profile-v0 canonical human identity is accompanied by the complete `identity_structural_roots` set. The future-facing root names are:
 
-MINDGARDEN (structural_role = mindgarden)
+1. Mindgarden;
+2. Backyard of Relationships;
+3. Self Tree;
+4. Anthill.
 
-The MINDGARDEN ("my mindgarden") is the identity's deterministic private incubation space for authored ideas. Ideas created by the identity MAY be drafted, iterated, and organized within the mindgarden prior to becoming publicly visible and participating in canonical epistemic processes. Every idea created by the identity MUST connect to the mindgarden using canonical connection types - typically a membership edge with role = in_mindgarden_of - so that authored ideas and drafts have a deterministic anchor in the personal graph. The mindgarden does not define an importance scope, does not receive POD, and does not participate in any ranking. Its purpose is to anchor authored ideas, drafts, and user-specific working spaces in a deterministic location while keeping pre-public and personal incubation meaning separated from public truth, importance, and action processes.
+A valid Profile-v0 `identity_create` MUST atomically create or deterministically derive the complete root set. Failure to establish any required root fails admission. These structural roots are NOT new canonical idea_type values; they are ordinary structural anchors or deterministic derivations whose exact identifiers, byte encodings, structural-role constants, containment relations, and connection schemas remain deferred to Appendix A and structural-role reconciliation. All conformant nodes MUST reconstruct this identity-root structure deterministically under replay.
 
-BACKYARD_OF_RELATIONSHIPS (structural_role = backyard_of_relationships)
+Mindgarden
 
-The BACKYARD_OF_RELATIONSHIPS ("my backyard of relationships") is the container for interpersonal and intrapersonal relationship structures. It SHALL NOT participate in universal, tribe, or personal importance ranking and SHALL NOT receive POD. Only relationship-specific structural-role ideas - such as shrubs, relationship_memory_leaves, and the self_tree - MAY appear under this space. The backyard_of_relationships separates relational meaning from epistemic meaning, ensuring that personal narrative and connection structures do not pollute public truth or importance graphs.
+The Mindgarden is the identity's deterministic personal incubation space for authored ideas, drafts, and user-specific working spaces. It does not define an importance scope, does not receive POD, and does not participate in ranking. Its purpose is to anchor authored ideas and drafts in a deterministic location while keeping pre-public and personal incubation meaning separated from public truth, importance, and action processes.
 
-SELF_TREE (structural_role = self_tree)
+Backyard of Relationships
 
-The SELF_TREE ("my relationship with myself") represents the identity's evolving internal narrative. The self_tree is a canonical idea with idea_type = conceptual_idea placed inside the backyard_of_relationships. It MAY have personal memory leaves attached, representing milestones, reflections, or experiences meaningful to the identity. The SELF_TREE SHALL NOT participate in challenges, SHALL NOT receive POD, SHALL NOT influence importance rankings, and SHALL NOT act as evidence or argument in any canonical epistemic process. It exists solely as a replayable narrative anchor unique to the identity.
+The Backyard of Relationships is the container for interpersonal and intrapersonal relationship structures. It SHALL NOT participate in universal, tribe, or personal importance ranking and SHALL NOT receive POD. Relationship-specific structures, such as shrubs, relationship memory leaves, and the Self Tree, MAY appear under this space when the exact structural-role schema permits them. The Backyard of Relationships separates relational meaning from epistemic meaning so that personal narrative and connection structures do not pollute public truth or importance graphs.
 
-SHRUBS (structural_role = shrub)
+Self Tree
 
-A SHRUB represents a pairwise relationship between two human identities. A shrub is created by one user under their backyard_of_relationships as the root relationship object. A shrub MAY remain visible only to the creating user or MAY become mutual - appearing in the second identity's backyard_of_relationships - if that identity explicitly accepts or mirrors the relationship. Shrubs MAY contain relationship_memory_leaves, which represent shared events or moments visible to both participants. Shrubs SHALL NOT participate in importance ranking, SHALL NOT receive POD, SHALL NOT alter governance structures, and SHALL NOT introduce epistemic implications. They are strictly narrative and relational structures, not public-knowledge claims.
+The Self Tree represents the identity's evolving internal narrative. It MAY have personal memory leaves attached, representing milestones, reflections, or experiences meaningful to the identity. The Self Tree SHALL NOT participate in challenges, SHALL NOT receive POD, SHALL NOT influence importance rankings, and SHALL NOT act as evidence or argument in any canonical epistemic process. It exists solely as a replayable narrative anchor unique to the identity.
 
-ANTHILL (structural_role = anthill)
+Shrubs
 
-The ANTHILL ("my anthill") records mutually acknowledged human connections. When two USER identities agree to a connection, each anthill receives a canonical membership connection referencing the other identity with a role such as knows or trusted_peer. The anthill MAY support higher-level systems such as peer-verification overlays but SHALL NOT influence importance, POD, governance, or challenge outcomes. As with the mindgarden and backyard_of_relationships, the anthill is a purely structural overlay that remains non-epistemic and is deterministically reconstructed under replay.
+Shrubs are optional relational structures, not required identity structural roots. A shrub represents a pairwise relationship between two human identities. A shrub MAY remain visible only to the creating identity or MAY become mutual if the second identity explicitly accepts or mirrors the relationship. Shrubs MAY contain relationship memory leaves, which represent shared events or moments visible to both participants. Shrubs SHALL NOT participate in importance ranking, SHALL NOT receive POD, SHALL NOT alter governance structures, and SHALL NOT introduce epistemic implications. They are strictly narrative and relational structures, not public-knowledge claims.
 
-Together
+Anthill
 
-Together, the mindgarden, backyard_of_relationships, self_tree, shrubs, and anthill define the personal and interpersonal terrain of each identity. These structures provide deterministic anchors for authored ideas, personal drafts, relational memories, and peer networks while keeping them rigorously separated from public truth, importance, and action processes. Implementations MAY build rich UI metaphors on top of these structures (visual gardens, narrative trees, social webs, etc.), but MUST preserve their semantic boundaries, SHALL NOT treat structural roles as canonical idea types, and MUST NOT extend their authority into POD, ranking, or governance domains.
+The Anthill records mutually acknowledged human connections and may provide a structural location where admission provenance, social acknowledgments, or verification-relevant claims can be inspected. Anthill membership, degree, lineage, or topology SHALL NOT influence importance, POD, governance, challenge outcomes, VH, VI, invitation authority, or any other eligibility lane by itself. A sponsor or peer may separately make an attributable and challengeable verification claim through the ordinary epistemic system, but the Anthill is a structural root, not verification.
+
+Together, the Mindgarden, Backyard of Relationships, Self Tree, Anthill, and optional shrubs define personal and interpersonal terrain for an identity. These structures provide deterministic anchors for authored ideas, personal drafts, relational memories, and peer networks while keeping them rigorously separated from public truth, importance, admission capacity, verification certainty, eligibility, and action processes. Implementations MAY build rich UI metaphors on top of these structures, but MUST preserve their semantic boundaries, SHALL NOT treat structural roles as canonical idea types, and MUST NOT extend their authority into POD, ranking, governance, Tempo, invitation, or economic domains.
 
 
 
 ### 8.4 identity lifecycle: creation, verification, and continuity [anchor: identity_lifecycle_creation_verification_and_continuity]
 
-Each human identity represents a single real person and persists for the duration of that person's participation in the system. Identity creation begins when a new user registers and emits a USER identity idea with idea_type = identity, along with canonical structural-role ideas: BACKYARD, RELATIONSHIP_GARDEN, SELF_TREE, and ANTHILL. These four ideas MUST be created atomically and MUST be linked to the USER identity through canonical membership connections whose role fields specify their structural function (e.g., has_backyard, has_relationship_garden, has_self_tree, has_anthill). Nodes MUST reject any registration event that fails to produce all four structural-role ideas in a deterministic configuration.
+Each human identity represents a single real person and persists for the duration of that person's participation in the system. Under Profile v0, canonical identity creation begins only when a valid sponsor-authored `identity_create` is successfully applied under the active admission profile. Permissionless local key generation, local identity preparation, local account creation, private product registration, signed admission requests, and relay transport do not create canonical identity state. The target kind is fixed as `identity_kind = human`.
 
-Verification provides the USER identity with a recognized, challengeable attestation of personhood. A USER identity MAY initially be unverified, but it MUST NOT participate in universal-scope challenges or voting until verification is complete. Verification consists of the identity producing evidence - such as government ID checks, anthill-mediated peer verification, third-party attestations, or live-verification sessions - and embedding this evidence into a truth-claim chain. Once a verification truth claim survives challenge, the identity's verification state becomes active for all nodes at the next scheduled activation cycle boundary.
+A successful Profile-v0 admission creates a `CanonicalAdmittedIdentity` with canonical existence, human target kind, accepted initial key, sponsor/admission provenance, and complete `identity_structural_roots`. Admission alone does not establish VH, VI, human uniqueness, civil identity, trustworthiness, ordinary writing, ordinary challenges, voting, governance, Tempo eligibility, inviter eligibility, invitation capacity, POD, POINT, or economic authority.
 
-Identity continuity is preserved through stable cryptographic signatures and replay-derived key-management events. A USER identity MUST control at least one active key or a canonically specified recovery path, and MAY rotate or revoke keys through signed key-management events under `canonical-event-authorship-and-signature-profile-v0.md`. The identity’s underlying canonical representation MUST remain constant under replay; only descriptions and metadata MAY change. The identity’s lifetime ends only through explicit death, retirement, or succession events defined in a rulebook. Structural-role ideas (backyard, relationship_garden, self_tree, anthill) remain attached to the identity throughout its lifetime and SHALL NOT be merged, reassigned, or severed except through formal succession processes.
+Verification follows the ordinary epistemic path: ordinary truth claims, evidence, contradictions, challenges, responses, and outcomes; rulebook evaluation; derived VH and VI certainty; activation boundary; and event-family-specific eligibility. Sponsorship, admission lineage, Anthill membership or degree, structural-root membership, invitation spending, and `verification_reference` do not automatically establish verification or ordinary authority. A sponsor MAY separately make an attributable and challengeable verification claim through the ordinary epistemic system.
+
+Identity continuity is preserved through stable cryptographic signatures and replay-derived key-management events. A USER identity MUST control at least one active key or a canonically specified recovery path, and MAY rotate or revoke keys through signed key-management events under `canonical-event-authorship-and-signature-profile-v0.md`. The identity's underlying canonical representation MUST remain constant under replay; only descriptions and metadata MAY change. The identity's lifetime ends only through explicit death, retirement, or succession events defined in a rulebook. The identity_structural_roots - Mindgarden, Backyard of Relationships, Self Tree, and Anthill - remain attached to the identity throughout its lifetime and SHALL NOT be merged, reassigned, or severed except through formal succession processes.
+
+### 8.4A invitation eligibility, capacity, and admission liveness [anchor: invitation_eligibility_capacity_and_admission_liveness]
+
+Inviter eligibility is a separate replay-derived lane. It is not ordinary writer eligibility, challenge eligibility, voting eligibility, governance eligibility, Tempo eligibility, economic authority, or current capacity balance. It MUST be generally attainable by humans satisfying the same objective verification, continuity, maturation, key-control, and good-standing rules. No permanent founder, operator, institution, expert, delegate, governance office, or genesis inviter class may hold exclusive admission authority.
+
+Every inviter-eligible, unsuspended human MUST receive at least one spendable invitation-capacity unit in each qualifying capacity period. Rulebooks MAY set higher rates, finite caps, carryover, expiration, maturation, suspension, restoration, and abuse controls. Rulebooks MUST NOT assign zero capacity indefinitely to otherwise eligible, unsuspended inviters.
+
+Invitation capacity is replay-derived, integer-valued, identity-bound, non-transferable, non-saleable, non-delegable in Profile v0, and bounded. It is not money, a token, reputation, verification certainty, truth weight, importance weight, or vote weight. Exact Profile-v0 invitation capacity is deterministically derivable from public canonical history and applicable rulebooks. A DTO or interface MAY omit or simplify the displayed amount, but that is presentation minimization, not cryptographic privacy.
+
+Qualifying invitation-capacity periods require properly certified human-deliberative cycles. Wall-clock passage, cron activity, AI activity, system-emitter activity, Dmax alone, forced boundaries, degraded boundaries, survivor boundaries, record-only boundaries, and machine-only boundaries do not generate invitation capacity, inviter eligibility, inviter maturation, carryover-cap increases, admission rewards, or suspension restoration merely by occurring. They may generate admission authority only if they independently satisfy the human-deliberative certification rules for a qualifying capacity period.
+
+Previously valid spendable capacity remains usable during a stall unless it was suspended, previously scheduled to expire, frozen by a canonical emergency rule, or restricted by another explicit constitutional rule. A stalled period MUST NOT silently destroy capacity. When no qualifying period occurs, replay MUST expose `admission_liveness_blocked = true`, or an equivalent deterministic state. That state means no new capacity generation, no maturation advancement, and no inviter-eligibility activation; admission depends only on existing valid capacity. Profile v0 permits no emergency invitation-capacity minting by operators, AI, system emitters, wall-clock processes, or machine-only cycles. Exact replay, snapshot, API, and conformance representations are deferred to the subordinate reconciliation tasks.
 
 ### 8.5 death, succession, and account freezing [anchor: death_succession_and_account_freezing]
 
@@ -3199,6 +3238,8 @@ Succession events transfer stewardship but not authorship. The successor identit
 ### 8.6 identity keys, signatures, and attribution rules [anchor: identity_keys_signatures_and_attribution_rules]
 
 All ordinary human-authored canonical events in the system MUST be attributed to a specific human identity through cryptographic signatures. Every event - idea creation, description proposal, connection formation, challenge creation, argument submission, vote cast, action declaration, and completion claim - MUST include a Profile-v0 `signature` from an active key owned by `author_identity_id` at the event candidate's applicable publication point. The exact authored-candidate structure, signed bytes, `public_key_ref` construction, key rotation, revocation, and non-retroactive key-state rules are defined in `canonical-event-authorship-and-signature-profile-v0.md`.
+
+For Profile-v0 `identity_create`, the sponsor's active key signs the authored candidate as `author_identity_id`. The applicant separately proves possession of the proposed initial key. That possession proof binds applicant-relevant admission fields but does not make the applicant the event author and does not require the proposed initial key to have been active before admission. Exact possession-proof bytes and payload placement are deferred to Appendix A, canonical encoding, and Profile-v0 authorship/signature reconciliation.
 
 Key rotation is allowed and encouraged. A USER identity MAY generate a new keypair and attach it through a signed key-rotation event authorized by an active prior key or by a canonically specified recovery process. A valid rotation becomes effective at its finalized canonical position. A valid revocation becomes effective at its finalized canonical position and does not invalidate earlier finalized events that were valid when published.
 
@@ -3226,7 +3267,7 @@ Identity-level activity MUST remain auditable, replayable, and reconstructible f
 
 Every canonical event includes the author's identity, a signature validating the authorship, and all metadata required to verify that the identity was eligible to perform that action at the time of authorship. Nodes MUST validate authorship eligibility at replay time by examining rate limits, verification state, tribe memberships (for tribe-scope actions), and any governance constraints active at that historical moment. This guarantees that identity-level audits remain consistent regardless of when or where they are performed.
 
-Identity activity is conceptually divided into three categories: epistemic actions, governance actions, and social-graph actions. Epistemic actions include idea creation, description proposals, argument or evidence submission, challenge creation, and vote casting. Governance actions include participation in rule-set adoption challenges, protocol-upgrade decisions expressed as challenge outcomes or rule-set selections, and any stewardship actions defined by governance ideas. Social-graph actions include modifications to backyard, anthill, relationship_garden, shrubs, and self_tree structures; these actions define personal and interpersonal meaning but MUST NOT alter canonical epistemic or governance semantics.
+Identity activity is conceptually divided into three categories: epistemic actions, governance actions, and social-graph actions. Epistemic actions include idea creation, description proposals, argument or evidence submission, challenge creation, and vote casting. Governance actions include participation in rule-set adoption challenges, protocol-upgrade decisions expressed as challenge outcomes or rule-set selections, and any stewardship actions defined by governance ideas. Social-graph actions include modifications to Mindgarden, Backyard of Relationships, Self Tree, Anthill, shrubs, and related structural-root or relational structures; these actions define personal and interpersonal meaning but MUST NOT alter canonical epistemic or governance semantics.
 
 For each category, identity-level auditability enables important downstream behaviors: detecting Sybil patterns, analyzing long-term POD distributions, reconstructing debate histories, evaluating trustworthiness or expertise through interpretable metrics, and enabling transparent governance participation records. The protocol mandates that all such analyses MUST be derivable solely from open canonical data, without requiring privileged access to any non-canonical metadata. Nodes MAY offer cached summaries or accelerated index structures for browsing efficiency, but such accelerations MUST be fully reconstructible from first principles.
 
@@ -4542,7 +4583,7 @@ Deterministic replay SHALL select the canonical description using rulebook-defin
 
 For clarity, the following terms are normative in this appendix:
 
-* **representation object** - a canonical object containing a single tiered description payload reference for one target object (`idea` or `rail`).
+* **representation object** - a canonical object containing a single tiered description payload reference for one target object (`idea` or `ordering`).
 * **candidate representation** (also called **competing representation**) - a representation object in canonical history that is not currently selected by the canonical pointer for its tier.
 * **canonical representation pointer** - the object-level pointer from a specific `(tier_length, tier_complexity)` slot to the currently selected representation object.
 * **proposed description** - synonymous with a candidate representation object not currently selected by the canonical representation pointer.
@@ -4552,7 +4593,7 @@ All candidate representations, including competing/proposed representations, are
 #### 13.2.2B scoped display overrides (normative) [anchor: scoped_display_overrides_normative]
 Scoped display overrides define scope-specific effective display selection without creating new representation objects.
 A scoped display override MUST be keyed by (scope_kind, anchor_id) and MUST reference:
-- an existing canonical target object (idea or rail),
+- an existing canonical target object (idea or ordering),
 - a specific representation tier slot, and
 - an already-canonical representation candidate for that same target and tier slot.
 Scoped display overrides MUST NOT:
@@ -4602,21 +4643,27 @@ Membership connections are directional from the member (identity or idea) to the
 
 Connection types MUST be defined and constrained in governance rulebooks and SHALL NOT be ad hoc. Evidence, importance arguments, and action-related relationships are all expressed as `relative_importance` connections with different `usage` values, not as separate connection types.
 
-#### 13.2.4 rails and vines (ordered sequences) [anchor: rails_and_vines_ordered_sequences]
+#### 13.2.4 Orderings and Vines (ordered sequences) [anchor: orderings_and_vines_ordered_sequences]
 
-A **rail** is a first-class canonical object that stores an ordered sequence of referenced items.
+An **Ordering** is the one first-class canonical authored-sequence object. It stores an ordered sequence of referenced `idea_id` values and declares exactly one `ordering_profile`.
 
-Rail invariants:
+Ordering invariants:
 
-* Rails provide ordering context and MUST NOT, by themselves, assert truth, importance, causality, or execution.
-* Rails MUST use canonical representation pointers for title/sentence/paragraph/full descriptions under the shared representation system.
-* Rails are excluded from universal importance ranking by default unless a future rulebook explicitly opts in.
-* Rails MUST preserve item order exactly as authored in canonical history.
+* Orderings provide ordering context and MUST NOT, by themselves, assert truth, importance, causality, or execution.
+* Orderings MUST use canonical representation pointers for title/sentence/paragraph/full descriptions under the shared representation system.
+* Orderings are excluded from universal importance ranking by default unless a future rulebook explicitly opts in.
+* Orderings MUST preserve item order exactly as authored in canonical history.
+* `ordering_profile` is exactly one of `vine`, `evidence_rail`, or `action_rail`.
+* Vine, Evidence Rail, and Action Rail are profiles over Ordering, not separate substrate object types.
+* Navigation, relative-importance, chronology, event position, and visual-layout orderings remain derived unless a human explicitly authors and publishes an Ordering.
 
-A **vine** is a rail specialization over `idea_id` items.
+A **Vine** is the ecosystem-facing open-ended authored Ordering profile.
 
 * `vine_type = pathway_vine` — derived from navigation and saved explicitly as a canonical object.
 * `vine_type = narrative_vine` — authored ordering without requiring relative-importance adjacency.
+* `vine_type` is valid only when `ordering_profile = vine`.
+
+An **Evidence Rail** is an Ordering with `ordering_profile = evidence_rail` and the mandatory evidence procedures defined by the applicable rulebook. An **Action Rail** is an Ordering with `ordering_profile = action_rail` and the mandatory action procedures defined by the applicable rulebook.
 
 Pathway navigation in UI is ephemeral and non-canonical until a user explicitly creates and publishes a `pathway_vine`.
 
@@ -4624,7 +4671,7 @@ For `pathway_vine`, each adjacent step MAY include an optional underlying `relat
 For `narrative_vine`, no underlying-edge requirement exists.
 
 Non-normative viewer note:
-Rails/vines render as an explicit spine/rail layer distinct from base graph connections. Base connections remain the map layer.
+Orderings/Vines render as an explicit authored spine layer distinct from base graph connections. Base connections remain the map layer.
 
 ### 13.3 canonical serialization and hashing rules [anchor: canonical_serialization_and_hashing_rules]
 
@@ -4675,9 +4722,8 @@ Canonical event names use Appendix A spelling. The current catalog includes:
 * **idea_update_representation** (deprecated alias of **representation_create**),
 * **idea_deprecate** / **idea_retract**,
 * **representation_create**,
-* **rail_create**,
-* **rail_fork**,
-* **rail_update_representation** (deprecated alias of **representation_create**),
+* **ordering_create**,
+* **ordering_fork**,
 * **connection_create**,
 * **connection_update**,
 * **connection_remove**,
@@ -4736,11 +4782,13 @@ A canonical ordinary human-authorship signature MUST:
 
 * bind the Profile-v0 authored-candidate fields and payload hash,
 * exclude publication-derived fields that do not exist when the human signs,
-* be produced by a private key controlled by an eligible verified human identity,
+* be produced by a private key controlled by the eligible human identity that authors the event,
 * be verifiable using the replay-derived identity key state for `public_key_ref`,
 * adhere to `signature_profile = ed25519_v0` unless a later explicit signature-profile specification supersedes it.
 
-`canonical-event-authorship-and-signature-profile-v0.md` defines the authored-candidate structure, Profile-v0 Ed25519 algorithm, exact signed bytes, public-key descriptor, `public_key_ref`, key rotation, key revocation, and authorship-signature conformance-vector requirements. Rulebooks MAY gate which verified humans are eligible for which event families, but conforming Profile-v0 implementations MUST NOT choose alternate human-signature algorithms locally.
+`canonical-event-authorship-and-signature-profile-v0.md` defines the authored-candidate structure, Profile-v0 Ed25519 algorithm, exact signed bytes, public-key descriptor, `public_key_ref`, key rotation, key revocation, and authorship-signature conformance-vector requirements. Rulebooks MAY gate which humans are eligible for which event families, but conforming Profile-v0 implementations MUST NOT choose alternate human-signature algorithms locally.
+
+For Profile-v0 identity admission, the sponsor's signature is the ordinary human-authorship signature for `identity_create`. The applicant's initial-key possession proof is a separate proof over applicant-relevant admission fields. It does not make the applicant the event author, and it does not require the applicant's proposed key to have been active before the event. Exact possession-proof bytes, payload placement, and no-reference encodings are deferred to Appendix A, canonical encoding, and Profile-v0 authorship/signature reconciliation.
 
 Identity verification procedures MUST remain human-first and SHALL NOT rely on cryptographic proofs alone.
 
@@ -4843,7 +4891,7 @@ Canonical engagement (such as challenges, votes, arguments, or evidence) that pr
 
 Structural roles provide a protocol-recognized way to assign narrative, organizational, or interface semantics to specific ideas **without introducing new canonical `idea_role` values, new importance scopes, or additional challenge semantics**. They exist strictly as deterministic metadata layered on top of the canonical ontology defined in Sections 1§7.
 
-Structural-role ideas include identity-root structures such as BACKYARD, RELATIONSHIP_GARDEN, SELF_TREE, and ANTHILL, as well as user-created personal structures such as shrubs, memory leaves, and vines. These ideas remain ordinary canonical ideas with additional metadata constraints and SHALL NOT alter epistemic or governance flows.
+Structural-role ideas include Profile-v0 identity-root structures named Mindgarden, Backyard of Relationships, Self Tree, and Anthill, as well as user-created personal structures such as shrubs, memory leaves, and vines. These ideas remain ordinary canonical ideas or deterministic structural derivations with additional metadata constraints and SHALL NOT alter epistemic or governance flows.
 
 #### 13.11.1 purpose of structural roles [anchor: purpose_of_structural_roles]
 
@@ -4878,17 +4926,17 @@ Structural roles MUST remain semantically neutral with respect to Sections 1§5.
 
 #### 13.11.3 creation rules [anchor: creation_rules]
 
-Some structural-role ideas MUST be created automatically at identity registration:
+Profile-v0 identity structural roots MUST be created or deterministically derived atomically with successful identity admission:
 
-* BACKYARD  
-* RELATIONSHIP_GARDEN  
-* SELF_TREE  
-* ANTHILL  
+* Mindgarden
+* Backyard of Relationships
+* Self Tree
+* Anthill
 
 These MUST:
 
-* be created atomically with the USER identity,  
-* use deterministic membership-style connections to the USER identity,  
+* be created or derived atomically with the canonical identity,
+* use deterministic membership-style connections or deterministic derivation rules for the canonical identity,
 * persist for the entire lifetime of the identity,  
 * replay identically on every conformant node.
 
@@ -4941,7 +4989,7 @@ Structural-role ideas are fully exempt from all challenge domains, importance ca
 - No POD or POINT accrual, routing, or influence may derive from activity involving structural-role ideas.
 - Structural-role ideas exist solely as immutable organizational scaffolding for personal drafting, relational modeling, narrative sequencing, or UI navigation. They provide containers and indexes for human-authored content but never participate in collective deliberation or incentive flows.
 
-This complete isolation ensures that personal structural spaces (e.g., BACKYARD, SELF_TREE, RELATIONSHIP_GARDEN, ANTHILL, or user-created equivalents) cannot inadvertently affect or be affected by the shared canonical reasoning graph.
+This complete isolation ensures that personal structural spaces (e.g., Mindgarden, Backyard of Relationships, Self Tree, Anthill, or user-created equivalents) cannot inadvertently affect or be affected by the shared canonical reasoning graph.
 
 #### 13.11.6 connection rules for structural roles [anchor: connection_rules_for_structural_roles]
 

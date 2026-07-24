@@ -41,6 +41,8 @@ keywords:
 
 This document defines the current public read-only HTTP API contract for the open-core runtime's canonical data access surface. It also records the narrow implemented signed canonical write ingress where that route affects public DTO and boundary checks; the full canonical write contract remains owned by Protocol v5, Appendix A, and the canonical event authorship/signature specification.
 
+Planned Profile-v0 sponsored identity-admission writes and reads are specified separately in `canonical-identity-admission-api-contract-v0.md`. That scoped contract is not evidence that the current runtime implements those routes, DTOs, or projections.
+
 Endpoints explicitly marked as implemented below are the current open-core runtime routes exposed by `backend/bins/api-server/src/server/router.rs`. Any sections explicitly labeled as spec/future are informative only and are not part of the current open-core runtime contract or conformance surface.
 
 Canonical read/write policy reference: `protocol v5.md` (`canonical_read_write_access_policy`).
@@ -179,7 +181,7 @@ Reserved for the spec/future overlay endpoints in section 4.11. It is not curren
 {
   "scope_kind": "string (enum: universal | tribe | personal)",
   "anchor_id": "UUIDv7 string | string constant (rulebook-defined universal anchor)",
-  "target_kind": "string (enum: idea | rail)",
+  "target_kind": "string (enum: idea | ordering)",
   "target_id": "UUIDv7 string",
   "display_slot_key": "string",
   "representation_id": "UUIDv7 string",
@@ -383,17 +385,17 @@ Stability expectations for Stage 0:
 * Response JSON fields listed below are stable for Stage 0 clients unless otherwise noted.
 * Semantics remain read-only and deterministic for a fixed snapshot basis.
 
-#### 4.10.1 GET /rail/{rail_id}
+#### 4.10.1 GET /ordering/{ordering_id}
 
 Path Parameter:
-* `rail_id`: UUIDv7 string
+* `ordering_id`: UUIDv7 string
 
 Success Response (200 OK):
 ```json
 {
-  "rail": {
-    "rail_id": "UUIDv7 string",
-    "rail_kind": "string (vine | tree | sequence | grouping | pathway_vine | contrast_vine | argument_vine)",
+  "ordering": {
+    "ordering_id": "UUIDv7 string",
+    "ordering_profile": "string (vine | evidence_rail | action_rail)",
     "vine_type": "string | null",
     "author_identity_id": "UUIDv7 string",
     "canonical_representations": {
@@ -414,9 +416,9 @@ Success Response (200 OK):
 ```
 
 Errors:
-* 404 Not Found if the rail does not exist in the latest canonical snapshot.
+* 404 Not Found if the ordering does not exist in the latest canonical snapshot.
 
-#### 4.10.2 GET /idea/{idea_id}/rails
+#### 4.10.2 GET /idea/{idea_id}/orderings
 
 Path Parameter:
 * `idea_id`: UUIDv7 string
@@ -424,10 +426,10 @@ Path Parameter:
 Success Response (200 OK):
 ```json
 {
-  "rails": [
+  "orderings": [
     {
-      "rail_id": "UUIDv7 string",
-      "rail_kind": "string",
+      "ordering_id": "UUIDv7 string",
+      "ordering_profile": "string (vine | evidence_rail | action_rail)",
       "vine_type": "string | null"
     }
   ]
@@ -435,7 +437,7 @@ Success Response (200 OK):
 ```
 
 Notes:
-* Empty list is valid when the idea has no canonical rails.
+* Empty list is valid when the idea has no canonical orderings.
 
 #### 4.10.3 GET /connections/relative-importance
 
@@ -662,6 +664,8 @@ Success Response (200 OK):
 
 #### 4.10.11 GET /api/v1/canonical/verification/{identity_id}
 
+This is an implemented transitional runtime read, not the future Profile-v0 identity-admission projection. Its `canonical_writer_level`, `email_verified`, and `active_verifier` fields are compatibility/materialized values and MUST NOT be treated as final replay-derived verification, VH, VI, writer, inviter, voting, governance, Tempo, or key-control authority. The planned public projection is defined in `canonical-identity-admission-api-contract-v0.md`.
+
 Path Parameter:
 * `identity_id`: UUIDv7 string
 
@@ -754,7 +758,7 @@ Returns scoped display override state for a declared overlay scope.
 Query Parameters:
 * `scope_kind`: `universal|tribe|personal` (required)
 * `anchor_id`: UUIDv7 string or rulebook-defined universal anchor constant (required)
-* `target_kind`: `idea|rail` (optional)
+* `target_kind`: `idea|ordering` (optional)
 * `target_id`: UUIDv7 string (optional)
 * `display_slot_key`: string (optional)
 * `limit`: decimal string (default 50, max 200)
@@ -793,6 +797,8 @@ AI helper behavior is advisory-only in the canonical universe: it may parse text
 ### 4.13 Canonical Write Surfaces
 
 Most canonical write endpoints remain out of scope for this read-focused contract. The current open-core runtime implements one narrow default-open-core write route:
+
+Profile-v0 sponsored identity admission is not implemented by this route today. Its planned write contract, safe read projections, rejection envelope, and non-canonical request boundary are specified in `canonical-identity-admission-api-contract-v0.md`.
 
 #### 4.13.1 POST /api/v1/canonical/events (implemented)
 

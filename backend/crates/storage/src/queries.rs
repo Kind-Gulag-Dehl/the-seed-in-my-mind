@@ -485,47 +485,47 @@ WHERE created_block_height <= $1
 ORDER BY created_block_height ASC, created_event_index ASC
 "#;
 
-pub const GET_CANONICAL_RAIL: &str = r#"
+pub const GET_CANONICAL_ORDERING: &str = r#"
 SELECT
-  r.rail_id,
-  r.rail_kind,
+  r.ordering_id,
+  r.ordering_profile,
   r.vine_type,
   r.speaker_identity_id AS author_identity_id,
   r.title_representation_id,
   r.sentence_representation_id,
   title_rep.payload_hash AS title_payload_hash,
   sentence_rep.payload_hash AS sentence_payload_hash
-FROM rails r
+FROM orderings r
 LEFT JOIN representations title_rep ON title_rep.representation_id = r.title_representation_id
 LEFT JOIN representations sentence_rep ON sentence_rep.representation_id = r.sentence_representation_id
-WHERE r.rail_id = $1
+WHERE r.ordering_id = $1
   AND r.created_block_height <= $2
 "#;
 
-pub const LIST_CANONICAL_RAIL_ITEMS: &str = r#"
+pub const LIST_CANONICAL_ORDERING_ITEMS: &str = r#"
 SELECT
   ri.idx,
   ri.idea_id,
   ri.via_connection_id
-FROM rail_items ri
-JOIN rails r ON r.rail_id = ri.rail_id
-WHERE ri.rail_id = $1
+FROM ordering_items ri
+JOIN orderings r ON r.ordering_id = ri.ordering_id
+WHERE ri.ordering_id = $1
   AND r.created_block_height <= $2
 ORDER BY ri.idx ASC
 "#;
 
-pub const LIST_CANONICAL_RAILS_FOR_IDEA: &str = r#"
+pub const LIST_CANONICAL_ORDERINGS_FOR_IDEA: &str = r#"
 SELECT
-  r.rail_id,
-  r.rail_kind,
+  r.ordering_id,
+  r.ordering_profile,
   r.vine_type
-FROM rails r
+FROM orderings r
 WHERE r.created_block_height <= $2
   AND EXISTS (
     SELECT 1
-    FROM rail_items ri
-    WHERE ri.rail_id = r.rail_id
+    FROM ordering_items ri
+    WHERE ri.ordering_id = r.ordering_id
       AND ri.idea_id = $1
   )
-ORDER BY r.created_block_height ASC, r.created_event_index ASC, r.rail_id ASC
+ORDER BY r.created_block_height ASC, r.created_event_index ASC, r.ordering_id ASC
 "#;

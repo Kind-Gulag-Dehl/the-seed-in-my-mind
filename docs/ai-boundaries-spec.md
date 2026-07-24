@@ -256,6 +256,12 @@ AI systems MAY be included in offline contexts only as optional non-canonical pa
 
 Any AI-generated content present in offline or Mindseed environments remains subject to the same sandbox isolation, adoption boundaries, and non-authority constraints defined elsewhere in this specification.
 
+### 8.1 Profile-v0 identity-admission boundary
+
+AI MUST NOT create a canonical `identity_create`, act as a sponsor, provide a human sponsor signature, provide an applicant private-key possession proof, mint invitation capacity, certify a qualifying capacity period, determine final VH or VI, or activate an eligibility lane. These prohibitions apply equally to AI-assisted, autopilot, agentic, hosted, local, or system-emitter workflows.
+
+AI MAY help a person prepare non-canonical drafts, admission requests, explanations, or evidence organization. A human must control the relevant private key and make every canonical signed act. AI output, availability, or approval MUST NOT be an admission prerequisite or canonical input.
+
 ## 9. Relationship to other specifications
 
 This specification is subordinate to and depends on the following documents within their respective domains:

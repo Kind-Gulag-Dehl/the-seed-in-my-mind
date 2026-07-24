@@ -1975,6 +1975,9 @@ Conformance testing includes, but is not limited to:
 - **Canonical authorship-signature tests**
   Nodes must pass the Profile-v0 authorship-signature vectors required by `canonical-event-authorship-and-signature-profile-v0.md`, including valid Ed25519 signatures, invalid signatures, altered payload hash, altered event type, altered author identity, wrong key owner, unknown key, revoked key use, historically valid pre-revocation signatures, key rotation, malformed key and signature encodings, unsupported signature profiles, byte-identical cross-implementation candidates, publication-wrapper mutation, unchanged signed bytes under canonical-position assignment, and attempted use of `event_index` in the human-authorship signed bytes.
 
+- **Native Ordering tests**
+  Nodes must pass `docs/conformance/native-ordering.vectors.json`, including deterministic named-profile bytes and hashes, profile validation for Vine/Evidence Rail/Action Rail, fork inheritance and agreement, rejection of the retired `rail_create` event and representation-update compatibility alias, deterministic replay, and snapshot reconstruction.
+
 - **POD/POINT cycle simulation tests**
   Nodes must:
   - compute POD flows deterministically,
@@ -2015,6 +2018,32 @@ Conformance testing includes, but is not limited to:
 Nodes failing any vector are **not conformant**.
 
 ---
+
+### 13.2A Profile-v0 identity-admission conformance [anchor: profile_v0_identity_admission_conformance]
+
+A node claiming Profile-v0 identity-admission conformance MUST validate `identity_create`, `identity_key_rotate`, `identity_key_revoke`, and compatibility-only `identity_verification_update` exactly as Appendix A, the Profile-v0 signature specification, and deterministic replay require. At minimum it MUST:
+
+- require a sponsor-authored `identity_create`, an absent `speaker_identity_id`, sponsor signature over the completed payload, and valid applicant possession proof;
+- enforce fixed human target kind, one-time direct-key registration and lifecycle rules, the complete atomic `identity_structural_roots` set, and exactly one capacity debit for a successful admission;
+- derive verification, eligibility, capacity, suspension, key state, and `admission_liveness_blocked` from replay rather than private accounts, mutable writer levels, database row order, wall-clock time, AI output, or operator discretion;
+- reject ordinary post-genesis `identity_verification_update` unless an explicit versioned compatibility manifest authorizes it, while preserving accurate genesis/import/legacy provenance;
+- preserve historical signature validity at original canonical positions; and
+- quarantine private-account-coupled, self/speaker-authored admission, bootstrap/seed-import, and stored-writer-level behavior as transitional implementation behavior until a migration proves conformance.
+
+The static requirement set is `docs/conformance/profile-v0-identity-admission.vectors.json`. It defines byte-level, schema, replay, and later-harness cases. Runtime conformance is not achieved merely because the static file exists.
+
+### 13.2B Native Ordering conformance [anchor: native_ordering_conformance]
+
+A node claiming DEC-043 native Ordering conformance MUST:
+
+- admit only `ordering_create` and `ordering_fork` as authored Ordering events;
+- require one explicit named `ordering_profile`: `vine`, `evidence_rail`, or `action_rail`;
+- require Vine creation to provide `vine_type`, permit a Vine fork to inherit it, and forbid `vine_type` for standardized Evidence Rail and Action Rail profiles;
+- reject profile-changing forks, the retired `rail_*` substrate events and fields, numeric profile values in event payloads, and representation-update compatibility aliases;
+- preserve item sequence and step metadata deterministically through canonical encoding, hashing, storage, replay, import/export, and snapshot reconstruction; and
+- keep representation pointers in the snapshot representation index, outside the authored Ordering state root.
+
+The executable fixture set is `docs/conformance/native-ordering.vectors.json`; its schema is `docs/conformance/native-ordering.schema.json`, the JavaScript harness is `scripts/native-ordering-fixture-harness.mjs`, and the Rust event-log suite consumes the same vectors.
 
 ### 13.3 Tooling [anchor: tooling]
 

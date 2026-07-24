@@ -99,6 +99,12 @@ It contains only fields known and controlled at authorship time:
 
 The payload itself may be carried with the candidate or retrieved through a canonical payload reference according to the event schema. In both cases, validation recomputes `payload_hash` from the canonical payload bytes before signature acceptance.
 
+For Profile-v0 `identity_create`, `author_identity_id` is the eligible human sponsor,
+not the applicant. `speaker_identity_id` MUST be absent. The applicant is represented
+only by the target identity fields and the separately verified initial-key possession
+proof in the payload. That proof does not make the applicant an authored-candidate
+author and does not require the proposed key to have been active before admission.
+
 ### 2.2 Published Canonical Event
 
 A published canonical event wraps or references the exact signed authored candidate and adds publication-derived data.
@@ -173,6 +179,14 @@ The fixed key-descriptor hash domain tag is:
 The fixed authored-candidate hash domain tag is:
 
 `seed.canonical_event.authored_candidate_hash.v0`
+
+The fixed initial-key possession-proof domain tag is:
+
+`seed.identity.initial_key_possession.v0`
+
+The fixed replacement-key possession-proof domain tag is:
+
+`seed.identity.replacement_key_possession.v0`
 
 ### 4.2 Profile-v0 Signed-Byte Layout
 
@@ -282,6 +296,109 @@ Validation MUST reject:
 - a key descriptor whose profile or algorithm does not match `signature_profile`;
 - an otherwise valid key that is not active at the applicable publication point.
 
+### 5.1 Profile-v0 direct-signing-key registration and non-reuse
+
+The descriptor in Section 5 is the complete Profile-v0 direct-signing-key descriptor.
+It has no implementation-local key identifier, purpose field, serialization wrapper, or
+private-key material. Its fixed key class is the direct canonical signing key used by
+the identity event families defined in Appendix A.
+
+An identity may register a descriptor only through the accepted event effects defined
+by Appendix A. Once a Profile-v0 human signing-key descriptor or its `public_key_ref`
+has been canonically registered, it MUST NOT be registered again as an initial,
+replacement, recovered, or replacement-for-a-replacement key by any identity,
+including the same identity after supersession or revocation. This is a global
+historical non-reuse rule, not merely a current-active-key check.
+
+The exceptional bootstrap for an event-derived Profile-v0 identity is narrow. The
+initial descriptor is embedded in sponsor-authored `identity_create`; the applicant
+proves possession of its raw public key with the separate proof defined in Section 5.2;
+and the key becomes active only when the event is successfully finalized and applied.
+The ordinary rule requiring an author key to already be active therefore applies to the
+sponsor's candidate signature, not to the applicant's proposed initial key.
+
+### 5.2 Profile-v0 applicant initial-key possession proof
+
+Appendix A owns the `identity_create` payload. This section owns the exact applicant
+proof bytes and Ed25519 verification rule. The proof message is signed directly using
+plain RFC 8032 Ed25519; it is not prehashed and it is not an authored-event signature.
+
+The exact bytes are:
+
+```text
+initial_key_possession_bytes_v0 =
+    ascii("seed.identity.initial_key_possession.v0")
+ || id(identity_create_event_id)
+ || id(target_identity_id)
+ || ascii(admission_profile_version)
+ || key_descriptor_bytes_v0
+ || hash32(initial_public_key_ref)
+ || id(sponsor_identity_id)
+ || hash32(admission_authorization_reference)
+ || optional_hash32(verification_reference)
+ || identity_structural_roots
+ || identity_structural_root_membership_connection_ids
+```
+
+`ascii`, `id`, `hash32`, `optional_hash32`, `identity_structural_roots`, and
+`identity_structural_root_membership_connection_ids` are exactly the encodings in the
+Canonical Encoding and Hashing Specification Section 7.5. `admission_profile_version`
+MUST be exactly `sponsored_public_admission_v0`. `key_descriptor_bytes_v0` is exactly
+the Section 5 descriptor bytes, including its owner identity. The applicant proof is
+exactly 64 raw bytes and is verified against the descriptor's exactly 32 raw public-key
+bytes.
+
+Before proof verification, a node MUST validate the descriptor profile, algorithm,
+length, ownership, and computed `initial_public_key_ref`. It then reconstructs the
+message above and performs strict Profile-v0 Ed25519
+verification. A malformed descriptor, non-32-byte key, non-64-byte signature,
+unsupported profile, unsupported algorithm, mismatched commitment, or failed
+verification is rejected.
+
+After a valid proof and before state application, the event-specific validation
+precedence performs the global historical non-reuse check. This preserves the Appendix A
+duplicate/key-uniqueness precedence without allowing a duplicate key to become active.
+
+The message MUST NOT include the possession proof itself, the sponsor signature, final
+signed-candidate bytes, a payload hash containing the proof, canonical publication
+fields, or mutable state such as current sponsor eligibility or capacity. Mutating any
+field that occurs in the message, including the exact present/absent verification
+reference state or either explicit root list, requires a new applicant proof.
+
+Construction is fixed: choose target identity and initial key; choose sponsor, profile,
+period, and rulebook; construct the reduced admission authorization reference; select
+the final UUIDv7 `identity_create` event ID; fix the exact verification-reference
+presence/value and root plan; construct the message; obtain the applicant signature;
+insert it into the payload; then have the sponsor sign the ordinary completed authored
+candidate. None of those pre-publication steps reserves invitation capacity.
+
+### 5.3 Profile-v0 replacement-key possession proof
+
+`identity_key_rotate` uses a separate direct Ed25519 proof from the proposed
+replacement key. Its exact bytes are:
+
+```text
+replacement_key_possession_bytes_v0 =
+    ascii("seed.identity.replacement_key_possession.v0")
+ || id(identity_key_rotate_event_id)
+ || id(identity_id)
+ || hash32(authorizing_public_key_ref)
+ || key_descriptor_bytes_v0
+ || hash32(replacement_public_key_ref)
+```
+
+`authorizing_public_key_ref` is the envelope `public_key_ref` of the active current
+key that signs the rotation candidate. The replacement descriptor's owner MUST equal
+`identity_id`; its computed reference MUST equal `replacement_public_key_ref`; the
+replacement signature is exactly 64 raw bytes and is verified against the replacement
+descriptor's 32 raw public-key bytes. The proof is signed directly with plain RFC 8032
+Ed25519 and MUST NOT include itself, the author signature, a payload hash containing
+it, publication fields, or mutable replay state.
+
+The two signatures have different roles: the replacement proof establishes control of
+the proposed new key, while the ordinary authored-candidate signature establishes that
+the identity's current active key authorized the completed rotation payload.
+
 ## 6. Replay-Derived Identity Key State
 
 Signature validation depends only on replay-derived canonical identity key state.
@@ -290,7 +407,15 @@ Private account tables, session databases, email addresses, cookies, bearer toke
 
 ### 6.1 Initial Registration
 
-An identity's initial key registration is bound to canonical identity creation or to a required linked canonical key-registration event.
+An event-derived Profile-v0 identity's initial registration is bound to the accepted
+sponsor-authored `identity_create` event. The event carries the complete descriptor and
+the successful applicant proof defined in Section 5.2. The proposed key is not active
+before that event; it becomes active only at its finalized canonical application
+position. A failed or rejected admission creates no key state.
+
+Genesis, import, and legacy key records are compatibility provenance classes defined by
+Appendix A. They are not event-derived Profile-v0 initial registrations and MUST NOT be
+rewritten to fabricate an applicant proof, sponsor, or admission event.
 
 The canonical identity creation path MUST provide enough canonical data to reconstruct:
 
@@ -304,23 +429,31 @@ If initial key material is absent or cannot reconstruct the descriptor, that key
 
 ### 6.2 Rotation
 
-Key rotation introduces a new key descriptor for the same canonical identity.
+Profile v0 has exactly one active direct signing key per identity. A rotation is authored
+by that same identity and signed by its current active direct key. It requires no
+ordinary-writer, voter, governance, Tempo, or inviter eligibility; direct key control is
+an independently authorized restricted lane.
 
-A rotation is valid only when authorized by a key that is active for that identity at the rotation event's applicable publication point, unless a separately specified canonical recovery process authorizes it.
-
-The new key becomes active at the finalized canonical position of the valid rotation event. It does not authorize events published before that position.
+The replacement descriptor and Section 5.3 proof are required. The replacement key and
+reference must pass descriptor validation and global historical non-reuse before the
+transition. At the finalized canonical position of a valid rotation, the prior active
+key becomes `superseded` and the replacement becomes `active` atomically. The
+replacement key cannot authorize an event before that position. An already superseded
+or revoked key cannot authorize a later rotation.
 
 ### 6.3 Revocation
 
-Key revocation targets a specific `public_key_ref`.
+Profile v0 revocation is authored by the same identity and signed by its sole current
+active direct key. It has the narrow purpose of marking a previously superseded direct
+key as revoked, for example after compromise is discovered. The target must belong to
+the identity and be `superseded`; it becomes `revoked` at the valid event's finalized
+canonical position.
 
-A revocation is valid only when authorized by another active key for the same identity or by a separately specified canonical recovery process.
-
-The revoked key becomes inactive at the finalized canonical position of the valid revocation event.
-
-Revocation is non-retroactive. It does not invalidate canonical events that were validly signed and finalized before the revocation became effective.
-
-A revocation that would leave no active key and no specified canonical recovery path MUST be rejected unless the active rulebook explicitly defines a non-private recovery mechanism for that identity class.
+Profile v0 defines no recovery event. A revocation that targets the sole active key is
+therefore rejected with `last_active_key_revocation_forbidden`. A second revocation of
+an already revoked key is rejected with `key_already_revoked`. A superseded key remains
+historically readable and may be validly targeted by this narrow revocation path; it is
+not silently deleted or reassigned.
 
 ### 6.4 Active-Key State
 
@@ -336,6 +469,10 @@ Unknown keys, revoked keys used after revocation, and keys owned by another iden
 
 Historical key records remain replay-visible so old finalized events can be verified against the key state that existed at their publication point.
 
+Supersession and revocation are non-retroactive. A historical candidate remains valid
+when it was signed by a key active at its own finalized canonical position, even if a
+later rotation superseded that key or a later event revoked it.
+
 ## 7. Authorship Validity
 
 An ordinary human-authored canonical event candidate has valid authorship only when all of the following are true:
@@ -345,7 +482,11 @@ An ordinary human-authored canonical event candidate has valid authorship only w
 3. The `signature` verifies against the raw public key identified by `public_key_ref`.
 4. The key descriptor resolves to `author_identity_id`.
 5. The key was active and authorized under replay-derived canonical identity key state at the candidate's applicable publication point.
-6. The `author_identity_id` is an eligible verified human identity for that event family.
+6. The `author_identity_id` is an eligible human identity for that event family under
+   the replay-derived lane required by that family. Ordinary events may require
+   ordinary-writer eligibility; `identity_create` requires sponsor admission eligibility;
+   direct key-control events require only the direct key-control authorization defined
+   in Section 6 and Appendix A.
 7. The event passes all other schema, causal, rulebook, payload, duplicate, and publication validation.
 
 AI provenance may be recorded as metadata where permitted by a payload schema, but AI provenance never satisfies human authorship, signature authority, verified-human eligibility, or canonical-writer eligibility.
@@ -391,6 +532,29 @@ Conformance suites for Signature Profile v0 MUST include vectors for:
 - publication wrapper altering signed candidate bytes;
 - same candidate assigned a canonical position without changing authored bytes;
 - attempted use of publication-assigned `event_index` as part of the author signature.
+
+Profile-v0 identity-admission and direct-key vectors MUST additionally cover:
+
+- a valid sponsor-authored `identity_create` with absent `speaker_identity_id`;
+- the exact `0x00` no-`verification_reference` encoding and rejection of alternate
+  absence encodings;
+- the reduced admission-authorization commitment, including each mutated component;
+- valid applicant possession proof and mutation of every bound proof field;
+- proof rejection when a proof includes itself, the sponsor signature, or a recursive
+  payload hash;
+- sponsor signature over the completed payload after applicant-proof insertion;
+- structurally valid authorization context distinguished from inactive/revoked sponsor
+  key, inviter ineligibility, invitation suspension, and insufficient capacity;
+- duplicate identity and globally reused historical key rejection;
+- the complete explicit four-root plan, structural-root collision, atomic capacity debit,
+  and exact retry without another debit;
+- valid rotation and replacement-key proof, replacement-key proof failure, and
+  historical key-reuse rejection;
+- historical pre-rotation and pre-revocation signature validity plus post-transition
+  rejection;
+- the Profile-v0 last-active-key revocation prohibition;
+- a compatibility-authorized `identity_verification_update` and rejection of that event
+  on ordinary post-genesis ingress.
 
 Each vector MUST include:
 

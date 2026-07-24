@@ -4,12 +4,13 @@ use axum::{
     http::{HeaderMap, HeaderValue, StatusCode},
     response::Response,
 };
-use storage::{ConnectionRow, PrivateVineItemInput};
+use storage::{ConnectionRow, PrivateOrderingItemInput};
 use uuid::Uuid;
 
 use crate::server::errors::json_error;
 use crate::server::types::{
-    IdeasTopOrder, PrivateVineItemPayload, RelativeImportanceDirection, VineTypeInput,
+    IdeasTopOrder, OrderingProfileInput, PrivateOrderingItemPayload,
+    RelativeImportanceDirection, VineTypeInput,
 };
 
 const INVALID_FIELD_LENGTH_CODE: &str = "invalid_field_length";
@@ -62,13 +63,21 @@ pub(crate) fn parse_vine_type_input(input: &VineTypeInput) -> Result<i16, Respon
                 "vine_type must be pathway_vine or narrative_vine",
             )),
         },
-        VineTypeInput::Number(value) => match *value {
-            0 => Ok(0),
-            1 => Ok(1),
+    }
+}
+
+pub(crate) fn parse_ordering_profile_input(
+    input: &OrderingProfileInput,
+) -> Result<i16, Response> {
+    match input {
+        OrderingProfileInput::String(value) => match value.trim() {
+            "vine" => Ok(0),
+            "evidence_rail" => Ok(1),
+            "action_rail" => Ok(2),
             _ => Err(json_error(
                 StatusCode::BAD_REQUEST,
                 "invalid_request",
-                "vine_type must be 0 or 1",
+                "ordering_profile must be vine, evidence_rail, or action_rail",
             )),
         },
     }
@@ -83,13 +92,11 @@ pub(crate) fn vine_type_label(vine_type: Option<i16>) -> Option<String> {
     }
 }
 
-pub(crate) fn private_vine_type_label(vine_type: i16) -> String {
-    vine_type_label(Some(vine_type)).unwrap_or_else(|| "unknown".to_string())
-}
-
-pub(crate) fn rail_kind_label(rail_kind: i16) -> String {
-    match rail_kind {
+pub(crate) fn ordering_profile_label(ordering_profile: i16) -> String {
+    match ordering_profile {
         0 => "vine".to_string(),
+        1 => "evidence_rail".to_string(),
+        2 => "action_rail".to_string(),
         other => format!("unknown_{other}"),
     }
 }
@@ -105,9 +112,9 @@ pub(crate) fn normalize_optional_text(value: Option<String>) -> Option<String> {
     })
 }
 
-pub(crate) fn parse_private_vine_items(
-    items: &[PrivateVineItemPayload],
-) -> Result<Vec<PrivateVineItemInput>, Response> {
+pub(crate) fn parse_private_ordering_items(
+    items: &[PrivateOrderingItemPayload],
+) -> Result<Vec<PrivateOrderingItemInput>, Response> {
     let mut out = Vec::with_capacity(items.len());
     for (idx, item) in items.iter().enumerate() {
         let idea_id = parse_uuid_v7_field(item.idea_id.trim(), "items[].idea_id")?;
@@ -118,7 +125,7 @@ pub(crate) fn parse_private_vine_items(
             )?),
             _ => None,
         };
-        out.push(PrivateVineItemInput {
+        out.push(PrivateOrderingItemInput {
             idx: idx as i32,
             idea_id,
             via_connection_id,
@@ -127,8 +134,32 @@ pub(crate) fn parse_private_vine_items(
     Ok(out)
 }
 
-pub(crate) fn ensure_pathway_items(vine_type: i16, items_len: usize) -> Result<(), Response> {
-    if vine_type == 0 && items_len == 0 {
+pub(crate) fn validate_ordering_profile_vine_type(
+    ordering_profile: i16,
+    vine_type: Option<i16>,
+) -> Result<(), Response> {
+    if ordering_profile == 0 && vine_type.is_none() {
+        return Err(json_error(
+            StatusCode::BAD_REQUEST,
+            "invalid_request",
+            "vine_type is required for the vine ordering_profile",
+        ));
+    }
+    if ordering_profile != 0 && vine_type.is_some() {
+        return Err(json_error(
+            StatusCode::BAD_REQUEST,
+            "invalid_request",
+            "vine_type is only valid for the vine ordering_profile",
+        ));
+    }
+    Ok(())
+}
+
+pub(crate) fn ensure_pathway_items(
+    vine_type: Option<i16>,
+    items_len: usize,
+) -> Result<(), Response> {
+    if vine_type == Some(0) && items_len == 0 {
         return Err(json_error(
             StatusCode::BAD_REQUEST,
             "invalid_request",

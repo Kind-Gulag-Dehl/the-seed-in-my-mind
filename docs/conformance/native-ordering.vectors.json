@@ -1,0 +1,291 @@
+{
+  "schema": "seed.conformance.native_ordering.v1",
+  "profile_codes": {
+    "vine": 0,
+    "evidence_rail": 1,
+    "action_rail": 2
+  },
+  "forbidden_legacy_event_types": [
+    "rail_create",
+    "rail_fork",
+    "rail_update_representation",
+    "ordering_update_representation"
+  ],
+  "vectors": [
+    {
+      "id": "NO-001",
+      "description": "Vine creation requires explicit profile and vine type.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000101",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000201",
+            "ordering_profile": "vine",
+            "vine_type": "narrative_vine",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": true,
+        "code": null
+      }
+    },
+    {
+      "id": "NO-002",
+      "description": "Evidence Rail is a standardized Ordering profile without vine metadata.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000102",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000202",
+            "ordering_profile": "evidence_rail",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": true,
+        "code": null
+      }
+    },
+    {
+      "id": "NO-003",
+      "description": "Action Rail is a standardized Ordering profile without vine metadata.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000103",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000203",
+            "ordering_profile": "action_rail",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": true,
+        "code": null
+      }
+    },
+    {
+      "id": "NO-004",
+      "description": "Vine metadata is forbidden on a standardized profile.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000104",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000204",
+            "ordering_profile": "evidence_rail",
+            "vine_type": "narrative_vine",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "NO-005",
+      "description": "A fork repeats its base Ordering profile and may inherit Vine metadata.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000105",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000205",
+            "ordering_profile": "vine",
+            "vine_type": "pathway_vine",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-000000000106",
+          "kind": "ordering_fork",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "base_ordering_id": "00000000-0000-7000-8000-000000000205",
+            "ordering_id": "00000000-0000-7000-8000-000000000206",
+            "ordering_profile": "vine",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301",
+              "00000000-0000-7000-8000-000000000302"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": true,
+        "code": null
+      }
+    },
+    {
+      "id": "NO-006",
+      "description": "A fork cannot change the base Ordering profile.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000107",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000207",
+            "ordering_profile": "evidence_rail",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-000000000108",
+          "kind": "ordering_fork",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "base_ordering_id": "00000000-0000-7000-8000-000000000207",
+            "ordering_id": "00000000-0000-7000-8000-000000000208",
+            "ordering_profile": "action_rail",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "ordering_profile_mismatch"
+      }
+    },
+    {
+      "id": "NO-007",
+      "description": "The superseded Rail creation event is not a live compatibility alias.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000109",
+          "kind": "rail_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "rail_id": "00000000-0000-7000-8000-000000000209",
+            "rail_kind": "vine",
+            "vine_type": "narrative_vine",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "unsupported_event_type"
+      }
+    },
+    {
+      "id": "NO-008",
+      "description": "No Ordering-specific representation compatibility alias is live.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000110",
+          "kind": "ordering_update_representation",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "target_kind": "ordering",
+            "target_object_id": "00000000-0000-7000-8000-000000000201"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "unsupported_event_type"
+      }
+    },
+    {
+      "id": "NO-009",
+      "description": "A fork must carry its explicit Ordering profile.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000111",
+          "kind": "ordering_fork",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "base_ordering_id": "00000000-0000-7000-8000-000000000205",
+            "ordering_id": "00000000-0000-7000-8000-000000000211",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "missing_field"
+      }
+    },
+    {
+      "id": "NO-010",
+      "description": "Canonical event payloads use named Ordering profiles, not storage enum codes.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000112",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000212",
+            "ordering_profile": 2,
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    }
+  ],
+  "hash_vectors": [
+    {
+      "id": "NO-HASH-001",
+      "payload": {
+        "ordering_id": "00000000-0000-7000-8000-000000000201",
+        "ordering_profile": "vine",
+        "vine_type": "narrative_vine",
+        "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+        "item_idea_ids": [
+          "00000000-0000-7000-8000-000000000301"
+        ]
+      },
+      "canonical_json_utf8": "{\"item_idea_ids\":[\"00000000-0000-7000-8000-000000000301\"],\"ordering_id\":\"00000000-0000-7000-8000-000000000201\",\"ordering_profile\":\"vine\",\"speaker_identity_id\":\"00000000-0000-7000-8000-000000000001\",\"vine_type\":\"narrative_vine\"}",
+      "blake3": "318597c0fd62c1971cb954153edd24faa061150efd35db0bcc0119bc96fc81f1"
+    }
+  ]
+}

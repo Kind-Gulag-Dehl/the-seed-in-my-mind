@@ -57,7 +57,7 @@ This document defines the derived, verifiable Snapshot Format v0 used by Stage L
 - Snapshots are derived, verifiable artifacts emitted at deterministic derived block-height intervals (default: every 100 blocks, where each derived block contains a fixed number of events, default 50). For convenience, implementations MAY prioritize scheduling at block heights immediately following a block that contains a `cycle_close` event, but snapshots remain block-keyed and cycles do not define snapshot identity, keys, or boundaries.
 - The canonical log MAY include a mechanical `snapshot_commit` boundary event that indexes a derived snapshot artifact. The artifact itself remains derived-only and replay-verifiable.
 - Provides a deterministic serialization format, hashing rules, and verification procedure.
-- Requires embedded title + sentence-tier text for all ideas and rails present in snapshot state.
+- Requires embedded title + sentence-tier text for all ideas and orderings present in snapshot state.
 - Includes sufficient tables and indexes to serve the read-only API without guessing.
 
 ### stage 0 snapshot scope (minimal canonical materialization)
@@ -112,20 +112,20 @@ Stage 0 sections MUST be encoded using canonical primitive encodings (big-endian
 11) `created_event_index` (u32)
 
 **Stage 0 title_sentence_payload_root:**
-For Stage 0, `title_sentence_payload_root` MUST be computed over title and sentence payloads for all included ideas and rails:
-- For each included object (`idea` and `rail`) at height `H`, resolve canonical title and sentence representation payload bytes for that object.
+For Stage 0, `title_sentence_payload_root` MUST be computed over title and sentence payloads for all included ideas and orderings:
+- For each included object (`idea` and `ordering`) at height `H`, resolve canonical title and sentence representation payload bytes for that object.
 - Canonicalize each payload per `canonical-encoding-and-hashing-spec.md` (UTF-8, NFC, LF normalization).
 - Compute `payload_hash = HASH(canonical_bytes)` (no domain tag).
 - Build leaf bytes as `u8(object_kind) || encode_id(object_id) || u8(tier_enum) || hash32(payload_hash)` where:
-  - `object_kind` is `0` for idea and `1` for rail.
+  - `object_kind` is `0` for idea and `1` for ordering.
   - `tier_enum` is `0` for title and `1` for sentence.
 - Sort leaves by raw bytewise comparison of full `leaf_bytes`.
 - Compute the Merkle root using the Merkle construction rules in `canonical-encoding-and-hashing-spec.md`.
 
-If any included idea or rail at height `H` lacks a title or sentence payload, the Stage 0 snapshot is invalid.
+If any included idea or ordering at height `H` lacks a title or sentence payload, the Stage 0 snapshot is invalid.
 
 **Stage 0 empty-root constants:**
-If there are zero included ideas and rails at height `H`, the `title_sentence_payload_root` MUST be:
+If there are zero included ideas and orderings at height `H`, the `title_sentence_payload_root` MUST be:
 ```
 BLAKE3("seed-empty-payload")
 ```
@@ -185,8 +185,8 @@ Snapshots MUST NOT define governance activation boundaries. This document define
 ## 2. Commitment Hierarchy
 
 Each snapshot defines:
-- `state_root_hash`: Merkle root over canonical facts only (identities, ideas, rails, representations with payload_hash pointers, connections, challenges, verdicts, active rulebook set).
-- `title_sentence_payload_root`: Merkle root over Tier 0 leaf bytes `(object_kind, object_id, tier_enum, payload_hash)` for title and sentence payloads across ideas and rails, ordered deterministically by full encoded leaf bytes.
+- `state_root_hash`: Merkle root over canonical facts only (identities, ideas, orderings, representations with payload_hash pointers, connections, challenges, verdicts, active rulebook set).
+- `title_sentence_payload_root`: Merkle root over Tier 0 leaf bytes `(object_kind, object_id, tier_enum, payload_hash)` for title and sentence payloads across ideas and orderings, ordered deterministically by full encoded leaf bytes.
 - `shared_map_commitment`: HASH("shared_map_commitment_v0" || state_root_hash || pocket_map_payload_root) — baseline commitment for verifying shared canonical reality and Tier 0 meaning preservation (as defined in Canonical Encoding and Hashing Specification (v0); referenced here).
 - `snapshot_hash`: HASH(domain_snapshot || entire_snapshot_bytes) — content-addressable artifact identifier.
 
@@ -263,14 +263,18 @@ Required sections in v0 (must appear, may be empty):
 - `0x0002` ideas
 - `0x0003` representations
 - `0x0004` idea_representation_index (index-only; excluded from state_root_hash)
-- `0x000F` rails
-- `0x0010` rail_representation_index (index-only; excluded from state_root_hash)
+- `0x000F` orderings
+- `0x0010` ordering_representation_index (index-only; excluded from state_root_hash)
 - `0x0005` connections
 - `0x0006` connection_from_index (index-only; excluded from state_root_hash)
 - `0x0007` connection_to_index (index-only; excluded from state_root_hash)
 - `0x0008` challenges
 - `0x0009` verdicts
 - `0x000B` rulebook_set
+- `0x0011` identity_direct_keys
+- `0x0012` identity_admission_lineage
+- `0x0013` identity_admission_derived
+- `0x0014` admission_capacity_period_state
 
 Optional derived-view sections in v0 (MAY be present):
 - `0x000A` rankings
@@ -279,7 +283,12 @@ Optional derived-view sections in v0 (MAY be present):
 - `0x000E` idea_tags
 - `0x000F` tempo_cycle_state
 
-Performance indexes and derived views (rankings, token balances, safety classifications, Tempo/Cycle state) MAY be included for convenience or historical record but are explicitly excluded from `state_root_hash` computation.
+`identity_admission_derived` and `admission_capacity_period_state` are required
+replay-derived explainability sections for Profile-v0 identity admission, but are
+excluded from `state_root_hash`. Performance indexes and other derived views (rankings,
+token balances, safety classifications, Tempo/Cycle state) MAY be included for
+convenience or historical record and are likewise excluded from `state_root_hash`
+computation.
 
 ### 4.1.1 derived state packs: ranks
 
@@ -309,6 +318,12 @@ If present, a Tempo/Cycle derived-state pack MAY expose:
 - beacon summaries,
 - provisional/pending/authorized/blocked downstream-output status.
 
+Tempo/Cycle state MUST be interpreted separately from the required Profile-v0 admission
+derived sections. A Dmax, forced, degraded, survivor, record-only, or machine-only
+boundary does not by itself make a qualifying capacity period, generate invitation
+capacity, advance maturation, activate inviter eligibility, restore suspension, or
+clear `admission_liveness_blocked`.
+
 The pack MUST NOT expose private identity details beyond public canonical rules. It MUST NOT include node-local clocks, server time, client timestamps, receipt time, block-height time claims, scheduler observations, local uncommitted observations, AI observations, or private verification material as Tempo authority.
 
 Tempo/Cycle packs MUST be reproducible from deterministic replay and MUST validate against the snapshot's existing commitments using the Appendix A Tempo/Cycle schemas. Snapshot `block_height` remains a packaging/address key only and MUST NOT substitute for Dmin/Dmax certainty, beacon state, cycle certification, or the lagged authorization frontier.
@@ -330,10 +345,97 @@ Primary key: `identity_id`
 
 Fields:
 - `identity_id` (id)
-- `verification_status_hash` (hash32)  // hash of verification status object or proof reference
-- `created_event_id` (id)
+- `identity_kind` (u8)  // Profile-v0 `0x01 = human`
+- `admission_provenance_class` (u8)  // Appendix A closed provenance enum
+- `created_event_id_present` (bool)
+- `created_event_id` (id, if present)
+- `compatibility_manifest_ref_present` (bool)
+- `compatibility_manifest_ref` (hash32, if present)
+- `structural_root_count` (u32)
+- `structural_roots` (ordered `(root_role u8, idea_id id)` list)
 - `public_display_name_present` (bool)
 - `public_display_name` (string, if present)
+
+`structural_roots` is exactly the four Profile-v0 roles for an `event_derived` identity
+and is absent only where a compatibility provenance is explicitly classified as lacking
+that history. A snapshot MUST NOT fabricate roots, sponsors, proofs, capacity debits,
+lineage, or verification artifacts for genesis/import/legacy identities.
+
+#### 4.3.1A identity_direct_keys (`0x0011`)
+Primary key: (`identity_id`, `public_key_ref`)
+
+Fields:
+- `identity_id` (id)
+- `public_key_ref` (hash32)
+- `key_descriptor_bytes` (bytes)
+- `key_state` (u8: active, superseded, revoked, invalid)
+- `registration_provenance_class` (u8)
+- `activation_event_id` (id)
+- `supersession_event_id_present` (bool)
+- `supersession_event_id` (id, if present)
+- `revocation_event_id_present` (bool)
+- `revocation_event_id` (id, if present)
+
+Records are sorted by canonical `identity_id` then raw `public_key_ref` bytes. This
+section commits complete registered-key history; the active key is replay-derived and
+must agree with the exact Appendix A/Profile-v0 lifecycle.
+
+#### 4.3.1B identity_admission_lineage (`0x0012`)
+Primary key: `admitted_identity_id`
+
+Fields:
+- `admitted_identity_id` (id)
+- `sponsor_identity_id_present` (bool)
+- `sponsor_identity_id` (id, if present)
+- `admission_event_id_present` (bool)
+- `admission_event_id` (id, if present)
+- `admission_profile_version_present` (bool)
+- `admission_profile_version` (string, if present)
+- `provenance_class` (u8)
+
+For `event_derived` Profile-v0 admission all sponsor and admission fields are required.
+For compatibility provenance they are absent unless an explicitly historical canonical
+record supplies them; replay MUST NOT invent them.
+
+#### 4.3.1C identity_admission_derived (`0x0013`)
+Primary key: (`identity_id`, `admission_profile_version`)
+
+Fields:
+- `identity_id` (id)
+- `admission_profile_version` (string)
+- `verification_state_commitment` (hash32)
+- `vh_certainty` (rulebook-defined canonical scalar encoding)
+- `vi_certainty` (rulebook-defined canonical scalar encoding)
+- `eligibility_lane_flags` (u16)
+- `invitation_capacity_balance` (i64, non-negative)
+- `invitation_suspension` (u8)
+- `maturation_state_commitment` (hash32)
+- `capacity_derivation_commitment` (hash32)
+
+The lane flags are an ordered bitset defined by the active rulebook for restricted
+verification, ordinary writer, ordinary challenge, voter, governance, Tempo, and
+inviter eligibility. The record is derived-only: canonical event history and active
+rulebooks remain authoritative, and its fields must be reproducible from them.
+
+#### 4.3.1D admission_capacity_period_state (`0x0014`)
+Primary key: (`admission_profile_version`, `rulebook_id`, `capacity_period_id`)
+
+Fields:
+- `admission_profile_version` (string)
+- `rulebook_id` (id)
+- `rulebook_version` (string)
+- `rulebook_hash` (hash32)
+- `capacity_period_id` (id)
+- `boundary_kind` (u8)
+- `qualifying_capacity_period` (bool)
+- `admission_liveness_blocked` (bool)
+- `maturation_advanced` (bool)
+- `new_capacity_generated` (bool)
+- `existing_capacity_spendable` (bool)
+
+This required derived section makes the public, rulebook-scoped, period-scoped admission
+liveness result explainable. It does not expose private capacity; Profile-v0 capacity is
+publicly replay-derivable.
 
 #### 4.3.2 ideas (`0x0002`)
 Primary key: `idea_id`
@@ -352,11 +454,11 @@ Fields:
 #### 4.3.3 representations (`0x0003`)
 Primary key: `representation_id`
 
-Each record represents a canonical description/representation object. Title and sentence tiers MUST be present for every idea and every rail and MUST include embedded payload bytes (Section 5).
+Each record represents a canonical description/representation object. Title and sentence tiers MUST be present for every idea and every ordering and MUST include embedded payload bytes (Section 5).
 
 Fields:
 - `representation_id` (id)
-- `target_kind` (u8)  // enum: idea, rail
+- `target_kind` (u8)  // enum: idea, ordering
 - `target_object_id` (id)
 - `representation_type` (u8)  // enum: title, sentence, paragraph, full, abstracted, jurisdictional_safe, diff, other
 - `payload_hash` (hash32)
@@ -382,28 +484,33 @@ Fields:
 - `other_representation_count` (u32)
 - `other_representation_ids` (id list, sorted)
 
-#### 4.3.4A rails (`0x000F`)
-Primary key: `rail_id`
+#### 4.3.4A orderings (`0x000F`)
+Primary key: `ordering_id`
 
 Fields:
-- `rail_id` (id)
-- `rail_kind` (u8)  // enum per Protocol v5 Appendix A
+- `ordering_id` (id)
+- `ordering_profile` (u8)  // 0=vine, 1=evidence_rail, 2=action_rail
 - `vine_type_present` (bool)
 - `vine_type` (u8, if present)  // enum: pathway_vine, narrative_vine
 - `speaker_identity_id` (id)
 - `created_event_id` (id)
-- `base_rail_id_present` (bool)
-- `base_rail_id` (id, if present)
+- `base_ordering_id_present` (bool)
+- `base_ordering_id` (id, if present)
 - `item_count` (u32)
 - `item_idea_ids` (id list, ordered)
 - `step_meta_count` (u32)
 - `step_meta` (list; each entry MAY include `via_connection_id` as optional id)
 
-#### 4.3.4B rail_representation_index (`0x0010`)
-Primary key: `rail_id`
+Profile invariants:
+- `vine_type_present` MUST be true for an `ordering_create` Vine and MAY inherit from the base for an `ordering_fork` Vine.
+- `vine_type_present` MUST be false for Evidence Rail and Action Rail profiles.
+- A fork's `ordering_profile` MUST equal its base Ordering's profile.
+
+#### 4.3.4B ordering_representation_index (`0x0010`)
+Primary key: `ordering_id`
 
 Fields:
-- `rail_id` (id)
+- `ordering_id` (id)
 - `title_representation_id` (id)
 - `sentence_representation_id` (id)
 - `other_representation_count` (u32)
@@ -452,9 +559,9 @@ Fields:
 - `challenge_domain` (u8)  // enum per Protocol v5 Appendix A
 - `subject_idea_count` (u32)
 - `subject_idea_ids` (id list, sorted)
-- `subject_rail_count_present` (bool)
-- `subject_rail_count` (u32, if present)
-- `subject_rail_ids` (id list, sorted, if present)
+- `subject_ordering_count_present` (bool)
+- `subject_ordering_count` (u32, if present)
+- `subject_ordering_ids` (id list, sorted, if present)
 - `created_by_identity_id` (id)
 - `lifecycle_state` (u8)
 - `opened_event_id` (id)
@@ -521,18 +628,18 @@ Fields:
 
 ## 5. embedded text rules (title + sentence tier)
 
-The snapshot MUST embed title-tier text and sentence-tier text for every idea and every rail present in snapshot state.
+The snapshot MUST embed title-tier text and sentence-tier text for every idea and every ordering present in snapshot state.
 
 Requirements:
 - Each idea MUST have exactly one title representation and one sentence representation.
-- Each rail MUST have exactly one title representation and one sentence representation.
+- Each ordering MUST have exactly one title representation and one sentence representation.
 - These representations MUST appear in `representations` with `payload_embedded = true` and their payload bytes present.
 - The embedded bytes MUST be the canonical payload bytes whose hash equals the `payload_hash` field.
 - Embedded payload bytes MUST be canonicalized and validated exactly as defined by the Canonical Encoding and Hashing Specification (v0), including all normalization and rejection rules.
 - `idea_representation_index` MUST reference title/sentence representation IDs for ideas.
-- `rail_representation_index` MUST reference title/sentence representation IDs for rails.
+- `ordering_representation_index` MUST reference title/sentence representation IDs for orderings.
 
-If any idea or rail lacks a title or sentence representation, or if embedded bytes do not hash to the declared `payload_hash`, the snapshot is invalid.
+If any idea or ordering lacks a title or sentence representation, or if embedded bytes do not hash to the declared `payload_hash`, the snapshot is invalid.
 
 
 
@@ -588,17 +695,22 @@ section_hash = HASH("snapshot_section" || u16(section_id) || section_bytes)
 The `section_hash` is recorded in the header section directory.
 
 ### 7.2 state_root_hash
-`state_root_hash` commits only to canonical facts, not to indexes or derived views. It includes exactly the sections listed below and excludes `idea_representation_index`, `rail_representation_index`, `connection_from_index`, `connection_to_index`, rankings, safety_classifications, token_balances, idea_tags, and all extension sections.
+`state_root_hash` commits only to canonical facts, not to indexes or derived views. It includes exactly the sections listed below and excludes `idea_representation_index`, `ordering_representation_index`, `connection_from_index`, `connection_to_index`, rankings, safety_classifications, token_balances, idea_tags, and all extension sections.
 
 Compute in order:
 1) Determine the canonical-facts sections:
-   - identities, ideas, rails, representations, connections, challenges, verdicts, rulebook_set.
+   - identities, identity_direct_keys, identity_admission_lineage, ideas, orderings,
+     representations, connections, challenges, verdicts, rulebook_set.
 2) Collect the `section_hash` values for those sections in canonical section-id order.
 3) Compute:
 
 state_root_hash = HASH("snapshot_state_root" || concat(section_hashes))
 
-Derived views (rankings, token_balances, safety_classifications, idea_tags) are computed from canonical facts plus active rulebooks. They MAY be included in the snapshot body for convenience but are not part of `state_root_hash`.
+Derived views (rankings, token_balances, safety_classifications, idea_tags,
+identity_admission_derived, and admission_capacity_period_state) are computed from
+canonical facts plus active rulebooks. They are required where Profile-v0 admission is
+active for independent explanation, but are not part of `state_root_hash` and never
+replace full replay.
 
 ### 7.2.1 active_rulebook_set_hash
 `active_rulebook_set_hash` is derived from the `rulebook_set` section bytes:
@@ -607,11 +719,11 @@ active_rulebook_set_hash = HASH("snapshot_rulebook_set" || rulebook_set_section_
 
 ### 7.3 title_sentence_payload_root (Tier 0 root)
 
-Let `P` be the ordered list of leaves for all title and sentence representations across all ideas and rails, where each leaf commits to the tuple `(object_kind, object_id, tier_enum, payload_hash)` in canonical byte order.
+Let `P` be the ordered list of leaves for all title and sentence representations across all ideas and orderings, where each leaf commits to the tuple `(object_kind, object_id, tier_enum, payload_hash)` in canonical byte order.
 
 - `object_kind` is a u8 with:
   - `0 = idea`
-  - `1 = rail`
+  - `1 = ordering`
 - `tier_enum` is a u8 with:
   - `0 = title`
   - `1 = sentence`
@@ -760,6 +872,3 @@ Schema additions required for Stage 1+ (not part of Stage 0):
 - challenges
 - verdicts
 - rulebook_set
-
-
-

@@ -19,13 +19,14 @@ use tower::ServiceExt;
 use uuid::Uuid;
 
 use crate::server::helpers::{
-    ensure_pathway_items, is_reference_scoped_connection, parse_private_vine_items,
+    ensure_pathway_items, is_reference_scoped_connection, parse_private_ordering_items,
     parse_relative_importance_direction, scoped_neighbor_from_reference, validate_max_len,
 };
 use crate::server::router::build_app;
 use crate::server::types::{
-    AppState, PrivateIdeaPayload, PrivateVineCreatePayload, PrivateVineItemPayload,
-    PrivateVineUpdatePayload, RelativeImportanceDirection, VineTypeInput,
+    AppState, PrivateIdeaPayload, PrivateOrderingCreatePayload, PrivateOrderingItemPayload,
+    OrderingProfileInput, PrivateOrderingUpdatePayload, RelativeImportanceDirection,
+    VineTypeInput,
 };
 use serde_json::Value;
 
@@ -314,9 +315,10 @@ fn sample_connection_row(
 }
 
 #[test]
-fn private_vine_create_payload_deserializes() {
-    let payload: PrivateVineCreatePayload = serde_json::from_str(
+fn private_ordering_create_payload_deserializes() {
+    let payload: PrivateOrderingCreatePayload = serde_json::from_str(
         r#"{
+          "ordering_profile":"vine",
           "vine_type":"pathway_vine",
           "title":"Test",
           "items":[
@@ -327,39 +329,54 @@ fn private_vine_create_payload_deserializes() {
     )
     .expect("create payload should deserialize");
     assert_eq!(payload.items.len(), 2);
+    assert!(matches!(
+        payload.ordering_profile,
+        OrderingProfileInput::String(ref value) if value == "vine"
+    ));
     match payload.vine_type {
-        VineTypeInput::String(value) => assert_eq!(value, "pathway_vine"),
+        Some(VineTypeInput::String(value)) => assert_eq!(value, "pathway_vine"),
         _ => panic!("expected string vine_type"),
     }
 }
 
 #[test]
-fn private_vine_update_payload_deserializes_partial() {
-    let payload: PrivateVineUpdatePayload = serde_json::from_str(
+fn private_ordering_payload_rejects_storage_enum_codes() {
+    let payload = r#"{
+      "ordering_profile":0,
+      "vine_type":1,
+      "items":[]
+    }"#;
+    assert!(serde_json::from_str::<PrivateOrderingCreatePayload>(payload).is_err());
+}
+
+#[test]
+fn private_ordering_update_payload_deserializes_partial() {
+    let payload: PrivateOrderingUpdatePayload = serde_json::from_str(
         r#"{
           "sentence":"Updated",
           "items":[{"idea_id":"00000000-0000-7000-8000-000000000010"}]
         }"#,
     )
     .expect("update payload should deserialize");
+    assert!(payload.ordering_profile.is_none());
     assert!(payload.vine_type.is_none());
     assert!(payload.sentence.is_some());
     assert!(payload.items.is_some());
 }
 
 #[test]
-fn private_vine_item_ordering_is_deterministic() {
+fn private_ordering_item_ordering_is_deterministic() {
     let items = vec![
-        PrivateVineItemPayload {
+        PrivateOrderingItemPayload {
             idea_id: "00000000-0000-7000-8000-000000000011".to_string(),
             via_connection_id: None,
         },
-        PrivateVineItemPayload {
+        PrivateOrderingItemPayload {
             idea_id: "00000000-0000-7000-8000-000000000012".to_string(),
             via_connection_id: Some("00000000-0000-7000-8000-000000000013".to_string()),
         },
     ];
-    let parsed = parse_private_vine_items(&items).expect("items should parse");
+    let parsed = parse_private_ordering_items(&items).expect("items should parse");
     assert_eq!(parsed.len(), 2);
     assert_eq!(parsed[0].idx, 0);
     assert_eq!(parsed[1].idx, 1);
@@ -368,9 +385,9 @@ fn private_vine_item_ordering_is_deterministic() {
 
 #[test]
 fn pathway_vine_requires_non_empty_items() {
-    assert!(ensure_pathway_items(0, 0).is_err());
-    assert!(ensure_pathway_items(0, 1).is_ok());
-    assert!(ensure_pathway_items(1, 0).is_ok());
+    assert!(ensure_pathway_items(Some(0), 0).is_err());
+    assert!(ensure_pathway_items(Some(0), 1).is_ok());
+    assert!(ensure_pathway_items(Some(1), 0).is_ok());
 }
 
 #[test]

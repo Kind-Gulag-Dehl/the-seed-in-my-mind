@@ -107,20 +107,21 @@ impl Storage {
         Ok(result.rows_affected())
     }
 
-    pub async fn create_private_vine(
+    pub async fn create_private_ordering(
         &self,
         owner_account_id: Uuid,
-        vine_type: i16,
+        ordering_profile: i16,
+        vine_type: Option<i16>,
         title: Option<&str>,
         sentence: Option<&str>,
         paragraph: Option<&str>,
         full: Option<&str>,
-        items: &[PrivateVineItemInput],
-    ) -> Result<PrivateVineRow> {
+        items: &[PrivateOrderingItemInput],
+    ) -> Result<PrivateOrderingRow> {
         for (expected_idx, item) in items.iter().enumerate() {
             if item.idx != expected_idx as i32 {
                 return Err(anyhow!(
-                    "private vine item idx mismatch expected={} actual={}",
+                    "private ordering item idx mismatch expected={} actual={}",
                     expected_idx,
                     item.idx
                 ));
@@ -128,12 +129,13 @@ impl Storage {
         }
 
         let mut tx = self.pool.begin().await?;
-        let private_vine_id = Uuid::new_v4();
-        let row = sqlx::query_as::<_, PrivateVineRow>(
+        let private_ordering_id = Uuid::new_v4();
+        let row = sqlx::query_as::<_, PrivateOrderingRow>(
             r#"
-            INSERT INTO private_vines (
-              private_vine_id,
+            INSERT INTO private_orderings (
+              private_ordering_id,
               owner_account_id,
+              ordering_profile,
               vine_type,
               title,
               sentence,
@@ -142,11 +144,12 @@ impl Storage {
               created_at,
               updated_at
             ) VALUES (
-              $1, $2, $3, $4, $5, $6, $7, NOW(), NOW()
+              $1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW()
             )
             RETURNING
-              private_vine_id,
+              private_ordering_id,
               owner_account_id,
+              ordering_profile,
               vine_type,
               title,
               sentence,
@@ -156,8 +159,9 @@ impl Storage {
               updated_at
             "#,
         )
-        .bind(private_vine_id)
+        .bind(private_ordering_id)
         .bind(owner_account_id)
+        .bind(ordering_profile)
         .bind(vine_type)
         .bind(title)
         .bind(sentence)
@@ -166,29 +170,30 @@ impl Storage {
         .fetch_one(&mut *tx)
         .await?;
 
-        replace_private_vine_items(&mut tx, private_vine_id, items).await?;
+        replace_private_ordering_items(&mut tx, private_ordering_id, items).await?;
         tx.commit().await?;
         Ok(row)
     }
 
-    pub async fn list_private_vines(
+    pub async fn list_private_orderings(
         &self,
         owner_account_id: Uuid,
-    ) -> Result<Vec<PrivateVineListRow>> {
-        let rows = sqlx::query_as::<_, PrivateVineListRow>(
+    ) -> Result<Vec<PrivateOrderingListRow>> {
+        let rows = sqlx::query_as::<_, PrivateOrderingListRow>(
             r#"
             SELECT
-              v.private_vine_id,
+              v.private_ordering_id,
+              v.ordering_profile,
               v.vine_type,
               v.title,
               v.sentence,
               v.updated_at,
-              COALESCE(COUNT(i.private_vine_id), 0)::bigint AS item_count
-            FROM private_vines v
-            LEFT JOIN private_vine_items i ON i.private_vine_id = v.private_vine_id
+              COALESCE(COUNT(i.private_ordering_id), 0)::bigint AS item_count
+            FROM private_orderings v
+            LEFT JOIN private_ordering_items i ON i.private_ordering_id = v.private_ordering_id
             WHERE v.owner_account_id = $1
-            GROUP BY v.private_vine_id, v.vine_type, v.title, v.sentence, v.updated_at
-            ORDER BY v.updated_at DESC, v.private_vine_id ASC
+            GROUP BY v.private_ordering_id, v.ordering_profile, v.vine_type, v.title, v.sentence, v.updated_at
+            ORDER BY v.updated_at DESC, v.private_ordering_id ASC
             "#,
         )
         .bind(owner_account_id)
@@ -197,16 +202,17 @@ impl Storage {
         Ok(rows)
     }
 
-    pub async fn get_private_vine(
+    pub async fn get_private_ordering(
         &self,
         owner_account_id: Uuid,
-        private_vine_id: Uuid,
-    ) -> Result<Option<PrivateVineRow>> {
-        let row = sqlx::query_as::<_, PrivateVineRow>(
+        private_ordering_id: Uuid,
+    ) -> Result<Option<PrivateOrderingRow>> {
+        let row = sqlx::query_as::<_, PrivateOrderingRow>(
             r#"
             SELECT
-              private_vine_id,
+              private_ordering_id,
               owner_account_id,
+              ordering_profile,
               vine_type,
               title,
               sentence,
@@ -214,60 +220,61 @@ impl Storage {
               "full",
               created_at,
               updated_at
-            FROM private_vines
+            FROM private_orderings
             WHERE owner_account_id = $1
-              AND private_vine_id = $2
+              AND private_ordering_id = $2
             "#,
         )
         .bind(owner_account_id)
-        .bind(private_vine_id)
+        .bind(private_ordering_id)
         .fetch_optional(&self.pool)
         .await?;
         Ok(row)
     }
 
-    pub async fn list_private_vine_items(
+    pub async fn list_private_ordering_items(
         &self,
         owner_account_id: Uuid,
-        private_vine_id: Uuid,
-    ) -> Result<Vec<PrivateVineItemRow>> {
-        let rows = sqlx::query_as::<_, PrivateVineItemRow>(
+        private_ordering_id: Uuid,
+    ) -> Result<Vec<PrivateOrderingItemRow>> {
+        let rows = sqlx::query_as::<_, PrivateOrderingItemRow>(
             r#"
             SELECT
-              i.private_vine_id,
+              i.private_ordering_id,
               i.idx,
               i.idea_id,
               i.via_connection_id
-            FROM private_vine_items i
-            JOIN private_vines v ON v.private_vine_id = i.private_vine_id
+            FROM private_ordering_items i
+            JOIN private_orderings v ON v.private_ordering_id = i.private_ordering_id
             WHERE v.owner_account_id = $1
-              AND i.private_vine_id = $2
+              AND i.private_ordering_id = $2
             ORDER BY i.idx ASC
             "#,
         )
         .bind(owner_account_id)
-        .bind(private_vine_id)
+        .bind(private_ordering_id)
         .fetch_all(&self.pool)
         .await?;
         Ok(rows)
     }
 
-    pub async fn update_private_vine(
+    pub async fn update_private_ordering(
         &self,
         owner_account_id: Uuid,
-        private_vine_id: Uuid,
-        vine_type: i16,
+        private_ordering_id: Uuid,
+        ordering_profile: i16,
+        vine_type: Option<i16>,
         title: Option<&str>,
         sentence: Option<&str>,
         paragraph: Option<&str>,
         full: Option<&str>,
-        items: Option<&[PrivateVineItemInput]>,
-    ) -> Result<Option<PrivateVineRow>> {
+        items: Option<&[PrivateOrderingItemInput]>,
+    ) -> Result<Option<PrivateOrderingRow>> {
         if let Some(items) = items {
             for (expected_idx, item) in items.iter().enumerate() {
                 if item.idx != expected_idx as i32 {
                     return Err(anyhow!(
-                        "private vine item idx mismatch expected={} actual={}",
+                        "private ordering item idx mismatch expected={} actual={}",
                         expected_idx,
                         item.idx
                     ));
@@ -276,20 +283,22 @@ impl Storage {
         }
 
         let mut tx = self.pool.begin().await?;
-        let row = sqlx::query_as::<_, PrivateVineRow>(
+        let row = sqlx::query_as::<_, PrivateOrderingRow>(
             r#"
-            UPDATE private_vines
-            SET vine_type = $3,
-                title = $4,
-                sentence = $5,
-                paragraph = $6,
-                "full" = $7,
+            UPDATE private_orderings
+            SET ordering_profile = $3,
+                vine_type = $4,
+                title = $5,
+                sentence = $6,
+                paragraph = $7,
+                "full" = $8,
                 updated_at = NOW()
             WHERE owner_account_id = $1
-              AND private_vine_id = $2
+              AND private_ordering_id = $2
             RETURNING
-              private_vine_id,
+              private_ordering_id,
               owner_account_id,
+              ordering_profile,
               vine_type,
               title,
               sentence,
@@ -300,7 +309,8 @@ impl Storage {
             "#,
         )
         .bind(owner_account_id)
-        .bind(private_vine_id)
+        .bind(private_ordering_id)
+        .bind(ordering_profile)
         .bind(vine_type)
         .bind(title)
         .bind(sentence)
@@ -314,27 +324,27 @@ impl Storage {
         };
 
         if let Some(items) = items {
-            replace_private_vine_items(&mut tx, private_vine_id, items).await?;
+            replace_private_ordering_items(&mut tx, private_ordering_id, items).await?;
         }
 
         tx.commit().await?;
         Ok(Some(row))
     }
 
-    pub async fn delete_private_vine(
+    pub async fn delete_private_ordering(
         &self,
         owner_account_id: Uuid,
-        private_vine_id: Uuid,
+        private_ordering_id: Uuid,
     ) -> Result<u64> {
         let result = sqlx::query(
             r#"
-            DELETE FROM private_vines
+            DELETE FROM private_orderings
             WHERE owner_account_id = $1
-              AND private_vine_id = $2
+              AND private_ordering_id = $2
             "#,
         )
         .bind(owner_account_id)
-        .bind(private_vine_id)
+        .bind(private_ordering_id)
         .execute(&self.pool)
         .await?;
         Ok(result.rows_affected())

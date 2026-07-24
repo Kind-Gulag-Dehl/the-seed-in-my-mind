@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "seed.conformance.native_ordering.v1",
+  "title": "Native Ordering conformance vectors",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "profile_codes",
+    "forbidden_legacy_event_types",
+    "vectors",
+    "hash_vectors"
+  ],
+  "properties": {
+    "schema": {
+      "const": "seed.conformance.native_ordering.v1"
+    },
+    "profile_codes": {
+      "const": {
+        "vine": 0,
+        "evidence_rail": 1,
+        "action_rail": 2
+      }
+    },
+    "forbidden_legacy_event_types": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "rail_create",
+          "rail_fork",
+          "rail_update_representation",
+          "ordering_update_representation"
+        ]
+      },
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true
+    },
+    "vectors": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "description",
+          "events",
+          "expected"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^NO-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "events": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "kind",
+                "speaker_identity_id",
+                "payload"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string"
+                },
+                "speaker_identity_id": {
+                  "type": "string"
+                },
+                "payload": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "expected": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "accept",
+              "code"
+            ],
+            "properties": {
+              "accept": {
+                "type": "boolean"
+              },
+              "code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "hash_vectors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "payload",
+          "canonical_json_utf8",
+          "blake3"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object"
+          },
+          "canonical_json_utf8": {
+            "type": "string"
+          },
+          "blake3": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

@@ -112,8 +112,8 @@ Near-universal distribution. Small enough to fit on phones and low-bandwidth dev
 **Required contents**
 
 * A Snapshot Format v0 full snapshot at block height H.
-* Title tier text for all ideas and rails present in the snapshot's state.
-* Sentence-tier description for all ideas and rails present in the snapshot's state.
+* Title tier text for all ideas and orderings present in the snapshot's state.
+* Sentence-tier description for all ideas and orderings present in the snapshot's state.
 * Optional minimal UI assets and local search index (non-canonical).
 
 **Properties**
@@ -260,7 +260,7 @@ shared_map_commitment(H) =
 Where:
 
 * `state_root_hash(H)` is the canonical facts commitment.
-* `pocket_map_payload_root(H)` is a Merkle root over Tier 0 payload leaf bytes `(object_kind, object_id, tier_enum, payload_hash)` at H, where `object_kind` is `idea` or `rail`, per the Canonical Encoding and Hashing Specification (v0).
+* `pocket_map_payload_root(H)` is a Merkle root over Tier 0 payload leaf bytes `(object_kind, object_id, tier_enum, payload_hash)` at H, where `object_kind` is `idea` or `ordering`, per the Canonical Encoding and Hashing Specification (v0).
 
 title_sentence_payload_root(H) equals pocket_map_payload_root(H) and MUST be identical to the Snapshot Format v0 header field title_sentence_payload_root at the same block height H.
 
@@ -282,8 +282,8 @@ Higher tiers extend this, but Tier 0 defines the baseline shared reality.
 
 To prevent “state without meaning,” snapshots MUST embed:
 
-* title tier text for each idea and rail in snapshot state,
-* sentence-tier description for each idea and rail in snapshot state.
+* title tier text for each idea and ordering in snapshot state,
+* sentence-tier description for each idea and ordering in snapshot state.
 
 These embedded bytes are:
 

@@ -94,7 +94,11 @@ In all cases:
 
 ### 1.1 identity versus account
 
-An **identity** is a canonical idea in the graph representing a real agent capable of saying things. An **account** is the key material and login surface used to submit events on behalf of that identity.
+An **identity** is a persistent canonical agent anchor. Its associated structural roots
+are ordinary graph ideas, but the identity is not a private product account and does not
+need to be modeled as an identity-as-idea endpoint. An **account** is a local product
+or login surface and has no canonical authority over identity existence, key control,
+verification, or eligibility.
 
 The protocol treats verification as statements about identities, not accounts alone. Evidence about account control must always be modeled as what an agent or node is willing to publicly claim it observed.
 
@@ -117,7 +121,8 @@ VL tiers may gate only:
 - ordinary canonical-writer eligibility,
 - narrow Tempo `tempo_contributor` eligibility,
 - `beacon_qualified_identity` and diversity-gate eligibility,
-- how many invites an account may issue,  
+- inviter eligibility and invitation-capacity conditions under the separate admission
+  and Cycle rules,
 - how much personal mana the account may hold,  
 - and eligibility to participate in voter pools.
 
@@ -140,10 +145,27 @@ Canonical write submission eligibility is derived from verification state and is
 - Challenge creation and voting are canonical write actions and therefore use ordinary challenge eligibility; `tempo_contributor` status alone is insufficient.
 
 Current deployment profile:
-- The canonical writer gate is implemented as `canonical_writer_level` and is currently issued through the Seed verifier role.
-- This is a gate for write eligibility, not an authority override of canonical challengeability or replay semantics.
+- `canonical_writer_level` is legacy/materialized compatibility state from the Seed
+  verifier deployment. It is not final protocol authority and MUST NOT override
+  replay-derived eligibility. Its migration and retirement remain separate work.
 
 Verification gates eligibility but MUST NOT weight influence. In Tempo, verification may affect `tempo_contributor` and `beacon_qualified_identity` eligibility, but it MUST NOT multiply certainty, challenge, governance, or Tempo influence.
+
+### 1.3B Profile-v0 restricted verification lane
+
+A `CanonicalAdmittedIdentity` with an active direct key may use the restricted
+verification lane only for the ordinary canonical claim, evidence, connection,
+challenge-response, and key-control categories needed to advance or defend its own
+identity verification. The default rule is `subject_identity_id = author_identity_id`.
+An exception requires an explicit event-family and rulebook rule.
+
+The lane may admit self-verification, identity-continuity, key-control, and
+self-specific evidence claims; responses or disputes about verification artifacts about
+that identity; permitted structural-root maintenance; and the Profile-v0 direct-key
+lifecycle. It does not grant ordinary idea creation, arbitrary connections, general
+challenges, voting, governance, Tempo claims, invitation spending, or economic action.
+The lane is restricted authorization into the ordinary epistemic system, not a separate
+verification database, graph, or truth model.
 
 ### 1.4 evidence ideas
 
@@ -201,7 +223,11 @@ The platform must continue functioning safely offline and across jurisdictions w
 
 ## 3. Canonical graph patterns for verification
 
-Verification state accumulates exclusively through ideas in which an agent says something relevant to VH or VI. During deterministic replay, nodes interpret those artifacts as holding or failing according to uniform algorithms.
+Verification state accumulates through ordinary canonical truth claims, evidence,
+connections, contradictions, challenges, responses, and outcomes in which an agent says
+something relevant to VH or VI. During deterministic replay, nodes interpret those
+artifacts under uniform rulebook algorithms; no parallel verification-only truth system
+exists.
 
 The interpretation pathway is:
 
@@ -209,7 +235,15 @@ The interpretation pathway is:
 - nodes record those claims as canonical events,  
 - additional claims operate as evidence supporting or contradicting earlier ones,  
 - replay computes a certainty scalar per track,  
-- and VL tiers are mapped from those scalars.
+- active rulebooks derive VH and VI certainty from those artifacts;
+- canonical activation boundaries apply the resulting changes; and
+- event-family-specific eligibility lanes are then derived.
+
+Sponsorship, admission lineage, root membership, Anthill degree, and a
+`verification_reference` are not verification. A verification attestation is an
+attributable, challengeable ordinary truth claim; raw artifacts do not themselves make
+VH or VI true. VH may be sufficient under an applicable rulebook without public civil
+identity, and VI is not universally required.
 
 No provider database, document image, or off-platform identifier may be interpreted as part of the canonical graph. The protocol reasons only over attestations and their cryptographic proofs that identify who made the statement.
 
@@ -239,7 +273,10 @@ Such vines are presentation aids only; the canonical authority remains the event
 
 ## 4. challenges to verification claims
 
-Any identity in the platform may initiate a challenge against verification ideas or evidence ideas using the ordinary challenge primitive.
+An identity may initiate or answer a verification challenge only when its applicable
+ordinary or restricted event-family eligibility permits that action. The restricted lane
+is limited to the identity-scoped challenge response and dispute scope in Section 1.3B;
+it does not create general challenge authority.
 
 A verification challenge may concern:
 
@@ -553,7 +590,10 @@ Replay MUST preserve attestations even if their referenced data later becomes un
 
 ### 7.1 identity creation is limited
 
-Invites are scarce and create accountability chains. An identity may exist only after being invited by another agent willing to say so, under the applicable rulebooks.
+Invites are scarce and create accountability chains. Under Profile v0, permissionless
+local preparation and a non-canonical admission request precede an eligible human
+sponsor's canonical `identity_create`. Sponsorship authorizes admission only; it is not
+verification, VH, VI, uniqueness, or ordinary authority.
 
 ### 7.2 lineage taint, negative evidence, and boundary conditions
 
@@ -830,10 +870,18 @@ Verification Levels may gate only:
 - ordinary_canonical_writer_eligibility
 - tempo_contributor_eligibility
 - beacon_qualified_identity_or_diversity_gate_eligibility
-- invite_rate  
+- inviter_eligibility and invitation-capacity conditions under the separate admission
+  and Cycle rules
 - personal_mana_max  
 - voter_pool_eligibility  
 - onboarding_probation_relief.
+
+The resulting permissions are separate replay-derived lanes, not a single mutable
+verification status. Rulebooks may define objectively reviewable thresholds, diversity,
+maturation, suspension, restoration, and transition conditions for restricted
+verification, ordinary writer/challenge, voter, governance, Tempo, and inviter
+eligibility. They MUST NOT make private accounts, AI, money, token balance, reputation,
+or viewpoint agreement substitutes for the applicable human-evidence rules.
 
 Verification Levels must never gate or weight:
 
@@ -928,6 +976,12 @@ At each boundary where derived state is updated, replay MUST produce:
 - vl_tier
 - eligibility_flags.
 
+For Profile v0, `eligibility_flags` is an ordered, independently explainable lane set:
+restricted-verification, ordinary-writer, ordinary-challenge, voter, governance, Tempo,
+and inviter eligibility; invitation suspension; and any applicable maturation state.
+VH and VI certainty remain separate derived inputs. No raw artifact, sponsorship,
+lineage, structural root, or compatibility record directly sets one of these lanes.
+
 Implementations MAY also output:
 - vh_components and vi_components (breakdown of evidence class contributions),
 - taint_flags and quarantine_flags,
@@ -943,6 +997,15 @@ Artifacts are never deleted. An artifact becomes ineffective only by:
 - or being discounted by deterministic scoring rules (such as decay or diminishing returns).
 
 Taint and quarantine effects, when applicable, are derived state only and apply forward in time. They MUST be reversible by successful appeals or new evidence according to deterministic boundary rules.
+
+`identity_verification_update` is not an ordinary post-genesis status-setting event.
+Replay accepts it only when a versioned genesis, import, or legacy manifest explicitly
+authorizes the compatibility record defined by Protocol v5 Appendix A. It preserves the
+declared compatibility provenance and historical status without fabricating evidence,
+sponsor lineage, applicant proof, capacity debit, or Profile-v0 admission history. It
+does not directly grant or remove VH, VI, ordinary writer, inviter, voter, governance,
+Tempo, or economic authority. Long-term verification derives solely through the ordinary
+claim/evidence/challenge/outcome path and active rulebook evaluation.
 
 ---
 ## 15. Relationship to other specifications
@@ -1158,8 +1221,9 @@ These examples illustrate intended use only. Exact math, weights, and thresholds
 
 ### 19.1 identity persistence and key authority
 
-An identity is a canonical idea representing a real agent capable of saying things.  
-Control of that identity is expressed operationally through cryptographic key material used to sign canonical events.
+An identity is a persistent canonical agent anchor. Control is expressed through
+cryptographic key material used to sign canonical events; it is not a private account or
+an identity-as-idea endpoint.
 
 The protocol distinguishes between:
 
@@ -1185,11 +1249,19 @@ Control state changes only through canonical artifacts that assert or dispute id
 
 No operator, node, or institution may alter control state outside the canonical log and challenge process.
 
+For Profile v0, the direct-key state is the exact R2B model: one active direct signing
+key; atomic active-to-superseded replacement on valid rotation; narrowly permitted
+revocation of a superseded key; globally non-reusable registered keys/references; and
+non-retroactive historical signature validity. Direct key control is independent of
+ordinary writer eligibility. Current state and transition provenance derive from replay.
+
 ---
 
 ### 19.3 control claims and recovery claims
 
-The protocol supports canonical artifacts asserting identity control transitions.
+The following generic control-claim and recovery artifacts are future-profile concepts.
+They MUST NOT override or supplement the Profile-v0 direct key lifecycle unless a later
+exact schema, proof, eligibility rule, and replay transition explicitly adopts them.
 
 Typical control-related artifacts MAY include:
 
@@ -1216,7 +1288,9 @@ All such artifacts:
 
 ### 19.4 evidence for recovery or reassignment
 
-Recovery or reassignment of identity control relies on the same verification primitives used elsewhere in this specification.
+Any future recovery or reassignment profile would rely on the same verification
+primitives used elsewhere in this specification. Profile v0 defines no recovery or
+reassignment event.
 
 Evidence MAY include:
 
@@ -1236,7 +1310,7 @@ Recovery therefore consists of producing new canonical evidence ideas sufficient
 
 ### 19.5 deterministic reassignment of control
 
-During replay:
+For an explicitly adopted future recovery profile, replay would:
 
 - nodes MUST evaluate control-related artifacts using deterministic rules,
 - upheld recovery or dispute outcomes MUST update the derived controlling keyset,
@@ -1252,7 +1326,8 @@ No reassignment may alter past ordering, invalidate existing artifacts, or erase
 
 ### 19.6 theft, compromise, and dispute handling
 
-If a keyset is alleged to be compromised:
+For an explicitly adopted future recovery profile, if a keyset is alleged to be
+compromised:
 
 - any agent MAY submit a dispute artifact,
 - the dispute proceeds through the ordinary challenge lifecycle,
@@ -1266,14 +1341,15 @@ It only prevents further authority from the invalidated keyset.
 
 ### 19.7 multi-key and recovery-friendly configurations
 
-Implementations MAY support:
+Future profiles MAY support:
 
 - multiple simultaneous controlling keysets,
 - hardware backup keys,
 - recovery contacts represented as identities,
 - or other redundancy strategies.
 
-These mechanisms remain implementation-level conveniences and must still resolve through canonical artifacts and deterministic replay.
+They require explicit canonical schemas and deterministic replay rules; they are not
+implementation-level conveniences that can alter Profile-v0 control state.
 
 No implementation may rely on hidden administrator override, private databases, or undisclosed recovery procedures.
 
@@ -1281,7 +1357,7 @@ No implementation may rely on hidden administrator override, private databases, 
 
 ### 19.8 offline recovery and mindseed compatibility
 
-Recovery claims and supporting evidence MAY be created while offline.
+Future-profile recovery claims and supporting evidence MAY be created while offline.
 
 When offline logs are later merged:
 

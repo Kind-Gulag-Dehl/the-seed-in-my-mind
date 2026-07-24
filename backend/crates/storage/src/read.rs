@@ -145,39 +145,40 @@ impl Storage {
         Ok(rows)
     }
 
-    pub async fn get_canonical_rail(
+    pub async fn get_canonical_ordering(
         &self,
         snapshot_height: i64,
-        rail_id: Uuid,
-    ) -> Result<Option<CanonicalRailRow>> {
-        let row = sqlx::query_as::<_, CanonicalRailRow>(queries::GET_CANONICAL_RAIL)
-            .bind(rail_id)
+        ordering_id: Uuid,
+    ) -> Result<Option<CanonicalOrderingRow>> {
+        let row = sqlx::query_as::<_, CanonicalOrderingRow>(queries::GET_CANONICAL_ORDERING)
+            .bind(ordering_id)
             .bind(snapshot_height)
             .fetch_optional(&self.pool)
             .await?;
         Ok(row)
     }
 
-    pub async fn list_canonical_rail_items(
+    pub async fn list_canonical_ordering_items(
         &self,
         snapshot_height: i64,
-        rail_id: Uuid,
-    ) -> Result<Vec<CanonicalRailItemRow>> {
-        let rows = sqlx::query_as::<_, CanonicalRailItemRow>(queries::LIST_CANONICAL_RAIL_ITEMS)
-            .bind(rail_id)
+        ordering_id: Uuid,
+    ) -> Result<Vec<CanonicalOrderingItemRow>> {
+        let rows =
+            sqlx::query_as::<_, CanonicalOrderingItemRow>(queries::LIST_CANONICAL_ORDERING_ITEMS)
+            .bind(ordering_id)
             .bind(snapshot_height)
             .fetch_all(&self.pool)
             .await?;
         Ok(rows)
     }
 
-    pub async fn list_canonical_rails_for_idea(
+    pub async fn list_canonical_orderings_for_idea(
         &self,
         snapshot_height: i64,
         idea_id: Uuid,
-    ) -> Result<Vec<CanonicalRailSummaryRow>> {
+    ) -> Result<Vec<CanonicalOrderingSummaryRow>> {
         let rows =
-            sqlx::query_as::<_, CanonicalRailSummaryRow>(queries::LIST_CANONICAL_RAILS_FOR_IDEA)
+            sqlx::query_as::<_, CanonicalOrderingSummaryRow>(queries::LIST_CANONICAL_ORDERINGS_FOR_IDEA)
                 .bind(idea_id)
                 .bind(snapshot_height)
                 .fetch_all(&self.pool)

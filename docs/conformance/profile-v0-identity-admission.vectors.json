@@ -1,0 +1,147 @@
+{
+  "schema": "seed.conformance.profile_v0_identity_admission.v1",
+  "status": "static_contract_vectors_not_runtime_executed",
+  "pure_crypto_fixtures": {
+    "identity_create_primary": {
+      "covers": ["IA-002", "IA-003", "IA-004", "IA-005", "IA-006", "IA-007", "IA-008", "IA-009", "IA-010", "IA-011", "IA-012", "IA-013"],
+      "sponsor_raw_public_key": "d04ab232742bb4ab3a1368bd4615e4e6d0224ab71a016baf8520a332c9778737",
+      "candidate": {
+        "signature_profile": "ed25519_v0",
+        "event_id": "00000000-0000-7000-8000-000000000101",
+        "event_type": "identity_create",
+        "author_identity_id": "00000000-0000-7000-8000-00000000a001",
+        "speaker_identity_id": null,
+        "public_key_ref": "69d4b68aee4b550683204148a9a31fd4f7d5c6f5be585a2bd5f0407bd17d1e33",
+        "payload_hash": "2126fbca8f7d30d5c1cca770d5e31ead35a654ee59cf720b52b7764c98486f8d",
+        "payload_binding_mode": "embedded_payload",
+        "payload_ref": null,
+        "author_observed_at": null,
+        "signature": "25492ca56ffd4259c9c96e63e74b345b0fda4d3c3c5cd4cc7bbd9b34460a3dfa62f4b877167ce86a1932a7610ad0304c3a0673a17dd44717c59d87ff8951550a"
+      },
+      "payload": {
+        "identity_id": "00000000-0000-7000-8000-00000000b001",
+        "initial_key_descriptor": {
+          "key_profile_version": "ed25519_v0",
+          "signature_algorithm": "ed25519",
+          "raw_public_key": "a09aa5f47a6759802ff955f8dc2d2a14a5c99d23be97f864127ff9383455a4f0",
+          "owning_identity_id": "00000000-0000-7000-8000-00000000b001"
+        },
+        "initial_public_key_ref": "03e0628bfb3c8435a02715d6fd402078d340dfac2d08ff2514bf1e68c76a268c",
+        "admission_profile_version": "sponsored_public_admission_v0",
+        "capacity_period_id": "00000000-0000-7000-8000-00000000c001",
+        "rulebook_reference": {
+          "rulebook_id": "00000000-0000-7000-8000-00000000d001",
+          "rulebook_version": "profile_v0",
+          "rulebook_hash": "4444444444444444444444444444444444444444444444444444444444444444"
+        },
+        "admission_authorization_reference": "18a8a99b28efadf6d07370ef9a3a5741eb410325224c1838d32df0ea8ef23bd1",
+        "identity_structural_roots": [
+          { "role": 1, "idea_id": "00000000-0000-7000-8000-00000000e001" },
+          { "role": 2, "idea_id": "00000000-0000-7000-8000-00000000e002" },
+          { "role": 3, "idea_id": "00000000-0000-7000-8000-00000000e003" },
+          { "role": 4, "idea_id": "00000000-0000-7000-8000-00000000e004" }
+        ],
+        "identity_structural_root_membership_connection_ids": [
+          "00000000-0000-7000-8000-00000000f001",
+          "00000000-0000-7000-8000-00000000f002",
+          "00000000-0000-7000-8000-00000000f003"
+        ],
+        "initial_key_possession_proof": "e979570456314713d5e01c58567b91dd2a98563ffd3e01377213a7c4cc1bcc59955db03d792237b58962dc5b2a28dfa1c1fb89afeda167dd4bac15f1440cb409"
+      },
+      "expected": {
+        "admission_authorization_reference": "18a8a99b28efadf6d07370ef9a3a5741eb410325224c1838d32df0ea8ef23bd1",
+        "verification_reference_absent_encoding_hex": "00",
+        "verification_reference_present_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+        "verification_reference_present_encoding_hex": "015555555555555555555555555555555555555555555555555555555555555555",
+        "canonical_payload_bytes_hex": "0000002430303030303030302d303030302d373030302d383030302d3030303030303030623030310000000a656432353531395f76300000000765643235353139a09aa5f47a6759802ff955f8dc2d2a14a5c99d23be97f864127ff9383455a4f00000002430303030303030302d303030302d373030302d383030302d30303030303030306230303103e0628bfb3c8435a02715d6fd402078d340dfac2d08ff2514bf1e68c76a268c0000001d73706f6e736f7265645f7075626c69635f61646d697373696f6e5f76300000002430303030303030302d303030302d373030302d383030302d3030303030303030633030310000002430303030303030302d303030302d373030302d383030302d3030303030303030643030310000000a70726f66696c655f7630444444444444444444444444444444444444444444444444444444444444444418a8a99b28efadf6d07370ef9a3a5741eb410325224c1838d32df0ea8ef23bd10000000004010000002430303030303030302d303030302d373030302d383030302d303030303030303065303031020000002430303030303030302d303030302d373030302d383030302d303030303030303065303032030000002430303030303030302d303030302d373030302d383030302d303030303030303065303033040000002430303030303030302d303030302d373030302d383030302d303030303030303065303034000000030000002430303030303030302d303030302d373030302d383030302d3030303030303030663030310000002430303030303030302d303030302d373030302d383030302d3030303030303030663030320000002430303030303030302d303030302d373030302d383030302d303030303030303066303033e979570456314713d5e01c58567b91dd2a98563ffd3e01377213a7c4cc1bcc59955db03d792237b58962dc5b2a28dfa1c1fb89afeda167dd4bac15f1440cb409",
+        "applicant_possession_bytes_hex": "00000027736565642e6964656e746974792e696e697469616c5f6b65795f706f7373657373696f6e2e76300000002430303030303030302d303030302d373030302d383030302d3030303030303030303130310000002430303030303030302d303030302d373030302d383030302d3030303030303030623030310000001d73706f6e736f7265645f7075626c69635f61646d697373696f6e5f76300000000a656432353531395f76300000000765643235353139a09aa5f47a6759802ff955f8dc2d2a14a5c99d23be97f864127ff9383455a4f00000002430303030303030302d303030302d373030302d383030302d30303030303030306230303103e0628bfb3c8435a02715d6fd402078d340dfac2d08ff2514bf1e68c76a268c0000002430303030303030302d303030302d373030302d383030302d30303030303030306130303118a8a99b28efadf6d07370ef9a3a5741eb410325224c1838d32df0ea8ef23bd10000000004010000002430303030303030302d303030302d373030302d383030302d303030303030303065303031020000002430303030303030302d303030302d373030302d383030302d303030303030303065303032030000002430303030303030302d303030302d373030302d383030302d303030303030303065303033040000002430303030303030302d303030302d373030302d383030302d303030303030303065303034000000030000002430303030303030302d303030302d373030302d383030302d3030303030303030663030310000002430303030303030302d303030302d373030302d383030302d3030303030303030663030320000002430303030303030302d303030302d373030302d383030302d303030303030303066303033",
+        "applicant_possession_proof": "e979570456314713d5e01c58567b91dd2a98563ffd3e01377213a7c4cc1bcc59955db03d792237b58962dc5b2a28dfa1c1fb89afeda167dd4bac15f1440cb409"
+      }
+    },
+    "identity_key_rotate_primary": {
+      "covers": ["IA-025"],
+      "author_raw_public_key": "d04ab232742bb4ab3a1368bd4615e4e6d0224ab71a016baf8520a332c9778737",
+      "candidate": {
+        "signature_profile": "ed25519_v0",
+        "event_id": "00000000-0000-7000-8000-000000000101",
+        "event_type": "identity_key_rotate",
+        "author_identity_id": "00000000-0000-7000-8000-00000000b001",
+        "speaker_identity_id": null,
+        "public_key_ref": "afe90a76df2e005839a1563dd79fce27287791bc40a48f823a45b08d50717f8e",
+        "payload_hash": "acbc4bc4628786488de9fbbc499fe6f4e6b65479b4b6b03a7f324a04e992528b",
+        "payload_binding_mode": "embedded_payload",
+        "payload_ref": null,
+        "author_observed_at": null,
+        "signature": "3258db4250d5de43bd7eb23842a2752fa03b3646a873ceca56afd134b3b2c365c9362401c9d0a5ee51b2f6d978a7bb9af5fb884ccf99e419247555020b81ff0d"
+      },
+      "payload": {
+        "identity_id": "00000000-0000-7000-8000-00000000b001",
+        "replacement_key_descriptor": {
+          "key_profile_version": "ed25519_v0",
+          "signature_algorithm": "ed25519",
+          "raw_public_key": "a09aa5f47a6759802ff955f8dc2d2a14a5c99d23be97f864127ff9383455a4f0",
+          "owning_identity_id": "00000000-0000-7000-8000-00000000b001"
+        },
+        "replacement_public_key_ref": "03e0628bfb3c8435a02715d6fd402078d340dfac2d08ff2514bf1e68c76a268c",
+        "replacement_key_possession_proof": "71abcae0fe3186374f44ac0468d362b6d74f5b6eb238fd7f6601ac759c2d9c3c3edc92dc8d9f570851bdf29ecf41ea2a9cc65a9d16c4b2042d0d9a04d0bedc07"
+      },
+      "expected": {
+        "canonical_payload_bytes_hex": "0000002430303030303030302d303030302d373030302d383030302d3030303030303030623030310000000a656432353531395f76300000000765643235353139a09aa5f47a6759802ff955f8dc2d2a14a5c99d23be97f864127ff9383455a4f00000002430303030303030302d303030302d373030302d383030302d30303030303030306230303103e0628bfb3c8435a02715d6fd402078d340dfac2d08ff2514bf1e68c76a268c71abcae0fe3186374f44ac0468d362b6d74f5b6eb238fd7f6601ac759c2d9c3c3edc92dc8d9f570851bdf29ecf41ea2a9cc65a9d16c4b2042d0d9a04d0bedc07",
+        "replacement_possession_bytes_hex": "0000002b736565642e6964656e746974792e7265706c6163656d656e745f6b65795f706f7373657373696f6e2e76300000002430303030303030302d303030302d373030302d383030302d3030303030303030303130310000002430303030303030302d303030302d373030302d383030302d303030303030303062303031afe90a76df2e005839a1563dd79fce27287791bc40a48f823a45b08d50717f8e0000000a656432353531395f76300000000765643235353139a09aa5f47a6759802ff955f8dc2d2a14a5c99d23be97f864127ff9383455a4f00000002430303030303030302d303030302d373030302d383030302d30303030303030306230303103e0628bfb3c8435a02715d6fd402078d340dfac2d08ff2514bf1e68c76a268c",
+        "replacement_possession_proof": "71abcae0fe3186374f44ac0468d362b6d74f5b6eb238fd7f6601ac759c2d9c3c3edc92dc8d9f570851bdf29ecf41ea2a9cc65a9d16c4b2042d0d9a04d0bedc07"
+      }
+    }
+  },
+  "authority": [
+    "identity-admission-and-invitation-capacity-spec-v0.md",
+    "protocol v5-appendix-a.md",
+    "canonical-event-authorship-and-signature-profile-v0.md",
+    "canonical-encoding-and-hashing-spec.md",
+    "deterministic-replay-and-merge-spec.md",
+    "verification-spec.md",
+    "cycle-spec.md",
+    "snapshot-format-v0.md"
+  ],
+  "execution_status_values": [
+    "static_contract_complete",
+    "exact_byte_fixture_required",
+    "runtime_harness_required"
+  ],
+  "vectors": [
+    { "id": "IA-001", "category": "schema", "case": "valid sponsor-authored Profile-v0 identity_create", "expected": "accepted", "execution_status": "runtime_harness_required" },
+    { "id": "IA-002", "category": "schema", "case": "absent speaker_identity_id", "expected": "accepted", "execution_status": "static_contract_complete" },
+    { "id": "IA-003", "category": "schema", "case": "present speaker_identity_id", "expected": "speaker_not_permitted", "execution_status": "static_contract_complete" },
+    { "id": "IA-004", "category": "schema", "case": "fixed human target", "expected": "accepted", "execution_status": "static_contract_complete" },
+    { "id": "IA-005", "category": "schema", "case": "non-human target", "expected": "invalid_target_identity_kind", "execution_status": "static_contract_complete" },
+    { "id": "IA-006", "category": "exact_bytes", "case": "verification_reference presence 0x00 absent", "expected": "accepted", "execution_status": "exact_byte_fixture_required" },
+    { "id": "IA-007", "category": "exact_bytes", "case": "verification_reference presence 0x01 plus hash32", "expected": "accepted", "execution_status": "exact_byte_fixture_required" },
+    { "id": "IA-008", "category": "schema", "case": "null, empty, all-zero, or alternate no-reference representation", "expected": "verification_reference_no_reference_encoding_invalid", "execution_status": "static_contract_complete" },
+    { "id": "IA-009", "category": "exact_bytes", "case": "reduced admission_authorization_reference", "expected": "exact domain-separated commitment", "execution_status": "exact_byte_fixture_required" },
+    { "id": "IA-010", "category": "exact_bytes", "case": "valid applicant possession proof", "expected": "accepted", "execution_status": "exact_byte_fixture_required" },
+    { "id": "IA-011", "category": "exact_bytes", "case": "mutate each applicant-bound event, target, key ref, descriptor, sponsor, profile, authorization, or verification-reference value", "expected": "applicant_proof_binding_mismatch", "execution_status": "exact_byte_fixture_required" },
+    { "id": "IA-012", "category": "exact_bytes", "case": "recursive applicant proof construction", "expected": "invalid_applicant_possession_proof", "execution_status": "exact_byte_fixture_required" },
+    { "id": "IA-013", "category": "exact_bytes", "case": "sponsor signature over completed payload containing applicant proof", "expected": "accepted", "execution_status": "exact_byte_fixture_required" },
+    { "id": "IA-014", "category": "replay", "case": "duplicate identity", "expected": "identity_already_exists", "execution_status": "runtime_harness_required" },
+    { "id": "IA-015", "category": "replay", "case": "historical key reuse", "expected": "public_key_already_registered", "execution_status": "runtime_harness_required" },
+    { "id": "IA-016", "category": "replay", "case": "complete Mindgarden, Backyard of Relationships, Self Tree, and Anthill roots", "expected": "accepted", "execution_status": "runtime_harness_required" },
+    { "id": "IA-017", "category": "replay", "case": "missing or colliding structural root", "expected": "incomplete_identity_structural_roots | structural_root_collision", "execution_status": "runtime_harness_required" },
+    { "id": "IA-018", "category": "replay", "case": "successful admission debits one capacity unit", "expected": "one atomic debit", "execution_status": "runtime_harness_required" },
+    { "id": "IA-019", "category": "replay", "case": "exact accepted retry", "expected": "idempotent with no second debit", "execution_status": "runtime_harness_required" },
+    { "id": "IA-020", "category": "validation", "case": "closed or replaced period/rulebook context", "expected": "stale_admission_authorization", "execution_status": "runtime_harness_required" },
+    { "id": "IA-021", "category": "validation", "case": "inactive or revoked sponsor author key", "expected": "author_key_inactive | author_key_revoked", "execution_status": "runtime_harness_required" },
+    { "id": "IA-022", "category": "validation", "case": "ineligible sponsor", "expected": "inviter_ineligible", "execution_status": "runtime_harness_required" },
+    { "id": "IA-023", "category": "validation", "case": "suspended sponsor", "expected": "inviter_suspended", "execution_status": "runtime_harness_required" },
+    { "id": "IA-024", "category": "validation", "case": "capacity exhaustion", "expected": "insufficient_invitation_capacity", "execution_status": "runtime_harness_required" },
+    { "id": "IA-025", "category": "exact_bytes", "case": "valid one-active-key rotation", "expected": "replacement proof then atomic activation/supersession", "execution_status": "exact_byte_fixture_required" },
+    { "id": "IA-026", "category": "validation", "case": "invalid replacement-key proof", "expected": "replacement_key_proof_invalid", "execution_status": "runtime_harness_required" },
+    { "id": "IA-027", "category": "replay", "case": "historical key reuse on rotation", "expected": "public_key_already_registered", "execution_status": "runtime_harness_required" },
+    { "id": "IA-028", "category": "validation", "case": "last active key revocation", "expected": "last_active_key_revocation_forbidden", "execution_status": "runtime_harness_required" },
+    { "id": "IA-029", "category": "compatibility", "case": "ordinary identity_verification_update ingress", "expected": "compatibility_event_not_authorized", "execution_status": "runtime_harness_required" },
+    { "id": "IA-030", "category": "compatibility", "case": "manifest-authorized compatibility update", "expected": "preserved compatibility provenance only", "execution_status": "runtime_harness_required" },
+    { "id": "IA-031", "category": "cycle", "case": "forced, Dmax-only, degraded, survivor, record-only, AI, system, clock, or machine-only boundary without human certification", "expected": "no capacity, maturation, restoration, or new inviter eligibility", "execution_status": "runtime_harness_required" },
+    { "id": "IA-032", "category": "cycle", "case": "qualifying certified human-deliberative period for eligible unsuspended inviter", "expected": "at least one spendable unit", "execution_status": "runtime_harness_required" },
+    { "id": "IA-033", "category": "cycle", "case": "admission-liveness stall with existing valid capacity", "expected": "capacity remains spendable unless explicitly suspended, expired, or frozen; liveness blocked true", "execution_status": "runtime_harness_required" },
+    { "id": "IA-034", "category": "compatibility", "case": "legacy or import identity", "expected": "readable provenance without fabricated sponsor, proof, debit, lineage, or verification history", "execution_status": "runtime_harness_required" },
+    { "id": "IA-035", "category": "authorization", "case": "restricted verification lane", "expected": "self-specific permitted actions only; ordinary writing, general challenge, vote, governance, Tempo, invitation, and economic actions rejected", "execution_status": "runtime_harness_required" }
+  ]
+}

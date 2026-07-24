@@ -1,5 +1,6 @@
 const APPROVED_EXACT_TEST_DATABASES: &[&str] = &["seed_export_smoke"];
 const APPROVED_TEST_DATABASE_PREFIXES: &[&str] = &[
+    "seed_admission_p3_test_",
     "seed_signed_ingress_test_",
     "seed_tempo_005c_r2_",
     "seed_test_",
@@ -80,6 +81,13 @@ mod tests {
             )
             .unwrap(),
             "seed_export_smoke"
+        );
+        assert_eq!(
+            require_disposable_database_url(
+                "postgresql://seed_app:secret@127.0.0.1:5432/seed_admission_p3_test_019f"
+            )
+            .unwrap(),
+            "seed_admission_p3_test_019f"
         );
     }
 

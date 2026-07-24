@@ -504,10 +504,12 @@ dependencies = [
 name = "event-log"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
  "encoding",
  "serde",
  "serde_json",
  "uuid",
+ "verification",
 ]
 
 [[package]]
@@ -1362,11 +1364,13 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
+ "ed25519-dalek",
  "encoding",
  "event-log",
  "serde_json",
  "sqlx",
  "uuid",
+ "verification",
 ]
 
 [[package]]
@@ -1583,6 +1587,7 @@ dependencies = [
  "serde",
  "sha2",
  "uuid",
+ "verification",
 ]
 
 [[package]]
@@ -1853,6 +1858,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "common",
+ "ed25519-dalek",
  "encoding",
  "event-log",
  "hmac",

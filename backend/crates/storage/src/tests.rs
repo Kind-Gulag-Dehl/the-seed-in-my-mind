@@ -182,17 +182,17 @@ async fn organizer_ideas_are_rankless_and_normal_ideas_are_ranked() -> Result<()
 }
 
 #[tokio::test]
-async fn private_vines_crud_and_owner_isolation() -> Result<()> {
+async fn private_orderings_crud_and_owner_isolation() -> Result<()> {
     let Some(database_url) = guarded_database_url() else {
         return Ok(());
     };
 
     let storage = Storage::new(&database_url).await?;
-    let has_private_vines: Option<String> =
-        sqlx::query_scalar("SELECT to_regclass('public.private_vines')::text")
+    let has_private_orderings: Option<String> =
+        sqlx::query_scalar("SELECT to_regclass('public.private_orderings')::text")
             .fetch_one(&storage.pool)
             .await?;
-    if has_private_vines.is_none() {
+    if has_private_orderings.is_none() {
         return Ok(());
     }
 
@@ -208,14 +208,15 @@ async fn private_vines_crud_and_owner_isolation() -> Result<()> {
         .await?;
 
     let created = storage
-        .create_private_vine(
+        .create_private_ordering(
             owner_a.account_id,
             0,
+            Some(0),
             Some("owner-a vine"),
             Some("owner-a sentence"),
             None,
             None,
-            &[PrivateVineItemInput {
+            &[PrivateOrderingItemInput {
                 idx: 0,
                 idea_id: Uuid::new_v4(),
                 via_connection_id: None,
@@ -223,33 +224,34 @@ async fn private_vines_crud_and_owner_isolation() -> Result<()> {
         )
         .await?;
 
-    let listed = storage.list_private_vines(owner_a.account_id).await?;
+    let listed = storage.list_private_orderings(owner_a.account_id).await?;
     assert!(listed
         .iter()
-        .any(|row| row.private_vine_id == created.private_vine_id));
+        .any(|row| row.private_ordering_id == created.private_ordering_id));
 
     let detail = storage
-        .get_private_vine(owner_a.account_id, created.private_vine_id)
+        .get_private_ordering(owner_a.account_id, created.private_ordering_id)
         .await?
         .ok_or_else(|| anyhow!("expected vine detail for owner"))?;
-    assert_eq!(detail.private_vine_id, created.private_vine_id);
+    assert_eq!(detail.private_ordering_id, created.private_ordering_id);
 
     let items = storage
-        .list_private_vine_items(owner_a.account_id, created.private_vine_id)
+        .list_private_ordering_items(owner_a.account_id, created.private_ordering_id)
         .await?;
     assert_eq!(items.len(), 1);
     assert_eq!(items[0].idx, 0);
 
     let not_owner_detail = storage
-        .get_private_vine(owner_b.account_id, created.private_vine_id)
+        .get_private_ordering(owner_b.account_id, created.private_ordering_id)
         .await?;
     assert!(not_owner_detail.is_none());
 
     let not_owner_update = storage
-        .update_private_vine(
+        .update_private_ordering(
             owner_b.account_id,
-            created.private_vine_id,
-            1,
+            created.private_ordering_id,
+            0,
+            Some(1),
             Some("should fail"),
             Some("should fail"),
             None,
@@ -260,21 +262,22 @@ async fn private_vines_crud_and_owner_isolation() -> Result<()> {
     assert!(not_owner_update.is_none());
 
     let updated = storage
-        .update_private_vine(
+        .update_private_ordering(
             owner_a.account_id,
-            created.private_vine_id,
-            1,
+            created.private_ordering_id,
+            0,
+            Some(1),
             Some("updated"),
             Some("updated sentence"),
             Some("updated paragraph"),
             None,
             Some(&[
-                PrivateVineItemInput {
+                PrivateOrderingItemInput {
                     idx: 0,
                     idea_id: Uuid::new_v4(),
                     via_connection_id: None,
                 },
-                PrivateVineItemInput {
+                PrivateOrderingItemInput {
                     idx: 1,
                     idea_id: Uuid::new_v4(),
                     via_connection_id: Some(Uuid::new_v4()),
@@ -283,23 +286,24 @@ async fn private_vines_crud_and_owner_isolation() -> Result<()> {
         )
         .await?
         .ok_or_else(|| anyhow!("expected owner update to succeed"))?;
-    assert_eq!(updated.vine_type, 1);
+    assert_eq!(updated.ordering_profile, 0);
+    assert_eq!(updated.vine_type, Some(1));
     assert_eq!(updated.title.as_deref(), Some("updated"));
 
     let updated_items = storage
-        .list_private_vine_items(owner_a.account_id, created.private_vine_id)
+        .list_private_ordering_items(owner_a.account_id, created.private_ordering_id)
         .await?;
     assert_eq!(updated_items.len(), 2);
     assert_eq!(updated_items[0].idx, 0);
     assert_eq!(updated_items[1].idx, 1);
 
     let deleted_by_other = storage
-        .delete_private_vine(owner_b.account_id, created.private_vine_id)
+        .delete_private_ordering(owner_b.account_id, created.private_ordering_id)
         .await?;
     assert_eq!(deleted_by_other, 0);
 
     let deleted_by_owner = storage
-        .delete_private_vine(owner_a.account_id, created.private_vine_id)
+        .delete_private_ordering(owner_a.account_id, created.private_ordering_id)
         .await?;
     assert_eq!(deleted_by_owner, 1);
 

@@ -866,3 +866,339 @@ This file is append-only completed-run history for Codex work in the open-core r
     - Runtime implementation remains blocked; controlled cross-document reconciliation edits must run before TEMPO-005D implementation can resume.
     - Recommended next task: TEMPO-005D-S3-R2A - Authority and Protocol Root Reconciliation for Profile-v0 Identity Admission.
     - No normative specifications, runtime code, schemas, DTOs, migrations, fixtures, tests, exports, databases, generated files, or private-repository files were changed.
+- 2026-07-13 12:07:50 -04:00
+  - Active task ID: TEMPO-005D-S3-R2A
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; TEMPO-005D remains blocked for runtime implementation.
+  - Cross-repository: no.
+  - Counterpart task ID: none; A:\the-seed-in-my-mind was not modified.
+  - Task summary: Completed authority and Protocol v5 root reconciliation for the finalized Profile-v0 identity-admission architecture. The pass added the identity-admission specification to the authority index, documented the scoped authority split, updated cross-document invariants, replaced direct-registration/self-authored Protocol v5 language with sponsor-authored admission, normalized future-facing structural-root names, added invitation-capacity and admission-liveness root rules, and updated existing navigation maps.
+  - Files changed:
+    - docs/authoritative-index.md (authority placement and scope split)
+    - docs/cross-doc-invariants.md (human-first admission, admission-not-verification, capacity/liveness invariants)
+    - docs/protocol v5.md (root admission architecture, structural roots, capacity/liveness, sponsor/applicant proof boundary)
+    - docs/map.index.md (navigation)
+    - docs/map.protocol-v5.md (Protocol v5 map updates)
+    - docs/reports/tempo/tempo-005d-s3-r2a-authority-and-protocol-root-reconciliation-report.md (new completion report)
+    - docs/codex-devlog.md (coordination only; this completed-run entry)
+    - docs/codex-active-tasks.md was updated for lifecycle registration and closeout, with no final diff after TEMPO-005D-S3-R2A removal.
+  - Baseline:
+    - Identity-admission SHA-256 before and after edit: dd28615fb10d80d9d38bc2fb989973788627784a56aea911472b32e8d42f73b1
+    - docs/authoritative-index.md: 9e058ae1b2fbb95c5129a53054534ce7e9c4fde0dadba243af402c1614a8e2a3 -> d8ad3e47877234fcd06399f8be08a38a61a5c7b5fdcf75afd8fb9c954a680dd7
+    - docs/cross-doc-invariants.md: 6c7478d1cebc961512e168abcee95136fc9fc444585af579e8e47a0d176674a9 -> c75f004b0434b205d8b0c8565726769b2d0922fea2be45acc9f6140bee2f714d
+    - docs/protocol v5.md: 06f9d23a9d277cce18f9dc83c7fadf15c622351a25e9ea4a21a1ca4258f3fb4c -> 1af7b8deaab10f5818268a66b5937d9fcf5fe8e4dc611b54f8c92303e5265fe2
+    - docs/map.index.md: 723c590bc68502086b3a100817667a9eef0cfffb8b5ce40da5a69ca81158c04d -> ffe5ada9c7993cd1ab6d4ba69e2a821171bf0b38270d2cdf8e9da1670a7dd764
+    - docs/map.protocol-v5.md: 5921123db43838fc5cb0b7f5db3d6669d52bcd1396172e3fa99ca868e7254525 -> d38a9ef594c31041e6d6e520d3fc5ce66e919466a88b30fa8fed610db1af7a1b
+  - Commands and results:
+    - Get-Content AGENTS.md and coordination/source documents (pass)
+    - git status --short (pass; no unrelated dirty tree was present at task start)
+    - Get-FileHash for identity-admission target (pass; required hash matched and remained unchanged)
+    - Test-Path docs/authoritative-stage-map.md (pass; file absent, no duplicate authority map created)
+    - targeted rg searches for AD-001/AD-002/AD-003/AD-006, stale registration/self-authoring, structural-root names, verification/eligibility boundaries, invitation capacity, and liveness terms (pass; remaining matches are corrected, stable anchors, compatibility/deferred, or unrelated lineage/verification uses)
+    - Manual git diff review (pass)
+    - Heading scan (pass with pre-existing duplicate Protocol v5 section IDs 2.11.1 and 8.6 noted; not introduced by this pass)
+    - Direct trailing-whitespace scan (pre-existing trailing whitespace in docs/protocol v5.md noted; git diff --check passed)
+    - Control-character scan (pass)
+    - git diff --check (pass; Git emitted line-ending warnings for edited Markdown files only)
+  - Findings resolved:
+    - AD-001, AD-002, AD-003, and AD-006 resolved at R2A scope.
+  - Unresolved risks and follow-ups:
+    - Runtime implementation remains blocked.
+    - Recommended next task: TEMPO-005D-S3-R2B - exact-schema reconciliation for Appendix A, canonical authorship/signature, canonical encoding/hashing, event registry, identity/key lifecycle semantics, and directly affected error vocabulary.
+    - No Appendix A, encoding/signature, event registry, replay, verification, cycle, Tempo, snapshot, privacy/offline/safety/governance/AI/token, API/DTO, conformance, runtime, migration, fixture, generated/export, database, or private-repository files were changed.
+- 2026-07-13 13:26:29 -04:00
+  - Active task ID: TEMPO-005D-S3-R2B
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; TEMPO-005D remains blocked for runtime implementation.
+  - Cross-repository: no.
+  - Counterpart task ID: none; A:\the-seed-in-my-mind was not modified.
+  - Task summary: Completed the exact Profile-v0 sponsored identity-admission schema reconciliation. The pass made sponsor-authored `identity_create`, absent speaker, initial-key possession, reduced authorization commitment, explicit structural roots, atomic effects/capacity debit, direct one-active-key lifecycle, compatibility-only `identity_verification_update`, provenance, event-registry status, and deterministic validation errors/precedence interoperable at the normative schema layer.
+  - Files changed:
+    - docs/protocol v5-appendix-a.md (exact identity admission, compatibility, key lifecycle, provenance, effects, errors, and precedence)
+    - docs/canonical-event-authorship-and-signature-profile-v0.md (applicant/replacement proof bytes, non-reuse, direct-key semantics, conformance requirements)
+    - docs/canonical-encoding-and-hashing-spec.md (BLAKE3-256/hash32 clarification and admission commitment/root-plan bytes)
+    - docs/protocol-event-registry.v1.md (identity/key event classifications and runtime-status correction)
+    - docs/reports/tempo/tempo-005d-s3-r2b-exact-identity-admission-schema-reconciliation-report.md (completion report)
+    - docs/codex-active-tasks.md (coordination only; TEMPO-005D-S3-R2B removed)
+    - docs/codex-devlog.md (coordination only; this completed-run entry)
+  - Protected dirty-tree work:
+    - R2A authority/index, invariant, map, Protocol v5, report, and coordination diffs were preserved without modification beyond the shared append-only devlog and active-task lifecycle files.
+  - Baseline and final hashes:
+    - Identity-admission target before and after: DD28615FB10D80D9D38BC2FB989973788627784A56AEA911472B32E8D42F73B1
+    - docs/protocol v5-appendix-a.md: 49F1796FF48B7A3198A71FF91B35F9B4E84B37F13BD32D017928100463A2C575 -> 418760888C08E04205B0E3D93A621255CF2270FA7A275DDC9EA40D2207A3D0A0
+    - docs/canonical-event-authorship-and-signature-profile-v0.md: 95B1D4F98755899051CF4587338D13F8B5C45DB25A72F50C5E83CCDE2452EBD6 -> 6EB6A75DFC6B1715FEBBDAF47551AB550F661717623A28D208A88C4AB331029B
+    - docs/canonical-encoding-and-hashing-spec.md: CA8EF2CFCE4CD89F29C08096F5B6E25A46E40AB62EE1DB8B5722CA5C353BE2BA -> 6FEAD64D5B84B91161BC2B50AA43B8A478C3D4D532AB93C734607E489D5FEEA7
+    - docs/protocol-event-registry.v1.md: C0D96741D06D11F8D170EE5EC02AAFD309C9F2E34D19409996B1B9FC4F951C45 -> 86F45FBD431CBE2E691FF994FC338106182932FEF60B5B7CFB5298838A5644E6
+  - Findings addressed:
+    - Fully or normatively: AD-004, AD-008, AD-009, AD-010, AD-015, Appendix A portion of AD-023, and normative-error portion of AD-028.
+    - Partially only: AD-005 compatibility classification, AD-007 speaker rule, and AD-035 provenance schema. Replay, runtime, API/DTO, migration, and compatibility execution remain deferred.
+  - Commands and results:
+    - Get-Content AGENTS.md, authority documents, R1/R2A reports, and coordination files (pass)
+    - git status --short and scoped diff inspection (pass; dirty tree preserved)
+    - Get-FileHash -Algorithm SHA256 for target and edited normative documents (pass; required target hash unchanged)
+    - Targeted rg searches for schema fields, optional encoding, domain tags, roots, errors, and forbidden legacy fields (pass; 0 forbidden hits)
+    - Appendix heading-order and changed-file duplicate-heading checks (pass)
+    - Control-character scan (pass; 0 hits)
+    - Whole-file trailing-whitespace scan (45 pre-existing Appendix A formatting hits outside R2B changes; no new trailing whitespace; git diff --check pass)
+    - git diff --check (pass; only existing LF-to-CRLF warnings)
+  - Failures and resolutions:
+    - The direct whole-file trailing-whitespace scan reported pre-existing Appendix A formatting. It was not normalized because that would be unrelated churn; the patch itself passed git diff --check.
+    - The direct-key retry wording was clarified before validation so exact accepted rotation/revocation retries are explicitly idempotent while distinct repeat revocations are rejected.
+  - Unresolved risks and follow-ups:
+    - Runtime implementation remains blocked pending R2C replay/verification/cycle/rulebook/snapshot reconciliation and combined R2D/E privacy/API/DTO/conformance/boundary reconciliation.
+    - Recommended next task: TEMPO-005D-S3-R2C - Replay, Verification, Cycle, Rulebook, And Snapshot Reconciliation.
+    - No database use, export generation, runtime code, migrations, tests, fixtures, API/DTO files, private-repository files, or out-of-scope normative documents were changed.
+- 2026-07-13 13:45:00 -04:00
+  - Active task ID: TEMPO-005D-S3-R2C
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; TEMPO-005D remains blocked for runtime implementation.
+  - Cross-repository: no; private repository not modified.
+  - Task summary: Reconciled deterministic replay identity/key/provenance state, restricted verification into the ordinary epistemic system, compatibility-only verification updates, qualifying invitation-capacity periods, positive capacity, admission liveness, Tempo separation, and snapshot commitments for Profile-v0 admission.
+  - Files changed: deterministic-replay-and-merge-spec.md, verification-spec.md, cycle-spec.md, tempo-spec.md, snapshot-format-v0.md, the R2C report, and coordination files.
+  - Validation: controlling identity-admission hash unchanged; targeted terminology review, control-character scan, and git diff --check passed after removing two newly introduced trailing-space lines.
+  - Follow-up: TEMPO-005D-S3-R2DE is next; runtime remains blocked pending boundary/API/DTO/conformance/status reconciliation.
+- 2026-07-13 15:53:00 -04:00
+  - Active task ID: TEMPO-005D-S3-R2DE
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; TEMPO-005D remains blocked for runtime implementation.
+  - Cross-repository: no.
+  - Counterpart task ID: none; `A:\the-seed-in-my-mind` was not modified.
+  - Task summary: Completed Profile-v0 identity-admission boundary, planned API/DTO contract, static conformance requirement, public/open-core boundary, and implementation-status reconciliation. Added no runtime behavior.
+  - Files changed:
+    - boundary specifications: privacy, offline, safety, safety-rulebook mechanics, governance, AI, and token
+    - node/API/status/boundary/navigation documentation and the new `canonical-identity-admission-api-contract-v0.md`
+    - `docs/conformance/profile-v0-identity-admission.{vectors.json,schema.json,vectors.md}`
+    - `docs/reports/tempo/tempo-005d-s3-r2de-boundary-api-conformance-status-reconciliation-report.md`
+    - coordination files: this devlog and the active-task ledger
+  - Key outcomes:
+    - private requests/accounts/evidence/relay data remain non-canonical; capacity is publicly derivable; AI/operator/machine authority is prohibited; inviter lineage has no active Profile-v0 economic fallback.
+    - node requirements, planned write/read DTO contract, runtime quarantine, and 35 static vector requirements are explicit; current runtime remains non-conformant for Profile-v0 admission.
+  - Validation:
+    - controlling identity-admission SHA-256 unchanged: `DD28615FB10D80D9D38BC2FB989973788627784A56AEA911472B32E8D42F73B1`
+    - JSON parse/vector-shape check passed (35 unique cases); `npm run conformance` passed 29/29; `npm run verify:boundaries` and `npm run verify:canonical-dto` passed; targeted stale-term scan, control-character scan, and `git diff --check` passed.
+  - Protected dirty-tree work:
+    - R2A/R2B/R2C authority, schema, replay, and prior report diffs were preserved. Existing whole-file duplicate-heading, level, and trailing-whitespace findings outside this pass were not normalized.
+  - Follow-up:
+    - Recommended next task: `TEMPO-005D-R3-P1 - Profile-v0 Identity Admission Runtime Implementation Plan and Existing-Code Gap Audit`.
+    - No database use, export generation, runtime or frontend code, DTO source, migrations, database-backed or Rust/API runtime tests, generated files, or private-repository files were changed.
+- 2026-07-13 16:20:26 -04:00
+  - Active task ID: TEMPO-005D-R3-P1
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; parent TEMPO-005D remains blocked and was not modified.
+  - Cross-repository: no; `A:\the-seed-in-my-mind` was not modified.
+  - Task summary: Completed the read-only existing-code gap audit and dependency-ordered Profile-v0 identity-admission runtime plan. The plan identifies the pure schema/proof foundation, additive persistence and compatibility work, atomic admission, replay/key lifecycle, restricted-lane/capacity/liveness, snapshot/API/DTO, conformance, and legacy account-path containment slices.
+  - Files changed:
+    - docs/reports/tempo/tempo-005d-r3-p1-runtime-implementation-plan-and-existing-code-gap-audit.md (new plan and gap audit)
+    - docs/codex-active-tasks.md (coordination only; TEMPO-005D-R3-P1 removed)
+    - docs/codex-devlog.md (coordination only; this completed-run entry)
+  - Key findings:
+    - Current identity creation is self-speaker and account-coupled; signed ingress supports only `idea_create` and `connection_create`; replay/snapshot omit Profile-v0 admission state.
+    - Existing one-source-event uniqueness constraints for ideas and connections prevent one admission from materializing four roots and three containment connections; legacy identity title and key-state schema need additive compatibility handling.
+    - All 35 static identity-admission vectors have a named future executable home. Future DB-backed admission tests must call `common::test_db_guard::require_disposable_database_url` in the same process and must never use `seed_dev`.
+  - Validation:
+    - Controlling identity-admission SHA-256 matched before and after: `DD28615FB10D80D9D38BC2FB989973788627784A56AEA911472B32E8D42F73B1`.
+    - Report-heading, duplicate-heading, vector-coverage, trailing-whitespace, and control-character checks passed; `git diff --check` passed.
+    - No database, migration execution, seed reset, export generation, runtime/API/DTO/test/vector-harness change, generated artifact, or private-repository edit occurred.
+  - Follow-up:
+    - Recommended next task: `TEMPO-005D-R3-P2 - Pure Profile-v0 Admission Schema and Cryptographic Validation`.
+    - Runtime implementation remains incomplete; begin with exact typed payload and proof validation only, without storage, migration, route, replay, or account changes.
+
+- 2026-07-13 17:10:34 -04:00
+  - Active task ID: TEMPO-005D-R3-P2
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; the parent TEMPO-005D remains blocked and was not modified.
+  - Cross-repository: no; `A:\the-seed-in-my-mind` was not modified.
+  - Task summary: Implemented database-free Profile-v0 typed admission/direct-key payload parsing, canonical payload and commitment bytes, Ed25519 applicant/replacement possession proofs, completed-payload sponsor candidate verification, explicit root-plan validation, supplied-state pure checks, and fixed public crypto fixtures.
+  - Files changed:
+    - `backend/crates/verification/src/admission.rs` and module export
+    - `backend/crates/event-log/src/profile_v0_admission.rs`, module export, manifest, and lockfile dependency record
+    - Profile-v0 identity-admission vector JSON, schema, and guide
+    - P2 report, code-change notes, this devlog, and the active-task ledger
+  - Validation:
+    - controlling identity-admission SHA-256 remained `DD28615FB10D80D9D38BC2FB989973788627784A56AEA911472B32E8D42F73B1`.
+    - `cargo test -p event-log -p verification` passed 41 and 5 tests; `cargo test -p encoding` passed 10; focused cargo check and formatting passed.
+    - static fixture JSON/schema parse, `npm run conformance` (29/29), `npm run verify:boundaries`, and `npm run verify:canonical-dto` passed.
+    - no database-backed tests, migration execution, seed reset, export generation, API/DTO/replay/storage changes, generated artifacts, or private-repository files were used or changed.
+  - Follow-up:
+    - Recommended next task: `TEMPO-005D-R3-P3 - Stateful Admission Validation, Atomic Storage Transition, and Compatibility Quarantine`.
+    - P2 is a pure library boundary only; stateful canonical application, capacity debit, replay, API, DTO, snapshots, and legacy ingress quarantine remain unimplemented.
+
+- 2026-07-13 18:22:07 -04:00
+  - Active task ID: TEMPO-005D-R3-P3
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; the parent TEMPO-005D remains blocked and was not modified.
+  - Cross-repository: no; `A:\the-seed-in-my-mind` was not modified.
+  - Task summary: Added an additive Profile-v0 identity-admission storage schema and one atomic sponsor-authored admission transition. It validates P2 candidates at canonical position, persists all admission effects and one append-only capacity debit together, and leaves no partial state on failure.
+  - Files changed:
+    - `backend/migrations/postgres/0023_profile_v0_identity_admission_storage.sql`
+    - `backend/crates/storage/Cargo.toml` and `src/profile_v0_admission.rs`, `lib.rs`, and `types.rs`
+    - P3 report, code-change notes, this devlog, and the active-task ledger
+  - Compatibility and safety:
+    - Legacy account-coupled creation, stored writer state, bootstrap/import rows, and ordinary `identity_verification_update` remain non-Profile-v0 admission paths. Transitional sponsor eligibility/capacity materializations are provenance-classed and replay-replaceable.
+    - Guarded PostgreSQL tests require `SEED_TEST_DATABASE_ADMIN_URL`, create only `seed_test_tempo_005d_r3_p3_*` databases, and call `common::test_db_guard::require_disposable_database_url` before connecting. The environment lacked that URL, so those cases skipped without database access.
+  - Validation:
+    - Controlling identity-admission SHA-256 remained `DD28615FB10D80D9D38BC2FB989973788627784A56AEA911472B32E8D42F73B1`.
+    - `cargo fmt --all -- --check`, `cargo check -p storage --all-targets`, and `cargo test -p storage --lib -- --nocapture` passed (17 tests; isolated DB cases safely skipped).
+    - `cargo test -p event-log -p verification` passed 41 and 5 tests; `cargo test -p encoding` passed 10. `npm run conformance` (29/29), `npm run verify:boundaries`, `npm run verify:canonical-dto`, whitespace/control scans, and `git diff --check` passed.
+  - Follow-up:
+    - Recommended next task: `TEMPO-005D-R3-P4 - Deterministic Replay, Snapshot Projection, and Admission-State Conformance`.
+    - P3 does not implement replay, snapshots, public ingress, API/DTOs, capacity generation, cycle qualification, VH/VI, or restricted verification behavior.
+
+- 2026-07-13 19:13:00 -04:00
+  - Active task ID: TEMPO-005D-R3-P4
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; the parent TEMPO-005D remains blocked and was not modified.
+  - Cross-repository: no; private repository was not modified.
+  - Task summary: Added a pure, deterministic Profile-v0 admission replay projector and a standalone admission snapshot pack. Successful sponsored admissions project human identity/provenance, direct keys, the four structural roots and memberships, sponsor lineage, restricted initial authority, and one capacity-debit fact. Ordinary `identity_verification_update` is rejected; only explicit provenance-classed manifest compatibility records remain readable and non-authoritative.
+  - Files changed:
+    - `backend/crates/replay/src/profile_v0_admission.rs`, `src/lib.rs`, and `Cargo.toml`
+    - `backend/crates/snapshot/src/profile_v0_admission.rs`, `src/lib.rs`, `src/format.rs`, and `Cargo.toml`
+    - `docs/reports/tempo/tempo-005d-r3-p4-replay-snapshot-admission-state-conformance-report.md`
+    - `docs/codex-notes.md`, this devlog, and the active-task ledger
+  - Replay and snapshot boundary:
+    - The new projection is database-free and deterministic by canonical position. It does not consult private accounts, APIs, wall-clock time, AI, operators, or storage order.
+    - Capacity balance, suspension, maturation, and `admission_liveness_blocked` remain explicitly `NotYetDerived` until the qualifying cycle/rulebook implementation exists; P4 does not mint capacity or authority from Dmax, forced, degraded, survivor, record-only, machine, system, AI, clock, or wall-clock inputs.
+    - Existing database-backed `ReplayDriver`, Stage-0 snapshot builder, and snapshot binaries were intentionally not modified.
+  - Validation:
+    - Controlling identity-admission SHA-256 remained `DD28615FB10D80D9D38BC2FB989973788627784A56AEA911472B32E8D42F73B1`.
+    - `cargo fmt --all -- --check`, `cargo check -p replay -p snapshot`, `cargo test -p replay --lib` (23), `cargo test -p snapshot --lib` (5), focused event-log Profile-v0 tests (8), verification tests (5), and encoding tests passed.
+    - `npm run conformance` (29/29), `npm run verify:boundaries`, `npm run verify:canonical-dto`, heading review, trailing-whitespace/control-character scans, and `git diff --check` passed. Workspace incremental-cache hard-link warnings were non-fatal.
+  - Outstanding integration gate:
+    - P3 PostgreSQL migration and atomic-transaction test matrix has not yet run because no explicit disposable PostgreSQL admin URL was configured. P4 used no database and does not waive that blocker.
+  - Follow-up:
+    - Recommended next task: `TEMPO-005D-R3-P5 - Canonical Profile-v0 Identity Admission Ingress, Public Read DTOs, and API Integration`.
+    - Replay/snapshot projection is complete at this pure boundary. Public ingress, API/DTOs, capacity/rulebook derivation, and guarded PostgreSQL integration validation remain incomplete.
+
+- 2026-07-13 19:40:00 -04:00
+  - Active task ID: TEMPO-005D-R3-P3-DBV
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; parent TEMPO-005D remains blocked and was not modified.
+  - Cross-repository: no; private repository was not modified.
+  - Task summary: Inspected the guarded P3 PostgreSQL migration/transaction matrix and its disposable-database protections. Execution was blocked before any database operation because no explicit safe PostgreSQL admin URL or PG configuration is available.
+  - Database safety result:
+    - No database connection, database creation, migration, test, query, or drop occurred. `seed_dev` and all protected databases were not contacted.
+    - The existing P3 test helper calls `common::test_db_guard::require_disposable_database_url`, but generates `seed_test_tempo_005d_r3_p3_*`; this task requires `seed_admission_p3_test_*`. Storage test code is out of scope, so the exact-name matrix needs a future approved runner or helper adjustment.
+  - Files changed:
+    - `docs/reports/tempo/tempo-005d-r3-p3-disposable-postgres-validation-report.md`
+    - this devlog and `docs/codex-active-tasks.md`
+  - Validation:
+    - controlling identity-admission hash matched `DD28615FB10D80D9D38BC2FB989973788627784A56AEA911472B32E8D42F73B1`.
+    - test guard, P3 isolated-test helper, migration catalog, environment presence, PostgreSQL service visibility, and runner conventions were inspected without printing any secret.
+  - Follow-up:
+    - TEMPO-005D-R3-P3-DBV remains blocked. Provide `SEED_TEST_DATABASE_ADMIN_URL` for the `postgres` maintenance database on a known disposable server with create/drop privileges, plus approval for a runner or helper naming path using only `seed_admission_p3_test_*`.
+    - P3 is not integration-validated; the P3 PostgreSQL migration and atomic-transaction test matrix remains a release gate.
+
+- 2026-07-15 18:16:46 -04:00
+  - Active task ID: TEMPO-005D-R3-P3-DBV
+  - Task update: Local PostgreSQL 18 was confirmed reachable only at the redacted maintenance endpoint `127.0.0.1:5432/postgres`. A passwordless read-only probe was rejected before authentication, so its query did not execute and no authenticated database session, migration, test, database creation, or cleanup operation occurred.
+  - Blocker remains: provide `SEED_TEST_DATABASE_ADMIN_URL` with explicit maintenance-database credentials and create/drop privileges for a new task-prefixed disposable database. `seed_dev` was not contacted.
+
+- 2026-07-23 20:42:40 -04:00 - TEMPO-005D-R3-P3-DBV
+  - Active task ID: TEMPO-005D-R3-P3-DBV
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; unrelated dirty-tree work remains protected.
+  - Cross-repository: no; private repository was not modified.
+  - Ownership handoff: The user independently verified an authenticated PostgreSQL maintenance probe in a process-local PowerShell session. Codex cannot read or reuse that environment variable, so the guarded P3 matrix is explicitly handed off to that same session.
+  - Files changed:
+    - `backend/crates/common/src/test_db_guard.rs`
+    - `backend/crates/storage/src/profile_v0_admission.rs`
+    - `docs/reports/tempo/tempo-005d-r3-p3-disposable-postgres-validation-report.md`
+    - `docs/codex-active-tasks.md`, `docs/codex-devlog.md`, and `docs/codex-notes.md`
+  - Test-only safety changes: the shared guard now accepts `seed_admission_p3_test_*`; the P3 helper generates only that exact prefix, refuses unmatched cleanup names, and reports cleanup status. Runtime, migrations, replay, API/DTOs, and private-repository files were not changed.
+  - Local validation: target identity-admission SHA-256 remained `DD28615FB10D80D9D38BC2FB989973788627784A56AEA911472B32E8D42F73B1`; `cargo test -p common --lib` passed after the guard change. Storage DB cases could only skip in Codex because the administrative URL is process-local to the user terminal.
+  - Required user-owned command: run the documented guarded Cargo sequence from the authenticated PowerShell and return only Cargo summaries plus redacted `ISOLATED_DB` and `ISOLATED_DB_CLEANUP` lines. Never paste the URL or password.
+  - Status: blocked pending the user-owned guarded PostgreSQL test result. `seed_dev` was not contacted by Codex, and no database was created, migrated, or dropped by Codex.
+
+- 2026-07-23 20:42:40 -04:00 - TEMPO-005D-R3-P3-DBV
+  - Active task ID: TEMPO-005D-R3-P3-DBV
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; unrelated dirty-tree work remains protected.
+  - Cross-repository: no; private repository was not modified.
+  - User-owned guarded execution: `cargo fmt --all -- --check` and `cargo check -p storage --all-targets` passed; common guard tests passed 4/4; event-log admission tests passed 8/8. The guarded storage matrix used only `seed_admission_p3_test_*` databases and each reported `differs_from_seed_dev=true`. Every visible cleanup ended `dropped=true`, but the concurrent output showed fourteen creates and only twelve matching cleanup lines; universal cleanup evidence remains incomplete.
+  - Failures: storage matrix passed 8 tests and failed 2. The atomic/idempotency test used an incorrect absolute `identities_s0` expectation (observed 3, expected 2). The corrupted-proof test received `applicant_proof_binding_mismatch` where it expected `invalid_applicant_possession_proof`; this requires a focused R2B error-mapping review.
+  - Safety: no `SEED_TEST_DATABASE_ADMIN_URL is missing` skip occurred in the user-owned run. `seed_dev` was not contacted. No credentials, URL, username, or password were recorded.
+  - Status: P3 remains not integration-validated. TEMPO-005D-R3-P3-DBV remains blocked pending a narrow corrective change and zero-failure rerun. DEC-043 authority and runtime-file claims remain unreleased.
+
+- 2026-07-23 20:42:40 -04:00 - TEMPO-005D-R3-P3-DBV corrective update
+  - Active task ID: TEMPO-005D-R3-P3-DBV
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; unrelated dirty-tree work remains protected.
+  - Cross-repository: no; private repository was not modified.
+  - Cause and correction: the atomic test assumed an absolute identity-table count and now asserts a one-row delta from its sponsor fixture baseline. The all-zero 64-byte proof is structurally present and fails the reconstructed applicant-bound message, so its exact P2 boundary is `applicant_proof_binding_mismatch`; malformed proof representation remains `invalid_applicant_possession_proof`.
+  - Cleanup evidence: isolated database test assertions were converted to fallible results inside their async bodies. Each body completes to a result, `db.cleanup().await` executes, and only then does the outer test surface failure. This prevents the previously observed panic-before-cleanup path.
+  - Local validation: `cargo fmt --all`, common guard tests (4/4), event-log admission tests (8/8), storage admission tests (10/10 with seven expected database skips in Codex), and `cargo check -p storage --all-targets` passed. Incremental-cache hard-link warnings were non-fatal.
+  - Status: TEMPO-005D-R3-P3-DBV remains blocked pending a zero-failure authenticated guarded PostgreSQL rerun with a visible `dropped=true` cleanup line for every created task-prefixed database. DEC-043 authority and runtime-file claims remain unreleased.
+
+- 2026-07-23 22:00:29 -04:00 - TEMPO-005D-R3-P3-DBV
+  - Active task ID: TEMPO-005D-R3-P3-DBV
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: no; unrelated dirty-tree work remains protected.
+  - Cross-repository: no; private repository was not modified.
+  - Final guarded execution: the user-owned authenticated PostgreSQL storage matrix passed 10/10 with 7 filtered tests. It created fourteen `seed_admission_p3_test_*` databases, each logged `differs_from_seed_dev=true`, and produced fourteen exact-name-matched `ISOLATED_DB_CLEANUP ... dropped=true` occurrences. Two cleanup messages were interleaved with concurrent test-status output but matched their created database names.
+  - Safety: no `SEED_TEST_DATABASE_ADMIN_URL is missing` skip occurred, no `seed_dev` operation was observed, and no URL, credential, username, or password was recorded.
+  - Validation: local `cargo fmt --all -- --check`, common guard tests (4/4), event-log admission tests (8/8), storage admission tests in the no-admin Codex process (10/10 with expected skips), `cargo check -p storage --all-targets`, and `git diff --check` passed.
+  - Status: TEMPO-005D-R3-P3-DBV is complete. P3 storage migration and atomic-transition integration validation is complete. Its narrow DEC-043 test-matrix/runtime-file claim is released; the parent TEMPO-005D remains independently blocked and no broader runtime completion is claimed.
+
+- 2026-07-23 22:00:29 -04:00 - TEMPO-005D parent ownership reconciliation
+  - Active task ID: TEMPO-005D
+  - Track name: Canonical Tempo and Stage 1
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Canonical Tempo Codex
+  - Active-task overlap detected: resolved by narrowing the stale parent claim; unrelated dirty-tree work remains protected.
+  - Cross-repository: `INTEGRATION-ORDERING-001` may now register in both repositories. Its authoritative open-core work must precede private downstream integration; no Git operation occurred.
+  - Released paths: all parent claims over authority/index/protocol admission documents; canonical encoding, event-log, identity, verification, storage, replay, snapshot, common, test, tooling, API/DTO, and migration paths; API-server, seed-importer, snapshot builder/verifier, and replay-verifier binaries; frontend canonical type/client paths; conformance, implementation-status, open-core boundary/export, ordering-script, and related coordination surfaces.
+  - Dirty handoff: the existing modified/untracked Profile-v0 admission authority documents, `backend/crates/{common,event-log,replay,snapshot,storage,verification}`, `backend/migrations/postgres/0023_profile_v0_identity_admission_storage.sql`, canonical identity-admission API/conformance artifacts, and P1-P4/P3-DBV reports remain uncommitted and protected for the Ordering task. Nothing was reset, restored, staged, deleted, or reformatted.
+  - Retained paths: `docs/tempo-spec.md`, `docs/cycle-spec.md`, and `docs/planning/tempo-cycle-canonical-schema-and-replay-resolution.v1.md`, plus coordination records. These are the only remaining TEMPO-005D claims and exclude DEC-043/Profile-v0 admission and ordering work.
+  - Status: TEMPO-005D remains blocked only for a future separately scoped Tempo authority task. It does not block `INTEGRATION-ORDERING-001`, does not claim broader Tempo runtime completion, and releases all DEC-043 authority/runtime file claims.
+
+- 2026-07-24 09:45:00 -04:00 - INTEGRATION-ORDERING-001 / OPENCORE-ORDERING-001
+  - Track name: Canonical Protocol and Runtime / cross-repository integration
+  - Repository role: authoritative public/open-core
+  - Task summary: Completed DEC-043 as one native authored Ordering substrate with `ordering_create`, `ordering_fork`, `ordering_id`, explicit named `ordering_profile`, Vine as the open-ended ecosystem profile, and Evidence Rail/Action Rail as standardized profiles. No permanent `rail_*` compatibility or dual-read/write path remains.
+  - Semantic surfaces: authority and terminology; event registry/validation; canonical encoding and hashing; storage/migrations; replay; snapshots and representation index; import/export/verification; public/private read APIs and DTOs; frontend canonical contracts; conformance; and downstream private projection.
+  - Preserved handoff: all dirty Profile-v0 admission code/specification/conformance/migration/report work and unrelated changes remained in place. Nothing was reset, restored, deleted, staged, mass-formatted, or overwritten.
+  - Verification: Open Core Rust workspace 139/139; native Ordering conformance 10/10; Tempo/Cycle regression 29/29; canonical DTOs 20/20; Open Core frontend boundary, 2/2 tests, and production build all passed.
+  - Database proof: empty disposable `seed_test_ordering_001_open_core` applied migrations `0001`-`0024`; the second bootstrap applied nothing; native tables existed, legacy tables did not, and the database-backed private Ordering isolation test passed.
+  - Seed proof: downstream GATE-SEED-002-03 passed with 16 regenerated native Ordering rows, 2 historical-only retired aliases, and 0 deferred rows; 50/50 current reconstruction proofs passed; six generated artifacts were byte-identical across repeated fixed-time regeneration. Final 50-source freeze and owner ratification remain later gates; final TASK-SEED-002 generation did not begin.
+  - Protected hashes unchanged: `tempo-spec.md` `3407193F0E5547202F0424E6DA32E8283FD654F9D9AA2902B61BC01BB110829D`; `cycle-spec.md` `905EC16DC60F0C23EC8E28A578AAB67B67DA9CA67E8E7E089C557A82626FBA79`; Tempo planning resolution `7CC60A89C3A1ADCC3F17551F2F3A6999818A5C172047C86AB5C20FA52ACCA7AB`.
+  - Detailed evidence: `docs/reports/ordering/integration-ordering-001-cutover-report.md`.

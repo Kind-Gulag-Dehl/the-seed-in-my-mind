@@ -9,12 +9,31 @@ pub(super) fn payload_object(
         .ok_or_else(|| ReplayError::new("invalid_payload", "payload must be object"))
 }
 
-pub(super) fn parse_rail_kind(value: i16) -> Result<RailKind, ReplayError> {
+pub(super) fn parse_ordering_profile(value: i16) -> Result<OrderingProfile, ReplayError> {
     match value {
-        0 => Ok(RailKind::Vine),
+        0 => Ok(OrderingProfile::Vine),
+        1 => Ok(OrderingProfile::EvidenceRail),
+        2 => Ok(OrderingProfile::ActionRail),
         _ => Err(ReplayError::new(
             "invalid_field",
-            format!("invalid rail_kind {}", value),
+            format!("invalid ordering_profile {}", value),
+        )),
+    }
+}
+
+pub(super) fn parse_ordering_profile_payload(
+    payload: &serde_json::Map<String, Value>,
+) -> Result<OrderingProfile, ReplayError> {
+    let value = payload
+        .get("ordering_profile")
+        .ok_or_else(|| ReplayError::new("missing_field", "ordering_profile required"))?;
+    match value {
+        Value::String(value) if value == "vine" => Ok(OrderingProfile::Vine),
+        Value::String(value) if value == "evidence_rail" => Ok(OrderingProfile::EvidenceRail),
+        Value::String(value) if value == "action_rail" => Ok(OrderingProfile::ActionRail),
+        _ => Err(ReplayError::new(
+            "invalid_field",
+            "invalid ordering_profile",
         )),
     }
 }
@@ -51,11 +70,6 @@ pub(super) fn parse_vine_type_payload(
         Value::String(value) if value == "pathway_vine" || value == "narrative_vine" => {
             Ok(Some(value.clone()))
         }
-        Value::Number(value) => match value.as_u64() {
-            Some(0) => Ok(Some("pathway_vine".to_string())),
-            Some(1) => Ok(Some("narrative_vine".to_string())),
-            _ => Err(ReplayError::new("invalid_field", "invalid vine_type")),
-        },
         _ => Err(ReplayError::new("invalid_field", "invalid vine_type")),
     }
 }
@@ -63,7 +77,7 @@ pub(super) fn parse_vine_type_payload(
 pub(super) fn parse_target_kind(value: i16) -> Result<TargetKind, ReplayError> {
     match value {
         0 => Ok(TargetKind::Idea),
-        1 => Ok(TargetKind::Rail),
+        1 => Ok(TargetKind::Ordering),
         _ => Err(ReplayError::new(
             "invalid_field",
             format!("invalid target_kind {}", value),
@@ -203,12 +217,12 @@ pub(super) fn parse_target_kind_value(value: &Value) -> Result<TargetKind, Repla
     match value {
         Value::String(value) => match value.as_str() {
             "idea" => Ok(TargetKind::Idea),
-            "rail" => Ok(TargetKind::Rail),
+            "ordering" => Ok(TargetKind::Ordering),
             _ => Err(ReplayError::new("invalid_field", "invalid target_kind")),
         },
         Value::Number(value) => match value.as_u64() {
             Some(0) => Ok(TargetKind::Idea),
-            Some(1) => Ok(TargetKind::Rail),
+            Some(1) => Ok(TargetKind::Ordering),
             _ => Err(ReplayError::new("invalid_field", "invalid target_kind")),
         },
         _ => Err(ReplayError::new("invalid_field", "invalid target_kind")),

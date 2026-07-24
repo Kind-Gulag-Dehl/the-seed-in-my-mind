@@ -38,14 +38,14 @@ pub struct ReplayDriver;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReplayObjectKind {
     Idea,
-    Rail,
+    Ordering,
 }
 
 impl ReplayObjectKind {
     pub fn as_u8(self) -> u8 {
         match self {
             ReplayObjectKind::Idea => 0,
-            ReplayObjectKind::Rail => 1,
+            ReplayObjectKind::Ordering => 1,
         }
     }
 }
@@ -61,25 +61,25 @@ pub struct ReplayIdeaRow {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ReplayRailItemRow {
+pub struct ReplayOrderingItemRow {
     pub idx: i32,
     pub idea_id: Uuid,
     pub via_connection_id: Option<Uuid>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ReplayRailRow {
-    pub rail_id: Uuid,
-    pub rail_kind: String,
+pub struct ReplayOrderingRow {
+    pub ordering_id: Uuid,
+    pub ordering_profile: String,
     pub vine_type: Option<String>,
     pub speaker_identity_id: Uuid,
     pub created_event_id: Uuid,
     pub created_block_height: i64,
     pub created_event_index: i32,
-    pub base_rail_id: Option<Uuid>,
+    pub base_ordering_id: Option<Uuid>,
     pub title_representation_id: Option<Uuid>,
     pub sentence_representation_id: Option<Uuid>,
-    pub items: Vec<ReplayRailItemRow>,
+    pub items: Vec<ReplayOrderingItemRow>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -117,7 +117,7 @@ pub struct ReplayOutput {
     pub last_event_id: Uuid,
     pub approximate_timestamp: DateTime<Utc>,
     pub ideas: Vec<ReplayIdeaRow>,
-    pub rails: Vec<ReplayRailRow>,
+    pub orderings: Vec<ReplayOrderingRow>,
     pub connections: Vec<ReplayConnectionRow>,
     pub payloads: Vec<ReplayPayloadRow>,
     pub cycle_status: ReplayCycleStatus,
@@ -189,20 +189,20 @@ struct IdeaRow {
 }
 
 #[derive(Debug, FromRow)]
-struct RailRow {
-    rail_id: Uuid,
-    rail_kind: i16,
+struct OrderingRow {
+    ordering_id: Uuid,
+    ordering_profile: i16,
     vine_type: Option<i16>,
     speaker_identity_id: Uuid,
     created_event_id: Uuid,
     created_block_height: i64,
     created_event_index: i32,
-    base_rail_id: Option<Uuid>,
+    base_ordering_id: Option<Uuid>,
 }
 
 #[derive(Debug, FromRow, Clone)]
-struct RailItemRow {
-    rail_id: Uuid,
+struct OrderingItemRow {
+    ordering_id: Uuid,
     idx: i32,
     idea_id: Uuid,
     via_connection_id: Option<Uuid>,
@@ -375,18 +375,18 @@ impl ReplayDriver {
         .await
         .map_err(|err| ReplayError::new("storage_error", err.to_string()))?;
 
-        let rail_rows: Vec<RailRow> = sqlx::query_as(
+        let ordering_rows: Vec<OrderingRow> = sqlx::query_as(
             r#"
             SELECT
-              rail_id,
-              rail_kind,
+              ordering_id,
+              ordering_profile,
               vine_type,
               speaker_identity_id,
               created_event_id,
               created_block_height,
               created_event_index,
-              base_rail_id
-            FROM rails
+              base_ordering_id
+            FROM orderings
             WHERE created_block_height <= $1
             ORDER BY created_block_height ASC, created_event_index ASC
             "#,
@@ -396,15 +396,15 @@ impl ReplayDriver {
         .await
         .map_err(|err| ReplayError::new("storage_error", err.to_string()))?;
 
-        let rail_item_rows: Vec<RailItemRow> = sqlx::query_as(
+        let ordering_item_rows: Vec<OrderingItemRow> = sqlx::query_as(
             r#"
             SELECT
-              ri.rail_id,
+              ri.ordering_id,
               ri.idx,
               ri.idea_id,
               ri.via_connection_id
-            FROM rail_items ri
-            JOIN rails r ON r.rail_id = ri.rail_id
+            FROM ordering_items ri
+            JOIN orderings r ON r.ordering_id = ri.ordering_id
             WHERE r.created_block_height <= $1
             ORDER BY r.created_block_height ASC, r.created_event_index ASC, ri.idx ASC
             "#,
@@ -561,13 +561,13 @@ impl ReplayDriver {
             .into_iter()
             .map(|row| (row.created_event_id, row))
             .collect();
-        let rail_by_event: HashMap<Uuid, RailRow> = rail_rows
+        let ordering_by_event: HashMap<Uuid, OrderingRow> = ordering_rows
             .into_iter()
             .map(|row| (row.created_event_id, row))
             .collect();
-        let mut rail_items_by_rail: HashMap<Uuid, Vec<RailItemRow>> = HashMap::new();
-        for row in rail_item_rows {
-            rail_items_by_rail.entry(row.rail_id).or_default().push(row);
+        let mut ordering_items_by_ordering: HashMap<Uuid, Vec<OrderingItemRow>> = HashMap::new();
+        for row in ordering_item_rows {
+            ordering_items_by_ordering.entry(row.ordering_id).or_default().push(row);
         }
         let connection_by_event: HashMap<Uuid, ConnectionRow> = connection_rows
             .into_iter()
@@ -594,8 +594,8 @@ impl ReplayDriver {
         let apply = apply_events_with_verification(
             &events,
             &idea_by_event,
-            &rail_by_event,
-            &rail_items_by_rail,
+            &ordering_by_event,
+            &ordering_items_by_ordering,
             &connection_by_event,
             &representation_by_event,
             &payload_by_idea,
@@ -611,7 +611,7 @@ impl ReplayDriver {
             last_event_id,
             approximate_timestamp,
             ideas: apply.ideas,
-            rails: apply.rails,
+            orderings: apply.orderings,
             connections: apply.connections,
             payloads: apply.payloads,
             cycle_status: apply.cycle_status,

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "seed.conformance.profile_v0_identity_admission.v1",
+  "title": "Profile-v0 Identity Admission Static Conformance Requirements",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "status",
+    "authority",
+    "execution_status_values",
+    "pure_crypto_fixtures",
+    "vectors"
+  ],
+  "properties": {
+    "schema": {
+      "const": "seed.conformance.profile_v0_identity_admission.v1"
+    },
+    "status": {
+      "const": "static_contract_vectors_not_runtime_executed"
+    },
+    "authority": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "execution_status_values": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "enum": [
+          "static_contract_complete",
+          "exact_byte_fixture_required",
+          "runtime_harness_required"
+        ]
+      }
+    },
+    "pure_crypto_fixtures": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity_create_primary", "identity_key_rotate_primary"],
+      "properties": {
+        "identity_create_primary": {
+          "$ref": "#/$defs/pureCryptoFixture"
+        },
+        "identity_key_rotate_primary": {
+          "$ref": "#/$defs/pureCryptoFixture"
+        }
+      }
+    },
+    "vectors": {
+      "type": "array",
+      "minItems": 35,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "category", "case", "expected", "execution_status"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^IA-[0-9]{3}$" },
+          "category": { "type": "string" },
+          "case": { "type": "string", "minLength": 1 },
+          "expected": { "type": "string", "minLength": 1 },
+          "execution_status": {
+            "enum": [
+              "static_contract_complete",
+              "exact_byte_fixture_required",
+              "runtime_harness_required"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "pureCryptoFixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["covers", "candidate", "payload", "expected"],
+      "properties": {
+        "covers": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^IA-[0-9]{3}$" }
+        },
+        "sponsor_raw_public_key": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "author_raw_public_key": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "candidate": { "type": "object" },
+        "payload": { "type": "object" },
+        "expected": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "anyOf": [
+            { "required": ["sponsor_raw_public_key"] },
+            { "required": ["author_raw_public_key"] }
+          ]
+        }
+      ]
+    }
+  }
+}

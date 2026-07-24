@@ -11,8 +11,8 @@ fn system_emitter() -> Uuid {
 
 fn empty_maps() -> (
     HashMap<Uuid, IdeaRow>,
-    HashMap<Uuid, RailRow>,
-    HashMap<Uuid, Vec<RailItemRow>>,
+    HashMap<Uuid, OrderingRow>,
+    HashMap<Uuid, Vec<OrderingItemRow>>,
     HashMap<Uuid, ConnectionRow>,
     HashMap<Uuid, RepresentationRow>,
     HashMap<Uuid, IdeaPayloadRow>,
@@ -206,8 +206,8 @@ fn replay_is_deterministic() {
 
     let mut idea_map = HashMap::new();
     idea_map.insert(idea_row.created_event_id, idea_row);
-    let rail_map = HashMap::new();
-    let rail_items = HashMap::new();
+    let ordering_map = HashMap::new();
+    let ordering_items = HashMap::new();
     let connection_map = HashMap::new();
     let representation_map = HashMap::new();
     let mut payload_map = HashMap::new();
@@ -218,8 +218,8 @@ fn replay_is_deterministic() {
     let first = apply_events(
         &[event.clone()],
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -230,8 +230,8 @@ fn replay_is_deterministic() {
     let second = apply_events(
         &[event],
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -246,8 +246,132 @@ fn replay_is_deterministic() {
 }
 
 #[test]
+fn native_ordering_create_and_fork_replay_deterministically() {
+    let speaker = v7("00000000-0000-7000-8000-00000000a010");
+    let create_event_id = v7("00000000-0000-7000-8000-000000000110");
+    let fork_event_id = v7("00000000-0000-7000-8000-000000000111");
+    let base_ordering_id = v7("00000000-0000-7000-8000-00000000b010");
+    let fork_ordering_id = v7("00000000-0000-7000-8000-00000000b011");
+    let idea_a = v7("00000000-0000-7000-8000-00000000c010");
+    let idea_b = v7("00000000-0000-7000-8000-00000000c011");
+    let events = vec![
+        EventRow {
+            block_height: 1,
+            event_index: 0,
+            event_id: create_event_id,
+            event_type: "ordering_create".to_string(),
+            speaker_identity_id: Some(speaker),
+            payload_json: json!({
+                "ordering_id": base_ordering_id,
+                "ordering_profile": "vine",
+                "vine_type": "narrative_vine",
+                "speaker_identity_id": speaker,
+                "item_idea_ids": [idea_a]
+            }),
+        },
+        EventRow {
+            block_height: 1,
+            event_index: 1,
+            event_id: fork_event_id,
+            event_type: "ordering_fork".to_string(),
+            speaker_identity_id: Some(speaker),
+            payload_json: json!({
+                "base_ordering_id": base_ordering_id,
+                "ordering_id": fork_ordering_id,
+                "ordering_profile": "vine",
+                "speaker_identity_id": speaker,
+                "item_idea_ids": [idea_a, idea_b]
+            }),
+        },
+    ];
+    let mut ordering_map = HashMap::new();
+    ordering_map.insert(
+        create_event_id,
+        OrderingRow {
+            ordering_id: base_ordering_id,
+            ordering_profile: 0,
+            vine_type: Some(1),
+            speaker_identity_id: speaker,
+            created_event_id: create_event_id,
+            created_block_height: 1,
+            created_event_index: 0,
+            base_ordering_id: None,
+        },
+    );
+    ordering_map.insert(
+        fork_event_id,
+        OrderingRow {
+            ordering_id: fork_ordering_id,
+            ordering_profile: 0,
+            vine_type: Some(1),
+            speaker_identity_id: speaker,
+            created_event_id: fork_event_id,
+            created_block_height: 1,
+            created_event_index: 1,
+            base_ordering_id: Some(base_ordering_id),
+        },
+    );
+    let mut ordering_items = HashMap::new();
+    ordering_items.insert(
+        base_ordering_id,
+        vec![OrderingItemRow {
+            ordering_id: base_ordering_id,
+            idx: 0,
+            idea_id: idea_a,
+            via_connection_id: None,
+        }],
+    );
+    ordering_items.insert(
+        fork_ordering_id,
+        vec![
+            OrderingItemRow {
+                ordering_id: fork_ordering_id,
+                idx: 0,
+                idea_id: idea_a,
+                via_connection_id: None,
+            },
+            OrderingItemRow {
+                ordering_id: fork_ordering_id,
+                idx: 1,
+                idea_id: idea_b,
+                via_connection_id: None,
+            },
+        ],
+    );
+    let tempo_rows = vec![
+        tempo_row(1, 0, false, false),
+        tempo_row(1, 1, false, false),
+    ];
+    let run = || {
+        apply_events(
+            &events,
+            &HashMap::new(),
+            &ordering_map,
+            &ordering_items,
+            &HashMap::new(),
+            &HashMap::new(),
+            &HashMap::new(),
+            &tempo_rows,
+            &HashMap::new(),
+        )
+        .expect("native Ordering replay")
+    };
+
+    let first = run();
+    let second = run();
+    assert_eq!(first.orderings, second.orderings);
+    assert_eq!(first.orderings.len(), 2);
+    assert_eq!(first.orderings[1].base_ordering_id, Some(base_ordering_id));
+    assert_eq!(
+        first.orderings[1].vine_type.as_deref(),
+        Some("narrative_vine")
+    );
+    assert_eq!(first.orderings[1].items.len(), 2);
+}
+
+#[test]
 fn replay_applies_canonical_writer_grant_and_revoke_deterministically() {
-    let (idea_map, rail_map, rail_items, connection_map, representation_map, payload_map) =
+    let (idea_map, ordering_map, ordering_items, connection_map, representation_map, payload_map) =
         empty_maps();
     let cycle_boundary_map = HashMap::new();
     let tempo_rows = vec![tempo_row(1, 0, false, false), tempo_row(1, 1, false, false)];
@@ -295,8 +419,8 @@ fn replay_applies_canonical_writer_grant_and_revoke_deterministically() {
     let first = apply_events_with_verification(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -309,8 +433,8 @@ fn replay_applies_canonical_writer_grant_and_revoke_deterministically() {
     let second = apply_events_with_verification(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -327,7 +451,7 @@ fn replay_applies_canonical_writer_grant_and_revoke_deterministically() {
 
 #[test]
 fn replay_rejects_canonical_writer_grant_from_non_verifier() {
-    let (idea_map, rail_map, rail_items, connection_map, representation_map, payload_map) =
+    let (idea_map, ordering_map, ordering_items, connection_map, representation_map, payload_map) =
         empty_maps();
     let cycle_boundary_map = HashMap::new();
     let tempo_rows = vec![tempo_row(1, 0, false, false)];
@@ -356,8 +480,8 @@ fn replay_rejects_canonical_writer_grant_from_non_verifier() {
     let err = apply_events_with_verification(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -372,7 +496,7 @@ fn replay_rejects_canonical_writer_grant_from_non_verifier() {
 
 #[test]
 fn replay_is_deterministic_for_idea_and_connection_across_cycle_boundary() {
-    let (idea_map, rail_map, rail_items, connection_map, representation_map, payload_map) =
+    let (idea_map, ordering_map, ordering_items, connection_map, representation_map, payload_map) =
         empty_maps();
 
     let speaker = v7("00000000-0000-7000-8000-00000000a001");
@@ -526,8 +650,8 @@ fn replay_is_deterministic_for_idea_and_connection_across_cycle_boundary() {
     let first = apply_events(
         &events,
         &idea_by_event,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_by_event,
         &representation_map,
         &payload_by_idea,
@@ -538,8 +662,8 @@ fn replay_is_deterministic_for_idea_and_connection_across_cycle_boundary() {
     let second = apply_events(
         &events,
         &idea_by_event,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_by_event,
         &representation_map,
         &payload_by_idea,
@@ -583,8 +707,8 @@ fn replay_rejects_invalid_event() {
 
     let mut idea_map = HashMap::new();
     idea_map.insert(idea_row.created_event_id, idea_row);
-    let rail_map = HashMap::new();
-    let rail_items = HashMap::new();
+    let ordering_map = HashMap::new();
+    let ordering_items = HashMap::new();
     let connection_map = HashMap::new();
     let representation_map = HashMap::new();
     let payload_map = HashMap::new();
@@ -594,8 +718,8 @@ fn replay_rejects_invalid_event() {
     let err = apply_events(
         &[event],
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -608,7 +732,7 @@ fn replay_rejects_invalid_event() {
 
 #[test]
 fn cycle_close_dmin_guardrail_blocks_early_close() {
-    let (idea_map, rail_map, rail_items, connection_map, representation_map, payload_map) =
+    let (idea_map, ordering_map, ordering_items, connection_map, representation_map, payload_map) =
         empty_maps();
     let human = v7("00000000-0000-7000-8000-00000000a001");
     let close_event_id = v7("00000000-0000-7000-8000-000000000402");
@@ -640,8 +764,8 @@ fn cycle_close_dmin_guardrail_blocks_early_close() {
     let err = apply_events(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -654,7 +778,7 @@ fn cycle_close_dmin_guardrail_blocks_early_close() {
 
 #[test]
 fn forced_cycle_close_is_accepted_at_earliest_valid_position() {
-    let (idea_map, rail_map, rail_items, connection_map, representation_map, payload_map) =
+    let (idea_map, ordering_map, ordering_items, connection_map, representation_map, payload_map) =
         empty_maps();
     let human = v7("00000000-0000-7000-8000-00000000a001");
     let close_event_id = v7("00000000-0000-7000-8000-000000000502");
@@ -686,8 +810,8 @@ fn forced_cycle_close_is_accepted_at_earliest_valid_position() {
     let applied = apply_events(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -701,7 +825,7 @@ fn forced_cycle_close_is_accepted_at_earliest_valid_position() {
 
 #[test]
 fn cycle_close_resets_cycle_age_predicates_for_next_cycle() {
-    let (idea_map, rail_map, rail_items, connection_map, representation_map, payload_map) =
+    let (idea_map, ordering_map, ordering_items, connection_map, representation_map, payload_map) =
         empty_maps();
     let human = v7("00000000-0000-7000-8000-00000000a001");
     let close_event_id = v7("00000000-0000-7000-8000-000000000552");
@@ -741,8 +865,8 @@ fn cycle_close_resets_cycle_age_predicates_for_next_cycle() {
     let applied = apply_events(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -756,7 +880,7 @@ fn cycle_close_resets_cycle_age_predicates_for_next_cycle() {
 
 #[test]
 fn replay_rejects_when_cycle_close_is_not_earliest_valid() {
-    let (idea_map, rail_map, rail_items, connection_map, representation_map, payload_map) =
+    let (idea_map, ordering_map, ordering_items, connection_map, representation_map, payload_map) =
         empty_maps();
     let human = v7("00000000-0000-7000-8000-00000000a001");
     let close_event_id = v7("00000000-0000-7000-8000-000000000602");
@@ -788,8 +912,8 @@ fn replay_rejects_when_cycle_close_is_not_earliest_valid() {
     let err = apply_events(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -802,7 +926,7 @@ fn replay_rejects_when_cycle_close_is_not_earliest_valid() {
 
 #[test]
 fn replay_rejects_duplicate_cycle_close_for_closed_cycle() {
-    let (idea_map, rail_map, rail_items, connection_map, representation_map, payload_map) =
+    let (idea_map, ordering_map, ordering_items, connection_map, representation_map, payload_map) =
         empty_maps();
     let close_1 = v7("00000000-0000-7000-8000-000000000701");
     let close_2 = v7("00000000-0000-7000-8000-000000000702");
@@ -832,8 +956,8 @@ fn replay_rejects_duplicate_cycle_close_for_closed_cycle() {
     let err = apply_events(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -846,7 +970,7 @@ fn replay_rejects_duplicate_cycle_close_for_closed_cycle() {
 
 #[test]
 fn replay_rejects_non_system_cycle_close_and_system_non_boundary() {
-    let (idea_map, rail_map, rail_items, connection_map, representation_map, payload_map) =
+    let (idea_map, ordering_map, ordering_items, connection_map, representation_map, payload_map) =
         empty_maps();
     let human = v7("00000000-0000-7000-8000-00000000a001");
 
@@ -861,8 +985,8 @@ fn replay_rejects_non_system_cycle_close_and_system_non_boundary() {
     let err = apply_events(
         &[close_by_human],
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -883,8 +1007,8 @@ fn replay_rejects_non_system_cycle_close_and_system_non_boundary() {
     let err = apply_events(
         &[non_boundary_by_system],
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -897,7 +1021,7 @@ fn replay_rejects_non_system_cycle_close_and_system_non_boundary() {
 
 #[test]
 fn replay_rejects_duplicate_importance_challenge_instance() {
-    let (mut idea_map, rail_map, rail_items, connection_map, representation_map, mut payload_map) =
+    let (mut idea_map, ordering_map, ordering_items, connection_map, representation_map, mut payload_map) =
         empty_maps();
     let speaker = v7("00000000-0000-7000-8000-00000000a110");
     let idea_a_id = v7("00000000-0000-7000-8000-00000000b110");
@@ -1010,8 +1134,8 @@ fn replay_rejects_duplicate_importance_challenge_instance() {
     let err = apply_events(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -1031,8 +1155,8 @@ fn replay_rejects_duplicate_importance_challenge_instance() {
 fn replay_rejects_importance_argument_after_voting_open_boundary() {
     let (
         mut idea_map,
-        rail_map,
-        rail_items,
+        ordering_map,
+        ordering_items,
         mut connection_map,
         representation_map,
         mut payload_map,
@@ -1198,8 +1322,8 @@ fn replay_rejects_importance_argument_after_voting_open_boundary() {
     let err = apply_events(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -1221,8 +1345,8 @@ fn replay_rejects_importance_argument_after_voting_open_boundary() {
 fn replay_applies_importance_arguments_deterministically_in_order() {
     let (
         mut idea_map,
-        rail_map,
-        rail_items,
+        ordering_map,
+        ordering_items,
         mut connection_map,
         representation_map,
         mut payload_map,
@@ -1408,8 +1532,8 @@ fn replay_applies_importance_arguments_deterministically_in_order() {
     let first = apply_events(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,
@@ -1420,8 +1544,8 @@ fn replay_applies_importance_arguments_deterministically_in_order() {
     let second = apply_events(
         &events,
         &idea_map,
-        &rail_map,
-        &rail_items,
+        &ordering_map,
+        &ordering_items,
         &connection_map,
         &representation_map,
         &payload_map,

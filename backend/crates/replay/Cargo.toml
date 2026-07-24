@@ -8,6 +8,10 @@ anyhow.workspace = true
 chrono.workspace = true
 event-log = { path = "../event-log" }
 encoding = { path = "../encoding" }
+verification = { path = "../verification" }
 serde_json.workspace = true
 sqlx.workspace = true
 uuid.workspace = true
+
+[dev-dependencies]
+ed25519-dalek.workspace = true

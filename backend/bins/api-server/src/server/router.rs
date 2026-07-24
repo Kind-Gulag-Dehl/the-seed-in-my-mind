@@ -29,13 +29,13 @@ use crate::server::handlers::canonical::{
 };
 #[cfg(feature = "full")]
 use crate::server::handlers::private::{
-    private_ai_draft, private_create_idea, private_create_vine, private_delete_idea,
-    private_delete_vine, private_get_idea, private_get_vine, private_list_ideas,
-    private_list_vines, private_update_idea, private_update_vine,
+    private_ai_draft, private_create_idea, private_create_ordering, private_delete_idea,
+    private_delete_ordering, private_get_idea, private_get_ordering, private_list_ideas,
+    private_list_orderings, private_update_idea, private_update_ordering,
 };
 use crate::server::handlers::public::{
-    health_check, idea_detail_handler, idea_neighborhood, idea_rails_handler, ideas_top,
-    identity_detail_handler, latest_snapshot, rail_detail_handler, relative_importance_connections,
+    health_check, idea_detail_handler, idea_neighborhood, idea_orderings_handler, ideas_top,
+    identity_detail_handler, latest_snapshot, ordering_detail_handler, relative_importance_connections,
     search_ideas, snapshot_by_height, snapshot_commit_by_height, snapshot_commit_list,
 };
 use crate::server::types::AppState;
@@ -64,8 +64,8 @@ pub(crate) fn build_app(state: AppState) -> Router {
         .route("/api/v0/ideas/top", get(ideas_top))
         .route("/api/v0/coordinates", get(canonical_coordinates))
         .route("/api/v0/idea/:idea_id", get(idea_detail_handler))
-        .route("/api/v0/rail/:rail_id", get(rail_detail_handler))
-        .route("/api/v0/idea/:idea_id/rails", get(idea_rails_handler))
+        .route("/api/v0/ordering/:ordering_id", get(ordering_detail_handler))
+        .route("/api/v0/idea/:idea_id/orderings", get(idea_orderings_handler))
         .route("/api/v0/idea/:idea_id/neighborhood", get(idea_neighborhood))
         .route(
             "/api/v0/connections/relative-importance",
@@ -98,16 +98,16 @@ pub(crate) fn build_app(state: AppState) -> Router {
             .nest("/ai", private_ai_routes)
             .layer(from_fn_with_state(state.clone(), auth_middleware));
         let me_routes = Router::new()
-            .route("/vines", get(private_list_vines))
-            .route("/vines", axum::routing::post(private_create_vine))
-            .route("/vines/:private_vine_id", get(private_get_vine))
+            .route("/orderings", get(private_list_orderings))
+            .route("/orderings", axum::routing::post(private_create_ordering))
+            .route("/orderings/:private_ordering_id", get(private_get_ordering))
             .route(
-                "/vines/:private_vine_id",
-                axum::routing::put(private_update_vine),
+                "/orderings/:private_ordering_id",
+                axum::routing::put(private_update_ordering),
             )
             .route(
-                "/vines/:private_vine_id",
-                axum::routing::delete(private_delete_vine),
+                "/orderings/:private_ordering_id",
+                axum::routing::delete(private_delete_ordering),
             )
             .layer(DefaultBodyLimit::max(API_PRIVATE_BODY_LIMIT_BYTES))
             .layer(from_fn_with_state(state.clone(), auth_middleware));

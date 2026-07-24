@@ -1406,13 +1406,10 @@ The default inheritance order is:
 1. **Explicit beneficiary**  
    If the identity designated a beneficiary via a canonical event, that beneficiary receives the inheritable POINT.
 
-2. **Inviter fallback**  
-   If no beneficiary exists, the POINT transfers to the identity that invited the deceased identity into the system (if that inviter is alive and eligible).
+2. **Burn fallback**
+   If no beneficiary exists, inheritable POINT follows the active rulebook's non-lineage burn or public redistribution rule. Profile-v0 sponsor or invitation lineage MUST NOT be a beneficiary, fallback recipient, ownership interest, or economic entitlement.
 
-3. **Anthill fallback**  
-4. **Burn fallback**  
-
-4. **Burn fallback**  
+Invitation capacity is not money, reputation, ownership, truth weight, vote weight, governance influence, or economic authority. Sponsorship records admission provenance only and creates no claim on an admitted identity's future POINT, earnings, assets, or inheritance. Any future sponsor-lineage economic mechanism requires a separately governed profile and has no active Profile-v0 effect.
 Governance MAY parameterize this hierarchy but MUST preserve determinism and MUST NOT allow discretionary assignment.
 
 Governance MAY parameterize this hierarchy but MUST preserve determinism and MUST NOT allow discretionary assignment.

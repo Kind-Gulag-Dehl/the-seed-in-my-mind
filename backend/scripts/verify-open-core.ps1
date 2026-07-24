@@ -121,7 +121,7 @@ if (-not $ready) {
     if (-not (Invoke-Check -Method POST -Url "http://127.0.0.1:3000/api/v0/auth/login" -ExpectedStatus 404)) { $failures += "open-core/excluded/auth-login" }
     if (-not (Invoke-Check -Method GET -Url "http://127.0.0.1:3000/api/v0/auth/me" -ExpectedStatus 404)) { $failures += "open-core/excluded/auth-me" }
     if (-not (Invoke-Check -Method GET -Url "http://127.0.0.1:3000/api/v0/private/ideas" -ExpectedStatus 404)) { $failures += "open-core/excluded/private-ideas" }
-    if (-not (Invoke-Check -Method GET -Url "http://127.0.0.1:3000/api/v0/me/vines" -ExpectedStatus 404)) { $failures += "open-core/excluded/me-vines" }
+    if (-not (Invoke-Check -Method GET -Url "http://127.0.0.1:3000/api/v0/me/orderings" -ExpectedStatus 404)) { $failures += "open-core/excluded/me-vines" }
     if (-not (Invoke-Check -Method POST -Url "http://127.0.0.1:3000/api/v1/canonical/ideas" -ExpectedStatus 404)) { $failures += "open-core/excluded/canonical-write-ideas" }
 }
 

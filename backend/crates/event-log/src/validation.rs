@@ -93,16 +93,11 @@ fn validate_event_kind(
         "identity_create" => validate_identity_create(payload, event.speaker_identity_id),
         "idea_create" => validate_idea_create(payload, event.speaker_identity_id),
         "connection_create" => validate_connection_create(payload, event.speaker_identity_id),
-        "rail_create" => validate_rail_create(payload, event.speaker_identity_id),
-        "rail_fork" => validate_rail_fork(payload, event.speaker_identity_id),
+        "ordering_create" => validate_ordering_create(payload, event.speaker_identity_id),
+        "ordering_fork" => validate_ordering_fork(payload, event.speaker_identity_id),
         "representation_create" => {
             validate_representation_create(payload, event.speaker_identity_id, None)
         }
-        "rail_update_representation" => validate_representation_create(
-            payload,
-            event.speaker_identity_id,
-            Some(TargetKind::Rail),
-        ),
         "challenge_create" => validate_challenge_create(payload, event.speaker_identity_id),
         "challenge_open_arguments"
         | "challenge_close_arguments"
@@ -146,7 +141,14 @@ fn is_system_boundary_event_kind(kind: &str) -> bool {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum TargetKind {
     Idea,
-    Rail,
+    Ordering,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum OrderingProfile {
+    Vine,
+    EvidenceRail,
+    ActionRail,
 }
 
 fn validate_idea_create(
@@ -304,17 +306,17 @@ fn validate_payload_speaker_identity(
     Ok(())
 }
 
-fn validate_rail_create(
+fn validate_ordering_create(
     payload: &serde_json::Map<String, Value>,
     speaker_identity_id: Option<uuid::Uuid>,
 ) -> Result<(), ValidationError> {
     ensure_speaker_identity_present(speaker_identity_id)?;
 
-    let rail_id = require_string(payload, "rail_id")?;
-    validate_id(rail_id).map_err(|err| ValidationError::new("invalid_id", err))?;
+    let ordering_id = require_string(payload, "ordering_id")?;
+    validate_id(ordering_id).map_err(|err| ValidationError::new("invalid_id", err))?;
 
-    parse_rail_kind(payload, "rail_kind")?;
-    parse_vine_type(payload, "vine_type", true)?;
+    let ordering_profile = parse_ordering_profile(payload, "ordering_profile")?;
+    validate_profile_vine_type(payload, ordering_profile, true)?;
     let item_count = validate_item_idea_ids(payload)?;
     validate_step_meta(payload, item_count)?;
     validate_initial_representation_refs(payload)?;
@@ -329,21 +331,22 @@ fn validate_rail_create(
     Ok(())
 }
 
-fn validate_rail_fork(
+fn validate_ordering_fork(
     payload: &serde_json::Map<String, Value>,
     speaker_identity_id: Option<uuid::Uuid>,
 ) -> Result<(), ValidationError> {
     ensure_speaker_identity_present(speaker_identity_id)?;
 
-    let base_rail_id = require_string(payload, "base_rail_id")?;
-    validate_id(base_rail_id).map_err(|err| ValidationError::new("invalid_id", err))?;
+    let base_ordering_id = require_string(payload, "base_ordering_id")?;
+    validate_id(base_ordering_id).map_err(|err| ValidationError::new("invalid_id", err))?;
 
-    let rail_id = require_string(payload, "rail_id")?;
-    validate_id(rail_id).map_err(|err| ValidationError::new("invalid_id", err))?;
+    let ordering_id = require_string(payload, "ordering_id")?;
+    validate_id(ordering_id).map_err(|err| ValidationError::new("invalid_id", err))?;
 
+    let ordering_profile = parse_ordering_profile(payload, "ordering_profile")?;
     let item_count = validate_item_idea_ids(payload)?;
     validate_step_meta(payload, item_count)?;
-    parse_vine_type(payload, "vine_type", false)?;
+    validate_profile_vine_type(payload, ordering_profile, false)?;
     validate_initial_representation_refs(payload)?;
 
     if let Some(value) = payload.get("speaker_identity_id") {
@@ -477,8 +480,8 @@ fn validate_challenge_create(
         validate_id_array(subject_idea_ids, "subject_idea_ids")?;
     }
 
-    if let Some(subject_rail_ids) = payload.get("subject_rail_ids") {
-        validate_id_array(subject_rail_ids, "subject_rail_ids")?;
+    if let Some(subject_ordering_ids) = payload.get("subject_ordering_ids") {
+        validate_id_array(subject_ordering_ids, "subject_ordering_ids")?;
     }
 
     Ok(())
@@ -958,7 +961,7 @@ fn parse_target_kind_value(value: &Value, field: &str) -> Result<TargetKind, Val
     match value {
         Value::String(v) => match v.as_str() {
             "idea" => Ok(TargetKind::Idea),
-            "rail" => Ok(TargetKind::Rail),
+            "ordering" => Ok(TargetKind::Ordering),
             _ => Err(ValidationError::new(
                 "invalid_field",
                 format!("{field} has unsupported value"),
@@ -966,7 +969,7 @@ fn parse_target_kind_value(value: &Value, field: &str) -> Result<TargetKind, Val
         },
         Value::Number(v) => match v.as_u64() {
             Some(0) => Ok(TargetKind::Idea),
-            Some(1) => Ok(TargetKind::Rail),
+            Some(1) => Ok(TargetKind::Ordering),
             _ => Err(ValidationError::new(
                 "invalid_field",
                 format!("{field} has unsupported value"),
@@ -979,20 +982,43 @@ fn parse_target_kind_value(value: &Value, field: &str) -> Result<TargetKind, Val
     }
 }
 
-fn parse_rail_kind(
+fn parse_ordering_profile(
     payload: &serde_json::Map<String, Value>,
     field: &str,
-) -> Result<(), ValidationError> {
+) -> Result<OrderingProfile, ValidationError> {
     let value = payload
         .get(field)
         .ok_or_else(|| ValidationError::new("missing_field", format!("{field} required")))?;
     match value {
-        Value::String(v) if v == "vine" => Ok(()),
-        Value::Number(v) if v.as_u64() == Some(0) => Ok(()),
+        Value::String(v) if v == "vine" => Ok(OrderingProfile::Vine),
+        Value::String(v) if v == "evidence_rail" => Ok(OrderingProfile::EvidenceRail),
+        Value::String(v) if v == "action_rail" => Ok(OrderingProfile::ActionRail),
         _ => Err(ValidationError::new(
             "invalid_field",
-            format!("{field} must be vine"),
+            format!("{field} must be vine, evidence_rail, or action_rail"),
         )),
+    }
+}
+
+fn validate_profile_vine_type(
+    payload: &serde_json::Map<String, Value>,
+    ordering_profile: OrderingProfile,
+    vine_type_required: bool,
+) -> Result<(), ValidationError> {
+    match ordering_profile {
+        OrderingProfile::Vine => parse_vine_type(payload, "vine_type", vine_type_required),
+        OrderingProfile::EvidenceRail | OrderingProfile::ActionRail => {
+            if payload
+                .get("vine_type")
+                .is_some_and(|value| !value.is_null())
+            {
+                return Err(ValidationError::new(
+                    "invalid_field",
+                    "vine_type is only valid for the vine ordering_profile",
+                ));
+            }
+            Ok(())
+        }
     }
 }
 
@@ -1010,7 +1036,6 @@ fn parse_vine_type(
     match value {
         Value::Null if !required => Ok(()),
         Value::String(v) if v == "pathway_vine" || v == "narrative_vine" => Ok(()),
-        Value::Number(v) if matches!(v.as_u64(), Some(0) | Some(1)) => Ok(()),
         _ => Err(ValidationError::new(
             "invalid_field",
             format!("{field} has unsupported value"),
@@ -1338,7 +1363,9 @@ fn validate_hex_64(value: &str, field: &str) -> Result<(), ValidationError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use encoding::payload::{canonical_json_payload_bytes, canonical_json_payload_hash_hex};
     use serde_json::json;
+    use std::collections::HashMap;
     use uuid::Uuid;
 
     fn v7(id: &str) -> Uuid {
@@ -1829,5 +1856,114 @@ mod tests {
 
         let err = validate_event(&event).expect_err("should reject secret-like payload");
         assert_eq!(err.code, "secret_detected");
+    }
+
+    #[test]
+    fn native_ordering_conformance_vectors_match_validation_and_hashing() {
+        let fixture: Value = serde_json::from_str(include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../docs/conformance/native-ordering.vectors.json"
+        )))
+        .expect("native Ordering fixture must parse");
+
+        for vector in fixture["vectors"]
+            .as_array()
+            .expect("vectors must be an array")
+        {
+            let mut profiles: HashMap<Uuid, String> = HashMap::new();
+            let mut actual_code: Option<String> = None;
+            for fixture_event in vector["events"].as_array().expect("events must be an array") {
+                let event = Event {
+                    id: v7(fixture_event["id"].as_str().expect("event id")),
+                    kind: fixture_event["kind"]
+                        .as_str()
+                        .expect("event kind")
+                        .to_string(),
+                    payload: fixture_event["payload"].clone(),
+                    speaker_identity_id: Some(v7(
+                        fixture_event["speaker_identity_id"]
+                            .as_str()
+                            .expect("speaker_identity_id"),
+                    )),
+                };
+
+                if let Err(error) = validate_event(&event) {
+                    actual_code = Some(error.code.to_string());
+                    break;
+                }
+
+                if matches!(event.kind.as_str(), "ordering_create" | "ordering_fork") {
+                    let payload = event.payload.as_object().expect("Ordering payload object");
+                    let ordering_id = v7(
+                        payload["ordering_id"]
+                            .as_str()
+                            .expect("ordering_id string"),
+                    );
+                    let profile = match &payload["ordering_profile"] {
+                        Value::String(value) => value.clone(),
+                        _ => panic!("validator accepted invalid ordering_profile"),
+                    };
+                    if event.kind == "ordering_fork" {
+                        let base_ordering_id = v7(
+                            payload["base_ordering_id"]
+                                .as_str()
+                                .expect("base_ordering_id string"),
+                        );
+                        match profiles.get(&base_ordering_id) {
+                            None => {
+                                actual_code = Some("base_ordering_not_found".to_string());
+                                break;
+                            }
+                            Some(base_profile) if base_profile != &profile => {
+                                actual_code = Some("ordering_profile_mismatch".to_string());
+                                break;
+                            }
+                            Some(_) => {}
+                        }
+                    }
+                    profiles.insert(ordering_id, profile);
+                }
+            }
+
+            let expected_accept = vector["expected"]["accept"]
+                .as_bool()
+                .expect("expected.accept");
+            let expected_code = vector["expected"]["code"].as_str().map(str::to_string);
+            assert_eq!(
+                actual_code.is_none(),
+                expected_accept,
+                "{} acceptance mismatch",
+                vector["id"].as_str().unwrap_or("unknown")
+            );
+            assert_eq!(
+                actual_code,
+                expected_code,
+                "{} error-code mismatch",
+                vector["id"].as_str().unwrap_or("unknown")
+            );
+        }
+
+        for vector in fixture["hash_vectors"]
+            .as_array()
+            .expect("hash_vectors must be an array")
+        {
+            let payload = &vector["payload"];
+            let canonical_bytes =
+                canonical_json_payload_bytes(payload).expect("canonical JSON bytes");
+            assert_eq!(
+                String::from_utf8(canonical_bytes).expect("canonical JSON is UTF-8"),
+                vector["canonical_json_utf8"]
+                    .as_str()
+                    .expect("canonical_json_utf8")
+            );
+            let actual_hash =
+                canonical_json_payload_hash_hex(payload).expect("canonical JSON hash");
+            assert_eq!(
+                actual_hash,
+                vector["blake3"].as_str().expect("blake3"),
+                "{} BLAKE3 mismatch",
+                vector["id"].as_str().unwrap_or("unknown")
+            );
+        }
     }
 }

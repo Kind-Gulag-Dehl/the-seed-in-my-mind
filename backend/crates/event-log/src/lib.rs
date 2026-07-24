@@ -1,4 +1,5 @@
 pub mod ordering;
+pub mod profile_v0_admission;
 pub mod schema;
 pub mod secret_screen;
 pub mod validation;

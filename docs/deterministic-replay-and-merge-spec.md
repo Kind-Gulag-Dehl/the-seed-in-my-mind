@@ -192,6 +192,32 @@ Replay order for Tempo/Cycle state:
 All conformant implementations MUST produce identical outputs from identical inputs.
 Replay height corresponds to a finalized canonical sequence boundary. When snapshots or APIs surface `block_height`, that height is the derived packaging address defined in snapshot-format-v0.md and `pod-consensus-and-canonical-publication-spec.md`. State reconstruction at snapshot boundaries uses the specified `state_root_hash`, `title_sentence_payload_root` (equal to `pocket_map_payload_root`), and derived `shared_map_commitment`.
 
+### 1.2B Profile-v0 identity-admission replay obligations [anchor: profile_v0_identity_admission_replay_obligations]
+
+For a valid Profile-v0 `identity_create`, replay applies the exact Appendix A and
+Signature Profile-v0 schema only at the event's finalized canonical position. The
+single atomic transition derives all of the following, or derives none of them:
+
+- canonical existence of the target `CanonicalAdmittedIdentity` with `identity_kind = human`;
+- `event_derived` admission provenance, the accepted initial direct key, and key-registration provenance;
+- the complete Mindgarden, Backyard of Relationships, Self Tree, and Anthill root set;
+- sponsor/admission provenance and the direct sponsor-to-admitted lineage relation;
+- exactly one debit of the sponsor's replay-derived invitation-capacity balance; and
+- only the restricted verification and direct-key-control lanes permitted by the active
+  event-family and rulebook rules.
+
+Admission does not derive VH, VI, human uniqueness, ordinary writing or challenge
+eligibility, voting, governance, Tempo eligibility, inviter eligibility, capacity,
+economic authority, a private account, or a mutable universal identity status.
+
+The same identity event, key transition, or capacity debit MUST be idempotent when the
+canonical event model recognizes an exact already-accepted retry. A conflicting
+duplicate, rejected candidate, or invalid event derives no identity, key, root, lineage,
+eligibility, or capacity effect. Replay MUST use finalized log order and the active
+canonical rulebook only; database row order, API arrival order, wall-clock time,
+operator discretion, private-account state, local storage behavior, and AI output are
+forbidden inputs.
+
 ### 1.3 Deterministic serialization and hashing dependencies [anchor: deterministic_serialization_and_hashing_dependencies]
 
 All deterministic replay, state hashing, snapshot verification, and authorship-signature checks depend on **canonical serialization, hashing, and authored-candidate signature rules**.
@@ -266,14 +292,16 @@ Any implementation that uses forbidden inputs to determine ordering violates det
 Deterministic replay operates over a single canonical state composed of the following **partitions**. Canonical facts are committed by `state_root_hash` as defined in Snapshot Format v0; derived outputs are not.
 
 - **identities**
-  Registered human identities and associated canonical metadata.
+  Canonical identity anchors, identity kind, provenance, admission facts, structural-root
+  references, and registered direct-key history. Current key and eligibility outputs are
+  replay-derived rather than private-account or implementation-owned state.
 
 - **ideas**
   All canonical ideas, including truth claims, conceptual ideas, actionable ideas, actions, and identity-typed ideas.
   Replay MUST treat ideas as a single universal canonical substrate. Tribe-only canonical idea object classes are forbidden and MUST NOT be created, inferred, or reconstructed during replay.
 
-- **rails / vines**
-  Canonical rail objects (including `pathway_vine` and `narrative_vine`) with ordered `idea_id` sequences and rail representation pointers.
+- **orderings / vines**
+  Canonical ordering objects (including `pathway_vine` and `narrative_vine`) with ordered `idea_id` sequences and ordering representation pointers.
 
 - **connections**
   Canonical connections (`same_as`, `relative_importance`, `membership`) with all protocol-defined metadata.
@@ -306,7 +334,7 @@ Each partition is classified as either **stored** or **derived**:
 **Stored state** includes:
 - identities
 - ideas
-- rails / vines
+- orderings / vines
 - representations / descriptions (representation objects plus canonical representation pointers)
 - connections
 - challenges and verdicts
@@ -319,6 +347,8 @@ Stored state is introduced **only** through canonical events or verified snapsho
 - POD and POINT balances
 - safety classifications and visibility state
 - voter eligibility pools
+- identity verification artifacts' VH and VI certainty, event-family eligibility lanes,
+  invitation capacity, invitation suspension, maturation, and admission-liveness state
 - search and navigation indexes
 - UI-oriented aggregates and summaries
 
@@ -331,6 +361,16 @@ Snapshots MAY include derived state for convenience or historical record, but de
 Derived indexes **MUST NOT** be treated as authoritative unless:
 - they are explicitly anchored to canonical events or snapshots, and
 - their derivation algorithm is deterministic and specified.
+
+For Profile v0, replay maintains separate derived identity lanes rather than one
+mutable lifecycle status: canonical existence; identity kind; key control and key
+history; structural-root completeness; sponsor/admission provenance and lineage;
+verification state; VH and VI certainty; restricted-verification, ordinary-writer,
+ordinary-challenge, voter, governance, Tempo, and inviter eligibility; invitation
+capacity balance; invitation suspension; maturation; dormancy or recovery state; and
+the applicable `admission_liveness_blocked` status. Stored compatibility fields such as
+`canonical_writer_level` are historical/materialized inputs only. They are not final
+protocol authority and cannot override replay-derived lanes.
 
 ### 3.3 Deterministic state hash [anchor: deterministic_state_hash]
 
@@ -521,6 +561,40 @@ To ensure replay safety:
 
 Implementations MUST be able to discard all in-memory state and reconstruct canonical state solely by replaying the canonical event log.
 
+### 5.2A Profile-v0 identity and direct-key application [anchor: profile_v0_identity_and_direct_key_application]
+
+`identity_create`, `identity_key_rotate`, and `identity_key_revoke` use the exact
+schemas, proofs, validation precedence, and non-reuse rule in Protocol v5 Appendix A,
+the Canonical Encoding and Hashing Specification, and the Profile-v0 Authorship and
+Signature Specification. Replay MUST NOT reinterpret their bytes or replace their
+errors.
+
+The direct-key model has one active key per identity. A valid rotation atomically
+supersedes the current active key and activates the proven replacement. A valid
+revocation has only the narrow Appendix A purpose of marking a superseded key revoked;
+it cannot revoke the sole active key in Profile v0. Historical signatures remain valid
+when their key was active at their own finalized position. A later supersession or
+revocation does not rewrite accepted history. Replay records active, superseded,
+revoked, malformed/invalid, and historically reused-key rejection states with the
+event/provenance that caused each transition.
+
+No direct-key recovery, reassignment, hidden operator override, or multiple-active-key
+extension is implied by this section. Those require a later profile.
+
+### 5.2B Compatibility-only identity verification records [anchor: compatibility_only_identity_verification_records]
+
+`identity_verification_update` is not an ordinary post-genesis validation or authority
+transition. Replay accepts it only when the exact versioned genesis, import, or legacy
+manifest required by Appendix A authorizes the compatibility record. It preserves its
+closed provenance class and historical status as compatibility information only.
+
+Such a record MUST NOT be translated into Profile-v0 sponsored admission, an applicant
+proof, a sponsor, a capacity debit, an admission lineage edge, ordinary truth/evidence
+material, VH, VI, or any ordinary writer, inviter, voter, governance, Tempo, or economic
+eligibility. Ordinary long-term verification derives from canonical claims, evidence,
+contradictions, challenges, responses, outcomes, active rulebooks, and activation
+boundaries. A manifest cannot create a continuing operator-controlled status setter.
+
 ### 5.3 Tombstones and reversals [anchor: tombstones_and_reversals]
 
 Canonical state supports removal and reversal through **forward-only events**.
@@ -537,26 +611,24 @@ Replay height corresponds to block height as defined in snapshot-format-v0.md. S
 Reversals or corrections MUST occur only through new canonical events and MUST NOT modify prior events retroactively.
 
 
-### 5.4 Rail event application semantics [anchor: rail_event_application_semantics]
+### 5.4 Ordering event application semantics [anchor: ordering_event_application_semantics]
 
-Rail/vine events are applied as deterministic stored-state transitions:
+Ordering/vine events are applied as deterministic stored-state transitions:
 
-- `rail_create`
-  - Adds a new rail object with ordered `item_idea_ids`, `rail_kind`, and required vine metadata.
+- `ordering_create`
+  - Adds a new Ordering object with ordered `item_idea_ids`, explicit `ordering_profile`, and profile-valid metadata.
 
-- `rail_fork`
-  - Adds a new rail object that references `base_rail_id` and carries a full replacement ordered item list.
-  - Existing rails are not edited in place (fork-only model).
-
-- `rail_update_representation`
-  - Deprecated compatibility alias of `representation_create` for rail targets (`target_kind = rail`).
-  - Creates a candidate/competing representation object for the rail target.
-  - Does not update canonical representation pointer selection.
+- `ordering_fork`
+  - Adds a new Ordering object that references `base_ordering_id`, repeats the base Ordering's `ordering_profile`, and carries a full replacement ordered item list.
+  - A fork whose profile differs from its base is invalid.
+  - Existing Orderings are not edited in place (fork-only model).
 
 - `representation_create`
-  - Creates candidate/competing representation objects for both ideas and rails, without pointer selection changes.
+  - Creates candidate/competing representation objects for both ideas and orderings, without pointer selection changes.
 
-Deterministic event ordering is sufficient to merge concurrent rail activity. No additional rail-specific merge heuristic is permitted.
+`representation_create` is the only live representation-creation event for Ordering targets. No Ordering-specific compatibility alias is valid.
+
+Deterministic event ordering is sufficient to merge concurrent Ordering activity. No additional Ordering-specific merge heuristic is permitted.
 
 ### 5.5 Overlay event application semantics [anchor: overlay_event_application_semantics]
 
@@ -739,7 +811,7 @@ Verdict finalization events map to deterministic state transformations based on 
 - Actions remain historical records regardless of acceptance outcome.
 
 **Representation challenges**
-- Replay of `challenge_finalize_verdict` updates canonical representation pointer(s) for an idea or rail tier slot.
+- Replay of `challenge_finalize_verdict` updates canonical representation pointer(s) for an idea or ordering tier slot.
 - Prior representation objects remain part of historical record.
 - No representation object is deleted or rewritten by verdict application.
 
@@ -811,7 +883,7 @@ A conformant snapshot MUST include, at minimum. Snapshot Format v0 is authoritat
 - **full canonical stored state**, including:
   - identities
   - ideas
-  - rails / vines
+  - orderings / vines
   - representations and canonical representation pointers
   - connections
   - challenges and verdicts
@@ -984,12 +1056,12 @@ The following conflict types MAY arise during replay or reintegration:
   - All claims may coexist canonically until challenged and adjudicated.
 
 - **Competing representations**
-  - Multiple descriptions or representations exist for the same idea or rail.
+  - Multiple descriptions or representations exist for the same idea or ordering.
   - Canonical selection occurs only through replay of finalized representation challenge verdicts.
 
-- **Competing rails / vines**
-  - Multiple rails may encode different orderings over overlapping idea sets.
-  - Rails are fork-only canonical objects; coexistence is preserved unless superseded by later canonical events.
+- **Competing orderings / vines**
+  - Multiple orderings may encode different orderings over overlapping idea sets.
+  - Orderings are fork-only canonical objects; coexistence is preserved unless superseded by later canonical events.
 
 - **Competing importance relations**
   - Multiple `relative_importance` connections assert incompatible orderings.

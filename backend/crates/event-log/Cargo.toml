@@ -5,6 +5,10 @@ edition.workspace = true
 
 [dependencies]
 encoding = { path = "../encoding" }
+verification = { path = "../verification" }
 serde.workspace = true
 serde_json.workspace = true
 uuid.workspace = true
+
+[dev-dependencies]
+ed25519-dalek.workspace = true

@@ -7,6 +7,7 @@ mod accounts;
 mod canonical;
 mod db;
 mod private_data;
+mod profile_v0_admission;
 mod read;
 mod types;
 

@@ -1,5 +1,5 @@
 use api_types_canonical::{
-    CanonicalRailResponse, CanonicalRailsResponse, IdeasTopResponse, IdentityInfo,
+    CanonicalOrderingResponse, CanonicalOrderingsResponse, IdeasTopResponse, IdentityInfo,
     IdentityResponse, NeighborhoodResponse, RelativeImportanceConnectionsResponse,
     SearchIdeasResponse, SnapshotCommitListResponse, SnapshotCommitResponse,
     SnapshotLatestResponse, SnapshotResponse,
@@ -20,7 +20,7 @@ use crate::server::helpers::{
     parse_relative_importance_direction, parse_uuid_v7, scoped_neighbor_from_reference,
 };
 use crate::server::mapping::{
-    canonical_rail_detail, canonical_rail_summary, connection_summary, idea_detail, idea_summary,
+    canonical_ordering_detail, canonical_ordering_summary, connection_summary, idea_detail, idea_summary,
     snapshot_commit_metadata, snapshot_headers, snapshot_metadata, with_headers,
 };
 use crate::server::types::{
@@ -650,12 +650,12 @@ pub(crate) async fn idea_neighborhood(
     with_headers(response, headers)
 }
 
-pub(crate) async fn rail_detail_handler(
-    Path(rail_id): Path<String>,
+pub(crate) async fn ordering_detail_handler(
+    Path(ordering_id): Path<String>,
     State(state): State<AppState>,
 ) -> Response {
-    let rail_id = match parse_uuid_v7(&rail_id) {
-        Ok(rail_id) => rail_id,
+    let ordering_id = match parse_uuid_v7(&ordering_id) {
+        Ok(ordering_id) => ordering_id,
         Err(response) => return response,
     };
 
@@ -678,13 +678,13 @@ pub(crate) async fn rail_detail_handler(
 
     let row = match state
         .storage
-        .get_canonical_rail(snapshot.block_height, rail_id)
+        .get_canonical_ordering(snapshot.block_height, ordering_id)
         .await
     {
         Ok(Some(row)) => row,
         Ok(None) => return json_error(StatusCode::NOT_FOUND, "not_found", "not found"),
         Err(err) => {
-            tracing::error!(?err, "failed to load rail detail");
+            tracing::error!(?err, "failed to load ordering detail");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -694,12 +694,12 @@ pub(crate) async fn rail_detail_handler(
     };
     let items = match state
         .storage
-        .list_canonical_rail_items(snapshot.block_height, rail_id)
+        .list_canonical_ordering_items(snapshot.block_height, ordering_id)
         .await
     {
         Ok(items) => items,
         Err(err) => {
-            tracing::error!(?err, "failed to load rail items");
+            tracing::error!(?err, "failed to load ordering items");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -708,14 +708,14 @@ pub(crate) async fn rail_detail_handler(
         }
     };
 
-    let body = CanonicalRailResponse {
-        rail: canonical_rail_detail(&row, &items),
+    let body = CanonicalOrderingResponse {
+        ordering: canonical_ordering_detail(&row, &items),
     };
     let response = (StatusCode::OK, Json(body)).into_response();
     with_headers(response, headers)
 }
 
-pub(crate) async fn idea_rails_handler(
+pub(crate) async fn idea_orderings_handler(
     Path(idea_id): Path<String>,
     State(state): State<AppState>,
 ) -> Response {
@@ -743,12 +743,12 @@ pub(crate) async fn idea_rails_handler(
 
     let rows = match state
         .storage
-        .list_canonical_rails_for_idea(snapshot.block_height, idea_id)
+        .list_canonical_orderings_for_idea(snapshot.block_height, idea_id)
         .await
     {
         Ok(rows) => rows,
         Err(err) => {
-            tracing::error!(?err, "failed to load rails for idea");
+            tracing::error!(?err, "failed to load orderings for idea");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -757,8 +757,8 @@ pub(crate) async fn idea_rails_handler(
         }
     };
 
-    let body = CanonicalRailsResponse {
-        rails: rows.iter().map(canonical_rail_summary).collect(),
+    let body = CanonicalOrderingsResponse {
+        orderings: rows.iter().map(canonical_ordering_summary).collect(),
     };
     let response = (StatusCode::OK, Json(body)).into_response();
     with_headers(response, headers)

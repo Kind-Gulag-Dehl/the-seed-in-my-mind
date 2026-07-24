@@ -20,4 +20,5 @@ sqlx.workspace = true
 uuid.workspace = true
 
 [dev-dependencies]
+ed25519-dalek.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

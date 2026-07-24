@@ -4,7 +4,7 @@ use encoding::hash::hash_with_domain;
 use replay::ReplayDriver;
 use snapshot::{
     compute_title_sentence_payload_root, sha256_hex, to_hex, CONNECTIONS_SECTION_ID,
-    IDEAS_SECTION_ID, RAILS_SECTION_ID,
+    IDEAS_SECTION_ID, ORDERINGS_SECTION_ID,
 };
 use sqlx::{postgres::PgPoolOptions, FromRow, PgPool};
 use std::collections::BTreeMap;
@@ -579,13 +579,13 @@ fn compute_stage0_state_root(hashes: &BTreeMap<u16, Vec<u8>>) -> Result<Vec<u8>>
     let connections = hashes
         .get(&CONNECTIONS_SECTION_ID)
         .ok_or_else(|| anyhow!("missing connections section"))?;
-    let rails = hashes
-        .get(&RAILS_SECTION_ID)
-        .ok_or_else(|| anyhow!("missing rails section"))?;
+    let orderings = hashes
+        .get(&ORDERINGS_SECTION_ID)
+        .ok_or_else(|| anyhow!("missing orderings section"))?;
     let mut payload = Vec::new();
     payload.extend_from_slice(ideas);
     payload.extend_from_slice(connections);
-    payload.extend_from_slice(rails);
+    payload.extend_from_slice(orderings);
     Ok(hash_with_domain("snapshot_state_root", &payload))
 }
 

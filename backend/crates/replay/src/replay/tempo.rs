@@ -1,5 +1,5 @@
 use super::parsing::parse_non_negative_i64_value;
-use super::state::{CycleClosureKind, RailKind, WriterVerificationState};
+use super::state::{CycleClosureKind, OrderingProfile, WriterVerificationState};
 use super::*;
 
 pub(super) fn parse_cycle_closure_kind(
@@ -79,9 +79,11 @@ pub(super) fn approximate_timestamp_from_event_id(
     })
 }
 
-pub(super) fn rail_kind_to_string(kind: RailKind) -> &'static str {
+pub(super) fn ordering_profile_to_string(kind: OrderingProfile) -> &'static str {
     match kind {
-        RailKind::Vine => "vine",
+        OrderingProfile::Vine => "vine",
+        OrderingProfile::EvidenceRail => "evidence_rail",
+        OrderingProfile::ActionRail => "action_rail",
     }
 }
 

@@ -93,3 +93,9 @@ These rules are enforced by:
 - compatibility alias for generated export cleanliness: `npm run verify:open-core-export`
 - working-tree-as-export hygiene check: `npm run verify:export-working-tree`
 - full export + packaged artifact generation: `npm run extract:open-core`
+
+## 6. Profile-v0 identity-admission boundary
+
+Profile-v0 canonical identity admission belongs in the public open-core canonical substrate: public event validation, replay, snapshots, public canonical reads, and the protocol-defined signed write ingress. Private product accounts, sessions, applicant requests, relay records, contact details, private evidence, private documents, private messages, private storage IDs, secrets, and private AI prompts or outputs are not canonical admission authority and MUST NOT enter the exported canonical dependency path.
+
+A generated export is not an authority source. No private module may become a hidden sponsor, verifier, capacity issuer, eligibility setter, or canonical admission decision-maker.

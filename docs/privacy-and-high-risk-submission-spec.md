@@ -699,7 +699,7 @@ The Verification Spec defines two separable tracks:
 
 This privacy specification clarifies that:
 
-- VH MUST be sufficient for canonical authorship eligibility.
+- VH may satisfy a human-evidence predicate, but ordinary canonical authorship remains subject to the separately derived event-family eligibility rules.
 - VI MUST remain optional.
 - Absence of VI MUST NOT reduce canonical rights or eligibility.
 
@@ -740,6 +740,16 @@ At the same time:
 
 Verification certainty is determined deterministically through canonical evidence ideas and challenge outcomes.
 Civil identity disclosure is not a substitute for proper challenge resolution.
+
+### 10.2A Profile-v0 admission privacy boundary
+
+Profile-v0 local identity preparation and admission requests are non-canonical. An applicant MAY exchange a request directly, through a relay, or through a future request-discovery mechanism, but the request does not create canonical identity state, reserve invitation capacity, oblige a sponsor, establish verification, establish VH or VI, grant ordinary authority, or create a canonical public record.
+
+Raw private evidence, contact details, identity documents, private communications, private account identifiers, relay-local records, and request-pool records MUST NOT become canonical merely to support admission. The optional `verification_reference` in a canonical `identity_create` MAY identify only an existing canonical verification artifact, a privacy-safe canonical commitment to applicant-authorized verification material, or another exact canonical commitment permitted by the applicable privacy and verification specifications. A privacy-safe commitment MUST NOT disclose its underlying private material by itself. A `verification_reference` has no admission, VH, VI, writer, inviter, voting, governance, Tempo, or economic effect merely by appearing in the event.
+
+Profile-v0 invitation capacity is deterministically derivable from public canonical history and applicable rulebooks. Omission, bucketing, or delay in a DTO or interface is presentation minimization, not cryptographic privacy. A future private-capacity profile requires separate cryptographic specification.
+
+Pseudonymous participation MAY reach sufficient VH without public civil identity; VI is not universally mandatory. High-risk, disconnected, or stranger applicants MUST NOT be rejected solely for lacking a pre-existing social connection or public civil identity. Any additional admission evidence, friction, or safety procedure MUST be objective, challengeable where applicable, and MUST NOT become viewpoint-based admission control.
 
 ---
 

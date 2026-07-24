@@ -70,13 +70,13 @@ function Copy-EnvIfMissing {
         [string]$SourceKey,
         [string]$TargetKey
     )
-    $targetItem = Get-Item -Path "Env:$TargetKey" -ErrorAction SilentlyContinue
-    if ($targetItem -and -not [string]::IsNullOrWhiteSpace($targetItem.Value)) {
+    $targetValue = [Environment]::GetEnvironmentVariable($TargetKey, "Process")
+    if (-not [string]::IsNullOrWhiteSpace($targetValue)) {
         return
     }
-    $sourceItem = Get-Item -Path "Env:$SourceKey" -ErrorAction SilentlyContinue
-    if ($sourceItem -and -not [string]::IsNullOrWhiteSpace($sourceItem.Value)) {
-        Set-Item -Path "Env:$TargetKey" -Value $sourceItem.Value
+    $sourceValue = [Environment]::GetEnvironmentVariable($SourceKey, "Process")
+    if (-not [string]::IsNullOrWhiteSpace($sourceValue)) {
+        [Environment]::SetEnvironmentVariable($TargetKey, $sourceValue, "Process")
         Write-Host "[bootstrap] mapped $SourceKey -> $TargetKey" -ForegroundColor DarkGray
     }
 }
@@ -174,8 +174,8 @@ function Test-MigrationApplied {
         "0009_identities_s0.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.identities_s0') IS NOT NULL;") -eq "t") }
         "0010_identity_idea_uniqueness.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.ideas_identity_idea_unique_idx') IS NOT NULL;") -eq "t") }
         "0011_personal_space_organizer_flag.sql" { return ((Invoke-Scalar "SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ideas' AND column_name = 'is_personal_space_organizer');") -eq "t") }
-        "0012_rails_vines_stage0.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.rails') IS NOT NULL;") -eq "t") }
-        "0013_private_vines_stage1.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.private_vines') IS NOT NULL;") -eq "t") }
+        "0012_rails_vines_stage0.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.orderings') IS NOT NULL OR to_regclass('public.rails') IS NOT NULL;") -eq "t") }
+        "0013_private_vines_stage1.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.private_orderings') IS NOT NULL OR to_regclass('public.private_vines') IS NOT NULL;") -eq "t") }
         "0014_canonical_append_only.sql" { return ((Invoke-Scalar "SELECT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'seed_enforce_canonical_append_only');") -eq "t") }
         "0015_cycle_tempo_foundation.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.tempo_predicates') IS NOT NULL;") -eq "t") }
         "0016_canonical_writer_verifications.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.canonical_writer_verifications') IS NOT NULL;") -eq "t") }
@@ -183,6 +183,7 @@ function Test-MigrationApplied {
         "0018_stage1_importance_voting.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.challenge_vote_sessions') IS NOT NULL;") -eq "t") }
         "0019_verifier_writer_grants.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.canonical_writer_verification_states') IS NOT NULL;") -eq "t") }
         "0020_auth_session_token_hash.sql" { return ((Invoke-Scalar "SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'auth_sessions' AND column_name = 'token_hash');") -eq "t") }
+        "0024_native_ordering_cutover.sql" { return ((Invoke-Scalar "SELECT to_regclass('public.orderings') IS NOT NULL AND to_regclass('public.rails') IS NULL;") -eq "t") }
         default { return $false }
     }
 }

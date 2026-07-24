@@ -27,7 +27,7 @@ It is mutable operational state. Completed work belongs in the append-only
 
 ## Active
 
-### TEMPO-005D - Canonical identity and Profile-v0 key lifecycle
+### TEMPO-005D - Tempo-specific follow-on authority after DEC-043 handoff
 
 - Track: Canonical Tempo and Stage 1
 - Repository: the-seed-in-my-mind-open-core
@@ -35,37 +35,27 @@ It is mutable operational state. Completed work belongs in the append-only
 - Codex conversation label: Canonical Tempo Codex
 - Status: blocked
 - Started: 2026-07-11 19:29:17 -04:00
-- Last updated: 2026-07-11 19:39:00 -04:00
-- Goal: Implement the smallest deterministic canonical identity and Ed25519 Profile-v0 key lifecycle required before future verified-human canonical contributions.
+- Last updated: 2026-07-24 09:45:00 -04:00
+- Goal: Retain only unresolved Tempo-specific authority work that follows, and does not overlap, the accepted DEC-043 Profile-v0 identity-admission implementation and ordering handoff.
 - Intended files/directories:
-  - authority documents listed by TEMPO-005D (read-only unless a blocker requires reporting; no spec semantic edits intended)
-  - `backend/crates/encoding/**` (inspect/edit only if existing canonical encoding helpers need event payload support)
-  - `backend/crates/event-log/**` (event validation/registry support)
-  - `backend/crates/replay/**` (replay-derived identity/key state)
-  - `backend/crates/storage/**` (additive key lifecycle storage/materialization/migrations/tests)
-  - `backend/crates/verification/**` (Profile-v0 descriptor/signature validation reuse; edit only if lifecycle support needs it)
-  - `backend/crates/api-types-canonical/**` (public DTO/read fields for safe identity/key state)
-  - `backend/bins/api-server/src/server/**` (canonical ingress dispatch, public reads, tests)
-  - `backend/migrations/postgres/**` (additive migrations only if required)
-  - `frontend/src/shared/types/canonical.ts` and DTO drift manifests if public DTOs change
-  - `docs/open-core-implementation-status.md` and `docs/api-contract-read-only.md` if implementation status/API claims change
+  - `docs/tempo-spec.md`
+  - `docs/cycle-spec.md`
+  - `docs/planning/tempo-cycle-canonical-schema-and-replay-resolution.v1.md`
   - `docs/codex-active-tasks.md`, `docs/codex-devlog.md`, `docs/codex-notes.md` (coordination)
 - Shared surfaces touched:
-  - signed canonical event ingress, identity/key-state projection, replay validation, public canonical DTOs, database-backed test isolation.
+  - Tempo and certified-cycle authority only; Profile-v0 identity admission, ordering, and their runtime surfaces are explicitly excluded.
 - Counterpart repository task:
   - none; private repository must not be modified.
 - Dependencies:
-  - TEMPO-005B, TEMPO-005A-R1, TEMPO-005C, TEMPO-005C-R1, and TEMPO-005C-R2 completed.
+  - TEMPO-005D-R3-P3-DBV completed; its narrow admission-storage validation claim is released.
+  - DEC-043 and `INTEGRATION-ORDERING-001` are complete; released cross-repository Ordering surfaces remain outside this Tempo task.
 - Required merge order:
-  - open-core identity/key lifecycle before canonical verification/writer lifecycle; Tempo claim recording remains later.
+  - Completed DEC-043 native Ordering cutover -> later separately scoped Tempo-specific task, if still required.
 - Notes:
-  - Stop before implementation if current authority does not settle identity-create author/authorization, initial key descriptor fields, bootstrap signature validation, rotation replacement/addition, revocation authorization, last-key/recovery, or key-management eligibility.
-  - All DB-backed tests must use disposable databases accepted by `common::test_db_guard`.
+  - Completed outside this task: all released authority/index/protocol admission paths; `backend/crates/encoding/**`, `event-log/**`, `identity/**`, `verification/**`, `storage/**`, `replay/**`, `snapshot/**`, `api-types-canonical/**`, `common/**`, `tests/**`, and `tooling/**`; `backend/bins/api-server/**`, `seed-importer/**`, `snapshot-builder/**`, `snapshot-verify/**`, and `verify-replay/**`; `backend/migrations/postgres/**`; frontend canonical type/client paths; API/DTO, conformance, implementation-status, boundary, export, Ordering-script, and related coordination surfaces.
+  - The released dirty work was preserved through the completed Ordering cutover without reset, restore, staging, deletion, or mass-formatting.
 - Blocker:
-  - Current authority does not settle the exact `identity_create` author/authorization rule. Appendix A defines payload fields/effects but not who authors or authorizes the event; Verification says identities may exist only after invite; Protocol v5 still contains older wording where a new user registers/emits the identity.
-  - Current authority does not settle `identity_create` signature bootstrap. It does not choose between inviter/verifier-authored creation, self-signed bootstrap exception, or bootstrap publisher authority.
-  - Current authority does not settle whether `identity_key_rotate` adds another simultaneously active key or supersedes/replaces the previous key. The authorship profile mentions active and superseded states, while Appendix A only says the new key becomes active.
-  - Current authority does not clearly state whether direct key-management events require ordinary canonical-writer eligibility or only active key control for the identity.
+  - Do not resume this parent task against released DEC-043 or ordering surfaces. A separate, explicitly scoped Tempo authority task is required before any retained-path implementation work.
 
 ### TEMPO-005A - Clean open-core canonical reasoning write substrate
 

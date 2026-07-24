@@ -196,6 +196,18 @@ Enum meaning is defined by the specification that introduces it, not by this doc
 
 ---
 
+#### 2.4 Fixed-size hash references (`hash32`) [anchor: fixed_size_hash_references_hash32]
+
+`hash32` is exactly 32 raw bytes. It has no text prefix, length prefix, hexadecimal
+wrapper, base64 wrapper, or sentinel value in canonical bytes.
+
+`hash32` fields MUST contain the 32-byte output of the active canonical hash function
+or another 32-byte commitment explicitly authorized by the referencing schema. A zero
+value is not an implicit absence representation. Optional `hash32` fields MUST use the
+presence encoding in Section 4.2.
+
+---
+
 ### 3. Text and Payload Canonicalization [anchor: 3_text_and_payload_canonicalization]
 
 #### 3.1 Character Encoding [anchor: character_encoding]
@@ -344,13 +356,17 @@ All cryptographic commitments rely on these primitives.
 
 #### 5.1 Hash Algorithm [anchor: hash_algorithm]
 
-The system uses a single fixed cryptographic hash algorithm.
+The Profile-v0 canonical hash function `HASH` is **BLAKE3-256**. It produces exactly
+32 raw bytes and is the hash function used for `hash32` commitments unless a later,
+explicitly versioned transition replaces it.
 
 Rules:
 
 * The hash algorithm MUST be explicitly named and versioned.
 * The algorithm MUST produce a fixed-length output.
 * The same algorithm MUST be used everywhere unless a specification explicitly defines a transition mechanism.
+
+The symbolic form `HASH(bytes)` means `BLAKE3-256(bytes)` in Profile v0.
 
 Hash outputs are treated as opaque byte sequences.
 
@@ -530,7 +546,7 @@ MUST NOT affect the `state_root_hash`.
 
 #### 7.3 Payload Roots [anchor: payload_roots]
 
-Payload roots commit to sets of human-readable payloads associated with represented canonical objects (ideas and rails for Tier 0).
+Payload roots commit to sets of human-readable payloads associated with represented canonical objects (ideas and orderings for Tier 0).
 
 Payload roots are defined per payload tier.
 
@@ -542,7 +558,7 @@ leaf_bytes = u8(object_kind) || encode_id(object_id) || u8(tier_enum) || hash32(
 
 Rules:
 
-* `object_kind` is `0` for `idea` and `1` for `rail`.
+* `object_kind` is `0` for `idea` and `1` for `ordering`.
 * `encode_id(object_id)` MUST follow the identifier encoding defined in §2.2.
 * `tier_enum` is `0` for `title` and `1` for `sentence`.
 * `payload_hash` MUST be the hash of the canonicalized payload bytes (§3).
@@ -583,6 +599,90 @@ Rules:
 * Transport-specific envelopes, compression layers, or batching containers MUST NOT affect the canonical bytes or hashes of these artifacts.
 
 These rules ensure that publication finality, omission proofs, and derived block packaging remain replay-verifiable across implementations.
+
+---
+
+#### 7.5 Profile-v0 identity-admission commitments [anchor: profile_v0_identity_admission_commitments]
+
+This subsection defines the byte-level commitments used only by the Profile-v0 sponsored
+human-admission schema in Protocol v5 Appendix A. It does not determine current sponsor
+eligibility, invitation capacity, or replay effects.
+
+Primitive shorthand in this subsection is:
+
+```text
+ascii(s) = u32be(byte_length(s)) || ASCII_BYTES(s)
+id(x) = the Section 2.2 canonical UUIDv7 encoding
+hash32(h) = exactly 32 raw bytes
+optional_hash32(x) = u8(0x00) when absent
+                   | u8(0x01) || hash32(x) when present
+```
+
+Profile-v0 defines the following closed values and encodings:
+
+```text
+admission_profile_version = ascii("sponsored_public_admission_v0")
+capacity_period_id = id(capacity_period_id)
+rulebook_reference =
+    id(rulebook_id)
+ || ascii(rulebook_version)
+ || hash32(rulebook_hash)
+```
+
+`capacity_period_id` identifies the rulebook/cycle-defined capacity period. Its
+existence and applicability are replay questions; its canonical type is an `id`.
+`rulebook_reference` identifies the rulebook object and exact version/hash, not a local
+configuration label.
+
+The reduced admission-authorization commitment is exactly:
+
+```text
+admission_authorization_reference = BLAKE3-256(
+    ascii("seed.identity.admission_authorization.v0")
+ || ascii("sponsored_public_admission_v0")
+ || id(sponsor_identity_id)
+ || id(capacity_period_id)
+ || id(rulebook_id)
+ || ascii(rulebook_version)
+ || hash32(rulebook_hash)
+)
+```
+
+The domain tag is unique to this commitment. The output is a `hash32`. A supplied
+reference is malformed when it is not exactly 32 bytes; it is invalid when it differs
+from the recomputed commitment. A correctly formed matching commitment may still be
+stale when the referenced profile, period, or rulebook is no longer applicable at the
+candidate's canonical application position. Sponsor key state, inviter eligibility,
+invitation suspension, and capacity balance are deliberately excluded from this
+commitment and are never frozen by it.
+
+For an `identity_create` payload, `verification_reference` is one optional `hash32` and
+MUST use `optional_hash32` above. `0x00` is the only canonical no-reference encoding.
+`0x01` MUST be followed by exactly one `hash32`. JSON or schema-facing transports MUST
+represent `0x00` as an omitted `verification_reference` member; `null`, an empty string,
+an all-zero hash, and alternate omitted encodings are forbidden for the signed payload.
+
+The identity-structural-root plan is encoded explicitly because canonical object IDs are
+UUIDv7 identifiers and cannot be newly derived as another identifier class. It is:
+
+```text
+identity_structural_roots = u32be(4)
+ || u8(0x01) || id(mindgarden_idea_id)
+ || u8(0x02) || id(backyard_of_relationships_idea_id)
+ || u8(0x03) || id(self_tree_idea_id)
+ || u8(0x04) || id(anthill_idea_id)
+
+identity_structural_root_membership_connection_ids = u32be(3)
+ || id(mindgarden_to_backyard_of_relationships_connection_id)
+ || id(mindgarden_to_self_tree_connection_id)
+ || id(mindgarden_to_anthill_connection_id)
+```
+
+The root-role enum is closed in Profile v0: `0x01 = mindgarden`, `0x02 =
+backyard_of_relationships`, `0x03 = self_tree`, and `0x04 = anthill`. Lists with a
+different count, order, role, duplicate identifier, or extra member are malformed.
+Appendix A defines the corresponding ordinary ideas, membership connections, and atomic
+effects.
 
 ---
 

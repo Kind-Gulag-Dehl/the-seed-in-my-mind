@@ -1020,7 +1020,7 @@ Instead, it demotes them epistically:
 - It helps voters understand extremeness and relative feasibility.
 - It does *not* automatically determine which proposal wins; that remains deliberative.
 
-This keeps the action-selection layer aligned with the truth-claim evidence-rail architecture.
+This keeps the action-selection layer aligned with the truth-claim evidence-ordering architecture.
 
 ### 6.11 determinism and replay guarantees [anchor: determinism_and_replay_guarantees]
 - explicit,
@@ -2020,5 +2020,13 @@ Replay enforces the true canonical governance state even if:
 - off-chain governance mimicked canonical processes.
 
 Replay is the final arbiter of truth for governance history.
+
+## 14. Profile-v0 identity-admission governance boundary [anchor: profile_v0_identity_admission_governance_boundary]
+
+Governance MUST NOT create a permanent founder, operator, institution, expert, tribe, or genesis inviter class. It MUST NOT make political agreement, viewpoint, social status, wealth, token ownership, private-account status, or AI approval a condition of ordinary Profile-v0 admission eligibility.
+
+Within the constitutional and replay constraints, rulebooks MAY define objective eligibility thresholds, evidence diversity, maturation, capacity rates above the minimum, caps, carryover, expiration, suspension, restoration, abuse controls, and transition grace periods. They MUST NOT assign zero invitation capacity indefinitely to an otherwise inviter-eligible and unsuspended human, transfer, sell, delegate, or tokenize capacity, or use admission lineage as governance or economic authority.
+
+An explicitly authorized emergency rule MAY freeze existing capacity prospectively. Governance MUST NOT mint emergency capacity through an operator, AI, system emitter, wall-clock process, or machine-only boundary, and MUST NOT fabricate verification, sponsor signatures, applicant proofs, sponsors, capacity debits, lineage, or Profile-v0 admission history for genesis, import, or legacy identities.
 
 ---

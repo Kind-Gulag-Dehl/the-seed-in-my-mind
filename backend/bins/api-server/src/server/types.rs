@@ -73,33 +73,40 @@ pub(crate) struct PrivateIdeaPayload {
 #[serde(untagged)]
 pub(crate) enum VineTypeInput {
     String(String),
-    Number(i64),
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct PrivateVineItemPayload {
+#[serde(untagged)]
+pub(crate) enum OrderingProfileInput {
+    String(String),
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub(crate) struct PrivateOrderingItemPayload {
     pub(crate) idea_id: String,
     pub(crate) via_connection_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct PrivateVineCreatePayload {
-    pub(crate) vine_type: VineTypeInput,
+pub(crate) struct PrivateOrderingCreatePayload {
+    pub(crate) ordering_profile: OrderingProfileInput,
+    pub(crate) vine_type: Option<VineTypeInput>,
     pub(crate) title: Option<String>,
     pub(crate) sentence: Option<String>,
     pub(crate) paragraph: Option<String>,
     pub(crate) full: Option<String>,
-    pub(crate) items: Vec<PrivateVineItemPayload>,
+    pub(crate) items: Vec<PrivateOrderingItemPayload>,
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct PrivateVineUpdatePayload {
+pub(crate) struct PrivateOrderingUpdatePayload {
+    pub(crate) ordering_profile: Option<OrderingProfileInput>,
     pub(crate) vine_type: Option<VineTypeInput>,
     pub(crate) title: Option<Option<String>>,
     pub(crate) sentence: Option<Option<String>>,
     pub(crate) paragraph: Option<Option<String>>,
     pub(crate) full: Option<Option<String>>,
-    pub(crate) items: Option<Vec<PrivateVineItemPayload>>,
+    pub(crate) items: Option<Vec<PrivateOrderingItemPayload>>,
 }
 
 #[derive(Debug, Deserialize)]

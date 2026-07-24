@@ -1,10 +1,10 @@
 use api_types_canonical::{
-    AuthorInfo, CanonicalRailDetail, CanonicalRailRepresentations, CanonicalRailSummary,
-    ConnectionSummary, IdeaDetail, IdeaSummary, RailItem, SnapshotCommitMetadata, SnapshotMetadata,
+    AuthorInfo, CanonicalOrderingDetail, CanonicalOrderingRepresentations, CanonicalOrderingSummary,
+    ConnectionSummary, IdeaDetail, IdeaSummary, OrderingItem, SnapshotCommitMetadata, SnapshotMetadata,
 };
 #[cfg(feature = "full")]
 use api_types_private::{
-    PrivateIdeaDetail, PrivateIdeaSummary, PrivateVineDetail, PrivateVineSummary,
+    PrivateIdeaDetail, PrivateIdeaSummary, PrivateOrderingDetail, PrivateOrderingSummary,
 };
 use axum::{
     http::{HeaderMap, StatusCode},
@@ -12,17 +12,15 @@ use axum::{
 };
 use chrono::DateTime;
 use storage::{
-    CanonicalRailItemRow, CanonicalRailRow, CanonicalRailSummaryRow, ConnectionRow, IdeaDetailRow,
+    CanonicalOrderingItemRow, CanonicalOrderingRow, CanonicalOrderingSummaryRow, ConnectionRow, IdeaDetailRow,
     IdeaSummaryRow, SnapshotCommitRow, SnapshotRow,
 };
 #[cfg(feature = "full")]
-use storage::{PrivateIdeaRow, PrivateVineItemRow, PrivateVineListRow, PrivateVineRow};
+use storage::{PrivateIdeaRow, PrivateOrderingItemRow, PrivateOrderingListRow, PrivateOrderingRow};
 use uuid::Uuid;
 
 use crate::server::errors::{json_error, snapshot_unavailable};
-#[cfg(feature = "full")]
-use crate::server::helpers::private_vine_type_label;
-use crate::server::helpers::{header_value, rail_kind_label, vine_type_label};
+use crate::server::helpers::{header_value, ordering_profile_label, vine_type_label};
 
 pub(crate) fn snapshot_headers(snapshot: &SnapshotRow) -> Result<HeaderMap, Response> {
     let mut headers = HeaderMap::new();
@@ -240,16 +238,16 @@ pub(crate) fn private_idea_detail(row: &PrivateIdeaRow) -> PrivateIdeaDetail {
     }
 }
 
-pub(crate) fn canonical_rail_summary(row: &CanonicalRailSummaryRow) -> CanonicalRailSummary {
-    CanonicalRailSummary {
-        rail_id: row.rail_id.to_string(),
-        rail_kind: rail_kind_label(row.rail_kind),
+pub(crate) fn canonical_ordering_summary(row: &CanonicalOrderingSummaryRow) -> CanonicalOrderingSummary {
+    CanonicalOrderingSummary {
+        ordering_id: row.ordering_id.to_string(),
+        ordering_profile: ordering_profile_label(row.ordering_profile),
         vine_type: vine_type_label(row.vine_type),
     }
 }
 
-pub(crate) fn canonical_rail_item(row: &CanonicalRailItemRow) -> RailItem {
-    RailItem {
+pub(crate) fn canonical_ordering_item(row: &CanonicalOrderingItemRow) -> OrderingItem {
+    OrderingItem {
         idx: row.idx.to_string(),
         idea_id: row.idea_id.to_string(),
         via_connection_id: row.via_connection_id.map(|value| value.to_string()),
@@ -257,24 +255,24 @@ pub(crate) fn canonical_rail_item(row: &CanonicalRailItemRow) -> RailItem {
 }
 
 #[cfg(feature = "full")]
-pub(crate) fn private_vine_item(row: &PrivateVineItemRow) -> RailItem {
-    RailItem {
+pub(crate) fn private_ordering_item(row: &PrivateOrderingItemRow) -> OrderingItem {
+    OrderingItem {
         idx: row.idx.to_string(),
         idea_id: row.idea_id.to_string(),
         via_connection_id: row.via_connection_id.map(|value| value.to_string()),
     }
 }
 
-pub(crate) fn canonical_rail_detail(
-    row: &CanonicalRailRow,
-    items: &[CanonicalRailItemRow],
-) -> CanonicalRailDetail {
-    CanonicalRailDetail {
-        rail_id: row.rail_id.to_string(),
-        rail_kind: rail_kind_label(row.rail_kind),
+pub(crate) fn canonical_ordering_detail(
+    row: &CanonicalOrderingRow,
+    items: &[CanonicalOrderingItemRow],
+) -> CanonicalOrderingDetail {
+    CanonicalOrderingDetail {
+        ordering_id: row.ordering_id.to_string(),
+        ordering_profile: ordering_profile_label(row.ordering_profile),
         vine_type: vine_type_label(row.vine_type),
         author_identity_id: row.author_identity_id.to_string(),
-        canonical_representations: CanonicalRailRepresentations {
+        canonical_representations: CanonicalOrderingRepresentations {
             title_representation_id: row.title_representation_id.map(|value| value.to_string()),
             title_payload_hash: row.title_payload_hash.clone(),
             sentence_representation_id: row
@@ -282,12 +280,12 @@ pub(crate) fn canonical_rail_detail(
                 .map(|value| value.to_string()),
             sentence_payload_hash: row.sentence_payload_hash.clone(),
         },
-        items: items.iter().map(canonical_rail_item).collect(),
+        items: items.iter().map(canonical_ordering_item).collect(),
     }
 }
 
 #[cfg(feature = "full")]
-pub(crate) fn private_vine_summary(row: &PrivateVineListRow) -> PrivateVineSummary {
+pub(crate) fn private_ordering_summary(row: &PrivateOrderingListRow) -> PrivateOrderingSummary {
     let fallback_title = row
         .title
         .as_deref()
@@ -302,9 +300,10 @@ pub(crate) fn private_vine_summary(row: &PrivateVineListRow) -> PrivateVineSumma
                 .map(|value| value.to_string())
         })
         .unwrap_or_else(|| "Untitled vine".to_string());
-    PrivateVineSummary {
-        private_vine_id: row.private_vine_id.to_string(),
-        vine_type: private_vine_type_label(row.vine_type),
+    PrivateOrderingSummary {
+        private_ordering_id: row.private_ordering_id.to_string(),
+        ordering_profile: ordering_profile_label(row.ordering_profile),
+        vine_type: vine_type_label(row.vine_type),
         title: fallback_title,
         updated_at: row.updated_at.to_rfc3339(),
         item_count: row.item_count.to_string(),
@@ -312,19 +311,20 @@ pub(crate) fn private_vine_summary(row: &PrivateVineListRow) -> PrivateVineSumma
 }
 
 #[cfg(feature = "full")]
-pub(crate) fn private_vine_detail(
-    row: &PrivateVineRow,
-    items: &[PrivateVineItemRow],
-) -> PrivateVineDetail {
-    PrivateVineDetail {
-        private_vine_id: row.private_vine_id.to_string(),
-        vine_type: private_vine_type_label(row.vine_type),
+pub(crate) fn private_ordering_detail(
+    row: &PrivateOrderingRow,
+    items: &[PrivateOrderingItemRow],
+) -> PrivateOrderingDetail {
+    PrivateOrderingDetail {
+        private_ordering_id: row.private_ordering_id.to_string(),
+        ordering_profile: ordering_profile_label(row.ordering_profile),
+        vine_type: vine_type_label(row.vine_type),
         title: row.title.clone(),
         sentence: row.sentence.clone(),
         paragraph: row.paragraph.clone(),
         full: row.full.clone(),
         created_at: row.created_at.to_rfc3339(),
         updated_at: row.updated_at.to_rfc3339(),
-        items: items.iter().map(private_vine_item).collect(),
+        items: items.iter().map(private_ordering_item).collect(),
     }
 }

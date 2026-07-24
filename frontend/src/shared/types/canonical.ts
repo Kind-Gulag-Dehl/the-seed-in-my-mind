@@ -6,6 +6,44 @@ export interface AuthorInfo {
 }
 
 export type RelativeImportanceDirection = "incoming" | "outgoing" | "both";
+export type OrderingProfile = "vine" | "evidence_rail" | "action_rail";
+export type VineType = "pathway_vine" | "narrative_vine";
+
+export interface OrderingItem {
+  idx: string;
+  idea_id: string;
+  via_connection_id?: string | null;
+}
+
+export interface CanonicalOrderingRepresentations {
+  title_representation_id?: string | null;
+  title_payload_hash?: string | null;
+  sentence_representation_id?: string | null;
+  sentence_payload_hash?: string | null;
+}
+
+export interface CanonicalOrderingSummary {
+  ordering_id: string;
+  ordering_profile: OrderingProfile;
+  vine_type?: VineType | null;
+}
+
+export interface CanonicalOrderingDetail {
+  ordering_id: string;
+  ordering_profile: OrderingProfile;
+  vine_type?: VineType | null;
+  author_identity_id: string;
+  canonical_representations: CanonicalOrderingRepresentations;
+  items: OrderingItem[];
+}
+
+export interface CanonicalOrderingResponse {
+  ordering: CanonicalOrderingDetail;
+}
+
+export interface CanonicalOrderingsResponse {
+  orderings: CanonicalOrderingSummary[];
+}
 
 export interface IdeaSummary {
   idea_id: string;

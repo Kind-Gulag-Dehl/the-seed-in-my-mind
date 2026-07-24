@@ -54,6 +54,7 @@ These documents are part of the intended open-core architecture and are public i
 - `governance-spec.md`
 - `token-spec.md`
 - `verification-spec.md`
+- `identity-admission-and-invitation-capacity-spec-v0.md`
 - `safety-spec.md`
 - `safety-rulebook-interface-mechanics-spec.md`
 - `privacy-and-high-risk-submission-spec.md`
@@ -62,6 +63,8 @@ These documents are part of the intended open-core architecture and are public i
 - `ai-boundaries-spec.md`
 
 Each of these documents carries an explicit status banner. `open-core-implementation-status.md` remains the authoritative current-state implementation reference.
+
+`identity-admission-and-invitation-capacity-spec-v0.md` is the scoped authority for Profile-v0 identity preparation and admission, sponsor-authored `identity_create` architecture, applicant initial-key possession architecture, initial admitted authority, identity structural roots, invitation eligibility and capacity, admission lineage, admission liveness, and genesis/legacy admission classification. It is subordinate to Protocol v5 constitutional invariants and does not settle exact encodings, domain separators, payload schemas, key-lifecycle payloads, numeric verification thresholds, numeric capacity rates above the constitutional minimum, or runtime implementation status.
 
 ### 1.3 derived public maps and navigation docs
 
@@ -86,6 +89,7 @@ These documents explain the public package, reviewer workflow, implementation st
 - `open-core-split-and-data-boundary-spec.md`
 - `stage0-runtime-configuration.md`
 - `api-contract-read-only.md`
+- `canonical-identity-admission-api-contract-v0.md` (scoped planned public contract; subordinate to protocol, schema, signature, replay, and implementation-status authorities)
 - `cross-doc-invariants.md`
 
 ---
@@ -112,6 +116,14 @@ Cycle/Tempo scope split:
 - `protocol v5.md` owns root normative cycle invariants, structural/consequential authority separation, and sealing semantics.
 - `cycle-spec.md` owns the detailed subordinate structural cycle-close, certification, and lagged authorization-frontier algorithm.
 - `tempo-spec.md` owns target-bound time truth claims, Tempo-context evidence rules using ordinary ideas/connections, certainty-band interpretation, Dmin/Dmax predicates, derived beacons, and Tempo modes.
+
+Identity admission scope split:
+- `protocol v5.md` owns constitutional human-first authorship, anti-gatekeeping, identity-root, admission-not-verification, and no-machine-authority invariants.
+- `identity-admission-and-invitation-capacity-spec-v0.md` owns Profile-v0 identity preparation and admission architecture, sponsorship, admitted initial authority, `identity_structural_roots`, invitation eligibility and capacity, admission lineage, admission liveness, and genesis/legacy admission classification.
+- `protocol v5-appendix-a.md` owns exact canonical event schemas and effects after reconciliation with the identity-admission specification.
+- `canonical-encoding-and-hashing-spec.md` owns exact bytes, primitive encodings, hashes, commitments, and canonical no-value encodings.
+- `canonical-event-authorship-and-signature-profile-v0.md` owns exact authored-candidate signature construction, key descriptors, `public_key_ref`, signature verification, and replay-derived identity key-state mechanics.
+- Replay, verification, cycle, snapshot, API, node/conformance, and subsystem specifications retain authority within their scoped domains and must reconcile with the Profile-v0 admission architecture without redefining it.
 
 ### 2.3 reviewer and navigation documents
 
@@ -150,10 +162,11 @@ Cycle/Tempo scope split:
 15) `shared-map-and-payload-bundles-spec.md`
 16) `offline-and-mindseed-spec.md`
 17) `verification-spec.md`
-18) `privacy-and-high-risk-submission-spec.md`
-19) `tribe-spec.md`
-20) `roles-and-stewardship-spec.md`
-21) `ai-boundaries-spec.md`
+18) `identity-admission-and-invitation-capacity-spec-v0.md`
+19) `privacy-and-high-risk-submission-spec.md`
+20) `tribe-spec.md`
+21) `roles-and-stewardship-spec.md`
+22) `ai-boundaries-spec.md`
 
 ---
 

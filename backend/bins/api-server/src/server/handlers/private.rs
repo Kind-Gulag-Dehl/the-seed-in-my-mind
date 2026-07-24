@@ -1,6 +1,6 @@
 use api_types_private::{
     PrivateAiDraftResponse, PrivateAiSuggestion, PrivateIdeaResponse, PrivateIdeasResponse,
-    PrivateVineResponse, PrivateVinesResponse,
+    PrivateOrderingResponse, PrivateOrderingsResponse,
 };
 use axum::{
     extract::{Extension, Path, State},
@@ -15,15 +15,16 @@ use common::security_limits::{
 
 use crate::server::errors::json_error;
 use crate::server::helpers::{
-    ensure_pathway_items, normalize_optional_text, parse_private_vine_items, parse_uuid_any,
-    parse_vine_type_input, validate_max_len, validate_optional_max_len,
+    ensure_pathway_items, normalize_optional_text, parse_private_ordering_items, parse_uuid_any,
+    parse_ordering_profile_input, parse_vine_type_input, validate_max_len,
+    validate_optional_max_len, validate_ordering_profile_vine_type,
 };
 use crate::server::mapping::{
-    private_idea_detail, private_idea_summary, private_vine_detail, private_vine_summary,
+    private_idea_detail, private_idea_summary, private_ordering_detail, private_ordering_summary,
 };
 use crate::server::types::{
     AppState, AuthenticatedAccount, PrivateAiDraftPayload, PrivateIdeaPayload,
-    PrivateVineCreatePayload, PrivateVineUpdatePayload,
+    PrivateOrderingCreatePayload, PrivateOrderingUpdatePayload,
 };
 
 pub(crate) async fn private_create_idea(
@@ -237,14 +238,14 @@ pub(crate) async fn private_delete_idea(
     (StatusCode::OK, Json(serde_json::json!({ "ok": true }))).into_response()
 }
 
-pub(crate) async fn private_list_vines(
+pub(crate) async fn private_list_orderings(
     State(state): State<AppState>,
     Extension(auth): Extension<AuthenticatedAccount>,
 ) -> Response {
-    let rows = match state.storage.list_private_vines(auth.account_id).await {
+    let rows = match state.storage.list_private_orderings(auth.account_id).await {
         Ok(rows) => rows,
         Err(err) => {
-            tracing::error!(?err, "failed to list private vines");
+            tracing::error!(?err, "failed to list private orderings");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -252,31 +253,31 @@ pub(crate) async fn private_list_vines(
             );
         }
     };
-    let body = PrivateVinesResponse {
-        vines: rows.iter().map(private_vine_summary).collect(),
+    let body = PrivateOrderingsResponse {
+        orderings: rows.iter().map(private_ordering_summary).collect(),
     };
     (StatusCode::OK, Json(body)).into_response()
 }
 
-pub(crate) async fn private_get_vine(
-    Path(private_vine_id): Path<String>,
+pub(crate) async fn private_get_ordering(
+    Path(private_ordering_id): Path<String>,
     State(state): State<AppState>,
     Extension(auth): Extension<AuthenticatedAccount>,
 ) -> Response {
-    let private_vine_id = match parse_uuid_any(&private_vine_id) {
-        Ok(private_vine_id) => private_vine_id,
+    let private_ordering_id = match parse_uuid_any(&private_ordering_id) {
+        Ok(private_ordering_id) => private_ordering_id,
         Err(response) => return response,
     };
 
     let row = match state
         .storage
-        .get_private_vine(auth.account_id, private_vine_id)
+        .get_private_ordering(auth.account_id, private_ordering_id)
         .await
     {
         Ok(Some(row)) => row,
         Ok(None) => return json_error(StatusCode::NOT_FOUND, "not_found", "not found"),
         Err(err) => {
-            tracing::error!(?err, "failed to load private vine");
+            tracing::error!(?err, "failed to load private ordering");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -286,12 +287,12 @@ pub(crate) async fn private_get_vine(
     };
     let items = match state
         .storage
-        .list_private_vine_items(auth.account_id, private_vine_id)
+        .list_private_ordering_items(auth.account_id, private_ordering_id)
         .await
     {
         Ok(items) => items,
         Err(err) => {
-            tracing::error!(?err, "failed to load private vine items");
+            tracing::error!(?err, "failed to load private ordering items");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -300,22 +301,34 @@ pub(crate) async fn private_get_vine(
         }
     };
 
-    let body = PrivateVineResponse {
-        vine: private_vine_detail(&row, &items),
+    let body = PrivateOrderingResponse {
+        ordering: private_ordering_detail(&row, &items),
     };
     (StatusCode::OK, Json(body)).into_response()
 }
 
-pub(crate) async fn private_create_vine(
+pub(crate) async fn private_create_ordering(
     State(state): State<AppState>,
     Extension(auth): Extension<AuthenticatedAccount>,
-    Json(payload): Json<PrivateVineCreatePayload>,
+    Json(payload): Json<PrivateOrderingCreatePayload>,
 ) -> Response {
-    let vine_type = match parse_vine_type_input(&payload.vine_type) {
-        Ok(vine_type) => vine_type,
+    let ordering_profile = match parse_ordering_profile_input(&payload.ordering_profile) {
+        Ok(ordering_profile) => ordering_profile,
         Err(response) => return response,
     };
-    let items = match parse_private_vine_items(&payload.items) {
+    let vine_type = match payload.vine_type.as_ref() {
+        Some(value) => match parse_vine_type_input(value) {
+            Ok(vine_type) => Some(vine_type),
+            Err(response) => return response,
+        },
+        None => None,
+    };
+    if let Err(response) =
+        validate_ordering_profile_vine_type(ordering_profile, vine_type)
+    {
+        return response;
+    }
+    let items = match parse_private_ordering_items(&payload.items) {
         Ok(items) => items,
         Err(response) => return response,
     };
@@ -353,8 +366,9 @@ pub(crate) async fn private_create_vine(
 
     let row = match state
         .storage
-        .create_private_vine(
+        .create_private_ordering(
             auth.account_id,
+            ordering_profile,
             vine_type,
             title.as_deref(),
             sentence.as_deref(),
@@ -366,7 +380,7 @@ pub(crate) async fn private_create_vine(
     {
         Ok(row) => row,
         Err(err) => {
-            tracing::error!(?err, "failed to create private vine");
+            tracing::error!(?err, "failed to create private ordering");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -376,12 +390,12 @@ pub(crate) async fn private_create_vine(
     };
     let detail_items = match state
         .storage
-        .list_private_vine_items(auth.account_id, row.private_vine_id)
+        .list_private_ordering_items(auth.account_id, row.private_ordering_id)
         .await
     {
         Ok(items) => items,
         Err(err) => {
-            tracing::error!(?err, "failed to load created private vine items");
+            tracing::error!(?err, "failed to load created private ordering items");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -390,32 +404,32 @@ pub(crate) async fn private_create_vine(
         }
     };
 
-    let body = PrivateVineResponse {
-        vine: private_vine_detail(&row, &detail_items),
+    let body = PrivateOrderingResponse {
+        ordering: private_ordering_detail(&row, &detail_items),
     };
     (StatusCode::OK, Json(body)).into_response()
 }
 
-pub(crate) async fn private_update_vine(
-    Path(private_vine_id): Path<String>,
+pub(crate) async fn private_update_ordering(
+    Path(private_ordering_id): Path<String>,
     State(state): State<AppState>,
     Extension(auth): Extension<AuthenticatedAccount>,
-    Json(payload): Json<PrivateVineUpdatePayload>,
+    Json(payload): Json<PrivateOrderingUpdatePayload>,
 ) -> Response {
-    let private_vine_id = match parse_uuid_any(&private_vine_id) {
-        Ok(private_vine_id) => private_vine_id,
+    let private_ordering_id = match parse_uuid_any(&private_ordering_id) {
+        Ok(private_ordering_id) => private_ordering_id,
         Err(response) => return response,
     };
 
     let existing = match state
         .storage
-        .get_private_vine(auth.account_id, private_vine_id)
+        .get_private_ordering(auth.account_id, private_ordering_id)
         .await
     {
         Ok(Some(row)) => row,
         Ok(None) => return json_error(StatusCode::NOT_FOUND, "not_found", "not found"),
         Err(err) => {
-            tracing::error!(?err, "failed to load private vine before update");
+            tracing::error!(?err, "failed to load private ordering before update");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -424,13 +438,26 @@ pub(crate) async fn private_update_vine(
         }
     };
 
-    let vine_type = match payload.vine_type.as_ref() {
-        Some(value) => match parse_vine_type_input(value) {
+    let ordering_profile = match payload.ordering_profile.as_ref() {
+        Some(value) => match parse_ordering_profile_input(value) {
             Ok(value) => value,
             Err(response) => return response,
         },
-        None => existing.vine_type,
+        None => existing.ordering_profile,
     };
+    let vine_type = match payload.vine_type.as_ref() {
+        Some(value) => match parse_vine_type_input(value) {
+            Ok(value) => Some(value),
+            Err(response) => return response,
+        },
+        None if ordering_profile == existing.ordering_profile => existing.vine_type,
+        None => None,
+    };
+    if let Err(response) =
+        validate_ordering_profile_vine_type(ordering_profile, vine_type)
+    {
+        return response;
+    }
 
     let title = match payload.title {
         Some(value) => normalize_optional_text(value),
@@ -468,7 +495,7 @@ pub(crate) async fn private_update_vine(
     }
 
     let replacement_items = match payload.items.as_ref() {
-        Some(items) => match parse_private_vine_items(items) {
+        Some(items) => match parse_private_ordering_items(items) {
             Ok(items) => Some(items),
             Err(response) => return response,
         },
@@ -479,12 +506,12 @@ pub(crate) async fn private_update_vine(
     } else {
         match state
             .storage
-            .list_private_vine_items(auth.account_id, private_vine_id)
+            .list_private_ordering_items(auth.account_id, private_ordering_id)
             .await
         {
             Ok(items) => items.len(),
             Err(err) => {
-                tracing::error!(?err, "failed to load existing private vine items");
+                tracing::error!(?err, "failed to load existing private ordering items");
                 return json_error(
                     StatusCode::INTERNAL_SERVER_ERROR,
                     "internal_error",
@@ -499,9 +526,10 @@ pub(crate) async fn private_update_vine(
 
     let row = match state
         .storage
-        .update_private_vine(
+        .update_private_ordering(
             auth.account_id,
-            private_vine_id,
+            private_ordering_id,
+            ordering_profile,
             vine_type,
             title.as_deref(),
             sentence.as_deref(),
@@ -514,7 +542,7 @@ pub(crate) async fn private_update_vine(
         Ok(Some(row)) => row,
         Ok(None) => return json_error(StatusCode::NOT_FOUND, "not_found", "not found"),
         Err(err) => {
-            tracing::error!(?err, "failed to update private vine");
+            tracing::error!(?err, "failed to update private ordering");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -524,12 +552,12 @@ pub(crate) async fn private_update_vine(
     };
     let detail_items = match state
         .storage
-        .list_private_vine_items(auth.account_id, private_vine_id)
+        .list_private_ordering_items(auth.account_id, private_ordering_id)
         .await
     {
         Ok(items) => items,
         Err(err) => {
-            tracing::error!(?err, "failed to load updated private vine items");
+            tracing::error!(?err, "failed to load updated private ordering items");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",
@@ -538,29 +566,29 @@ pub(crate) async fn private_update_vine(
         }
     };
 
-    let body = PrivateVineResponse {
-        vine: private_vine_detail(&row, &detail_items),
+    let body = PrivateOrderingResponse {
+        ordering: private_ordering_detail(&row, &detail_items),
     };
     (StatusCode::OK, Json(body)).into_response()
 }
 
-pub(crate) async fn private_delete_vine(
-    Path(private_vine_id): Path<String>,
+pub(crate) async fn private_delete_ordering(
+    Path(private_ordering_id): Path<String>,
     State(state): State<AppState>,
     Extension(auth): Extension<AuthenticatedAccount>,
 ) -> Response {
-    let private_vine_id = match parse_uuid_any(&private_vine_id) {
-        Ok(private_vine_id) => private_vine_id,
+    let private_ordering_id = match parse_uuid_any(&private_ordering_id) {
+        Ok(private_ordering_id) => private_ordering_id,
         Err(response) => return response,
     };
     let deleted = match state
         .storage
-        .delete_private_vine(auth.account_id, private_vine_id)
+        .delete_private_ordering(auth.account_id, private_ordering_id)
         .await
     {
         Ok(deleted) => deleted,
         Err(err) => {
-            tracing::error!(?err, "failed to delete private vine");
+            tracing::error!(?err, "failed to delete private ordering");
             return json_error(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal_error",

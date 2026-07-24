@@ -48,6 +48,7 @@ Public note: this repo is a curated documentation subset. Some broader specs are
 - `open-core-reviewer-guide.md` - how to review the public package.
 - `open-core-demo-flow.md` - what the demo proves.
 - `open-core-boundary-manifest.md` - what belongs in the public package.
+- `canonical-identity-admission-api-contract-v0.md` - planned Profile-v0 public admission writes and replay-derived reads; not current runtime behavior.
 
 ## public maps included in this repo
 
@@ -84,6 +85,7 @@ Public note: this repo is a curated documentation subset. Some broader specs are
 - `governance-spec.md`
 - `token-spec.md`
 - `verification-spec.md`
+- `identity-admission-and-invitation-capacity-spec-v0.md`
 - `safety-spec.md`
 - `safety-rulebook-interface-mechanics-spec.md`
 - `privacy-and-high-risk-submission-spec.md`
@@ -93,7 +95,7 @@ Public note: this repo is a curated documentation subset. Some broader specs are
 
 ## how to interpret the broader public specs
 
-- `tempo-spec.md`, `challenge-engine-spec.md`, `governance-spec.md`, `token-spec.md`, `verification-spec.md`, `safety-spec.md`, `safety-rulebook-interface-mechanics-spec.md`, `privacy-and-high-risk-submission-spec.md`, `tribe-spec.md`, `roles-and-stewardship-spec.md`, and `ai-boundaries-spec.md` are public for architectural transparency.
+- `tempo-spec.md`, `challenge-engine-spec.md`, `governance-spec.md`, `token-spec.md`, `verification-spec.md`, `identity-admission-and-invitation-capacity-spec-v0.md`, `safety-spec.md`, `safety-rulebook-interface-mechanics-spec.md`, `privacy-and-high-risk-submission-spec.md`, `tribe-spec.md`, `roles-and-stewardship-spec.md`, and `ai-boundaries-spec.md` are public for architectural transparency.
 - Those docs carry explicit status banners at the top.
 - Their publication does not imply full runtime implementation.
 - Use `open-core-implementation-status.md` for the current implemented surface.

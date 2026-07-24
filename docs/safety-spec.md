@@ -1069,10 +1069,9 @@ Reconciliation MUST be deterministic and replayable across all conformant nodes.
 
 ## 11. ai roles, visibility, and payload handling
 
-### 11.1 ai as ordinary authors of ideas and text
+### 11.1 AI-generated material and safety processing
 
-AI helpers MAY generate text exactly as humans do.  
-All AI-generated text MUST enter the safety pipeline in the same way as human-generated text:
+AI helpers MAY generate non-canonical draft text. AI-generated material that is surfaced for possible human adoption MUST enter the safety pipeline in the same way as human-proposed text:
 
 - classification,  
 - emotional-load scoring,  
@@ -1080,13 +1079,7 @@ All AI-generated text MUST enter the safety pipeline in the same way as human-ge
 - jurisdiction overlays,  
 - possible blocked_submission events.
 
-The ONLY canonical distinction is metadata recording:
-
-- whether the author was human or AI,  
-- the model name and version if available,  
-- prompt or context needed for transparency.
-
-Payload behavior MUST NOT differ based on author type.
+AI is never a canonical author. A canonical candidate incorporating AI-generated material requires the ordinary valid human author and signature for its event family; AI-origin metadata, if retained, is non-authoritative and MUST NOT confer authorship, sponsorship, verification, eligibility, or authority.
 
 ---
 
@@ -1197,6 +1190,12 @@ However, sandbox AI MAY NOT:
 - bypass deterministic safety transformations.
 
 Sandbox roles provide enhanced reasoning capabilities—not enhanced authority.
+
+### 11.7 Profile-v0 admission safety boundary
+
+Safety controls MAY govern presentation, access friction, safe handling of voluntarily supplied non-canonical request material, and process safeguards within their delegated authority. They MUST NOT fabricate canonical identity, sponsorship, lineage, verification, invitation capacity, eligibility, or a qualifying capacity period. Safety systems MUST NOT delete canonical history or silently rewrite replay-derived authority.
+
+Any admission-specific restriction MUST be objective, challengeable where the applicable protocol permits challenge, and independent of viewpoint, political agreement, wealth, token ownership, private-account status, social rank, or AI approval. A constitutionally authorized emergency rule MAY freeze existing invitation-capacity spending only through its explicit canonical rulebook process; it MUST NOT mint replacement capacity by operator, AI, system, wall-clock, or machine-only action.
 
 ## 12. governance, rulebooks, and challenge processes
 
@@ -1543,5 +1542,4 @@ Informative guidance MAY explore:
 - alternative safe-summary algorithms.
 
 These proposals SHALL NOT constrain the current version of the protocol but MAY inform later revisions.
-
 

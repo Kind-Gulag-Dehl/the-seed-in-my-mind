@@ -945,26 +945,26 @@ pub(crate) fn is_valid_idea_type(value: &str) -> bool {
     )
 }
 
-pub(crate) async fn replace_private_vine_items(
+pub(crate) async fn replace_private_ordering_items(
     tx: &mut Transaction<'_, Postgres>,
-    private_vine_id: Uuid,
-    items: &[PrivateVineItemInput],
+    private_ordering_id: Uuid,
+    items: &[PrivateOrderingItemInput],
 ) -> Result<()> {
     sqlx::query(
         r#"
-        DELETE FROM private_vine_items
-        WHERE private_vine_id = $1
+        DELETE FROM private_ordering_items
+        WHERE private_ordering_id = $1
         "#,
     )
-    .bind(private_vine_id)
+    .bind(private_ordering_id)
     .execute(&mut **tx)
     .await?;
 
     for item in items {
         sqlx::query(
             r#"
-            INSERT INTO private_vine_items (
-              private_vine_id,
+            INSERT INTO private_ordering_items (
+              private_ordering_id,
               idx,
               idea_id,
               via_connection_id
@@ -973,7 +973,7 @@ pub(crate) async fn replace_private_vine_items(
             )
             "#,
         )
-        .bind(private_vine_id)
+        .bind(private_ordering_id)
         .bind(item.idx)
         .bind(item.idea_id)
         .bind(item.via_connection_id)

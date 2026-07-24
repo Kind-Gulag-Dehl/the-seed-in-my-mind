@@ -2,6 +2,12 @@
   "version": 1,
   "interfaces": [
     { "name": "AuthorInfo" },
+    { "name": "OrderingItem" },
+    { "name": "CanonicalOrderingRepresentations" },
+    { "name": "CanonicalOrderingSummary" },
+    { "name": "CanonicalOrderingDetail" },
+    { "name": "CanonicalOrderingResponse" },
+    { "name": "CanonicalOrderingsResponse" },
     { "name": "IdeaSummary" },
     { "name": "ConnectionSummary" },
     { "name": "IdeaDetail", "allow_rust_only": ["derived_universal_axis_ranks"] },

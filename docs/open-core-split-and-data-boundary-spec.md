@@ -281,3 +281,9 @@ These surfaces MUST be explicitly labeled non-canonical.
 - this document is technical structure guidance, not legal advice.
 - this document does not select a final software license.
 - this document does not redefine protocol semantics outside delegated authoritative specs.
+
+## 12. Profile-v0 canonical identity-admission boundary [anchor: profile_v0_canonical_identity_admission_boundary]
+
+The public open core owns protocol-defined sponsored identity admission: canonical event validation, deterministic replay, snapshots, public canonical read contracts, and the protocol-defined write ingress. Non-canonical applicant requests may be exchanged directly or through relays, but remain NODE or INDIVIDUAL data and have no canonical authority.
+
+Accounts, sessions, private requests, relay-local data, private evidence, private documents, private messages, private contact details, private storage identifiers, secrets, and private AI prompts or outputs MUST NOT determine canonical admission, verification, invitation capacity, key control, or eligibility. A private product integration may consume the public canonical contract, but it MUST NOT become a hidden canonical decision-maker.

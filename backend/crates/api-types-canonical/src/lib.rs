@@ -8,7 +8,7 @@ pub struct ApiError {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct RailItem {
+pub struct OrderingItem {
     pub idx: String,
     pub idea_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -16,7 +16,7 @@ pub struct RailItem {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct CanonicalRailRepresentations {
+pub struct CanonicalOrderingRepresentations {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title_representation_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -28,32 +28,32 @@ pub struct CanonicalRailRepresentations {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct CanonicalRailSummary {
-    pub rail_id: String,
-    pub rail_kind: String,
+pub struct CanonicalOrderingSummary {
+    pub ordering_id: String,
+    pub ordering_profile: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vine_type: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct CanonicalRailDetail {
-    pub rail_id: String,
-    pub rail_kind: String,
+pub struct CanonicalOrderingDetail {
+    pub ordering_id: String,
+    pub ordering_profile: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vine_type: Option<String>,
     pub author_identity_id: String,
-    pub canonical_representations: CanonicalRailRepresentations,
-    pub items: Vec<RailItem>,
+    pub canonical_representations: CanonicalOrderingRepresentations,
+    pub items: Vec<OrderingItem>,
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct CanonicalRailResponse {
-    pub rail: CanonicalRailDetail,
+pub struct CanonicalOrderingResponse {
+    pub ordering: CanonicalOrderingDetail,
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct CanonicalRailsResponse {
-    pub rails: Vec<CanonicalRailSummary>,
+pub struct CanonicalOrderingsResponse {
+    pub orderings: Vec<CanonicalOrderingSummary>,
 }
 
 #[derive(Debug, Clone, Serialize)]

@@ -786,19 +786,19 @@ function Capture-ApiSet {
     $identityRaw = Invoke-HttpGetRaw "http://127.0.0.1:3000/api/v0/identity/$identityId"
     Write-TextFile -Path (Join-Path $OutputDir "identity_detail.json") -Content $identityRaw
 
-    $ideaRailsRaw = Invoke-HttpGetRaw "http://127.0.0.1:3000/api/v0/idea/$SelectedIdeaId/rails"
-    Write-TextFile -Path (Join-Path $OutputDir "idea_rails.json") -Content $ideaRailsRaw
+    $ideaOrderingsRaw = Invoke-HttpGetRaw "http://127.0.0.1:3000/api/v0/idea/$SelectedIdeaId/orderings"
+    Write-TextFile -Path (Join-Path $OutputDir "idea_orderings.json") -Content $ideaOrderingsRaw
 
-    $ideaRails = $ideaRailsRaw | ConvertFrom-Json -ErrorAction Stop
-    $railId = $null
-    if ($ideaRails.rails -and $ideaRails.rails.Count -gt 0) {
-        $railId = [string]$ideaRails.rails[0].rail_id
+    $ideaOrderings = $ideaOrderingsRaw | ConvertFrom-Json -ErrorAction Stop
+    $orderingId = $null
+    if ($ideaOrderings.orderings -and $ideaOrderings.orderings.Count -gt 0) {
+        $orderingId = [string]$ideaOrderings.orderings[0].ordering_id
     }
-    if (-not [string]::IsNullOrWhiteSpace($railId)) {
-        $railDetailRaw = Invoke-HttpGetRaw "http://127.0.0.1:3000/api/v0/rail/$railId"
-        Write-TextFile -Path (Join-Path $OutputDir "rail_detail.json") -Content $railDetailRaw
+    if (-not [string]::IsNullOrWhiteSpace($orderingId)) {
+        $orderingDetailRaw = Invoke-HttpGetRaw "http://127.0.0.1:3000/api/v0/ordering/$orderingId"
+        Write-TextFile -Path (Join-Path $OutputDir "ordering_detail.json") -Content $orderingDetailRaw
     } else {
-        Write-TextFile -Path (Join-Path $OutputDir "rail_detail.json") -Content "{`"rail`":null}"
+        Write-TextFile -Path (Join-Path $OutputDir "ordering_detail.json") -Content "{`"ordering`":null}"
     }
 
     $riIdsCsv = [string]::Join(",", $RelativeImportanceIdeaIds)
@@ -823,7 +823,7 @@ function Capture-ApiSet {
         relative_importance_idea_ids = $RelativeImportanceIdeaIds
         search_query = $SearchQuery
         identity_id = $identityId
-        rail_id = $railId
+        ordering_id = $orderingId
         challenge_id = $ChallengeId
     } | ConvertTo-Json -Depth 5
     Write-TextFile -Path (Join-Path $OutputDir "capture_state.json") -Content $state

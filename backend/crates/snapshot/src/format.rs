@@ -8,14 +8,15 @@ use encoding::merkle::{compute_root_with_tags, empty_payload_root};
 use encoding::payload::payload_hash_hex;
 use replay::{
     ReplayConnectionRow, ReplayIdeaRow, ReplayObjectKind, ReplayOutput, ReplayPayloadRow,
-    ReplayRailRow,
+    ReplayOrderingRow,
 };
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
 pub const IDEAS_SECTION_ID: u16 = 0x8001;
 pub const CONNECTIONS_SECTION_ID: u16 = 0x8002;
-pub const RAILS_SECTION_ID: u16 = 0x000F;
+pub const ORDERINGS_SECTION_ID: u16 = 0x000F;
+pub const ORDERING_REPRESENTATION_INDEX_SECTION_ID: u16 = 0x0010;
 
 #[derive(Debug, Clone)]
 pub struct SnapshotFormat {
@@ -23,7 +24,7 @@ pub struct SnapshotFormat {
     pub state_root: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SnapshotSection {
     pub id: u16,
     pub item_count: u32,
@@ -75,7 +76,7 @@ impl std::fmt::Display for SnapshotError {
 impl std::error::Error for SnapshotError {}
 
 pub fn build_stage0_snapshot(replay: &ReplayOutput) -> Result<Stage0Snapshot, SnapshotError> {
-    let sections = build_stage0_sections(&replay.ideas, &replay.connections, &replay.rails)?;
+    let sections = build_stage0_sections(&replay.ideas, &replay.connections, &replay.orderings)?;
     let commitments = compute_stage0_commitments(&sections, &replay.payloads)?;
 
     let bytes = encode_snapshot_v0(replay, &commitments, &sections, "", 0)?;
@@ -237,15 +238,15 @@ fn compute_stage0_commitments(
         .iter()
         .find(|section| section.id == CONNECTIONS_SECTION_ID)
         .ok_or_else(|| SnapshotError::new("missing_section", "connections section missing"))?;
-    let rails = sections
+    let orderings = sections
         .iter()
-        .find(|section| section.id == RAILS_SECTION_ID)
-        .ok_or_else(|| SnapshotError::new("missing_section", "rails section missing"))?;
+        .find(|section| section.id == ORDERINGS_SECTION_ID)
+        .ok_or_else(|| SnapshotError::new("missing_section", "orderings section missing"))?;
 
     let mut state_root_payload = Vec::new();
     state_root_payload.extend_from_slice(&ideas.hash);
     state_root_payload.extend_from_slice(&connections.hash);
-    state_root_payload.extend_from_slice(&rails.hash);
+    state_root_payload.extend_from_slice(&orderings.hash);
     let state_root_hash = hash_with_domain("snapshot_state_root", &state_root_payload);
 
     validate_payload_hashes(payloads)?;
@@ -273,15 +274,21 @@ fn compute_stage0_commitments(
 fn build_stage0_sections(
     ideas: &[ReplayIdeaRow],
     connections: &[ReplayConnectionRow],
-    rails: &[ReplayRailRow],
+    orderings: &[ReplayOrderingRow],
 ) -> Result<Vec<SnapshotSection>, SnapshotError> {
     let (ideas_bytes, ideas_count) = build_ideas_section(ideas)?;
     let (connections_bytes, connections_count) = build_connections_section(connections)?;
-    let (rails_bytes, rails_count) = build_rails_section(rails)?;
+    let (orderings_bytes, orderings_count) = build_orderings_section(orderings)?;
+    let (ordering_representation_index_bytes, ordering_representation_index_count) =
+        build_ordering_representation_index_section(orderings)?;
 
     let ideas_hash = section_hash(IDEAS_SECTION_ID, &ideas_bytes);
     let connections_hash = section_hash(CONNECTIONS_SECTION_ID, &connections_bytes);
-    let rails_hash = section_hash(RAILS_SECTION_ID, &rails_bytes);
+    let orderings_hash = section_hash(ORDERINGS_SECTION_ID, &orderings_bytes);
+    let ordering_representation_index_hash = section_hash(
+        ORDERING_REPRESENTATION_INDEX_SECTION_ID,
+        &ordering_representation_index_bytes,
+    );
 
     Ok(vec![
         SnapshotSection {
@@ -297,10 +304,16 @@ fn build_stage0_sections(
             hash: connections_hash,
         },
         SnapshotSection {
-            id: RAILS_SECTION_ID,
-            item_count: rails_count,
-            bytes: rails_bytes,
-            hash: rails_hash,
+            id: ORDERINGS_SECTION_ID,
+            item_count: orderings_count,
+            bytes: orderings_bytes,
+            hash: orderings_hash,
+        },
+        SnapshotSection {
+            id: ORDERING_REPRESENTATION_INDEX_SECTION_ID,
+            item_count: ordering_representation_index_count,
+            bytes: ordering_representation_index_bytes,
+            hash: ordering_representation_index_hash,
         },
     ])
 }
@@ -348,53 +361,87 @@ fn build_connections_section(
     Ok((out, count))
 }
 
-fn build_rails_section(rails: &[ReplayRailRow]) -> Result<(Vec<u8>, u32), SnapshotError> {
-    let mut sorted = rails.to_vec();
+fn build_orderings_section(orderings: &[ReplayOrderingRow]) -> Result<(Vec<u8>, u32), SnapshotError> {
+    let mut sorted = orderings.to_vec();
     sorted.sort_by_key(|row| (row.created_block_height, row.created_event_index));
+    let profiles = sorted
+        .iter()
+        .map(|row| (row.ordering_id, row.ordering_profile.as_str()))
+        .collect::<std::collections::HashMap<_, _>>();
 
     let mut out = Vec::new();
     for row in &sorted {
-        let title_representation_id = row.title_representation_id.ok_or_else(|| {
-            SnapshotError::new(
-                "missing_representation_pointer",
-                format!(
-                    "missing title representation pointer for rail_id={}",
-                    row.rail_id
-                ),
-            )
-        })?;
-        let sentence_representation_id = row.sentence_representation_id.ok_or_else(|| {
-            SnapshotError::new(
-                "missing_representation_pointer",
-                format!(
-                    "missing sentence representation pointer for rail_id={}",
-                    row.rail_id
-                ),
-            )
-        })?;
+        let profile_code = ordering_profile_code(&row.ordering_profile)?;
+        match (profile_code, row.vine_type.as_deref()) {
+            (0, Some(vine_type)) => {
+                vine_type_code(vine_type)?;
+            }
+            (0, None) => {
+                return Err(SnapshotError::new(
+                    "missing_vine_type",
+                    format!("missing vine_type for ordering_id={}", row.ordering_id),
+                ));
+            }
+            (_, Some(_)) => {
+                return Err(SnapshotError::new(
+                    "invalid_vine_type",
+                    format!(
+                        "vine_type is forbidden for ordering_profile={} ordering_id={}",
+                        row.ordering_profile, row.ordering_id
+                    ),
+                ));
+            }
+            (_, None) => {}
+        }
+        if let Some(base_ordering_id) = row.base_ordering_id {
+            let base_profile = profiles.get(&base_ordering_id).ok_or_else(|| {
+                SnapshotError::new(
+                    "missing_base_ordering",
+                    format!("missing base_ordering_id={base_ordering_id}"),
+                )
+            })?;
+            if *base_profile != row.ordering_profile.as_str() {
+                return Err(SnapshotError::new(
+                    "ordering_profile_mismatch",
+                    format!(
+                        "fork profile differs from base for ordering_id={}",
+                        row.ordering_id
+                    ),
+                ));
+            }
+        }
 
-        out.extend_from_slice(&encode_id_anyhow(&row.rail_id.to_string())?);
-        out.extend_from_slice(&encode_string_canon(&row.rail_kind)?);
-        push_optional_string(&mut out, row.vine_type.as_deref())?;
+        out.extend_from_slice(&encode_id_anyhow(&row.ordering_id.to_string())?);
+        out.extend_from_slice(&encode_u8(profile_code));
+        match row.vine_type.as_deref() {
+            Some(vine_type) => {
+                out.extend_from_slice(&encode_u8(1));
+                out.extend_from_slice(&encode_u8(vine_type_code(vine_type)?));
+            }
+            None => out.extend_from_slice(&encode_u8(0)),
+        }
         out.extend_from_slice(&encode_id_anyhow(&row.speaker_identity_id.to_string())?);
         out.extend_from_slice(&encode_id_anyhow(&row.created_event_id.to_string())?);
-        match row.base_rail_id {
-            Some(base_rail_id) => {
+        match row.base_ordering_id {
+            Some(base_ordering_id) => {
                 out.extend_from_slice(&encode_u8(1));
-                out.extend_from_slice(&encode_id_anyhow(&base_rail_id.to_string())?);
+                out.extend_from_slice(&encode_id_anyhow(&base_ordering_id.to_string())?);
             }
             None => {
                 out.extend_from_slice(&encode_u8(0));
             }
         }
-        out.extend_from_slice(&encode_id_anyhow(&title_representation_id.to_string())?);
-        out.extend_from_slice(&encode_id_anyhow(&sentence_representation_id.to_string())?);
 
         out.extend_from_slice(&encode_u32(u32::try_from(row.items.len()).map_err(
-            |_| SnapshotError::new("invalid_count", "rail items count overflow"),
+            |_| SnapshotError::new("invalid_count", "ordering items count overflow"),
         )?));
         for item in &row.items {
             out.extend_from_slice(&encode_id_anyhow(&item.idea_id.to_string())?);
+        }
+        out.extend_from_slice(&encode_u32(u32::try_from(row.items.len()).map_err(
+            |_| SnapshotError::new("invalid_count", "ordering step metadata count overflow"),
+        )?));
+        for item in &row.items {
             match item.via_connection_id {
                 Some(via_connection_id) => {
                     out.extend_from_slice(&encode_u8(1));
@@ -408,8 +455,72 @@ fn build_rails_section(rails: &[ReplayRailRow]) -> Result<(Vec<u8>, u32), Snapsh
     }
 
     let count = u32::try_from(sorted.len())
-        .map_err(|_| SnapshotError::new("invalid_count", "rails count overflow"))?;
+        .map_err(|_| SnapshotError::new("invalid_count", "orderings count overflow"))?;
     Ok((out, count))
+}
+
+fn build_ordering_representation_index_section(
+    orderings: &[ReplayOrderingRow],
+) -> Result<(Vec<u8>, u32), SnapshotError> {
+    let mut sorted = orderings.to_vec();
+    sorted.sort_by_key(|row| (row.created_block_height, row.created_event_index));
+
+    let mut out = Vec::new();
+    for row in &sorted {
+        let title_representation_id = row.title_representation_id.ok_or_else(|| {
+            SnapshotError::new(
+                "missing_representation_pointer",
+                format!(
+                    "missing title representation pointer for ordering_id={}",
+                    row.ordering_id
+                ),
+            )
+        })?;
+        let sentence_representation_id = row.sentence_representation_id.ok_or_else(|| {
+            SnapshotError::new(
+                "missing_representation_pointer",
+                format!(
+                    "missing sentence representation pointer for ordering_id={}",
+                    row.ordering_id
+                ),
+            )
+        })?;
+        out.extend_from_slice(&encode_id_anyhow(&row.ordering_id.to_string())?);
+        out.extend_from_slice(&encode_id_anyhow(&title_representation_id.to_string())?);
+        out.extend_from_slice(&encode_id_anyhow(&sentence_representation_id.to_string())?);
+        out.extend_from_slice(&encode_u32(0));
+    }
+
+    let count = u32::try_from(sorted.len()).map_err(|_| {
+        SnapshotError::new(
+            "invalid_count",
+            "ordering representation index count overflow",
+        )
+    })?;
+    Ok((out, count))
+}
+
+fn ordering_profile_code(value: &str) -> Result<u8, SnapshotError> {
+    match value {
+        "vine" => Ok(0),
+        "evidence_rail" => Ok(1),
+        "action_rail" => Ok(2),
+        _ => Err(SnapshotError::new(
+            "invalid_ordering_profile",
+            format!("unsupported ordering_profile={value}"),
+        )),
+    }
+}
+
+fn vine_type_code(value: &str) -> Result<u8, SnapshotError> {
+    match value {
+        "pathway_vine" => Ok(0),
+        "narrative_vine" => Ok(1),
+        _ => Err(SnapshotError::new(
+            "invalid_vine_type",
+            format!("unsupported vine_type={value}"),
+        )),
+    }
 }
 
 fn section_hash(section_id: u16, section_bytes: &[u8]) -> Vec<u8> {
@@ -427,7 +538,7 @@ fn validate_payload_hashes(payloads: &[ReplayPayloadRow]) -> Result<(), Snapshot
         let object_id = row.object_id.to_string();
         let object_kind = match row.object_kind {
             ReplayObjectKind::Idea => "idea",
-            ReplayObjectKind::Rail => "rail",
+            ReplayObjectKind::Ordering => "ordering",
         };
         let title = row.title.as_deref().ok_or_else(|| {
             SnapshotError::new(
@@ -477,14 +588,14 @@ fn validate_payload_hashes(payloads: &[ReplayPayloadRow]) -> Result<(), Snapshot
                     missing.push(format!("idea:{}:combined", row.object_id));
                 }
             }
-        } else if row.object_kind == ReplayObjectKind::Rail
+        } else if row.object_kind == ReplayObjectKind::Ordering
             && (row.title_payload_hash.is_none() || row.sentence_payload_hash.is_none())
         {
             if row.title_payload_hash.is_none() {
-                missing.push(format!("rail:{}:title", row.object_id));
+                missing.push(format!("ordering:{}:title", row.object_id));
             }
             if row.sentence_payload_hash.is_none() {
-                missing.push(format!("rail:{}:sentence", row.object_id));
+                missing.push(format!("ordering:{}:sentence", row.object_id));
             }
         }
     }
@@ -540,7 +651,9 @@ fn encode_id_anyhow(value: &str) -> Result<Vec<u8>, SnapshotError> {
 mod tests {
     use super::*;
     use chrono::TimeZone;
-    use replay::{ReplayCycleStatus, ReplayTempoStatus};
+    use replay::{
+        ReplayCycleStatus, ReplayOrderingItemRow, ReplayOrderingRow, ReplayTempoStatus,
+    };
 
     fn v7(id: &str) -> Uuid {
         Uuid::parse_str(id).expect("uuid parse")
@@ -548,10 +661,17 @@ mod tests {
 
     fn fixture() -> ReplayOutput {
         let payload_hash = payload_hash_hex("title", "sentence", None, None).expect("hash");
+        let ordering_title = "Evidence Rail title";
+        let ordering_sentence = "Evidence Rail sentence";
+        let ordering_title_hash =
+            to_hex(&hash_bytes(&canonicalize_string_anyhow(ordering_title).expect("title")));
+        let ordering_sentence_hash = to_hex(&hash_bytes(
+            &canonicalize_string_anyhow(ordering_sentence).expect("sentence"),
+        ));
         ReplayOutput {
             height: 1,
-            event_count: 1,
-            last_event_id: v7("00000000-0000-7000-8000-000000000101"),
+            event_count: 2,
+            last_event_id: v7("00000000-0000-7000-8000-000000000102"),
             approximate_timestamp: Utc.timestamp_opt(0, 0).single().unwrap(),
             ideas: vec![ReplayIdeaRow {
                 idea_id: v7("00000000-0000-7000-8000-00000000b001"),
@@ -561,19 +681,52 @@ mod tests {
                 created_block_height: 1,
                 created_event_index: 0,
             }],
-            rails: vec![],
-            connections: vec![],
-            payloads: vec![ReplayPayloadRow {
-                object_kind: ReplayObjectKind::Idea,
-                object_id: v7("00000000-0000-7000-8000-00000000b001"),
-                title: Some("title".to_string()),
-                sentence: Some("sentence".to_string()),
-                paragraph: None,
-                full: None,
-                payload_hash: Some(payload_hash),
-                title_payload_hash: None,
-                sentence_payload_hash: None,
+            orderings: vec![ReplayOrderingRow {
+                ordering_id: v7("00000000-0000-7000-8000-00000000b010"),
+                ordering_profile: "evidence_rail".to_string(),
+                vine_type: None,
+                speaker_identity_id: v7("00000000-0000-7000-8000-00000000a001"),
+                created_event_id: v7("00000000-0000-7000-8000-000000000102"),
+                created_block_height: 1,
+                created_event_index: 1,
+                base_ordering_id: None,
+                title_representation_id: Some(v7(
+                    "00000000-0000-7000-8000-00000000d010",
+                )),
+                sentence_representation_id: Some(v7(
+                    "00000000-0000-7000-8000-00000000d011",
+                )),
+                items: vec![ReplayOrderingItemRow {
+                    idx: 0,
+                    idea_id: v7("00000000-0000-7000-8000-00000000b001"),
+                    via_connection_id: None,
+                }],
             }],
+            connections: vec![],
+            payloads: vec![
+                ReplayPayloadRow {
+                    object_kind: ReplayObjectKind::Idea,
+                    object_id: v7("00000000-0000-7000-8000-00000000b001"),
+                    title: Some("title".to_string()),
+                    sentence: Some("sentence".to_string()),
+                    paragraph: None,
+                    full: None,
+                    payload_hash: Some(payload_hash),
+                    title_payload_hash: None,
+                    sentence_payload_hash: None,
+                },
+                ReplayPayloadRow {
+                    object_kind: ReplayObjectKind::Ordering,
+                    object_id: v7("00000000-0000-7000-8000-00000000b010"),
+                    title: Some(ordering_title.to_string()),
+                    sentence: Some(ordering_sentence.to_string()),
+                    paragraph: None,
+                    full: None,
+                    payload_hash: None,
+                    title_payload_hash: Some(ordering_title_hash),
+                    sentence_payload_hash: Some(ordering_sentence_hash),
+                },
+            ],
             cycle_status: ReplayCycleStatus {
                 cycle_index: 0,
                 h_start: 0,
@@ -612,5 +765,27 @@ mod tests {
         let sha1 = sha256_hex(&snapshot.bytes);
         let sha2 = sha256_hex(&snapshot.bytes);
         assert_eq!(sha1, sha2);
+    }
+
+    #[test]
+    fn ordering_representation_index_is_excluded_from_state_root() {
+        let first = build_stage0_snapshot(&fixture()).expect("first snapshot");
+        let mut changed = fixture();
+        changed.orderings[0].title_representation_id =
+            Some(v7("00000000-0000-7000-8000-00000000d012"));
+        let second = build_stage0_snapshot(&changed).expect("second snapshot");
+        assert_eq!(
+            first.commitments.state_root_hash,
+            second.commitments.state_root_hash
+        );
+        assert_ne!(first.snapshot_hash, second.snapshot_hash);
+    }
+
+    #[test]
+    fn snapshot_rejects_vine_metadata_on_standardized_profile() {
+        let mut replay = fixture();
+        replay.orderings[0].vine_type = Some("narrative_vine".to_string());
+        let error = build_stage0_snapshot(&replay).expect_err("invalid profile metadata");
+        assert_eq!(error.code, "invalid_vine_type");
     }
 }

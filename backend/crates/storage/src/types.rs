@@ -134,9 +134,9 @@ pub struct PrivateIdeaRow {
 }
 
 #[derive(Debug, Clone, Serialize, FromRow)]
-pub struct CanonicalRailRow {
-    pub rail_id: Uuid,
-    pub rail_kind: i16,
+pub struct CanonicalOrderingRow {
+    pub ordering_id: Uuid,
+    pub ordering_profile: i16,
     pub vine_type: Option<i16>,
     pub author_identity_id: Uuid,
     pub title_representation_id: Option<Uuid>,
@@ -146,24 +146,25 @@ pub struct CanonicalRailRow {
 }
 
 #[derive(Debug, Clone, Serialize, FromRow)]
-pub struct CanonicalRailItemRow {
+pub struct CanonicalOrderingItemRow {
     pub idx: i32,
     pub idea_id: Uuid,
     pub via_connection_id: Option<Uuid>,
 }
 
 #[derive(Debug, Clone, Serialize, FromRow)]
-pub struct CanonicalRailSummaryRow {
-    pub rail_id: Uuid,
-    pub rail_kind: i16,
+pub struct CanonicalOrderingSummaryRow {
+    pub ordering_id: Uuid,
+    pub ordering_profile: i16,
     pub vine_type: Option<i16>,
 }
 
 #[derive(Debug, Clone, Serialize, FromRow)]
-pub struct PrivateVineRow {
-    pub private_vine_id: Uuid,
+pub struct PrivateOrderingRow {
+    pub private_ordering_id: Uuid,
     pub owner_account_id: Uuid,
-    pub vine_type: i16,
+    pub ordering_profile: i16,
+    pub vine_type: Option<i16>,
     pub title: Option<String>,
     pub sentence: Option<String>,
     pub paragraph: Option<String>,
@@ -173,9 +174,10 @@ pub struct PrivateVineRow {
 }
 
 #[derive(Debug, Clone, Serialize, FromRow)]
-pub struct PrivateVineListRow {
-    pub private_vine_id: Uuid,
-    pub vine_type: i16,
+pub struct PrivateOrderingListRow {
+    pub private_ordering_id: Uuid,
+    pub ordering_profile: i16,
+    pub vine_type: Option<i16>,
     pub title: Option<String>,
     pub sentence: Option<String>,
     pub updated_at: DateTime<Utc>,
@@ -183,15 +185,15 @@ pub struct PrivateVineListRow {
 }
 
 #[derive(Debug, Clone, Serialize, FromRow)]
-pub struct PrivateVineItemRow {
-    pub private_vine_id: Uuid,
+pub struct PrivateOrderingItemRow {
+    pub private_ordering_id: Uuid,
     pub idx: i32,
     pub idea_id: Uuid,
     pub via_connection_id: Option<Uuid>,
 }
 
 #[derive(Debug, Clone)]
-pub struct PrivateVineItemInput {
+pub struct PrivateOrderingItemInput {
     pub idx: i32,
     pub idea_id: Uuid,
     pub via_connection_id: Option<Uuid>,
@@ -306,6 +308,16 @@ pub struct SignedCanonicalWriteResult {
     pub object_id: Uuid,
     pub idempotent: bool,
     pub publication_profile: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct ProfileV0IdentityAdmissionResult {
+    pub identity_id: Uuid,
+    pub event_id: Uuid,
+    pub block_height: i64,
+    pub event_index: i32,
+    pub invitation_capacity_debit_units: i64,
+    pub idempotent: bool,
 }
 
 #[derive(Debug, Clone)]
