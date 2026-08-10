@@ -94,3 +94,9 @@ Documentation-only coordination work does not require a notes entry unless it ch
   - Description: aligned representation-bearing state roots, enforced non-null description complexity, made reviewer and export execution exact-prefix/outside-repository isolated, and completed the inherited conformance gate.
   - Commands/results: full Rust, 67/67 conformance, 22/22 DTO, boundaries, identity integrity, frontend, 19/19 PostgreSQL matrix, source demo, exported demo, export verifier, and cleanup/catalog gates passed.
   - Result: implementation complete; no staging or checkpoint action performed.
+
+- 2026-08-10 16:03:44 -04:00 - OPENCORE-PRODUCT-READ-CONTRACT-001 complete
+  - Files changed: API handlers/router/helpers/mapping/tests/types; canonical Rust and TypeScript DTOs; storage read/query/types; reset/demo scripts; API contract/drift/export tooling; read-contract, boundary, status, and coordination docs.
+  - Description: added API contract v1.0.0 capabilities and bounded, deterministic, snapshot-pinned product reads with a shared commitment-bearing basis; completed representation list/detail; added canonical-ID batch resolution and exact title/sentence lookup; added Open Core-owned schema and drift checks. No migration, write kind, canonical policy, or private behavior was added.
+  - Commands/results: Rust fmt/build/all-target tests passed; focused guarded API database acceptance passed; PostgreSQL matrix 19/19 passed; conformance, 31-interface DTO drift, 19-endpoint API drift, boundaries, frontend 2/2/build, source demo, full external export verification, and exported smoke passed.
+  - Result: complete on local branch; all disposable databases cleaned, protected database count preserved at 2, and no private repository or external system changed.

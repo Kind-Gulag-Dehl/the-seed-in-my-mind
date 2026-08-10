@@ -30,14 +30,27 @@ pub(crate) struct SnapshotCommitByHeightPath {
 }
 
 #[derive(Deserialize)]
+pub(crate) struct SnapshotPinQuery {
+    pub(crate) snapshot_height: Option<String>,
+}
+
+#[derive(Deserialize)]
 pub(crate) struct IdeasTopQuery {
+    pub(crate) snapshot_height: Option<String>,
     pub(crate) limit: Option<String>,
     pub(crate) offset: Option<String>,
     pub(crate) order: Option<String>,
 }
 
 #[derive(Deserialize)]
+pub(crate) struct IdeaDetailQuery {
+    pub(crate) snapshot_height: Option<String>,
+    pub(crate) connection_limit: Option<String>,
+}
+
+#[derive(Deserialize)]
 pub(crate) struct SearchIdeasQuery {
+    pub(crate) snapshot_height: Option<String>,
     pub(crate) q: Option<String>,
     pub(crate) limit: Option<String>,
     pub(crate) offset: Option<String>,
@@ -45,14 +58,51 @@ pub(crate) struct SearchIdeasQuery {
 
 #[derive(Deserialize)]
 pub(crate) struct NeighborhoodQuery {
+    pub(crate) snapshot_height: Option<String>,
     pub(crate) depth: Option<String>,
     pub(crate) limit_per_hop: Option<String>,
     pub(crate) ri_dir: Option<String>,
 }
 
 #[derive(Deserialize)]
-pub(crate) struct RelativeImportanceConnectionsQuery {
+pub(crate) struct OrderingDetailQuery {
+    pub(crate) snapshot_height: Option<String>,
+    pub(crate) item_limit: Option<String>,
+}
+
+#[derive(Deserialize)]
+pub(crate) struct BoundedListQuery {
+    pub(crate) snapshot_height: Option<String>,
+    pub(crate) limit: Option<String>,
+    pub(crate) offset: Option<String>,
+}
+
+#[derive(Deserialize)]
+pub(crate) struct BatchIdeaResolutionQuery {
+    pub(crate) snapshot_height: Option<String>,
     pub(crate) idea_ids: Option<String>,
+}
+
+#[derive(Deserialize)]
+pub(crate) struct ExactMatchIdeasQuery {
+    pub(crate) snapshot_height: Option<String>,
+    pub(crate) field: Option<String>,
+    pub(crate) value: Option<String>,
+    pub(crate) limit: Option<String>,
+}
+
+#[derive(Deserialize)]
+pub(crate) struct RelativeImportanceConnectionsQuery {
+    pub(crate) snapshot_height: Option<String>,
+    pub(crate) idea_ids: Option<String>,
+    pub(crate) limit: Option<String>,
+}
+
+#[derive(Deserialize)]
+pub(crate) struct CoordinatesQuery {
+    pub(crate) snapshot_height: Option<String>,
+    pub(crate) reference_id: Option<String>,
+    pub(crate) limit: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]

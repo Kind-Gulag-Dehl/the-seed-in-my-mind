@@ -29,9 +29,17 @@ psql $env:DATABASE_URL -v ON_ERROR_STOP=1 -c "DROP SCHEMA public CASCADE; CREATE
 
 $migrationDir = Join-Path $backendDir "migrations\\postgres"
 Write-Host "[reset] apply migrations from $migrationDir" -ForegroundColor Cyan
+psql $env:DATABASE_URL -v ON_ERROR_STOP=1 -c "CREATE TABLE schema_migrations (filename text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now());"
 Get-ChildItem -Path $migrationDir -Filter "*.sql" | Sort-Object Name | ForEach-Object {
     Write-Host "[reset] apply $($_.Name)" -ForegroundColor Cyan
     psql $env:DATABASE_URL -v ON_ERROR_STOP=1 -f $_.FullName
+    if ($LASTEXITCODE -ne 0) {
+        throw "[reset] migration failed: $($_.Name)"
+    }
+    psql $env:DATABASE_URL -v ON_ERROR_STOP=1 -c "INSERT INTO schema_migrations (filename) VALUES ('$($_.Name)');" | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "[reset] migration ledger update failed: $($_.Name)"
+    }
 }
 
 if (-not [string]::IsNullOrWhiteSpace($SeedDataFile)) {

@@ -1,10 +1,39 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+pub const API_CONTRACT_VERSION: &str = "1.0.0";
+pub const PUBLIC_CONTRACT_ARTIFACT: &str = "tools/open-core/public-api-contract.v1.json";
+pub const SNAPSHOT_FORMAT_VERSION: &str = "0";
+pub const EXPECTED_MIGRATION_HEAD: &str = "0025_seed_conformance_bindings";
+
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {
     pub error_code: String,
     pub message: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ApiCapabilitiesResponse {
+    pub api_contract_version: String,
+    pub build_revision: String,
+    pub migration_head: String,
+    pub snapshot_format_version: String,
+    pub active_feature_profile: String,
+    pub supported_canonical_signed_write_kinds: Vec<String>,
+    pub public_contract_artifact: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct SnapshotBasis {
+    pub snapshot_id: String,
+    pub snapshot_height: String,
+    pub snapshot_hash: String,
+    pub state_root_hash: String,
+    pub title_sentence_payload_root: String,
+    pub shared_map_commitment: String,
+    pub active_rulebook_set_hash: String,
+    pub last_event_id: String,
+    pub event_count: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -51,11 +80,13 @@ pub struct CanonicalOrderingDetail {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct CanonicalOrderingResponse {
+    pub basis: SnapshotBasis,
     pub ordering: CanonicalOrderingDetail,
 }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct CanonicalOrderingsResponse {
+    pub basis: SnapshotBasis,
     pub orderings: Vec<CanonicalOrderingSummary>,
 }
 
@@ -72,15 +103,28 @@ pub struct CanonicalRepresentationDetail {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vocabulary_version_id: Option<String>,
     pub payload_hash: String,
+    pub payload_text: Option<String>,
     pub author_identity_id: String,
     pub language_locale: Option<String>,
     pub provenance: Option<String>,
     pub created_event_id: String,
+    pub created_block_height: String,
+    pub created_event_index: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct CanonicalRepresentationResponse {
+    pub basis: SnapshotBasis,
     pub representation: CanonicalRepresentationDetail,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CanonicalRepresentationsResponse {
+    pub basis: SnapshotBasis,
+    pub representations: Vec<CanonicalRepresentationDetail>,
+    pub total: String,
+    pub offset: String,
+    pub limit: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -145,6 +189,7 @@ pub struct IdeaDetail {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct NeighborhoodResponse {
+    pub basis: SnapshotBasis,
     pub central_idea: IdeaDetail,
     pub adjacent_ideas: Vec<IdeaSummary>,
     pub connections: Vec<ConnectionSummary>,
@@ -168,6 +213,7 @@ pub struct SnapshotMetadata {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SnapshotLatestResponse {
+    pub basis: SnapshotBasis,
     pub snapshot: SnapshotMetadata,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub preview_ideas: Option<Vec<IdeaSummary>>,
@@ -175,6 +221,7 @@ pub struct SnapshotLatestResponse {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SnapshotResponse {
+    pub basis: SnapshotBasis,
     pub snapshot: SnapshotMetadata,
 }
 
@@ -204,6 +251,7 @@ pub struct SnapshotCommitListResponse {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct IdeasTopResponse {
+    pub basis: SnapshotBasis,
     pub ideas: Vec<IdeaSummary>,
     pub total: String,
     pub offset: String,
@@ -211,14 +259,41 @@ pub struct IdeasTopResponse {
 }
 
 #[derive(Debug, Clone, Serialize)]
+pub struct IdeaDetailResponse {
+    pub basis: SnapshotBasis,
+    pub idea: IdeaDetail,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct SearchIdeasResponse {
+    pub basis: SnapshotBasis,
     pub results: Vec<IdeaSummary>,
     pub total: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
+pub struct IdeaBatchResolutionResponse {
+    pub basis: SnapshotBasis,
+    pub ideas: Vec<IdeaSummary>,
+    pub missing_idea_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ExactMatchIdeasResponse {
+    pub basis: SnapshotBasis,
+    pub field: String,
+    pub value: String,
+    pub matches: Vec<IdeaSummary>,
+    pub truncated: bool,
+    pub limit: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct RelativeImportanceConnectionsResponse {
+    pub basis: SnapshotBasis,
     pub connections: Vec<ConnectionSummary>,
+    pub truncated: bool,
+    pub limit: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -229,7 +304,37 @@ pub struct IdentityInfo {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct IdentityResponse {
+    pub basis: SnapshotBasis,
     pub identity: IdentityInfo,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CoordinateNodeResponse {
+    pub id: String,
+    pub x: f64,
+    pub y: f64,
+    pub title: String,
+    pub sentence: Option<String>,
+    pub idea_type: String,
+    pub derived_universal_rank: Option<String>,
+    pub ri_in_count: String,
+    pub ri_out_count: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CoordinateMetaResponse {
+    pub spacing: f64,
+    pub algo: String,
+    pub relaxed: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CoordinateViewResponse {
+    pub basis: SnapshotBasis,
+    pub mode: String,
+    pub reference_id: Option<String>,
+    pub coords: Vec<CoordinateNodeResponse>,
+    pub meta: CoordinateMetaResponse,
 }
 
 #[derive(Debug, Clone, Serialize)]

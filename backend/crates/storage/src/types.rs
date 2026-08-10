@@ -171,10 +171,13 @@ pub struct CanonicalRepresentationRow {
     pub tier_complexity: Option<i16>,
     pub vocabulary_version_id: Option<Uuid>,
     pub payload_hash: String,
+    pub payload_text: Option<String>,
     pub author_identity_id: Uuid,
     pub language_locale: Option<String>,
     pub provenance: Option<String>,
     pub created_event_id: Uuid,
+    pub created_block_height: i64,
+    pub created_event_index: i32,
 }
 
 #[derive(Debug, Clone, Serialize, FromRow)]
@@ -220,6 +223,12 @@ pub struct PrivateOrderingItemInput {
 #[derive(Debug, Clone, FromRow)]
 pub(crate) struct CountRow {
     pub(crate) total: i64,
+}
+
+#[derive(Debug, Clone, FromRow)]
+pub struct MigrationHeadRow {
+    pub version: i64,
+    pub description: String,
 }
 
 pub(crate) const BUILD_MANA_CYCLE_CAP: i64 = 20;

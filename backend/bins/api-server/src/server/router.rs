@@ -34,10 +34,11 @@ use crate::server::handlers::private::{
     private_list_orderings, private_update_idea, private_update_ordering,
 };
 use crate::server::handlers::public::{
-    health_check, idea_detail_handler, idea_neighborhood, idea_orderings_handler, ideas_top,
-    identity_detail_handler, latest_snapshot, ordering_detail_handler,
-    relative_importance_connections, representation_detail_handler, search_ideas,
-    snapshot_by_height, snapshot_commit_by_height, snapshot_commit_list,
+    capabilities, exact_match_ideas, health_check, idea_detail_handler, idea_neighborhood,
+    idea_orderings_handler, idea_representations_handler, ideas_top, identity_detail_handler,
+    latest_snapshot, ordering_detail_handler, relative_importance_connections,
+    representation_detail_handler, resolve_ideas_batch, search_ideas, snapshot_by_height,
+    snapshot_commit_by_height, snapshot_commit_list,
 };
 use crate::server::types::AppState;
 
@@ -55,6 +56,7 @@ pub(crate) fn build_app(state: AppState) -> Router {
         .layer(DefaultBodyLimit::max(API_CANONICAL_BODY_LIMIT_BYTES));
     let app = Router::new()
         .route("/api/v0/health", get(health_check))
+        .route("/api/v0/capabilities", get(capabilities))
         .route("/api/v0/snapshot/latest", get(latest_snapshot))
         .route("/api/v0/snapshot/:height", get(snapshot_by_height))
         .route("/api/v0/snapshots/commits", get(snapshot_commit_list))
@@ -63,8 +65,14 @@ pub(crate) fn build_app(state: AppState) -> Router {
             get(snapshot_commit_by_height),
         )
         .route("/api/v0/ideas/top", get(ideas_top))
+        .route("/api/v0/ideas/resolve", get(resolve_ideas_batch))
+        .route("/api/v0/ideas/exact-match", get(exact_match_ideas))
         .route("/api/v0/coordinates", get(canonical_coordinates))
         .route("/api/v0/idea/:idea_id", get(idea_detail_handler))
+        .route(
+            "/api/v0/idea/:idea_id/representations",
+            get(idea_representations_handler),
+        )
         .route(
             "/api/v0/ordering/:ordering_id",
             get(ordering_detail_handler),

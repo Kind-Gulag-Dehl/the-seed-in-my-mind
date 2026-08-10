@@ -1368,3 +1368,44 @@ This file is append-only completed-run history for Codex work in the open-core r
   - Cross-repository: private repository was not modified. Exact downstream obligations are snapshot representations parity/goldens and migration-0030 non-null parity, followed by guarded private verification.
   - Safety: no seed_dev, persistent database, secret, Git index/history/remote, zip/release, genesis, or historical artifact was touched.
   - Status: complete and awaiting Control Room authorization for the audited three-cohort Git checkpoint.
+
+- 2026-08-10 16:03:44 -04:00
+  - Active task ID: `OPENCORE-PRODUCT-READ-CONTRACT-001`.
+  - Track name: Track A / Track C public product-read contract.
+  - Repository name: the-seed-in-my-mind-open-core.
+  - Repository role: authoritative public/open-core producer.
+  - Codex conversation label: Open Core product read contract.
+  - Active-task overlap detected: no; the exact baseline was clean and no other active task claimed the surface.
+  - Cross-repository: the private repository was inspected read-only for consumer evidence only; no private bytes changed.
+  - Task summary: added additive API contract v1.0.0 capabilities, bounded snapshot-pinned public reads with commitment-bearing basis metadata, complete representation reads, bounded canonical-ID batch resolution, bounded exact title/sentence lookup, and an Open Core-owned machine contract with drift verification. No canonical policy, write kind, migration, or consensus semantics were added.
+  - Files changed:
+    - `backend/bins/api-server/src/server/handlers/canonical.rs`
+    - `backend/bins/api-server/src/server/handlers/public.rs`
+    - `backend/bins/api-server/src/server/helpers.rs`
+    - `backend/bins/api-server/src/server/mapping.rs`
+    - `backend/bins/api-server/src/server/router.rs`
+    - `backend/bins/api-server/src/server/tests_signed_ingress.rs`
+    - `backend/bins/api-server/src/server/types.rs`
+    - `backend/crates/api-types-canonical/src/lib.rs`
+    - `backend/crates/storage/src/queries.rs`
+    - `backend/crates/storage/src/read.rs`
+    - `backend/crates/storage/src/types.rs`
+    - `backend/scripts/reset-dev-db.ps1`
+    - `frontend/src/shared/types/canonical.ts`
+    - `package.json`
+    - `scripts/open-core-demo.ps1`
+    - `tools/open-core/canonical-dto-surface.json`
+    - `tools/open-core/export-manifest.json`
+    - `tools/open-core/public-api-contract.v1.json`
+    - `tools/open-core/verify-public-api-contract.mjs`
+    - `docs/api-contract-read-only.md`
+    - `docs/open-core-boundary-manifest.md`
+    - `docs/open-core-implementation-status.md`
+    - `docs/codex-active-tasks.md`
+    - `docs/codex-devlog.md`
+    - `docs/codex-notes.md`
+  - Commands and results: Windows Rust bootstrap passed with Cargo 1.93.0 and rustc 1.93.0; `cargo fmt --all -- --check` passed; `cargo build --workspace --all-targets --locked` passed; `cargo test --workspace --all-targets --locked` passed including API server 27/27; focused guarded product-read acceptance passed 1/1; guarded PostgreSQL conformance passed 19/19 at migration 0025; `npm run conformance` passed 29 Tempo/cycle + 20 Ordering + 18 Seed-binding vectors; canonical DTO verification passed 31 interfaces; public API contract verification passed 19 endpoints and 9 basis fields; boundaries passed; frontend passed 2/2 and production build; source demo passed; full outside-repository export generation/verification/frontend/Rust/demo smoke passed.
+  - Failures and resolution: one export attempt failed because sandboxed Node could not traverse the user-profile temp path, and a second sandboxed attempt stalled at network-restricted `npm install`; both left zero disposable databases. The generated temp output was removed, the exact export was rerun under `S:\` with approved network access, and the full gate passed. Earlier demo attempts exposed a PowerShell PATH collision, an `Invoke-WebRequest` hang, and missing script-managed migration ledger; the demo/reset scripts were minimally repaired and the standard and exported demos passed.
+  - Database cleanup: zero `seed_opencore_m1_reviewer_repair_001_*` databases remain; `seed_admission_p3_test_32944_*` remained exactly 2 before and after all database gates. `seed_dev`, persistent databases, secrets, and external systems were untouched.
+  - Required merge order: this Open Core producer commit first; downstream private client integration second, consuming the Open Core-owned contract and pinning one snapshot height across multi-call reads.
+  - Status: complete; local commit authorized, with no push, merge, PR, publication, deployment, release, rebase, or amend.

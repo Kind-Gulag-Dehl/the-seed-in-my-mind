@@ -16,9 +16,9 @@ function AdminScalar([string]$Sql) {
  return (($o|Out-String).Trim())
 }
 function JsonGet([string]$Uri) {
- $r=Invoke-WebRequest -Uri $Uri -UseBasicParsing -TimeoutSec 5
- if($r.StatusCode -ne 200){throw "[open-core-demo] unexpected HTTP status for $Uri"}
- return ($r.Content|ConvertFrom-Json)
+ $content=& curl.exe --fail --silent --show-error --max-time 5 $Uri
+ if($LASTEXITCODE -ne 0){throw "[open-core-demo] GET failed for $Uri"}
+ return (($content|Out-String)|ConvertFrom-Json)
 }
 if($KeepServerRunning){throw "[open-core-demo] KeepServerRunning is incompatible with disposable cleanup"}
 if([string]::IsNullOrWhiteSpace($AdminDatabaseUrl)){throw "[open-core-demo] SEED_TEST_DATABASE_ADMIN_URL is required"}
@@ -28,6 +28,7 @@ if(-not[string]::IsNullOrWhiteSpace($env:DATABASE_URL)){
 }
 if(-not(Get-Command cargo -ErrorAction SilentlyContinue)){throw "[open-core-demo] cargo not found"}
 if(-not(Get-Command psql -ErrorAction SilentlyContinue)){throw "[open-core-demo] psql not found"}
+if(-not(Get-Command curl.exe -ErrorAction SilentlyContinue)){throw "[open-core-demo] curl.exe not found"}
 try{$adminUri=[System.Uri]$AdminDatabaseUrl}catch{throw "[open-core-demo] invalid administrator URL"}
 if($adminUri.AbsolutePath.Trim("/") -ne "postgres"){throw "[open-core-demo] administrator URL must target postgres"}
 if($dbName.Length -gt 63 -or -not $dbName.StartsWith($prefix)){throw "[open-core-demo] invalid generated database name"}
@@ -64,10 +65,20 @@ try{
  try{cargo build -p api-server --no-default-features --features open_core --locked;if($LASTEXITCODE -ne 0){throw "[open-core-demo] api-server build failed"}}finally{Pop-Location}
  $apiExe=Join-Path $target "debug\api-server.exe"
  if(-not(Test-Path $apiExe)){throw "[open-core-demo] isolated api-server executable missing"}
+ $processPath=$env:Path
+ [Environment]::SetEnvironmentVariable("PATH",$null,"Process")
+ [Environment]::SetEnvironmentVariable("Path",$processPath,"Process")
  $server=Start-Process -FilePath $apiExe -WorkingDirectory $backend -RedirectStandardOutput $outLog -RedirectStandardError $errLog -PassThru -WindowStyle Hidden
  $ready=$false
- for($i=0;$i -lt 60;$i++){Start-Sleep -Milliseconds 500;if($server.HasExited){break};try{$h=Invoke-WebRequest "http://127.0.0.1:3000/api/v0/health" -UseBasicParsing -TimeoutSec 2;if($h.StatusCode -eq 200){$ready=$true;break}}catch{}}
+ for($i=0;$i -lt 60;$i++){
+  Start-Sleep -Milliseconds 500
+  if($server.HasExited){break}
+  $status=& curl.exe --silent --output NUL --write-out "%{http_code}" --max-time 2 "http://127.0.0.1:3000/api/v0/health" 2>$null
+  if($LASTEXITCODE -eq 0 -and $status -eq "200"){$ready=$true;break}
+ }
  if(-not $ready){throw "[open-core-demo] owned api-server did not become ready; port 3000 may be occupied"}
+ $capabilities=JsonGet "http://127.0.0.1:3000/api/v0/capabilities"
+ if($capabilities.api_contract_version -ne "1.0.0" -or $capabilities.migration_head -ne "0025_seed_conformance_bindings"){throw "[open-core-demo] public API capability contract mismatch"}
  $snapshot=JsonGet "http://127.0.0.1:3000/api/v0/snapshot/latest?include_preview=true"
  $ideas=JsonGet "http://127.0.0.1:3000/api/v0/ideas/top?limit=10&offset=0&order=asc"
  $detail=JsonGet "http://127.0.0.1:3000/api/v0/idea/59427f80-5901-7128-990e-90b49f288bcc"
@@ -79,6 +90,8 @@ try{
   try{npm install;if($LASTEXITCODE -ne 0){throw "frontend install failed"};npm test;if($LASTEXITCODE -ne 0){throw "frontend tests failed"};npm run build;if($LASTEXITCODE -ne 0){throw "frontend build failed"}}finally{Pop-Location}
  }
  Write-Host "Open-core demo report" -ForegroundColor Green
+ Write-Host "  API contract version   : $($capabilities.api_contract_version)"
+ Write-Host "  migration head         : $($capabilities.migration_head)"
  Write-Host "  snapshot height        : $($snapshot.snapshot.height)"
  Write-Host "  snapshot hash          : $($snapshot.snapshot.snapshot_hash)"
  Write-Host "  shared map commitment  : $($snapshot.snapshot.shared_map_commitment)"

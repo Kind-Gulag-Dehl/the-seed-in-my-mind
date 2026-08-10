@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "api_contract_version": "1.0.0",
+  "owner": "repo:open_core",
+  "scope": "public_product_read_contract",
+  "artifact": "tools/open-core/public-api-contract.v1.json",
+  "snapshot_format_version": "0",
+  "expected_migration_head": "0025_seed_conformance_bindings",
+  "active_feature_profiles": ["open_core", "full"],
+  "supported_canonical_signed_write_kinds": ["idea_create", "connection_create"],
+  "snapshot_pin": {
+    "query_parameter": "snapshot_height",
+    "type": "non-negative decimal block height",
+    "default": "latest verified snapshot"
+  },
+  "snapshot_basis_fields": [
+    "snapshot_id",
+    "snapshot_height",
+    "snapshot_hash",
+    "state_root_hash",
+    "title_sentence_payload_root",
+    "shared_map_commitment",
+    "active_rulebook_set_hash",
+    "last_event_id",
+    "event_count"
+  ],
+  "limits": {
+    "page_max": 200,
+    "batch_idea_ids_max": 200,
+    "exact_match_max": 200,
+    "coordinates_max": 200,
+    "neighborhood_depth_max": 2,
+    "neighborhood_per_hop_max": 200
+  },
+  "dto_sources": {
+    "rust": "backend/crates/api-types-canonical/src/lib.rs",
+    "typescript": "frontend/src/shared/types/canonical.ts",
+    "drift_surface": "tools/open-core/canonical-dto-surface.json"
+  },
+  "endpoints": [
+    { "method": "GET", "path": "/api/v0/health", "response_dto": null, "snapshot_pinned": false, "bounded": true },
+    { "method": "GET", "path": "/api/v0/capabilities", "response_dto": "ApiCapabilitiesResponse", "snapshot_pinned": false, "bounded": true },
+    { "method": "GET", "path": "/api/v0/snapshot/latest", "response_dto": "SnapshotLatestResponse", "snapshot_pinned": false, "bounded": true },
+    { "method": "GET", "path": "/api/v0/snapshot/:height", "response_dto": "SnapshotResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/snapshots/commits", "response_dto": "SnapshotCommitListResponse", "snapshot_pinned": false, "bounded": true },
+    { "method": "GET", "path": "/api/v0/snapshots/commits/:height", "response_dto": "SnapshotCommitResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/ideas/top", "response_dto": "IdeasTopResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/ideas/resolve", "response_dto": "IdeaBatchResolutionResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/ideas/exact-match", "response_dto": "ExactMatchIdeasResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/idea/:idea_id", "response_dto": "IdeaDetailResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/idea/:idea_id/neighborhood", "response_dto": "NeighborhoodResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/idea/:idea_id/orderings", "response_dto": "CanonicalOrderingsResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/idea/:idea_id/representations", "response_dto": "CanonicalRepresentationsResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/ordering/:ordering_id", "response_dto": "CanonicalOrderingResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/representation/:representation_id", "response_dto": "CanonicalRepresentationResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/search/ideas", "response_dto": "SearchIdeasResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/connections/relative-importance", "response_dto": "RelativeImportanceConnectionsResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/coordinates", "response_dto": "CoordinateViewResponse", "snapshot_pinned": true, "bounded": true },
+    { "method": "GET", "path": "/api/v0/identity/:identity_id", "response_dto": "IdentityResponse", "snapshot_pinned": true, "bounded": true }
+  ]
+}

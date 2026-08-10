@@ -201,6 +201,186 @@ impl Storage {
         Ok(row)
     }
 
+    pub async fn list_connections_for_idea_bounded(
+        &self,
+        snapshot_height: i64,
+        idea_id: Uuid,
+        limit: i64,
+    ) -> Result<Vec<ConnectionRow>> {
+        let rows = sqlx::query_as::<_, ConnectionRow>(queries::LIST_CONNECTIONS_FOR_IDEA_BOUNDED)
+            .bind(snapshot_height)
+            .bind(idea_id)
+            .bind(limit)
+            .fetch_all(&self.pool)
+            .await?;
+        Ok(rows)
+    }
+
+    pub async fn list_connections_for_ideas_bounded(
+        &self,
+        snapshot_height: i64,
+        idea_ids: &[Uuid],
+        limit: i64,
+    ) -> Result<Vec<ConnectionRow>> {
+        let rows = sqlx::query_as::<_, ConnectionRow>(queries::LIST_CONNECTIONS_FOR_IDEAS_BOUNDED)
+            .bind(snapshot_height)
+            .bind(idea_ids)
+            .bind(limit)
+            .fetch_all(&self.pool)
+            .await?;
+        Ok(rows)
+    }
+
+    pub async fn list_canonical_ordering_items_bounded(
+        &self,
+        snapshot_height: i64,
+        ordering_id: Uuid,
+        limit: i64,
+    ) -> Result<Vec<CanonicalOrderingItemRow>> {
+        let rows = sqlx::query_as::<_, CanonicalOrderingItemRow>(
+            queries::LIST_CANONICAL_ORDERING_ITEMS_BOUNDED,
+        )
+        .bind(ordering_id)
+        .bind(snapshot_height)
+        .bind(limit)
+        .fetch_all(&self.pool)
+        .await?;
+        Ok(rows)
+    }
+
+    pub async fn list_canonical_orderings_for_idea_bounded(
+        &self,
+        snapshot_height: i64,
+        idea_id: Uuid,
+        limit: i64,
+    ) -> Result<Vec<CanonicalOrderingSummaryRow>> {
+        let rows = sqlx::query_as::<_, CanonicalOrderingSummaryRow>(
+            queries::LIST_CANONICAL_ORDERINGS_FOR_IDEA_BOUNDED,
+        )
+        .bind(idea_id)
+        .bind(snapshot_height)
+        .bind(limit)
+        .fetch_all(&self.pool)
+        .await?;
+        Ok(rows)
+    }
+
+    pub async fn list_canonical_representations_for_idea(
+        &self,
+        snapshot_height: i64,
+        idea_id: Uuid,
+        offset: i64,
+        limit: i64,
+    ) -> Result<Vec<CanonicalRepresentationRow>> {
+        let rows = sqlx::query_as::<_, CanonicalRepresentationRow>(
+            queries::LIST_CANONICAL_REPRESENTATIONS_FOR_IDEA,
+        )
+        .bind(idea_id)
+        .bind(snapshot_height)
+        .bind(limit)
+        .bind(offset)
+        .fetch_all(&self.pool)
+        .await?;
+        Ok(rows)
+    }
+
+    pub async fn count_canonical_representations_for_idea(
+        &self,
+        snapshot_height: i64,
+        idea_id: Uuid,
+    ) -> Result<i64> {
+        let row = sqlx::query_as::<_, CountRow>(queries::COUNT_CANONICAL_REPRESENTATIONS_FOR_IDEA)
+            .bind(idea_id)
+            .bind(snapshot_height)
+            .fetch_one(&self.pool)
+            .await?;
+        Ok(row.total)
+    }
+
+    pub async fn list_exact_match_idea_ids(
+        &self,
+        snapshot_height: i64,
+        field: &str,
+        value: &str,
+        limit: i64,
+    ) -> Result<Vec<Uuid>> {
+        let query = match field {
+            "title" => queries::EXACT_MATCH_IDEA_TITLE_IDS,
+            "sentence" => queries::EXACT_MATCH_IDEA_SENTENCE_IDS,
+            _ => unreachable!("validated exact-match field"),
+        };
+        let ids = sqlx::query_scalar::<_, Uuid>(query)
+            .bind(snapshot_height)
+            .bind(value)
+            .bind(limit)
+            .fetch_all(&self.pool)
+            .await?;
+        Ok(ids)
+    }
+
+    pub async fn get_identity_at_snapshot(
+        &self,
+        snapshot_height: i64,
+        identity_id: Uuid,
+    ) -> Result<Option<IdentityRow>> {
+        let row = sqlx::query_as::<_, IdentityRow>(
+            r#"
+            SELECT i.identity_id, i.title, i.created_event_id, i.created_at
+            FROM identities_s0 i
+            JOIN events e ON e.event_id = i.created_event_id
+            WHERE i.identity_id = $1
+              AND e.block_height <= $2
+            "#,
+        )
+        .bind(identity_id)
+        .bind(snapshot_height)
+        .fetch_optional(&self.pool)
+        .await?;
+        Ok(row)
+    }
+
+    pub async fn get_applied_migration_head(&self) -> Result<Option<MigrationHeadRow>> {
+        let sqlx_ledger: Option<String> =
+            sqlx::query_scalar("SELECT to_regclass('public._sqlx_migrations')::text")
+                .fetch_one(&self.pool)
+                .await?;
+        if sqlx_ledger.is_some() {
+            return Ok(sqlx::query_as::<_, MigrationHeadRow>(
+                r#"
+                SELECT version, description
+                FROM _sqlx_migrations
+                WHERE success = true
+                ORDER BY version DESC
+                LIMIT 1
+                "#,
+            )
+            .fetch_optional(&self.pool)
+            .await?);
+        }
+
+        let script_ledger: Option<String> =
+            sqlx::query_scalar("SELECT to_regclass('public.schema_migrations')::text")
+                .fetch_one(&self.pool)
+                .await?;
+        if script_ledger.is_none() {
+            return Ok(None);
+        }
+        let row = sqlx::query_as::<_, MigrationHeadRow>(
+            r#"
+            SELECT
+              substring(filename from '^([0-9]{4})')::bigint AS version,
+              regexp_replace(filename, '^[0-9]{4}_|\.sql$', '', 'g') AS description
+            FROM schema_migrations
+            WHERE filename ~ '^[0-9]{4}_.+\.sql$'
+            ORDER BY filename DESC
+            LIMIT 1
+            "#,
+        )
+        .fetch_optional(&self.pool)
+        .await?;
+        Ok(row)
+    }
+
     pub async fn get_latest_snapshot(&self) -> Result<Option<SnapshotRow>> {
         let row = sqlx::query_as::<_, SnapshotRow>(
             r#"

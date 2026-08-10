@@ -1,3 +1,25 @@
+export interface ApiCapabilitiesResponse {
+  api_contract_version: string;
+  build_revision: string;
+  migration_head: string;
+  snapshot_format_version: string;
+  active_feature_profile: "open_core" | "full";
+  supported_canonical_signed_write_kinds: Array<"idea_create" | "connection_create">;
+  public_contract_artifact: string;
+}
+
+export interface SnapshotBasis {
+  snapshot_id: string;
+  snapshot_height: string;
+  snapshot_hash: string;
+  state_root_hash: string;
+  title_sentence_payload_root: string;
+  shared_map_commitment: string;
+  active_rulebook_set_hash: string;
+  last_event_id: string;
+  event_count: string;
+}
+
 export interface AuthorInfo {
   author_identity_id: string | null;
   author_identity_title: string | null;
@@ -54,10 +76,12 @@ export interface CanonicalOrderingDetail {
 }
 
 export interface CanonicalOrderingResponse {
+  basis: SnapshotBasis;
   ordering: CanonicalOrderingDetail;
 }
 
 export interface CanonicalOrderingsResponse {
+  basis: SnapshotBasis;
   orderings: CanonicalOrderingSummary[];
 }
 
@@ -70,14 +94,26 @@ export interface CanonicalRepresentationDetail {
   tier_complexity?: RepresentationTierComplexity;
   vocabulary_version_id?: string;
   payload_hash: string;
+  payload_text: string | null;
   author_identity_id: string;
   language_locale: string | null;
   provenance: string | null;
   created_event_id: string;
+  created_block_height: string;
+  created_event_index: string;
 }
 
 export interface CanonicalRepresentationResponse {
+  basis: SnapshotBasis;
   representation: CanonicalRepresentationDetail;
+}
+
+export interface CanonicalRepresentationsResponse {
+  basis: SnapshotBasis;
+  representations: CanonicalRepresentationDetail[];
+  total: string;
+  offset: string;
+  limit: string;
 }
 
 export interface IdeaSummary {
@@ -117,6 +153,7 @@ export interface IdeaDetail extends IdeaSummary {
 }
 
 export interface NeighborhoodResponse {
+  basis: SnapshotBasis;
   central_idea: IdeaDetail;
   adjacent_ideas: IdeaSummary[];
   connections: ConnectionSummary[];
@@ -138,11 +175,13 @@ export interface SnapshotMetadata {
 }
 
 export interface SnapshotLatestResponse {
+  basis: SnapshotBasis;
   snapshot: SnapshotMetadata;
   preview_ideas?: IdeaSummary[];
 }
 
 export interface IdeasTopResponse {
+  basis: SnapshotBasis;
   ideas: IdeaSummary[];
   total: string;
   offset: string;
@@ -150,20 +189,67 @@ export interface IdeasTopResponse {
 }
 
 export interface IdeaDetailResponse {
+  basis: SnapshotBasis;
   idea: IdeaDetail;
 }
 
 export interface SearchIdeasResponse {
+  basis: SnapshotBasis;
   results: IdeaSummary[];
   total: string;
 }
 
+export interface IdeaBatchResolutionResponse {
+  basis: SnapshotBasis;
+  ideas: IdeaSummary[];
+  missing_idea_ids: string[];
+}
+
+export interface ExactMatchIdeasResponse {
+  basis: SnapshotBasis;
+  field: "title" | "sentence";
+  value: string;
+  matches: IdeaSummary[];
+  truncated: boolean;
+  limit: string;
+}
+
 export interface RelativeImportanceConnectionsResponse {
+  basis: SnapshotBasis;
   connections: ConnectionSummary[];
+  truncated: boolean;
+  limit: string;
 }
 
 export interface SnapshotByHeightResponse {
+  basis: SnapshotBasis;
   snapshot: SnapshotMetadata;
+}
+
+export interface CoordinateNodeResponse {
+  id: string;
+  x: number;
+  y: number;
+  title: string;
+  sentence: string | null;
+  idea_type: string;
+  derived_universal_rank: string | null;
+  ri_in_count: string;
+  ri_out_count: string;
+}
+
+export interface CoordinateMetaResponse {
+  spacing: number;
+  algo: string;
+  relaxed: boolean;
+}
+
+export interface CoordinateViewResponse {
+  basis: SnapshotBasis;
+  mode: "global" | "reference";
+  reference_id: string | null;
+  coords: CoordinateNodeResponse[];
+  meta: CoordinateMetaResponse;
 }
 
 export interface CanonicalEventLogEvent {

@@ -19,6 +19,7 @@
     "build": "npm --prefix frontend/open-core-reference run build",
     "verify:boundaries": "node ./scripts/check-open-core-boundaries.mjs --frontend-dir frontend/open-core-reference",
     "verify:canonical-dto": "node ./tools/open-core/verify-canonical-dto.mjs",
+    "verify:public-api-contract": "node ./tools/open-core/verify-public-api-contract.mjs",
     "verify:open-core-export": "npm run verify:generated-export",
     "verify:generated-export": "node ./scripts/verify-open-core-export.mjs --export-root _export/open-core",
     "verify:export-working-tree": "node ./scripts/verify-open-core-export.mjs --export-root .",
@@ -29,7 +30,7 @@
     "review:demo": "powershell -ExecutionPolicy Bypass -File scripts/open-core-demo.ps1",
     "verify:frontend": "npm --prefix frontend/open-core-reference run lint:boundaries && npm --prefix frontend/open-core-reference test && npm --prefix frontend/open-core-reference run build",
     "verify:backend": "powershell -ExecutionPolicy Bypass -File backend/scripts/verify-backend.ps1",
-    "verify:public": "npm run verify:boundaries && npm run verify:canonical-dto && npm run verify:frontend && npm run verify:backend",
+    "verify:public": "npm run verify:boundaries && npm run verify:canonical-dto && npm run verify:public-api-contract && npm run verify:frontend && npm run verify:backend",
     "verify:all": "npm run verify:public && npm run verify:generated-export",
     "verify": "npm run verify:public"
   }

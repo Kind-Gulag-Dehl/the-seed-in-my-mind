@@ -10,9 +10,9 @@ use api_types_canonical::{
     CanonicalIdentityCreateResponse, CanonicalTempoStatus, CanonicalTempoStatusResponse,
     CanonicalVerificationStatus, CanonicalVerificationStatusResponse,
     CanonicalVerifierGrantResponse, CanonicalVerifierRevokeResponse, CanonicalVoteCastResponse,
-    CanonicalVoteSessionPullResponse, SignedCanonicalEventSubmitEvent,
-    SignedCanonicalEventSubmitObject, SignedCanonicalEventSubmitRequest,
-    SignedCanonicalEventSubmitResponse,
+    CanonicalVoteSessionPullResponse, CoordinateMetaResponse, CoordinateNodeResponse,
+    CoordinateViewResponse, SignedCanonicalEventSubmitEvent, SignedCanonicalEventSubmitObject,
+    SignedCanonicalEventSubmitRequest, SignedCanonicalEventSubmitResponse,
 };
 #[cfg(feature = "full")]
 use axum::Extension;
@@ -29,7 +29,7 @@ use common::security_limits::{
     IDEA_FULL_MAX_CHARS, IDEA_PARAGRAPH_MAX_CHARS, IDEA_SENTENCE_MAX_CHARS, IDEA_TITLE_MAX_CHARS,
 };
 use replay::ReplayDriver;
-use serde::Serialize;
+
 use std::collections::{HashMap, HashSet};
 use storage::SignedCanonicalCandidateInput;
 #[cfg(feature = "full")]
@@ -46,17 +46,18 @@ use crate::server::coordinates::{
 };
 use crate::server::errors::canonical_write_error_response;
 use crate::server::errors::json_error;
-#[cfg(feature = "full")]
-use crate::server::helpers::parse_non_negative_i64;
-use crate::server::helpers::{is_reference_scoped_connection, scoped_neighbor_from_reference};
+use crate::server::helpers::{
+    is_reference_scoped_connection, parse_non_negative_i64, resolve_snapshot,
+    scoped_neighbor_from_reference,
+};
 #[cfg(feature = "full")]
 use crate::server::helpers::{
     normalize_optional_text, validate_max_len, validate_optional_max_len,
 };
 use crate::server::helpers::{parse_uuid_v7, parse_uuid_v7_field};
-use crate::server::mapping::{snapshot_headers, with_headers};
-use crate::server::types::AppState;
+use crate::server::mapping::{snapshot_basis, snapshot_headers, with_headers};
 use crate::server::types::RelativeImportanceDirection;
+use crate::server::types::{AppState, CoordinatesQuery};
 #[cfg(feature = "full")]
 use crate::server::types::{
     AuthenticatedAccount, CanonicalBlockedSubmissionPayload, CanonicalChallengeVoteCastPayload,
@@ -69,34 +70,6 @@ use crate::server::types::{
 const SECRET_DETECTED_CODE: &str = "secret_detected";
 #[cfg(feature = "full")]
 const SECRET_DETECTED_MESSAGE: &str = "canonical payload rejected: secret-like content detected";
-
-#[derive(Serialize)]
-struct CoordinateNodeResponse {
-    id: String,
-    x: f64,
-    y: f64,
-    title: String,
-    sentence: Option<String>,
-    idea_type: String,
-    derived_universal_rank: Option<String>,
-    ri_in_count: String,
-    ri_out_count: String,
-}
-
-#[derive(Serialize)]
-struct CoordinateMetaResponse {
-    spacing: f64,
-    algo: String,
-    relaxed: bool,
-}
-
-#[derive(Serialize)]
-struct CoordinateViewResponse {
-    mode: String,
-    reference_id: Option<String>,
-    coords: Vec<CoordinateNodeResponse>,
-    meta: CoordinateMetaResponse,
-}
 
 #[derive(sqlx::FromRow)]
 struct EventLogEventRow {
@@ -485,27 +458,29 @@ fn coordinate_node_response(
 
 pub(crate) async fn canonical_coordinates(
     State(state): State<AppState>,
-    Query(query): Query<HashMap<String, String>>,
+    Query(query): Query<CoordinatesQuery>,
 ) -> Response {
-    let snapshot = match state.storage.get_latest_snapshot().await {
-        Ok(Some(snapshot)) => snapshot,
-        Ok(None) => return json_error(StatusCode::NOT_FOUND, "not_found", "not found"),
-        Err(err) => {
-            tracing::error!(?err, "failed to load latest snapshot");
-            return json_error(
-                StatusCode::INTERNAL_SERVER_ERROR,
-                "internal_error",
-                "internal server error",
-            );
-        }
+    let limit = query
+        .limit
+        .as_deref()
+        .and_then(parse_non_negative_i64)
+        .unwrap_or(200)
+        .clamp(1, 200);
+    let snapshot = match resolve_snapshot(&state.storage, query.snapshot_height.as_deref()).await {
+        Ok(snapshot) => snapshot,
+        Err(response) => return response,
     };
 
     let headers = match snapshot_headers(&snapshot) {
         Ok(headers) => headers,
         Err(response) => return response,
     };
+    let basis = match snapshot_basis(&snapshot) {
+        Ok(basis) => basis,
+        Err(response) => return response,
+    };
 
-    let reference_id = match query.get("reference_id").map(|value| value.trim()) {
+    let reference_id = match query.reference_id.as_deref().map(str::trim) {
         Some(value) if !value.is_empty() => match parse_uuid_v7(value) {
             Ok(value) => Some(value),
             Err(response) => return response,
@@ -523,7 +498,7 @@ pub(crate) async fn canonical_coordinates(
     let (coords, relaxed) = if let Some(reference_id) = reference_id {
         let mut connections = match state
             .storage
-            .list_connections_for_idea(snapshot.block_height, reference_id)
+            .list_connections_for_idea_bounded(snapshot.block_height, reference_id, limit * 2)
             .await
         {
             Ok(rows) => rows,
@@ -566,7 +541,9 @@ pub(crate) async fn canonical_coordinates(
             };
             allowed_ids.insert(neighbor_id);
 
-            if !seen_neighbor_ids.contains_key(&neighbor_id) {
+            if !seen_neighbor_ids.contains_key(&neighbor_id)
+                && neighbor_ids.len() < limit.saturating_sub(1) as usize
+            {
                 seen_neighbor_ids.insert(neighbor_id, ());
                 neighbor_ids.push(neighbor_id);
             }
@@ -694,20 +671,9 @@ pub(crate) async fn canonical_coordinates(
 
         (response, scatter_projection.relaxed)
     } else {
-        let total = match state.storage.count_ideas(snapshot.block_height).await {
-            Ok(total) => total,
-            Err(err) => {
-                tracing::error!(?err, "failed to count ideas for coordinates");
-                return json_error(
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    "internal_error",
-                    "internal server error",
-                );
-            }
-        };
         let mut rows = match state
             .storage
-            .list_ideas_top(snapshot.block_height, 0, total, false)
+            .list_ideas_top(snapshot.block_height, 0, limit, false)
             .await
         {
             Ok(rows) => rows,
@@ -760,6 +726,7 @@ pub(crate) async fn canonical_coordinates(
     };
 
     let body = CoordinateViewResponse {
+        basis,
         mode,
         reference_id: reference_id.map(|value| value.to_string()),
         coords,

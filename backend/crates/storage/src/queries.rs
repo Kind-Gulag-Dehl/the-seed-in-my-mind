@@ -542,11 +542,138 @@ SELECT
   tier_complexity,
   vocabulary_version_id,
   payload_hash,
+  payload_text,
   author_identity_id,
   language_locale,
   provenance,
-  created_event_id
+  created_event_id,
+  created_block_height,
+  created_event_index
 FROM representations
 WHERE representation_id = $1
   AND created_block_height <= $2
+"#;
+
+pub const LIST_CANONICAL_REPRESENTATIONS_FOR_IDEA: &str = r#"
+SELECT
+  representation_id,
+  target_kind,
+  target_id,
+  tier_enum,
+  tier_complexity,
+  vocabulary_version_id,
+  payload_hash,
+  payload_text,
+  author_identity_id,
+  language_locale,
+  provenance,
+  created_event_id,
+  created_block_height,
+  created_event_index
+FROM representations
+WHERE target_kind = 0
+  AND target_id = $1
+  AND created_block_height <= $2
+ORDER BY created_block_height ASC, created_event_index ASC
+LIMIT $3 OFFSET $4
+"#;
+
+pub const COUNT_CANONICAL_REPRESENTATIONS_FOR_IDEA: &str = r#"
+SELECT COUNT(*)::bigint AS total
+FROM representations
+WHERE target_kind = 0
+  AND target_id = $1
+  AND created_block_height <= $2
+"#;
+
+pub const LIST_CONNECTIONS_FOR_IDEA_BOUNDED: &str = r#"
+SELECT
+  connection_id,
+  from_idea_id,
+  to_idea_id,
+  connection_type,
+  usage,
+  axis,
+  timeframe,
+  scope,
+  created_by_event_id,
+  created_block_height,
+  created_event_index
+FROM connections
+WHERE created_block_height <= $1
+  AND (from_idea_id = $2 OR to_idea_id = $2)
+ORDER BY created_block_height ASC, created_event_index ASC
+LIMIT $3
+"#;
+
+pub const LIST_CONNECTIONS_FOR_IDEAS_BOUNDED: &str = r#"
+SELECT
+  connection_id,
+  from_idea_id,
+  to_idea_id,
+  connection_type,
+  usage,
+  axis,
+  timeframe,
+  scope,
+  created_by_event_id,
+  created_block_height,
+  created_event_index
+FROM connections
+WHERE created_block_height <= $1
+  AND (from_idea_id = ANY($2) OR to_idea_id = ANY($2))
+ORDER BY created_block_height ASC, created_event_index ASC
+LIMIT $3
+"#;
+
+pub const LIST_CANONICAL_ORDERING_ITEMS_BOUNDED: &str = r#"
+SELECT
+  ri.idx,
+  ri.idea_id,
+  ri.item_role,
+  ri.via_connection_id
+FROM ordering_items ri
+JOIN orderings r ON r.ordering_id = ri.ordering_id
+WHERE ri.ordering_id = $1
+  AND r.created_block_height <= $2
+ORDER BY ri.idx ASC
+LIMIT $3
+"#;
+
+pub const LIST_CANONICAL_ORDERINGS_FOR_IDEA_BOUNDED: &str = r#"
+SELECT
+  r.ordering_id,
+  r.ordering_profile,
+  r.vine_type,
+  r.subject_idea_id
+FROM orderings r
+WHERE r.created_block_height <= $2
+  AND EXISTS (
+    SELECT 1
+    FROM ordering_items ri
+    WHERE ri.ordering_id = r.ordering_id
+      AND ri.idea_id = $1
+  )
+ORDER BY r.created_block_height ASC, r.created_event_index ASC, r.ordering_id ASC
+LIMIT $3
+"#;
+
+pub const EXACT_MATCH_IDEA_TITLE_IDS: &str = r#"
+SELECT i.idea_id
+FROM ideas i
+JOIN events e ON e.event_id = i.created_event_id
+WHERE i.created_block_height <= $1
+  AND (e.payload_json->>'title') = $2
+ORDER BY i.created_block_height ASC, i.created_event_index ASC
+LIMIT $3
+"#;
+
+pub const EXACT_MATCH_IDEA_SENTENCE_IDS: &str = r#"
+SELECT i.idea_id
+FROM ideas i
+JOIN events e ON e.event_id = i.created_event_id
+WHERE i.created_block_height <= $1
+  AND (e.payload_json->>'sentence') = $2
+ORDER BY i.created_block_height ASC, i.created_event_index ASC
+LIMIT $3
 "#;

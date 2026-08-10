@@ -202,6 +202,8 @@
     "scripts/open-core-demo.ps1",
     "scripts/verify-open-core-export.mjs",
     "tools/open-core/verify-canonical-dto.mjs",
+    "tools/open-core/verify-public-api-contract.mjs",
+    "tools/open-core/public-api-contract.v1.json",
     "tools/open-core/canonical-dto-surface.json",
     "tools/open-core/smoke-export.ps1"
   ],
@@ -218,6 +220,10 @@
     [
       "node",
       "tools/open-core/verify-canonical-dto.mjs"
+    ],
+    [
+      "node",
+      "tools/open-core/verify-public-api-contract.mjs"
     ],
     [
       "node",

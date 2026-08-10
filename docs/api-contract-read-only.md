@@ -120,6 +120,23 @@ All numeric header values are encoded as base-10 decimal strings.
 
 Responses use JSON objects with the following common schemas (fields are normative unless marked optional):
 
+### SnapshotBasis
+
+Every snapshot-pinned `/api/v0` product read response includes this object as `basis` and the same commitments in response headers:
+
+```json
+{
+  "snapshot_id": "hex string (equals snapshot_hash)",
+  "snapshot_height": "decimal block-height string",
+  "snapshot_hash": "hex string",
+  "state_root_hash": "hex string",
+  "title_sentence_payload_root": "hex string",
+  "shared_map_commitment": "hex string",
+  "active_rulebook_set_hash": "hex string",
+  "last_event_id": "UUIDv7 string",
+  "event_count": "decimal string"
+}
+```
 ### IdeaSummary
 ```json
 {
@@ -157,7 +174,7 @@ Responses use JSON objects with the following common schemas (fields are normati
 }
 ```
 
-### CanonicalRepresentationDetail (target; pending verification)
+### CanonicalRepresentationDetail
 
 Title representation:
 ```json
@@ -167,10 +184,13 @@ Title representation:
   "target_object_id": "UUIDv7 string",
   "representation_kind": "title",
   "payload_hash": "hex string",
+  "payload_text": "string | null",
   "author_identity_id": "UUIDv7 string",
   "language_locale": "string | null",
   "provenance": "string | null",
-  "created_event_id": "UUIDv7 string"
+  "created_event_id": "UUIDv7 string",
+  "created_block_height": "decimal string",
+  "created_event_index": "decimal string"
 }
 ```
 
@@ -188,10 +208,13 @@ Description representation:
   "tier_complexity": "string (fundamental | standard | advanced | canonical)",
   "vocabulary_version_id": "UUIDv7 string (present only when tier_complexity = canonical)",
   "payload_hash": "hex string",
+  "payload_text": "string | null",
   "author_identity_id": "UUIDv7 string",
   "language_locale": "string | null",
   "provenance": "string | null",
-  "created_event_id": "UUIDv7 string"
+  "created_event_id": "UUIDv7 string",
+  "created_block_height": "decimal string",
+  "created_event_index": "decimal string"
 }
 ```
 
@@ -303,6 +326,8 @@ Current implemented router namespaces:
 
 Sections 4.0-4.10 describe endpoints currently implemented in the open-core runtime. Section 4.11 is spec/future only and is not implemented in the current open-core runtime.
 
+Except for `/health`, `/capabilities`, and the snapshot/commit metadata routes, the `/api/v0` endpoints below accept an optional `snapshot_height` query parameter. It is a non-negative decimal block height and defaults to the latest verified snapshot. Each such response includes `basis: SnapshotBasis` plus the commitment headers in Section 2. Invalid heights return 400; unavailable snapshot heights return 404. Ordering detail is replayed at the requested height so later representation-pointer selections cannot leak into a historical basis.
+
 ### 4.0 GET /health
 
 Health check for automation and local verification.
@@ -314,6 +339,10 @@ Success Response (200 OK):
 
 Notes:
 * `/health` is not a canonical data endpoint and does not include snapshot headers.
+
+### 4.0.1 GET /capabilities
+
+Returns the runtime contract handshake: `api_contract_version`, `build_revision`, applied `migration_head`, `snapshot_format_version`, `active_feature_profile`, the supported canonical signed write kinds, and the Open-Core-owned machine contract artifact path. This route is metadata-only and does not include a snapshot basis.
 
 ### 4.1 GET /snapshot/latest
 
@@ -419,14 +448,42 @@ Success Response (200 OK):
 }
 ```
 
+### 4.7 GET /ideas/resolve
+
+Resolves a comma-separated, de-duplicated list of at most 200 canonical UUIDv7 idea IDs at one snapshot basis. Results preserve request order and missing IDs are returned separately.
+
+Query Parameters:
+* `idea_ids`: comma-separated UUIDv7 list (required, max 200 distinct IDs)
+* `snapshot_height`: optional basis block height
+
+Success Response (200 OK):
+```json
+{
+  "basis": SnapshotBasis,
+  "ideas": "[IdeaSummary]",
+  "missing_idea_ids": "[UUIDv7 string]"
+}
+```
+
+### 4.8 GET /ideas/exact-match
+
+Performs bounded byte-exact equality lookup over canonical creation-event title or sentence text. This is distinct from substring search and is intended for deterministic duplicate detection.
+
+Query Parameters:
+* `field`: `title|sentence` (required)
+* `value`: exact UTF-8 value (required; canonical field length limits apply)
+* `limit`: decimal string (default 50, max 200)
+* `snapshot_height`: optional basis block height
+
+Success Response includes `basis`, the echoed `field` and `value`, ordered `matches`, `truncated`, and the applied `limit`.
+
+### 4.9 Snapshot-pinned product-read envelope
+
+The list, detail, substring-search, neighborhood, Ordering, representation, identity, relative-importance, and coordinate routes in this section use the common `SnapshotBasis` envelope described in Section 3. Multi-call consumers pin every request to the same `snapshot_height` and compare the returned commitments before combining results.
+
 ### 4.10 Stage-0 Extension Endpoints
 
-The following read endpoints are extension endpoints outside the minimal core set in
-sections 4.1-4.6. Existing fields remain implemented as stated. The new
-`subject_idea_id`, `item_role`, representation kind/tier/author/vocabulary bindings, and
-`GET /representation/{representation_id}` surface are target/pending contract until
-runtime, replay, snapshot, import, and conformance verification is complete; their
-presence here does not claim implementation acceptance.
+The following read endpoints are extension endpoints outside the minimal core set in sections 4.1-4.9. Their currently implemented fields are stable within `/api/v0`. Representation kind/tier/author/vocabulary bindings and replay-resolved Ordering representation pointers are implemented and covered by DTO, guarded database, replay, snapshot, boundary, demo, and export verification.
 
 Stability expectations for Stage 0:
 * Endpoint paths are stable within their current versioned namespace.
@@ -509,7 +566,7 @@ Ordering:
 Errors:
 * 400 Bad Request if `idea_ids` is missing, invalid, or exceeds 200 IDs.
 
-#### 4.10.4 GET /representation/{representation_id} (target; pending verification)
+#### 4.10.4 GET /representation/{representation_id}
 
 Path Parameter:
 * `representation_id`: UUIDv7 string
@@ -526,7 +583,18 @@ vocabulary-version binding carried by canonical replay state. It never supplies 
 inferred vocabulary.
 
 Errors:
-* 404 Not Found if the representation does not exist in the latest canonical snapshot.
+* 404 Not Found if the representation does not exist in the requested basis snapshot.
+
+#### 4.10.4a GET /idea/{idea_id}/representations
+
+Returns canonical representation candidates for one idea in creation-event order.
+
+Query Parameters:
+* `limit`: decimal string (default 50, max 200)
+* `offset`: decimal string (default 0)
+* `snapshot_height`: optional basis block height
+
+Success Response includes `basis`, `representations: [CanonicalRepresentationDetail]`, `total`, `offset`, and `limit`. Payload text, slot identity, author, vocabulary binding, provenance, payload hash, and creation event position are returned exactly from canonical stored/replay state.
 
 #### 4.10.5 GET /identity/{identity_id}
 
@@ -577,7 +645,12 @@ Errors:
 
 #### 4.10.8 GET /coordinates
 
-Returns the current Stage 0 coordinate projection of the canonical idea map.
+Returns the Stage 0 coordinate projection for one snapshot basis.
+
+Query Parameters:
+* `snapshot_height`: optional basis block height
+* `reference_id`: optional UUIDv7 focus idea
+* `limit`: decimal string (default 200, max 200)
 
 Success Response (200 OK):
 ```json
@@ -946,6 +1019,8 @@ The current public read surface uses two versioned namespaces:
 - `/api/v1/canonical` for additional canonical status/detail reads already exposed by the current runtime
 
 This contract remains fixed until a canonical-breaking change requires a new versioned surface.
+
+The Open-Core-owned machine contract is `tools/open-core/public-api-contract.v1.json`. `GET /api/v0/capabilities` reports its contract version and runtime compatibility facts. `npm run verify:public-api-contract` checks the artifact against Rust DTO constants, TypeScript DTO fields, router paths, query pin support, migration head, bounds, and the narrow signed-write-kind list; downstream consumers may run the same verifier without importing private DTOs or behavior.
 
 Future extensions MUST:
 * Preserve all existing endpoints and schemas.

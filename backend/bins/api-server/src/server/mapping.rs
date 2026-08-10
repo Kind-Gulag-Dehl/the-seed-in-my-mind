@@ -1,7 +1,7 @@
 use api_types_canonical::{
     AuthorInfo, CanonicalOrderingDetail, CanonicalOrderingRepresentations,
     CanonicalOrderingSummary, CanonicalRepresentationDetail, ConnectionSummary, IdeaDetail,
-    IdeaSummary, OrderingItem, SnapshotCommitMetadata, SnapshotMetadata,
+    IdeaSummary, OrderingItem, SnapshotBasis, SnapshotCommitMetadata, SnapshotMetadata,
 };
 #[cfg(feature = "full")]
 use api_types_private::{
@@ -12,10 +12,10 @@ use axum::{
     response::Response,
 };
 use chrono::DateTime;
+use replay::{ReplayOrderingRow, ReplayRepresentationRow};
 use storage::{
-    CanonicalOrderingItemRow, CanonicalOrderingRow, CanonicalOrderingSummaryRow,
-    CanonicalRepresentationRow, ConnectionRow, IdeaDetailRow, IdeaSummaryRow, SnapshotCommitRow,
-    SnapshotRow,
+    CanonicalOrderingSummaryRow, CanonicalRepresentationRow, ConnectionRow, IdeaDetailRow,
+    IdeaSummaryRow, SnapshotCommitRow, SnapshotRow,
 };
 #[cfg(feature = "full")]
 use storage::{PrivateIdeaRow, PrivateOrderingItemRow, PrivateOrderingListRow, PrivateOrderingRow};
@@ -39,11 +39,26 @@ pub(crate) fn snapshot_headers(snapshot: &SnapshotRow) -> Result<HeaderMap, Resp
         .as_deref()
         .ok_or_else(snapshot_unavailable)?;
 
+    let active_rulebook_set_hash = snapshot
+        .active_rulebook_set_hash
+        .as_deref()
+        .ok_or_else(snapshot_unavailable)?;
+    let last_event_id = snapshot.last_event_id.ok_or_else(snapshot_unavailable)?;
+    let event_count = snapshot.event_count.ok_or_else(snapshot_unavailable)?;
+
     headers.insert("ETag", header_value(&snapshot.snapshot_hash)?);
+    headers.insert("X-Snapshot-Id", header_value(&snapshot.snapshot_hash)?);
+    headers.insert("X-Snapshot-Hash", header_value(&snapshot.snapshot_hash)?);
     headers.insert(
         "X-Snapshot-Height",
         header_value(&snapshot.block_height.to_string())?,
     );
+    headers.insert(
+        "X-Active-Rulebook-Set-Hash",
+        header_value(active_rulebook_set_hash)?,
+    );
+    headers.insert("X-Last-Event-Id", header_value(&last_event_id.to_string())?);
+    headers.insert("X-Event-Count", header_value(&event_count.to_string())?);
     headers.insert("X-State-Root-Hash", header_value(state_root_hash)?);
     headers.insert(
         "X-Title-Sentence-Payload-Root",
@@ -95,6 +110,38 @@ pub(crate) fn snapshot_metadata(snapshot: &SnapshotRow) -> Result<SnapshotMetada
         approximate_timestamp: approximate_timestamp.to_string(),
         cycle_index: snapshot.cycle_index.map(|value| value.to_string()),
         cycle_close_height: snapshot.cycle_close_height.map(|value| value.to_string()),
+    })
+}
+
+pub(crate) fn snapshot_basis(snapshot: &SnapshotRow) -> Result<SnapshotBasis, Response> {
+    Ok(SnapshotBasis {
+        snapshot_id: snapshot.snapshot_hash.clone(),
+        snapshot_height: snapshot.block_height.to_string(),
+        snapshot_hash: snapshot.snapshot_hash.clone(),
+        state_root_hash: snapshot
+            .state_root_hash
+            .clone()
+            .ok_or_else(snapshot_unavailable)?,
+        title_sentence_payload_root: snapshot
+            .title_sentence_payload_root
+            .clone()
+            .ok_or_else(snapshot_unavailable)?,
+        shared_map_commitment: snapshot
+            .shared_map_commitment
+            .clone()
+            .ok_or_else(snapshot_unavailable)?,
+        active_rulebook_set_hash: snapshot
+            .active_rulebook_set_hash
+            .clone()
+            .ok_or_else(snapshot_unavailable)?,
+        last_event_id: snapshot
+            .last_event_id
+            .ok_or_else(snapshot_unavailable)?
+            .to_string(),
+        event_count: snapshot
+            .event_count
+            .ok_or_else(snapshot_unavailable)?
+            .to_string(),
     })
 }
 
@@ -251,15 +298,6 @@ pub(crate) fn canonical_ordering_summary(
     }
 }
 
-pub(crate) fn canonical_ordering_item(row: &CanonicalOrderingItemRow) -> OrderingItem {
-    OrderingItem {
-        idx: row.idx.to_string(),
-        idea_id: row.idea_id.to_string(),
-        item_role: ordering_item_role_label(row.item_role),
-        via_connection_id: row.via_connection_id.map(|value| value.to_string()),
-    }
-}
-
 #[cfg(feature = "full")]
 pub(crate) fn private_ordering_item(row: &PrivateOrderingItemRow) -> OrderingItem {
     OrderingItem {
@@ -270,25 +308,44 @@ pub(crate) fn private_ordering_item(row: &PrivateOrderingItemRow) -> OrderingIte
     }
 }
 
-pub(crate) fn canonical_ordering_detail(
-    row: &CanonicalOrderingRow,
-    items: &[CanonicalOrderingItemRow],
+pub(crate) fn canonical_ordering_detail_from_replay(
+    row: &ReplayOrderingRow,
+    representations: &[ReplayRepresentationRow],
+    item_limit: usize,
 ) -> CanonicalOrderingDetail {
+    let payload_hash = |representation_id: Option<Uuid>| {
+        representation_id.and_then(|representation_id| {
+            representations
+                .iter()
+                .find(|representation| representation.representation_id == representation_id)
+                .map(|representation| representation.payload_hash.clone())
+        })
+    };
     CanonicalOrderingDetail {
         ordering_id: row.ordering_id.to_string(),
-        ordering_profile: ordering_profile_label(row.ordering_profile),
-        vine_type: vine_type_label(row.vine_type),
+        ordering_profile: row.ordering_profile.clone(),
+        vine_type: row.vine_type.clone(),
         subject_idea_id: row.subject_idea_id.map(|value| value.to_string()),
-        author_identity_id: row.author_identity_id.to_string(),
+        author_identity_id: row.speaker_identity_id.to_string(),
         canonical_representations: CanonicalOrderingRepresentations {
             title_representation_id: row.title_representation_id.map(|value| value.to_string()),
-            title_payload_hash: row.title_payload_hash.clone(),
+            title_payload_hash: payload_hash(row.title_representation_id),
             sentence_representation_id: row
                 .sentence_representation_id
                 .map(|value| value.to_string()),
-            sentence_payload_hash: row.sentence_payload_hash.clone(),
+            sentence_payload_hash: payload_hash(row.sentence_representation_id),
         },
-        items: items.iter().map(canonical_ordering_item).collect(),
+        items: row
+            .items
+            .iter()
+            .take(item_limit)
+            .map(|item| OrderingItem {
+                idx: item.idx.to_string(),
+                idea_id: item.idea_id.to_string(),
+                item_role: item.item_role.clone(),
+                via_connection_id: item.via_connection_id.map(|value| value.to_string()),
+            })
+            .collect(),
     }
 }
 
@@ -306,21 +363,13 @@ pub(crate) fn canonical_representation_detail(
             .map(representation_tier_complexity_label),
         vocabulary_version_id: row.vocabulary_version_id.map(|value| value.to_string()),
         payload_hash: row.payload_hash.clone(),
+        payload_text: row.payload_text.clone(),
         author_identity_id: row.author_identity_id.to_string(),
         language_locale: row.language_locale.clone(),
         provenance: row.provenance.clone(),
         created_event_id: row.created_event_id.to_string(),
-    }
-}
-
-fn ordering_item_role_label(item_role: Option<i16>) -> Option<String> {
-    match item_role {
-        Some(0) => Some("potential_evidence".to_string()),
-        Some(1) => Some("actual_evidence".to_string()),
-        Some(2) => Some("potential_action".to_string()),
-        Some(3) => Some("proposed_action".to_string()),
-        Some(other) => Some(format!("unknown_{other}")),
-        None => None,
+        created_block_height: row.created_block_height.to_string(),
+        created_event_index: row.created_event_index.to_string(),
     }
 }
 
@@ -408,7 +457,6 @@ pub(crate) fn private_ordering_detail(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use api_types_canonical::CanonicalRepresentationResponse;
 
     fn v7(id: &str) -> Uuid {
         Uuid::parse_str(id).expect("uuid parse")
@@ -429,10 +477,13 @@ mod tests {
             tier_complexity: None,
             vocabulary_version_id: None,
             payload_hash: payload_hash.to_string(),
+            payload_text: Some("Example title".to_string()),
             author_identity_id,
             language_locale: None,
             provenance: None,
             created_event_id,
+            created_block_height: 2,
+            created_event_index: 0,
         };
 
         let detail = canonical_representation_detail(&row);
@@ -447,14 +498,8 @@ mod tests {
         assert_eq!(detail.author_identity_id, author_identity_id.to_string());
         assert_eq!(detail.created_event_id, created_event_id.to_string());
 
-        let body = serde_json::to_value(CanonicalRepresentationResponse {
-            representation: detail,
-        })
-        .expect("serialize representation response");
-        let representation = body
-            .get("representation")
-            .and_then(serde_json::Value::as_object)
-            .expect("representation object");
+        let body = serde_json::to_value(&detail).expect("serialize representation detail");
+        let representation = body.as_object().expect("representation object");
         assert_eq!(
             representation
                 .get("representation_kind")

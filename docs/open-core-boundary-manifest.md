@@ -3,7 +3,7 @@ doc_id: open_core_boundary_manifest
 title: Open-Core Boundary Manifest
 status: derived
 version: v0
-last_reviewed: 2026-03-05
+last_reviewed: 2026-08-10
 scope:
   - Describes the practical in-repo boundary rules enforced for the public open-core package.
 authoritative_for:
@@ -32,7 +32,7 @@ The public package intentionally includes:
 - `scripts/grant-reviewer-quickstart.ps1`,
 - `scripts/open-core-demo.ps1`,
 - `scripts/verify-open-core-export.mjs`,
-- `tools/open-core/**`,
+- `tools/open-core/**`, including the Open-Core-owned `public-api-contract.v1.json` and its drift verifier,
 - curated docs listed by the export manifest,
 - deterministic public seed/demo files under `seed/**`.
 
@@ -62,6 +62,7 @@ This is enforced by:
 - `scripts/check-open-core-boundaries.mjs`
 - the export manifest denylist
 - export-time Cargo manifest sanitization
+- the Open-Core-owned canonical DTO and public API contract artifacts; downstream private consumers may generate against them but may not redefine them
 
 ## 4. Export hygiene rules
 
@@ -88,6 +89,7 @@ These rules are enforced by:
 
 - local boundary checks: `npm run verify:boundaries`
 - canonical DTO drift guard: `npm run verify:canonical-dto`
+- public product-read contract drift guard: `npm run verify:public-api-contract`
 - public working-tree verification: `npm run verify`
 - generated export cleanliness: `npm run verify:generated-export`
 - compatibility alias for generated export cleanliness: `npm run verify:open-core-export`

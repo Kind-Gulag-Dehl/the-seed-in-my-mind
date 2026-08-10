@@ -373,6 +373,11 @@ async fn run_signed_ingress_acceptance(
         .await?;
     assert_rebuilt_signed_projection_matches_materialized(db.storage.pool()).await?;
 
+    let representation_id = uuid("00000000-0000-7000-8000-00000000d101");
+    let ordering_id = uuid("00000000-0000-7000-8000-00000000d102");
+    insert_test_representation(db.storage.pool(), idea_one_id, representation_id).await?;
+    insert_test_ordering(db.storage.pool(), idea_one_id, idea_two_id, ordering_id).await?;
+
     let replay = ReplayDriver::run(db.storage.pool(), None).await?;
     assert!(
         replay.ideas.iter().any(|idea| idea.idea_id == idea_one_id),
@@ -384,6 +389,20 @@ async fn run_signed_ingress_acceptance(
             .iter()
             .any(|connection| connection.connection_id == connection_id),
         "replay output should contain signed connection"
+    );
+    assert!(
+        replay
+            .representations
+            .iter()
+            .any(|representation| representation.representation_id == representation_id),
+        "replay output should contain the product-read representation"
+    );
+    assert!(
+        replay
+            .orderings
+            .iter()
+            .any(|ordering| ordering.ordering_id == ordering_id),
+        "replay output should contain the product-read ordering"
     );
 
     insert_test_snapshot(db.storage.pool(), 0).await?;
@@ -461,6 +480,314 @@ async fn run_signed_ingress_acceptance(
             .pointer("/idea/idea_id")
             .and_then(Value::as_str),
         Some(idea_one_id.to_string().as_str())
+    );
+
+    let capabilities = oneshot_json(
+        db.app(),
+        Method::GET,
+        "/api/v0/capabilities",
+        json!({}),
+        None,
+    )
+    .await;
+    assert_eq!(
+        capabilities.status,
+        StatusCode::OK,
+        "{}",
+        capabilities.body_preview
+    );
+    assert_eq!(
+        capabilities
+            .json
+            .get("api_contract_version")
+            .and_then(Value::as_str),
+        Some("1.0.0")
+    );
+    assert_eq!(
+        capabilities
+            .json
+            .get("migration_head")
+            .and_then(Value::as_str),
+        Some("0025_seed_conformance_bindings")
+    );
+    assert_eq!(
+        capabilities
+            .json
+            .get("supported_canonical_signed_write_kinds")
+            .and_then(Value::as_array)
+            .map(Vec::len),
+        Some(2)
+    );
+
+    let pinned_response = db
+        .app()
+        .oneshot(
+            Request::builder()
+                .method(Method::GET)
+                .uri(format!(
+                    "/api/v0/idea/{idea_one_id}?snapshot_height=0&connection_limit=10"
+                ))
+                .body(Body::empty())?,
+        )
+        .await?;
+    assert_eq!(pinned_response.status(), StatusCode::OK);
+    assert_eq!(
+        pinned_response
+            .headers()
+            .get("x-snapshot-height")
+            .and_then(|value| value.to_str().ok()),
+        Some("0")
+    );
+    assert_eq!(
+        pinned_response
+            .headers()
+            .get("x-state-root-hash")
+            .and_then(|value| value.to_str().ok()),
+        Some("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+    );
+    let pinned_body = to_bytes(pinned_response.into_body(), usize::MAX).await?;
+    let pinned_json: Value = serde_json::from_slice(&pinned_body)?;
+    assert_eq!(
+        pinned_json
+            .pointer("/basis/snapshot_height")
+            .and_then(Value::as_str),
+        Some("0")
+    );
+    assert_eq!(
+        pinned_json
+            .pointer("/basis/shared_map_commitment")
+            .and_then(Value::as_str),
+        Some("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
+    );
+
+    let resolved = oneshot_json(
+        db.app(),
+        Method::GET,
+        &format!(
+            "/api/v0/ideas/resolve?snapshot_height=0&idea_ids={idea_one_id},00000000-0000-7000-8000-00000000b199"
+        ),
+        json!({}),
+        None,
+    )
+    .await;
+    assert_eq!(resolved.status, StatusCode::OK, "{}", resolved.body_preview);
+    assert_eq!(
+        resolved
+            .json
+            .pointer("/ideas/0/idea_id")
+            .and_then(Value::as_str),
+        Some(idea_one_id.to_string().as_str())
+    );
+    assert_eq!(
+        resolved
+            .json
+            .pointer("/missing_idea_ids/0")
+            .and_then(Value::as_str),
+        Some("00000000-0000-7000-8000-00000000b199")
+    );
+
+    let exact_title = oneshot_json(
+        db.app(),
+        Method::GET,
+        "/api/v0/ideas/exact-match?snapshot_height=0&field=title&value=Signed%20route%20idea%20one&limit=10",
+        json!({}),
+        None,
+    )
+    .await;
+    assert_eq!(
+        exact_title.status,
+        StatusCode::OK,
+        "{}",
+        exact_title.body_preview
+    );
+    assert_eq!(
+        exact_title
+            .json
+            .pointer("/matches/0/idea_id")
+            .and_then(Value::as_str),
+        Some(idea_one_id.to_string().as_str())
+    );
+    assert_eq!(
+        exact_title.json.get("truncated").and_then(Value::as_bool),
+        Some(false)
+    );
+
+    let exact_sentence = oneshot_json(
+        db.app(),
+        Method::GET,
+        "/api/v0/ideas/exact-match?snapshot_height=0&field=sentence&value=Signed%20ingress%20test%20sentence&limit=10",
+        json!({}),
+        None,
+    )
+    .await;
+    assert_eq!(
+        exact_sentence.status,
+        StatusCode::OK,
+        "{}",
+        exact_sentence.body_preview
+    );
+    assert_eq!(
+        exact_sentence
+            .json
+            .get("matches")
+            .and_then(Value::as_array)
+            .map(Vec::len),
+        Some(2)
+    );
+
+    let representations = oneshot_json(
+        db.app(),
+        Method::GET,
+        &format!("/api/v0/idea/{idea_one_id}/representations?snapshot_height=0&limit=10&offset=0"),
+        json!({}),
+        None,
+    )
+    .await;
+    assert_eq!(
+        representations.status,
+        StatusCode::OK,
+        "{}",
+        representations.body_preview
+    );
+    assert_eq!(
+        representations
+            .json
+            .pointer("/representations/0/representation_id")
+            .and_then(Value::as_str),
+        Some(representation_id.to_string().as_str())
+    );
+    assert_eq!(
+        representations
+            .json
+            .pointer("/representations/0/payload_text")
+            .and_then(Value::as_str),
+        Some("Product read contract representation")
+    );
+    assert_eq!(
+        representations
+            .json
+            .pointer("/representations/0/representation_kind")
+            .and_then(Value::as_str),
+        Some("description")
+    );
+    assert_eq!(
+        representations
+            .json
+            .pointer("/representations/0/tier_length")
+            .and_then(Value::as_str),
+        Some("sentence")
+    );
+    assert_eq!(
+        representations
+            .json
+            .pointer("/representations/0/tier_complexity")
+            .and_then(Value::as_str),
+        Some("fundamental")
+    );
+    assert_eq!(
+        representations
+            .json
+            .pointer("/representations/0/provenance")
+            .and_then(Value::as_str),
+        Some("test://product-read-contract")
+    );
+
+    let representation = oneshot_json(
+        db.app(),
+        Method::GET,
+        &format!("/api/v0/representation/{representation_id}?snapshot_height=0"),
+        json!({}),
+        None,
+    )
+    .await;
+    assert_eq!(
+        representation.status,
+        StatusCode::OK,
+        "{}",
+        representation.body_preview
+    );
+    assert_eq!(
+        representation
+            .json
+            .pointer("/representation/author_identity_id")
+            .and_then(Value::as_str),
+        Some(AUTHOR_ID)
+    );
+    assert_eq!(
+        representation
+            .json
+            .pointer("/representation/created_block_height")
+            .and_then(Value::as_str),
+        Some("0")
+    );
+    assert_eq!(
+        representation
+            .json
+            .pointer("/basis/snapshot_height")
+            .and_then(Value::as_str),
+        Some("0")
+    );
+
+    let pinned_product_reads = vec![
+        "/api/v0/snapshot/0".to_string(),
+        "/api/v0/ideas/top?snapshot_height=0&limit=10&offset=0&order=asc".to_string(),
+        "/api/v0/search/ideas?snapshot_height=0&q=Signed&limit=10&offset=0".to_string(),
+        format!(
+            "/api/v0/idea/{idea_one_id}/neighborhood?snapshot_height=0&depth=2&limit_per_hop=10"
+        ),
+        format!(
+            "/api/v0/coordinates?snapshot_height=0&reference_id={idea_one_id}&limit=10"
+        ),
+        format!(
+            "/api/v0/idea/{idea_one_id}/orderings?snapshot_height=0&limit=10"
+        ),
+        format!(
+            "/api/v0/connections/relative-importance?snapshot_height=0&idea_ids={idea_one_id},{idea_two_id}&limit=10"
+        ),
+        format!("/api/v0/identity/{AUTHOR_ID}?snapshot_height=0"),
+    ];
+    for uri in pinned_product_reads {
+        let response = oneshot_json(db.app(), Method::GET, &uri, json!({}), None).await;
+        assert_eq!(response.status, StatusCode::OK, "{}", response.body_preview);
+        assert_eq!(
+            response
+                .json
+                .pointer("/basis/snapshot_height")
+                .and_then(Value::as_str),
+            Some("0"),
+            "missing pinned basis for {uri}"
+        );
+    }
+
+    let ordering = oneshot_json(
+        db.app(),
+        Method::GET,
+        &format!("/api/v0/ordering/{ordering_id}?snapshot_height=0&item_limit=10"),
+        json!({}),
+        None,
+    )
+    .await;
+    assert_eq!(ordering.status, StatusCode::OK, "{}", ordering.body_preview);
+    assert_eq!(
+        ordering
+            .json
+            .pointer("/ordering/ordering_id")
+            .and_then(Value::as_str),
+        Some(ordering_id.to_string().as_str())
+    );
+    assert_eq!(
+        ordering
+            .json
+            .pointer("/ordering/items/1/idea_id")
+            .and_then(Value::as_str),
+        Some(idea_two_id.to_string().as_str())
+    );
+    assert_eq!(
+        ordering
+            .json
+            .pointer("/basis/snapshot_height")
+            .and_then(Value::as_str),
+        Some("0")
     );
 
     Ok(())
@@ -1376,6 +1703,146 @@ async fn assert_rebuilt_signed_projection_matches_materialized(
     .await?;
     assert_eq!(rebuilt_ideas, materialized_ideas);
     assert_eq!(rebuilt_connections, materialized_connections);
+    Ok(())
+}
+
+async fn insert_test_ordering(
+    pool: &PgPool,
+    idea_one_id: Uuid,
+    idea_two_id: Uuid,
+    ordering_id: Uuid,
+) -> Result<(), sqlx::Error> {
+    let event_id = uuid("00000000-0000-7000-8000-000000000105");
+    let mut tx = pool.begin().await?;
+    let block_height = 0_i64;
+    let event_index: i32 = sqlx::query_scalar(
+        "SELECT COALESCE(MAX(event_index) + 1, 0)::int FROM events WHERE block_height = $1",
+    )
+    .bind(block_height)
+    .fetch_one(&mut *tx)
+    .await?;
+    let payload = json!({
+        "ordering_id": ordering_id,
+        "ordering_profile": "vine",
+        "vine_type": "narrative_vine",
+        "speaker_identity_id": AUTHOR_ID,
+        "item_idea_ids": [idea_one_id, idea_two_id]
+    });
+    sqlx::query(
+        r#"
+        INSERT INTO events (
+          block_height,
+          event_index,
+          event_id,
+          event_type,
+          speaker_identity_id,
+          payload_json,
+          signature
+        ) VALUES ($1, $2, $3, 'ordering_create', $4, $5, NULL)
+        "#,
+    )
+    .bind(block_height)
+    .bind(event_index)
+    .bind(event_id)
+    .bind(uuid(AUTHOR_ID))
+    .bind(payload)
+    .execute(&mut *tx)
+    .await?;
+    sqlx::query(
+        r#"
+        INSERT INTO orderings (
+          ordering_id,
+          ordering_profile,
+          vine_type,
+          subject_idea_id,
+          speaker_identity_id,
+          created_block_height,
+          created_event_index,
+          created_event_id,
+          base_ordering_id,
+          title_representation_id,
+          sentence_representation_id
+        ) VALUES ($1, 0, 1, NULL, $2, $3, $4, $5, NULL, NULL, NULL)
+        "#,
+    )
+    .bind(ordering_id)
+    .bind(uuid(AUTHOR_ID))
+    .bind(block_height)
+    .bind(event_index)
+    .bind(event_id)
+    .execute(&mut *tx)
+    .await?;
+    sqlx::query(
+        r#"
+        INSERT INTO ordering_items (ordering_id, idx, idea_id, item_role, via_connection_id)
+        VALUES ($1, 0, $2, NULL, NULL), ($1, 1, $3, NULL, NULL)
+        "#,
+    )
+    .bind(ordering_id)
+    .bind(idea_one_id)
+    .bind(idea_two_id)
+    .execute(&mut *tx)
+    .await?;
+    tx.commit().await?;
+    Ok(())
+}
+async fn insert_test_representation(
+    pool: &PgPool,
+    idea_id: Uuid,
+    representation_id: Uuid,
+) -> Result<(), sqlx::Error> {
+    let event_id = uuid("00000000-0000-7000-8000-000000000104");
+    let payload_hash = "f".repeat(64);
+    let payload_text = "Product read contract representation";
+    let payload = json!({
+        "representation_id": representation_id,
+        "target_kind": "idea",
+        "target_object_id": idea_id,
+        "representation_kind": "description",
+        "tier_length": "sentence",
+        "tier_complexity": "fundamental",
+        "payload_hash": payload_hash,
+        "payload_text": payload_text,
+        "author_identity_id": AUTHOR_ID
+    });
+    let (block_height, event_index) = append_internal_event(
+        pool,
+        event_id,
+        "representation_create",
+        Some(uuid(AUTHOR_ID)),
+        payload,
+    )
+    .await?;
+    sqlx::query(
+        r#"
+        INSERT INTO representations (
+          representation_id,
+          target_kind,
+          target_id,
+          tier_enum,
+          tier_complexity,
+          vocabulary_version_id,
+          payload_hash,
+          payload_text,
+          author_identity_id,
+          language_locale,
+          provenance,
+          created_block_height,
+          created_event_index,
+          created_event_id
+        ) VALUES ($1, 0, $2, 1, 0, NULL, $3, $4, $5, 'en', 'test://product-read-contract', $6, $7, $8)
+        "#,
+    )
+    .bind(representation_id)
+    .bind(idea_id)
+    .bind(payload_hash)
+    .bind(payload_text)
+    .bind(uuid(AUTHOR_ID))
+    .bind(block_height)
+    .bind(event_index)
+    .bind(event_id)
+    .execute(pool)
+    .await?;
     Ok(())
 }
 

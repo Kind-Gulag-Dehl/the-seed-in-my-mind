@@ -4,7 +4,8 @@ use axum::{
     http::{HeaderMap, HeaderValue, StatusCode},
     response::Response,
 };
-use storage::{ConnectionRow, PrivateOrderingItemInput};
+use std::collections::BTreeSet;
+use storage::{ConnectionRow, PrivateOrderingItemInput, SnapshotRow, Storage};
 use uuid::Uuid;
 
 use crate::server::errors::json_error;
@@ -15,6 +16,85 @@ use crate::server::types::{
 
 const INVALID_FIELD_LENGTH_CODE: &str = "invalid_field_length";
 
+pub(crate) async fn resolve_snapshot(
+    storage: &Storage,
+    requested_height: Option<&str>,
+) -> Result<SnapshotRow, Response> {
+    let requested_height = match requested_height {
+        Some(value) => Some(parse_non_negative_i64(value).ok_or_else(|| {
+            json_error(
+                StatusCode::BAD_REQUEST,
+                "invalid_request",
+                "snapshot_height must be a non-negative decimal string",
+            )
+        })?),
+        None => None,
+    };
+    let snapshot = match requested_height {
+        Some(height) => storage.get_snapshot_by_height(height).await,
+        None => storage.get_latest_snapshot().await,
+    };
+    match snapshot {
+        Ok(Some(snapshot)) => Ok(snapshot),
+        Ok(None) => Err(json_error(
+            StatusCode::NOT_FOUND,
+            "snapshot_not_found",
+            "snapshot not found",
+        )),
+        Err(err) => {
+            tracing::error!(?err, "failed to resolve snapshot basis");
+            Err(json_error(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "internal_error",
+                "internal server error",
+            ))
+        }
+    }
+}
+
+pub(crate) fn parse_bounded_uuid_v7_csv(
+    raw: Option<&str>,
+    field: &str,
+    max: usize,
+) -> Result<Vec<Uuid>, Response> {
+    let raw = raw
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .ok_or_else(|| {
+            json_error(
+                StatusCode::BAD_REQUEST,
+                "invalid_request",
+                &format!("missing {field}"),
+            )
+        })?;
+    let mut ids = Vec::new();
+    let mut seen = BTreeSet::new();
+    for value in raw
+        .split(',')
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+    {
+        let id = parse_uuid_v7_field(value, field)?;
+        if seen.insert(id) {
+            ids.push(id);
+        }
+    }
+    if ids.is_empty() {
+        return Err(json_error(
+            StatusCode::BAD_REQUEST,
+            "invalid_request",
+            &format!("missing {field}"),
+        ));
+    }
+    if ids.len() > max {
+        return Err(json_error(
+            StatusCode::BAD_REQUEST,
+            "invalid_request",
+            &format!("{field} supports up to {max} ids"),
+        ));
+    }
+    Ok(ids)
+}
 pub(crate) fn parse_uuid_v7(value: &str) -> Result<Uuid, Response> {
     let uuid = Uuid::parse_str(value)
         .map_err(|_| json_error(StatusCode::BAD_REQUEST, "invalid_id", "id must be uuidv7"))?;
