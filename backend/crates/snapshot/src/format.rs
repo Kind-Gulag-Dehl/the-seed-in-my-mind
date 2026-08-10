@@ -7,14 +7,15 @@ use encoding::hash::{hash_bytes, hash_with_domain};
 use encoding::merkle::{compute_root_with_tags, empty_payload_root};
 use encoding::payload::payload_hash_hex;
 use replay::{
-    ReplayConnectionRow, ReplayIdeaRow, ReplayObjectKind, ReplayOutput, ReplayPayloadRow,
-    ReplayOrderingRow,
+    ReplayConnectionRow, ReplayIdeaRow, ReplayObjectKind, ReplayOrderingRow, ReplayOutput,
+    ReplayPayloadRow, ReplayRepresentationRow,
 };
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
 pub const IDEAS_SECTION_ID: u16 = 0x8001;
 pub const CONNECTIONS_SECTION_ID: u16 = 0x8002;
+pub const REPRESENTATIONS_SECTION_ID: u16 = 0x8003;
 pub const ORDERINGS_SECTION_ID: u16 = 0x000F;
 pub const ORDERING_REPRESENTATION_INDEX_SECTION_ID: u16 = 0x0010;
 
@@ -76,7 +77,12 @@ impl std::fmt::Display for SnapshotError {
 impl std::error::Error for SnapshotError {}
 
 pub fn build_stage0_snapshot(replay: &ReplayOutput) -> Result<Stage0Snapshot, SnapshotError> {
-    let sections = build_stage0_sections(&replay.ideas, &replay.connections, &replay.orderings)?;
+    let sections = build_stage0_sections(
+        &replay.ideas,
+        &replay.connections,
+        &replay.orderings,
+        &replay.representations,
+    )?;
     let commitments = compute_stage0_commitments(&sections, &replay.payloads)?;
 
     let bytes = encode_snapshot_v0(replay, &commitments, &sections, "", 0)?;
@@ -242,11 +248,16 @@ fn compute_stage0_commitments(
         .iter()
         .find(|section| section.id == ORDERINGS_SECTION_ID)
         .ok_or_else(|| SnapshotError::new("missing_section", "orderings section missing"))?;
+    let representations = sections
+        .iter()
+        .find(|section| section.id == REPRESENTATIONS_SECTION_ID)
+        .ok_or_else(|| SnapshotError::new("missing_section", "representations section missing"))?;
 
     let mut state_root_payload = Vec::new();
     state_root_payload.extend_from_slice(&ideas.hash);
     state_root_payload.extend_from_slice(&connections.hash);
     state_root_payload.extend_from_slice(&orderings.hash);
+    state_root_payload.extend_from_slice(&representations.hash);
     let state_root_hash = hash_with_domain("snapshot_state_root", &state_root_payload);
 
     validate_payload_hashes(payloads)?;
@@ -275,16 +286,20 @@ fn build_stage0_sections(
     ideas: &[ReplayIdeaRow],
     connections: &[ReplayConnectionRow],
     orderings: &[ReplayOrderingRow],
+    representations: &[ReplayRepresentationRow],
 ) -> Result<Vec<SnapshotSection>, SnapshotError> {
     let (ideas_bytes, ideas_count) = build_ideas_section(ideas)?;
     let (connections_bytes, connections_count) = build_connections_section(connections)?;
-    let (orderings_bytes, orderings_count) = build_orderings_section(orderings)?;
+    let (orderings_bytes, orderings_count) = build_orderings_section(orderings, ideas)?;
+    let (representations_bytes, representations_count) =
+        build_representations_section(representations)?;
     let (ordering_representation_index_bytes, ordering_representation_index_count) =
         build_ordering_representation_index_section(orderings)?;
 
     let ideas_hash = section_hash(IDEAS_SECTION_ID, &ideas_bytes);
     let connections_hash = section_hash(CONNECTIONS_SECTION_ID, &connections_bytes);
     let orderings_hash = section_hash(ORDERINGS_SECTION_ID, &orderings_bytes);
+    let representations_hash = section_hash(REPRESENTATIONS_SECTION_ID, &representations_bytes);
     let ordering_representation_index_hash = section_hash(
         ORDERING_REPRESENTATION_INDEX_SECTION_ID,
         &ordering_representation_index_bytes,
@@ -308,6 +323,12 @@ fn build_stage0_sections(
             item_count: orderings_count,
             bytes: orderings_bytes,
             hash: orderings_hash,
+        },
+        SnapshotSection {
+            id: REPRESENTATIONS_SECTION_ID,
+            item_count: representations_count,
+            bytes: representations_bytes,
+            hash: representations_hash,
         },
         SnapshotSection {
             id: ORDERING_REPRESENTATION_INDEX_SECTION_ID,
@@ -361,12 +382,169 @@ fn build_connections_section(
     Ok((out, count))
 }
 
-fn build_orderings_section(orderings: &[ReplayOrderingRow]) -> Result<(Vec<u8>, u32), SnapshotError> {
+fn build_representations_section(
+    representations: &[ReplayRepresentationRow],
+) -> Result<(Vec<u8>, u32), SnapshotError> {
+    let mut sorted = representations.to_vec();
+    sorted.sort_by_key(|row| (row.created_block_height, row.created_event_index));
+
+    let mut seen = std::collections::BTreeSet::new();
+    let mut out = Vec::new();
+    for row in &sorted {
+        if !seen.insert(row.representation_id) {
+            return Err(SnapshotError::new(
+                "duplicate_representation",
+                format!("duplicate representation_id={}", row.representation_id),
+            ));
+        }
+        out.extend_from_slice(&encode_id_anyhow(&row.representation_id.to_string())?);
+        out.extend_from_slice(&encode_u8(match row.target_kind.as_str() {
+            "idea" => 0,
+            "ordering" => 1,
+            other => {
+                return Err(SnapshotError::new(
+                    "invalid_target_kind",
+                    format!("unsupported representation target_kind={other}"),
+                ))
+            }
+        }));
+        out.extend_from_slice(&encode_id_anyhow(&row.target_object_id.to_string())?);
+
+        match row.representation_kind.as_str() {
+            "title" => {
+                if row.tier_length.is_some()
+                    || row.tier_complexity.is_some()
+                    || row.vocabulary_version_id.is_some()
+                {
+                    return Err(SnapshotError::new(
+                        "invalid_representation_slot",
+                        format!(
+                            "title representation carries description fields: {}",
+                            row.representation_id
+                        ),
+                    ));
+                }
+                out.extend_from_slice(&encode_u8(0));
+                out.extend_from_slice(&encode_u8(0));
+            }
+            "description" => {
+                out.extend_from_slice(&encode_u8(1));
+                let length = match row.tier_length.as_deref() {
+                    Some("sentence") => 0,
+                    Some("paragraph") => 1,
+                    Some("full") => 2,
+                    _ => {
+                        return Err(SnapshotError::new(
+                            "invalid_tier_length",
+                            format!(
+                                "description has invalid tier_length: {}",
+                                row.representation_id
+                            ),
+                        ))
+                    }
+                };
+                let complexity = match row.tier_complexity.as_deref() {
+                    Some("fundamental") => 0,
+                    Some("standard") => 1,
+                    Some("advanced") => 2,
+                    Some("canonical") => 3,
+                    _ => {
+                        return Err(SnapshotError::new(
+                            "invalid_tier_complexity",
+                            format!(
+                                "description has invalid tier_complexity: {}",
+                                row.representation_id
+                            ),
+                        ))
+                    }
+                };
+                out.extend_from_slice(&encode_u8(length));
+                out.extend_from_slice(&encode_u8(complexity));
+                match (complexity, row.vocabulary_version_id) {
+                    (3, Some(vocabulary_id)) => {
+                        out.extend_from_slice(&encode_u8(1));
+                        out.extend_from_slice(&encode_id_anyhow(&vocabulary_id.to_string())?);
+                    }
+                    (3, None) => {
+                        return Err(SnapshotError::new(
+                            "missing_vocabulary",
+                            format!(
+                                "canonical description missing vocabulary: {}",
+                                row.representation_id
+                            ),
+                        ))
+                    }
+                    (_, Some(_)) => {
+                        return Err(SnapshotError::new(
+                            "invalid_vocabulary",
+                            format!(
+                                "noncanonical description carries vocabulary: {}",
+                                row.representation_id
+                            ),
+                        ))
+                    }
+                    (_, None) => out.extend_from_slice(&encode_u8(0)),
+                }
+            }
+            other => {
+                return Err(SnapshotError::new(
+                    "invalid_representation_kind",
+                    format!("unsupported representation_kind={other}"),
+                ))
+            }
+        }
+
+        out.extend_from_slice(&encode_id_anyhow(&row.author_identity_id.to_string())?);
+        let payload_hash = decode_hex_32(&row.payload_hash)?;
+        if let Some(text) = row.payload_text.as_deref() {
+            let actual = hash_bytes(&canonicalize_string_anyhow(text)?);
+            if actual.as_slice() != payload_hash.as_slice() {
+                return Err(SnapshotError::new(
+                    "payload_hash_mismatch",
+                    format!(
+                        "representation payload hash mismatch: {}",
+                        row.representation_id
+                    ),
+                ));
+            }
+        }
+        out.extend_from_slice(&payload_hash);
+        match row.payload_text.as_deref() {
+            Some(text) => {
+                out.extend_from_slice(&encode_u8(1));
+                out.extend_from_slice(&encode_string_canon(text)?);
+            }
+            None => out.extend_from_slice(&encode_u8(0)),
+        }
+        push_optional_string(&mut out, row.language_locale.as_deref())?;
+        push_optional_string(&mut out, row.provenance.as_deref())?;
+        out.extend_from_slice(&encode_id_anyhow(&row.created_event_id.to_string())?);
+        out.extend_from_slice(&encode_u64(row.created_block_height as u64));
+        out.extend_from_slice(&encode_u32(row.created_event_index as u32));
+    }
+
+    let count = u32::try_from(sorted.len())
+        .map_err(|_| SnapshotError::new("invalid_count", "representations count overflow"))?;
+    Ok((out, count))
+}
+
+fn build_orderings_section(
+    orderings: &[ReplayOrderingRow],
+    ideas: &[ReplayIdeaRow],
+) -> Result<(Vec<u8>, u32), SnapshotError> {
     let mut sorted = orderings.to_vec();
     sorted.sort_by_key(|row| (row.created_block_height, row.created_event_index));
     let profiles = sorted
         .iter()
         .map(|row| (row.ordering_id, row.ordering_profile.as_str()))
+        .collect::<std::collections::HashMap<_, _>>();
+    let ordering_by_id = sorted
+        .iter()
+        .map(|row| (row.ordering_id, row))
+        .collect::<std::collections::HashMap<_, _>>();
+    let idea_types = ideas
+        .iter()
+        .map(|row| (row.idea_id, row.idea_type.as_str()))
         .collect::<std::collections::HashMap<_, _>>();
 
     let mut out = Vec::new();
@@ -393,6 +571,98 @@ fn build_orderings_section(orderings: &[ReplayOrderingRow]) -> Result<(Vec<u8>, 
             }
             (_, None) => {}
         }
+        match (profile_code, row.subject_idea_id) {
+            (0, None) => {}
+            (0, Some(_)) => {
+                return Err(SnapshotError::new(
+                    "invalid_subject",
+                    format!("Vine must not carry a subject: {}", row.ordering_id),
+                ))
+            }
+            (1, Some(subject_id)) => {
+                if idea_types.get(&subject_id) != Some(&"truth_claim") {
+                    return Err(SnapshotError::new(
+                        "invalid_subject",
+                        format!(
+                            "Evidence Rail requires truth_claim subject: {}",
+                            row.ordering_id
+                        ),
+                    ));
+                }
+            }
+            (2, Some(subject_id)) => {
+                if idea_types.get(&subject_id) != Some(&"actionable_idea") {
+                    return Err(SnapshotError::new(
+                        "invalid_subject",
+                        format!(
+                            "Action Rail requires actionable_idea subject: {}",
+                            row.ordering_id
+                        ),
+                    ));
+                }
+            }
+            (_, None) => {
+                return Err(SnapshotError::new(
+                    "missing_subject",
+                    format!("standardized Ordering missing subject: {}", row.ordering_id),
+                ))
+            }
+            _ => unreachable!(),
+        }
+        if profile_code != 0 {
+            if row.items.is_empty() {
+                return Err(SnapshotError::new(
+                    "missing_ordering_item",
+                    format!("standardized Ordering has no items: {}", row.ordering_id),
+                ));
+            }
+            let mut ids = std::collections::BTreeSet::new();
+            for item in &row.items {
+                if !ids.insert(item.idea_id) {
+                    return Err(SnapshotError::new(
+                        "duplicate_ordering_item",
+                        format!(
+                            "standardized Ordering contains duplicate item {}",
+                            item.idea_id
+                        ),
+                    ));
+                }
+                let role = item_role_code(item.item_role.as_deref())?.ok_or_else(|| {
+                    SnapshotError::new(
+                        "missing_item_role",
+                        format!(
+                            "standardized Ordering item missing role: {}",
+                            row.ordering_id
+                        ),
+                    )
+                })?;
+                if (profile_code == 1 && !matches!(role, 0 | 1))
+                    || (profile_code == 2 && !matches!(role, 2 | 3))
+                {
+                    return Err(SnapshotError::new(
+                        "invalid_item_role",
+                        format!("invalid item role for ordering_id={}", row.ordering_id),
+                    ));
+                }
+            }
+            if profile_code == 2 {
+                let lane = item_role_code(row.items[0].item_role.as_deref())?
+                    .expect("standardized role checked above");
+                if row.items.iter().any(|item| {
+                    item_role_code(item.item_role.as_deref()).ok().flatten() != Some(lane)
+                }) {
+                    return Err(SnapshotError::new(
+                        "invalid_action_lane",
+                        format!("Action Rail lane is not homogeneous: {}", row.ordering_id),
+                    ));
+                }
+            }
+        } else if row.items.iter().any(|item| item.item_role.is_some()) {
+            return Err(SnapshotError::new(
+                "invalid_item_role",
+                format!("Vine must not carry item roles: {}", row.ordering_id),
+            ));
+        }
         if let Some(base_ordering_id) = row.base_ordering_id {
             let base_profile = profiles.get(&base_ordering_id).ok_or_else(|| {
                 SnapshotError::new(
@@ -409,6 +679,44 @@ fn build_orderings_section(orderings: &[ReplayOrderingRow]) -> Result<(Vec<u8>, 
                     ),
                 ));
             }
+            let base = ordering_by_id[&base_ordering_id];
+            if base.subject_idea_id != row.subject_idea_id {
+                return Err(SnapshotError::new(
+                    "ordering_subject_mismatch",
+                    format!("fork subject differs from base: {}", row.ordering_id),
+                ));
+            }
+            let base_roles = base
+                .items
+                .iter()
+                .map(|item| (item.idea_id, item.item_role.as_deref()))
+                .collect::<std::collections::HashMap<_, _>>();
+            for item in &row.items {
+                if let Some(base_role) = base_roles.get(&item.idea_id) {
+                    if *base_role != item.item_role.as_deref() {
+                        return Err(SnapshotError::new(
+                            "ordering_role_mismatch",
+                            format!("fork changed retained-item role: {}", item.idea_id),
+                        ));
+                    }
+                }
+            }
+            if profile_code == 2 {
+                let base_lane = base
+                    .items
+                    .first()
+                    .and_then(|item| item_role_code(item.item_role.as_deref()).ok().flatten());
+                let fork_lane = row
+                    .items
+                    .first()
+                    .and_then(|item| item_role_code(item.item_role.as_deref()).ok().flatten());
+                if base_lane.is_none() || base_lane != fork_lane {
+                    return Err(SnapshotError::new(
+                        "ordering_lane_mismatch",
+                        format!("Action Rail fork changed base lane: {}", row.ordering_id),
+                    ));
+                }
+            }
         }
 
         out.extend_from_slice(&encode_id_anyhow(&row.ordering_id.to_string())?);
@@ -417,6 +725,13 @@ fn build_orderings_section(orderings: &[ReplayOrderingRow]) -> Result<(Vec<u8>, 
             Some(vine_type) => {
                 out.extend_from_slice(&encode_u8(1));
                 out.extend_from_slice(&encode_u8(vine_type_code(vine_type)?));
+            }
+            None => out.extend_from_slice(&encode_u8(0)),
+        }
+        match row.subject_idea_id {
+            Some(subject_id) => {
+                out.extend_from_slice(&encode_u8(1));
+                out.extend_from_slice(&encode_id_anyhow(&subject_id.to_string())?);
             }
             None => out.extend_from_slice(&encode_u8(0)),
         }
@@ -437,6 +752,13 @@ fn build_orderings_section(orderings: &[ReplayOrderingRow]) -> Result<(Vec<u8>, 
         )?));
         for item in &row.items {
             out.extend_from_slice(&encode_id_anyhow(&item.idea_id.to_string())?);
+            match item_role_code(item.item_role.as_deref())? {
+                Some(role) => {
+                    out.extend_from_slice(&encode_u8(1));
+                    out.extend_from_slice(&encode_u8(role));
+                }
+                None => out.extend_from_slice(&encode_u8(0)),
+            }
         }
         out.extend_from_slice(&encode_u32(u32::try_from(row.items.len()).map_err(
             |_| SnapshotError::new("invalid_count", "ordering step metadata count overflow"),
@@ -457,6 +779,20 @@ fn build_orderings_section(orderings: &[ReplayOrderingRow]) -> Result<(Vec<u8>, 
     let count = u32::try_from(sorted.len())
         .map_err(|_| SnapshotError::new("invalid_count", "orderings count overflow"))?;
     Ok((out, count))
+}
+
+fn item_role_code(value: Option<&str>) -> Result<Option<u8>, SnapshotError> {
+    match value {
+        None => Ok(None),
+        Some("potential_evidence") => Ok(Some(0)),
+        Some("actual_evidence") => Ok(Some(1)),
+        Some("potential_action") => Ok(Some(2)),
+        Some("proposed_action") => Ok(Some(3)),
+        Some(other) => Err(SnapshotError::new(
+            "invalid_item_role",
+            format!("unsupported item_role={other}"),
+        )),
+    }
 }
 
 fn build_ordering_representation_index_section(
@@ -647,13 +983,28 @@ fn encode_id_anyhow(value: &str) -> Result<Vec<u8>, SnapshotError> {
     encode_id(value).map_err(|err| SnapshotError::new("invalid_id", err))
 }
 
+fn decode_hex_32(value: &str) -> Result<Vec<u8>, SnapshotError> {
+    if value.len() != 64 || !value.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        return Err(SnapshotError::new(
+            "invalid_payload_hash",
+            "payload_hash must be 64 hexadecimal characters",
+        ));
+    }
+    (0..64)
+        .step_by(2)
+        .map(|index| {
+            u8::from_str_radix(&value[index..index + 2], 16).map_err(|_| {
+                SnapshotError::new("invalid_payload_hash", "payload_hash contains invalid hex")
+            })
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use chrono::TimeZone;
-    use replay::{
-        ReplayCycleStatus, ReplayOrderingItemRow, ReplayOrderingRow, ReplayTempoStatus,
-    };
+    use replay::{ReplayCycleStatus, ReplayOrderingItemRow, ReplayOrderingRow, ReplayTempoStatus};
 
     fn v7(id: &str) -> Uuid {
         Uuid::parse_str(id).expect("uuid parse")
@@ -663,8 +1014,9 @@ mod tests {
         let payload_hash = payload_hash_hex("title", "sentence", None, None).expect("hash");
         let ordering_title = "Evidence Rail title";
         let ordering_sentence = "Evidence Rail sentence";
-        let ordering_title_hash =
-            to_hex(&hash_bytes(&canonicalize_string_anyhow(ordering_title).expect("title")));
+        let ordering_title_hash = to_hex(&hash_bytes(
+            &canonicalize_string_anyhow(ordering_title).expect("title"),
+        ));
         let ordering_sentence_hash = to_hex(&hash_bytes(
             &canonicalize_string_anyhow(ordering_sentence).expect("sentence"),
         ));
@@ -685,23 +1037,57 @@ mod tests {
                 ordering_id: v7("00000000-0000-7000-8000-00000000b010"),
                 ordering_profile: "evidence_rail".to_string(),
                 vine_type: None,
+                subject_idea_id: Some(v7("00000000-0000-7000-8000-00000000b001")),
                 speaker_identity_id: v7("00000000-0000-7000-8000-00000000a001"),
                 created_event_id: v7("00000000-0000-7000-8000-000000000102"),
                 created_block_height: 1,
                 created_event_index: 1,
                 base_ordering_id: None,
-                title_representation_id: Some(v7(
-                    "00000000-0000-7000-8000-00000000d010",
-                )),
-                sentence_representation_id: Some(v7(
-                    "00000000-0000-7000-8000-00000000d011",
-                )),
+                title_representation_id: Some(v7("00000000-0000-7000-8000-00000000d010")),
+                sentence_representation_id: Some(v7("00000000-0000-7000-8000-00000000d011")),
                 items: vec![ReplayOrderingItemRow {
                     idx: 0,
                     idea_id: v7("00000000-0000-7000-8000-00000000b001"),
+                    item_role: Some("potential_evidence".to_string()),
                     via_connection_id: None,
                 }],
             }],
+            representations: vec![
+                ReplayRepresentationRow {
+                    representation_id: v7("00000000-0000-7000-8000-00000000d010"),
+                    target_kind: "ordering".to_string(),
+                    target_object_id: v7("00000000-0000-7000-8000-00000000b010"),
+                    representation_kind: "title".to_string(),
+                    tier_length: None,
+                    tier_complexity: None,
+                    vocabulary_version_id: None,
+                    payload_hash: ordering_title_hash.clone(),
+                    payload_text: Some(ordering_title.to_string()),
+                    author_identity_id: v7("00000000-0000-7000-8000-00000000a001"),
+                    language_locale: None,
+                    provenance: None,
+                    created_event_id: v7("00000000-0000-7000-8000-000000000103"),
+                    created_block_height: 1,
+                    created_event_index: 2,
+                },
+                ReplayRepresentationRow {
+                    representation_id: v7("00000000-0000-7000-8000-00000000d011"),
+                    target_kind: "ordering".to_string(),
+                    target_object_id: v7("00000000-0000-7000-8000-00000000b010"),
+                    representation_kind: "description".to_string(),
+                    tier_length: Some("sentence".to_string()),
+                    tier_complexity: Some("standard".to_string()),
+                    vocabulary_version_id: None,
+                    payload_hash: ordering_sentence_hash.clone(),
+                    payload_text: Some(ordering_sentence.to_string()),
+                    author_identity_id: v7("00000000-0000-7000-8000-00000000a001"),
+                    language_locale: None,
+                    provenance: None,
+                    created_event_id: v7("00000000-0000-7000-8000-000000000104"),
+                    created_block_height: 1,
+                    created_event_index: 3,
+                },
+            ],
             connections: vec![],
             payloads: vec![
                 ReplayPayloadRow {
@@ -779,6 +1165,67 @@ mod tests {
             second.commitments.state_root_hash
         );
         assert_ne!(first.snapshot_hash, second.snapshot_hash);
+    }
+
+    #[test]
+    fn representation_author_is_committed_to_state_root() {
+        let first = build_stage0_snapshot(&fixture()).expect("first snapshot");
+        let mut changed = fixture();
+        changed.representations[0].author_identity_id = v7("00000000-0000-7000-8000-00000000a002");
+        let second = build_stage0_snapshot(&changed).expect("second snapshot");
+        assert_ne!(
+            first.commitments.state_root_hash,
+            second.commitments.state_root_hash
+        );
+    }
+
+    #[test]
+    fn title_representation_is_committed_as_a_distinct_snapshot_record() {
+        let replay = fixture();
+        let title = &replay.representations[0];
+        assert_eq!(title.representation_kind, "title");
+        assert_eq!(title.tier_length, None);
+        assert_eq!(title.tier_complexity, None);
+        assert_eq!(title.vocabulary_version_id, None);
+
+        let with_title = build_stage0_snapshot(&replay).expect("snapshot with title");
+        let with_title_section = with_title
+            .sections
+            .iter()
+            .find(|section| section.id == REPRESENTATIONS_SECTION_ID)
+            .expect("representations section");
+        assert_eq!(with_title_section.item_count, 2);
+
+        let mut changed_title = replay;
+        let changed_title_text = "Changed Evidence Rail title";
+        let changed_title_hash = to_hex(&hash_bytes(
+            &canonicalize_string_anyhow(changed_title_text).expect("changed title"),
+        ));
+        changed_title.representations[0].payload_text = Some(changed_title_text.to_string());
+        changed_title.representations[0].payload_hash = changed_title_hash.clone();
+        changed_title.payloads[1].title = Some(changed_title_text.to_string());
+        changed_title.payloads[1].title_payload_hash = Some(changed_title_hash);
+        let changed_title =
+            build_stage0_snapshot(&changed_title).expect("snapshot with changed title record");
+        let changed_title_section = changed_title
+            .sections
+            .iter()
+            .find(|section| section.id == REPRESENTATIONS_SECTION_ID)
+            .expect("representations section");
+        assert_eq!(changed_title_section.item_count, 2);
+        assert_ne!(with_title_section.hash, changed_title_section.hash);
+        assert_ne!(
+            with_title.commitments.state_root_hash,
+            changed_title.commitments.state_root_hash
+        );
+    }
+
+    #[test]
+    fn snapshot_rejects_description_metadata_on_title() {
+        let mut replay = fixture();
+        replay.representations[0].tier_length = Some("sentence".to_string());
+        let error = build_stage0_snapshot(&replay).expect_err("invalid title slot");
+        assert_eq!(error.code, "invalid_representation_slot");
     }
 
     #[test]

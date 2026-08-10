@@ -138,6 +138,7 @@ pub struct CanonicalOrderingRow {
     pub ordering_id: Uuid,
     pub ordering_profile: i16,
     pub vine_type: Option<i16>,
+    pub subject_idea_id: Option<Uuid>,
     pub author_identity_id: Uuid,
     pub title_representation_id: Option<Uuid>,
     pub sentence_representation_id: Option<Uuid>,
@@ -149,6 +150,7 @@ pub struct CanonicalOrderingRow {
 pub struct CanonicalOrderingItemRow {
     pub idx: i32,
     pub idea_id: Uuid,
+    pub item_role: Option<i16>,
     pub via_connection_id: Option<Uuid>,
 }
 
@@ -157,6 +159,22 @@ pub struct CanonicalOrderingSummaryRow {
     pub ordering_id: Uuid,
     pub ordering_profile: i16,
     pub vine_type: Option<i16>,
+    pub subject_idea_id: Option<Uuid>,
+}
+
+#[derive(Debug, Clone, Serialize, FromRow)]
+pub struct CanonicalRepresentationRow {
+    pub representation_id: Uuid,
+    pub target_kind: i16,
+    pub target_id: Uuid,
+    pub tier_enum: i16,
+    pub tier_complexity: Option<i16>,
+    pub vocabulary_version_id: Option<Uuid>,
+    pub payload_hash: String,
+    pub author_identity_id: Uuid,
+    pub language_locale: Option<String>,
+    pub provenance: Option<String>,
+    pub created_event_id: Uuid,
 }
 
 #[derive(Debug, Clone, Serialize, FromRow)]

@@ -11,6 +11,7 @@ pub struct ApiError {
 pub struct OrderingItem {
     pub idx: String,
     pub idea_id: String,
+    pub item_role: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub via_connection_id: Option<String>,
 }
@@ -33,6 +34,7 @@ pub struct CanonicalOrderingSummary {
     pub ordering_profile: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vine_type: Option<String>,
+    pub subject_idea_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -41,6 +43,7 @@ pub struct CanonicalOrderingDetail {
     pub ordering_profile: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vine_type: Option<String>,
+    pub subject_idea_id: Option<String>,
     pub author_identity_id: String,
     pub canonical_representations: CanonicalOrderingRepresentations,
     pub items: Vec<OrderingItem>,
@@ -54,6 +57,30 @@ pub struct CanonicalOrderingResponse {
 #[derive(Debug, Clone, Serialize)]
 pub struct CanonicalOrderingsResponse {
     pub orderings: Vec<CanonicalOrderingSummary>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CanonicalRepresentationDetail {
+    pub representation_id: String,
+    pub target_kind: String,
+    pub target_object_id: String,
+    pub representation_kind: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tier_length: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tier_complexity: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub vocabulary_version_id: Option<String>,
+    pub payload_hash: String,
+    pub author_identity_id: String,
+    pub language_locale: Option<String>,
+    pub provenance: Option<String>,
+    pub created_event_id: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CanonicalRepresentationResponse {
+    pub representation: CanonicalRepresentationDetail,
 }
 
 #[derive(Debug, Clone, Serialize)]

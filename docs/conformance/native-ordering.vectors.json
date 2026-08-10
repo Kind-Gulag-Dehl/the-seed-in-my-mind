@@ -5,6 +5,15 @@
     "evidence_rail": 1,
     "action_rail": 2
   },
+  "idea_types": {
+    "00000000-0000-7000-8000-000000000301": "conceptual_idea",
+    "00000000-0000-7000-8000-000000000302": "conceptual_idea",
+    "00000000-0000-7000-8000-000000000303": "conceptual_idea",
+    "00000000-0000-7000-8000-000000000401": "truth_claim",
+    "00000000-0000-7000-8000-000000000402": "actionable_idea",
+    "00000000-0000-7000-8000-000000000403": "conceptual_idea",
+    "00000000-0000-7000-8000-000000000404": "truth_claim"
+  },
   "forbidden_legacy_event_types": [
     "rail_create",
     "rail_fork",
@@ -47,9 +56,13 @@
           "payload": {
             "ordering_id": "00000000-0000-7000-8000-000000000202",
             "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
             "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
             "item_idea_ids": [
               "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_evidence"
             ]
           }
         }
@@ -70,9 +83,13 @@
           "payload": {
             "ordering_id": "00000000-0000-7000-8000-000000000203",
             "ordering_profile": "action_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000402",
             "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
             "item_idea_ids": [
               "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_action"
             ]
           }
         }
@@ -94,9 +111,13 @@
             "ordering_id": "00000000-0000-7000-8000-000000000204",
             "ordering_profile": "evidence_rail",
             "vine_type": "narrative_vine",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
             "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
             "item_idea_ids": [
               "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_evidence"
             ]
           }
         }
@@ -156,9 +177,13 @@
           "payload": {
             "ordering_id": "00000000-0000-7000-8000-000000000207",
             "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
             "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
             "item_idea_ids": [
               "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_evidence"
             ]
           }
         },
@@ -170,9 +195,13 @@
             "base_ordering_id": "00000000-0000-7000-8000-000000000207",
             "ordering_id": "00000000-0000-7000-8000-000000000208",
             "ordering_profile": "action_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000402",
             "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
             "item_idea_ids": [
               "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_action"
             ]
           }
         }
@@ -270,6 +299,330 @@
         "accept": false,
         "code": "invalid_field"
       }
+    },
+    {
+      "id": "NO-011",
+      "description": "A Vine cannot infer or carry a standardized subject.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000113",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000213",
+            "ordering_profile": "vine",
+            "vine_type": "narrative_vine",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "NO-012",
+      "description": "Evidence Rails require a truth-claim subject.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000114",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000214",
+            "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000403",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_evidence"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "subject_type_mismatch"
+      }
+    },
+    {
+      "id": "NO-013",
+      "description": "Action Rails require an actionable-idea subject.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000115",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000215",
+            "ordering_profile": "action_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_action"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "subject_type_mismatch"
+      }
+    },
+    {
+      "id": "NO-014",
+      "description": "Standardized Ordering item roles are mandatory.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000116",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000216",
+            "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "missing_field"
+      }
+    },
+    {
+      "id": "NO-015",
+      "description": "Standardized Ordering item roles align one-for-one.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000117",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000217",
+            "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301",
+              "00000000-0000-7000-8000-000000000302"
+            ],
+            "item_roles": [
+              "potential_evidence"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "NO-016",
+      "description": "An Action Rail cannot collapse potential and proposed lanes.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000118",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000218",
+            "ordering_profile": "action_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000402",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301",
+              "00000000-0000-7000-8000-000000000302"
+            ],
+            "item_roles": [
+              "potential_action",
+              "proposed_action"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "NO-017",
+      "description": "Standardized Rails reject duplicate item IDs.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000119",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000219",
+            "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301",
+              "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_evidence",
+              "actual_evidence"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "NO-018",
+      "description": "A standardized fork preserves its explicit subject.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000120",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000220",
+            "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_evidence"
+            ]
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-000000000121",
+          "kind": "ordering_fork",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "base_ordering_id": "00000000-0000-7000-8000-000000000220",
+            "ordering_id": "00000000-0000-7000-8000-000000000221",
+            "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000404",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_evidence"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "ordering_subject_mismatch"
+      }
+    },
+    {
+      "id": "NO-019",
+      "description": "A standardized fork preserves the role of every retained item.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000122",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000222",
+            "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_evidence"
+            ]
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-000000000123",
+          "kind": "ordering_fork",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "base_ordering_id": "00000000-0000-7000-8000-000000000222",
+            "ordering_id": "00000000-0000-7000-8000-000000000223",
+            "ordering_profile": "evidence_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000401",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "actual_evidence"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "ordering_item_role_mismatch"
+      }
+    },
+    {
+      "id": "NO-020",
+      "description": "An Action Rail fork preserves its lane even with no retained items.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-000000000124",
+          "kind": "ordering_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "ordering_id": "00000000-0000-7000-8000-000000000224",
+            "ordering_profile": "action_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000402",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000301"
+            ],
+            "item_roles": [
+              "potential_action"
+            ]
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-000000000125",
+          "kind": "ordering_fork",
+          "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+          "payload": {
+            "base_ordering_id": "00000000-0000-7000-8000-000000000224",
+            "ordering_id": "00000000-0000-7000-8000-000000000225",
+            "ordering_profile": "action_rail",
+            "subject_idea_id": "00000000-0000-7000-8000-000000000402",
+            "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+            "item_idea_ids": [
+              "00000000-0000-7000-8000-000000000302"
+            ],
+            "item_roles": [
+              "proposed_action"
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "action_lane_mismatch"
+      }
     }
   ],
   "hash_vectors": [
@@ -286,6 +639,23 @@
       },
       "canonical_json_utf8": "{\"item_idea_ids\":[\"00000000-0000-7000-8000-000000000301\"],\"ordering_id\":\"00000000-0000-7000-8000-000000000201\",\"ordering_profile\":\"vine\",\"speaker_identity_id\":\"00000000-0000-7000-8000-000000000001\",\"vine_type\":\"narrative_vine\"}",
       "blake3": "318597c0fd62c1971cb954153edd24faa061150efd35db0bcc0119bc96fc81f1"
+    },
+    {
+      "id": "NO-HASH-002",
+      "payload": {
+        "ordering_id": "00000000-0000-7000-8000-000000000202",
+        "ordering_profile": "evidence_rail",
+        "subject_idea_id": "00000000-0000-7000-8000-000000000401",
+        "speaker_identity_id": "00000000-0000-7000-8000-000000000001",
+        "item_idea_ids": [
+          "00000000-0000-7000-8000-000000000301"
+        ],
+        "item_roles": [
+          "potential_evidence"
+        ]
+      },
+      "canonical_json_utf8": "{\"item_idea_ids\":[\"00000000-0000-7000-8000-000000000301\"],\"item_roles\":[\"potential_evidence\"],\"ordering_id\":\"00000000-0000-7000-8000-000000000202\",\"ordering_profile\":\"evidence_rail\",\"speaker_identity_id\":\"00000000-0000-7000-8000-000000000001\",\"subject_idea_id\":\"00000000-0000-7000-8000-000000000401\"}",
+      "blake3": "92dca3941dfc608931972b0bf2de810ffbab9de0502b2275ccceda4e0bd6a42f"
     }
   ]
 }

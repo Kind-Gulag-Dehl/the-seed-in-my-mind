@@ -1980,7 +1980,15 @@ Conformance testing includes, but is not limited to:
   Nodes must pass the Profile-v0 authorship-signature vectors required by `canonical-event-authorship-and-signature-profile-v0.md`, including valid Ed25519 signatures, invalid signatures, altered payload hash, altered event type, altered author identity, wrong key owner, unknown key, revoked key use, historically valid pre-revocation signatures, key rotation, malformed key and signature encodings, unsupported signature profiles, byte-identical cross-implementation candidates, publication-wrapper mutation, unchanged signed bytes under canonical-position assignment, and attempted use of `event_index` in the human-authorship signed bytes.
 
 - **Native Ordering tests**
-  Nodes must pass `docs/conformance/native-ordering.vectors.json`, including deterministic named-profile bytes and hashes, profile validation for Vine/Evidence Rail/Action Rail, fork inheritance and agreement, rejection of the retired `rail_create` event and representation-update compatibility alias, deterministic replay, and snapshot reconstruction.
+  Nodes must pass `docs/conformance/native-ordering.vectors.json`, including deterministic named-profile bytes and hashes, typed standardized subjects, aligned item roles, role-homogeneous potential/proposed Action Rail lanes, fork preservation, rejection of the retired `rail_create` event and representation-update compatibility alias, deterministic replay, and snapshot reconstruction.
+
+- **Representation conformance-binding tests**
+  Nodes must pass `docs/conformance/seed-conformance-bindings.vectors.json`, including
+  the exact `title | description` kind discriminator; rejection of tier or vocabulary
+  fields on title representations; all twelve valid description cells; exact
+  canonical-vocabulary binding; forbidden defaults/inference; representation
+  author/speaker equality; author and vocabulary pre-use existence; and canonical
+  payload commitment sensitivity to kind, conditional-field presence, or either binding.
 
 - **POD/POINT cycle simulation tests**
   Nodes must:
@@ -2044,10 +2052,39 @@ A node claiming DEC-043 native Ordering conformance MUST:
 - require one explicit named `ordering_profile`: `vine`, `evidence_rail`, or `action_rail`;
 - require Vine creation to provide `vine_type`, permit a Vine fork to inherit it, and forbid `vine_type` for standardized Evidence Rail and Action Rail profiles;
 - reject profile-changing forks, the retired `rail_*` substrate events and fields, numeric profile values in event payloads, and representation-update compatibility aliases;
-- preserve item sequence and step metadata deterministically through canonical encoding, hashing, storage, replay, import/export, and snapshot reconstruction; and
-- keep representation pointers in the snapshot representation index, outside the authored Ordering state root.
+- preserve item sequence and step metadata deterministically through canonical encoding, hashing, storage, replay, import/export, and snapshot reconstruction;
+- require a `truth_claim` subject and aligned evidence roles for Evidence Rails;
+- require an `actionable_idea` subject and one homogeneous potential or proposed role
+  lane for each Action Rail, preserving the two-Ordering structure;
+- reject duplicate item IDs in standardized Rails;
+- preserve profile, subject, retained-item roles, and Action Rail lane across forks;
+- reject title/first-item/position-based inference of subjects or roles; and
+- keep representation pointers in the snapshot representation index, outside the authored Ordering state root while committing subject and item roles inside the Ordering state record.
 
 The executable fixture set is `docs/conformance/native-ordering.vectors.json`; its schema is `docs/conformance/native-ordering.schema.json`, the JavaScript harness is `scripts/native-ordering-fixture-harness.mjs`, and the Rust event-log suite consumes the same vectors.
+
+### 13.2C Representation vocabulary and authorship conformance [anchor: representation_vocabulary_and_authorship_conformance]
+
+A conforming node MUST require `representation_kind` to be exactly `title` or
+`description`. A title representation has one target-specific slot and MUST omit
+`tier_length`, `tier_complexity`, and `vocabulary_version_id`. A description
+representation MUST carry `tier_length = sentence | paragraph | full` and
+`tier_complexity = fundamental | standard | advanced | canonical`, producing exactly
+twelve description cells per target. `vocabulary_version_id` is required exactly for a
+canonical-complexity description and forbidden for title and every other description
+complexity. Nodes MUST preserve these values and their presence or absence through
+payload hashing, authorship signatures, storage, replay, snapshots, imports, and
+canonical reads, and never infer or default them. The vocabulary reference is an
+ordinary already-existing idea.
+
+For canonical `representation_create`, `author_identity_id` MUST equal the event speaker
+and that identity MUST already exist. Materialized state, replay, and snapshots MUST
+verify the same binding. DEC-044 package authorization never waives these event rules;
+separate versioned bootstrap materialization records carry genesis package provenance.
+The executable fixture set is
+`docs/conformance/seed-conformance-bindings.vectors.json`; its schema is
+`docs/conformance/seed-conformance-bindings.schema.json` and its harness is
+`scripts/seed-conformance-bindings-harness.mjs`.
 
 ### 13.3 Tooling [anchor: tooling]
 

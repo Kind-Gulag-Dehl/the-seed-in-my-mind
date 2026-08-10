@@ -4,15 +4,53 @@ use event_log::validation::validate_legacy_import_event;
 use event_log::Event;
 use event_log::{SYSTEM_BOUNDARY_EMITTER_ID_STR, SYSTEM_BOUNDARY_EMITTER_TITLE};
 use serde::Deserialize;
-use serde_json::Value;
+use serde_json::{Map, Value};
 use sha2::{Digest, Sha256};
 use sqlx::{postgres::PgPoolOptions, Postgres, Transaction};
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::env;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 use uuid::Uuid;
 
+const V4_PILOT_SCHEMA_VERSION: &str = "seed-v4-pilot-manifest-v1";
+const V4_PILOT_ARTIFACT_TYPE: &str = "unsigned_noncanonical_isolated_local_pilot";
+const V4_PILOT_OPEN_CORE_BASELINE: &str = "6068072160fc032eb1ec3b7641cb917c38f08776";
+const V4_PILOT_PRIVATE_BASELINE: &str = "ce8b0c6ac4dc97f155dda83fb9ed19bd735819fd";
+const V4_PILOT_UUID_DOMAIN: &str = "seed.v4.pilot.uuidv7.v1";
+const V4_PILOT_SPEAKER_ID: &str = "380b7817-db3b-7b76-8cf3-87df879ddddb";
+const V4_PILOT_IDEA_COUNT: usize = 50;
+const V4_PILOT_REPRESENTATION_COUNT: usize = 600;
+const V4_PILOT_COMPONENT_FILES: [&str; 15] = [
+    "seed-v4-pilot-selection.v1.json",
+    "seed-v4-pilot-generator-provenance.v1.json",
+    "seed-v4-pilot-source-provenance.v1.json",
+    "seed-v4-pilot-ideas.v1.json",
+    "seed-v4-pilot-representations.v1.json",
+    "seed-v4-pilot-connections.v1.json",
+    "seed-v4-pilot-orderings.v1.json",
+    "seed-v4-pilot-importance-contexts-and-arguments.v1.json",
+    "seed-v4-pilot-derived-importance.v1.json",
+    "seed-v4-pilot-document-reconstruction.v1.json",
+    "seed-v4-pilot-authored-event-templates.v1.json",
+    "seed-v4-pilot-import-projection.v1.json",
+    "seed-v4-pilot-mechanical-validation.v1.json",
+    "seed-v4-pilot-semantic-evaluation.v1.json",
+    "seed-v4-pilot-review-and-readable-projection.v1.json",
+];
+const UNIVERSAL_ORIENTATIONS: [&str; 4] = [
+    "important_to_current_individual",
+    "important_for_current_individual",
+    "important_to_collective",
+    "important_for_collective",
+];
+const IMPORTANCE_HORIZONS: [&str; 5] = [
+    "near_term",
+    "mid_term",
+    "long_term",
+    "very_long_term",
+    "trans_generational",
+];
 #[derive(Debug, Deserialize)]
 struct SeedFile {
     version: String,
@@ -30,6 +68,73 @@ struct SeedEvent {
 struct Options {
     file: PathBuf,
     force: bool,
+    validate_only: bool,
+}
+
+#[derive(Debug, Deserialize)]
+struct PilotManifest {
+    schema_version: String,
+    artifact_type: String,
+    frozen_at: String,
+    package_domain: String,
+    status: String,
+    finalized: bool,
+    signed: bool,
+    canonical: bool,
+    import_authorized: bool,
+    owner_accepted: bool,
+    owner_review: PilotOwnerReview,
+    baseline_authority: PilotBaseline,
+    component_count: usize,
+    non_manifest_component_digest_sha256: String,
+    components: Vec<PilotComponent>,
+    manifest_payload_sha256: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct PilotBaseline {
+    private_product: String,
+    open_core: String,
+    v3_pair_status: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct PilotOwnerReview {
+    completed: usize,
+    required: usize,
+}
+
+#[derive(Debug, Deserialize)]
+struct PilotComponent {
+    file: String,
+    byte_length: u64,
+    sha256: String,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct PilotValidationSummary {
+    idea_count: usize,
+    description_count: usize,
+    connection_count: usize,
+    ordering_count: usize,
+    universal_profile_count: usize,
+    relative_lens_count: usize,
+    component_hash_set_digest_sha256: String,
+}
+
+#[derive(Debug)]
+struct UniversalProfileProjection {
+    idea_id: Uuid,
+    aggregate_score: i64,
+    horizon_subtotals: BTreeMap<String, i64>,
+    selection_index: i64,
+    cumulative_rank: i64,
+}
+
+#[derive(Debug)]
+struct PilotImportanceProfile {
+    aggregate_score: Option<i64>,
+    horizon_subtotals: BTreeMap<String, Option<i64>>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -109,6 +214,7 @@ struct RepresentationKey {
     target_kind: TargetKind,
     target_object_id: Uuid,
     tier_enum: TierEnum,
+    tier_complexity: Option<i16>,
 }
 
 #[derive(Debug, Clone)]
@@ -116,6 +222,7 @@ struct RepresentationPointerUpdate {
     target_kind: TargetKind,
     target_object_id: Uuid,
     tier_enum: TierEnum,
+    tier_complexity: Option<i16>,
     representation_id: Uuid,
 }
 
@@ -167,8 +274,34 @@ async fn main() -> Result<()> {
 
     let contents = fs::read_to_string(&seed_path)
         .with_context(|| format!("reading seed file {}", seed_path.display()))?;
-    let seed: SeedFile = serde_json::from_str(&contents)
+    let document: Value = serde_json::from_str(&contents)
         .with_context(|| format!("parsing seed JSON from {}", seed_path.display()))?;
+
+    if document.get("schema_version").and_then(Value::as_str) == Some(V4_PILOT_SCHEMA_VERSION) {
+        require_v4_pilot_validate_only(&options)?;
+        let summary = validate_v4_pilot_package(&seed_path, &contents, document)?;
+        println!(
+            "seed-importer: validate-only pass canonical_writes=0 status=unsigned_noncanonical ideas={} representations={} connections={} orderings={} universal_profiles={} relative_contexts={} non_manifest_component_digest_sha256={}",
+            summary.idea_count,
+            summary.description_count,
+            summary.connection_count,
+            summary.ordering_count,
+            summary.universal_profile_count,
+            summary.relative_lens_count,
+            summary.component_hash_set_digest_sha256
+        );
+        return Ok(());
+    }
+
+    if options.validate_only {
+        return Err(anyhow!(
+            "--validate-only accepts only schema_version={}",
+            V4_PILOT_SCHEMA_VERSION
+        ));
+    }
+
+    let seed: SeedFile = serde_json::from_value(document)
+        .with_context(|| format!("parsing legacy seed JSON from {}", seed_path.display()))?;
 
     if seed.version.trim() != "seed-data-v0" {
         return Err(anyhow!("unsupported seed version: {}", seed.version));
@@ -213,6 +346,8 @@ async fn main() -> Result<()> {
     let mut seen_event_ids = HashSet::new();
     let mut seen_ordering_ids = HashSet::new();
     let mut seen_representation_ids = HashSet::new();
+    let mut seen_identity_ids = HashSet::new();
+    let mut seen_idea_ids = HashSet::new();
     let mut idea_rows = Vec::new();
     let mut connection_rows = Vec::new();
     let mut ordering_rows = Vec::new();
@@ -247,18 +382,32 @@ async fn main() -> Result<()> {
         }
 
         match stage0_event.kind.as_str() {
+            "identity_create" => {
+                let payload = payload_object(&stage0_event.payload)?;
+                let identity_id = parse_uuid_field(payload, "identity_id")?;
+                if !seen_identity_ids.insert(identity_id) {
+                    return Err(anyhow!(
+                        "duplicate identity_id in seed file: {}",
+                        identity_id
+                    ));
+                }
+            }
             "idea_create" => {
                 let payload = payload_object(&stage0_event.payload)?;
                 let idea_id = parse_uuid_field(payload, "idea_id")?;
+                if !seen_idea_ids.insert(idea_id) {
+                    return Err(anyhow!("duplicate idea_id in seed file: {}", idea_id));
+                }
                 let speaker = stage0_event
                     .speaker_identity_id
                     .ok_or_else(|| anyhow!("missing speaker_identity_id for idea_create"))?;
 
                 let is_identity_idea = idea_id == seed_identity_id;
+                let payload_idea_type = parse_string_field(payload, "idea_type")?;
                 let idea_type = if is_identity_idea {
                     "identity".to_string()
                 } else {
-                    "conceptual_idea".to_string()
+                    payload_idea_type.to_string()
                 };
 
                 idea_rows.push(IdeaRow {
@@ -308,7 +457,10 @@ async fn main() -> Result<()> {
                 let payload = payload_object(&stage0_event.payload)?;
                 let ordering_id = parse_uuid_field(payload, "ordering_id")?;
                 if !seen_ordering_ids.insert(ordering_id) {
-                    return Err(anyhow!("duplicate ordering_id in seed file: {}", ordering_id));
+                    return Err(anyhow!(
+                        "duplicate ordering_id in seed file: {}",
+                        ordering_id
+                    ));
                 }
 
                 let ordering_profile = parse_ordering_profile_field(payload, "ordering_profile")?;
@@ -318,14 +470,16 @@ async fn main() -> Result<()> {
                     matches!(ordering_profile, OrderingProfile::Vine),
                 )?;
                 if ordering_profile != OrderingProfile::Vine && vine_type.is_some() {
-                    return Err(anyhow!(
-                        "vine_type is only valid for vine ordering_profile"
-                    ));
+                    return Err(anyhow!("vine_type is only valid for vine ordering_profile"));
                 }
                 let speaker_identity_id = stage0_event
                     .speaker_identity_id
                     .ok_or_else(|| anyhow!("missing speaker_identity_id for ordering_create"))?;
                 let item_idea_ids = parse_uuid_array_field(payload, "item_idea_ids")?;
+                let subject_idea_id =
+                    parse_ordering_subject(payload, ordering_profile, &idea_rows)?;
+                let item_roles =
+                    parse_ordering_item_roles(payload, ordering_profile, item_idea_ids.len())?;
                 let step_meta = parse_step_meta(payload, item_idea_ids.len())?;
                 let initial_refs = parse_initial_representation_refs(payload)?;
 
@@ -333,6 +487,7 @@ async fn main() -> Result<()> {
                     ordering_id,
                     ordering_profile: ordering_profile.as_i16(),
                     vine_type: vine_type.map(VineType::as_i16),
+                    subject_idea_id,
                     speaker_identity_id,
                     created_block_height: 1,
                     created_event_index: event_index,
@@ -357,6 +512,7 @@ async fn main() -> Result<()> {
                         ordering_id,
                         idx: idx as i32,
                         idea_id,
+                        item_role: item_roles[idx],
                         via_connection_id,
                     });
                 }
@@ -365,16 +521,23 @@ async fn main() -> Result<()> {
                 let payload = payload_object(&stage0_event.payload)?;
                 let ordering_id = parse_uuid_field(payload, "ordering_id")?;
                 if !seen_ordering_ids.insert(ordering_id) {
-                    return Err(anyhow!("duplicate ordering_id in seed file: {}", ordering_id));
+                    return Err(anyhow!(
+                        "duplicate ordering_id in seed file: {}",
+                        ordering_id
+                    ));
                 }
 
                 let base_ordering_id = parse_uuid_field(payload, "base_ordering_id")?;
                 let base = ordering_rows
                     .iter()
                     .find(|row| row.ordering_id == base_ordering_id)
-                    .ok_or_else(|| anyhow!("ordering_fork base_ordering_id not found: {}", base_ordering_id))?;
-                let ordering_profile =
-                    parse_ordering_profile_field(payload, "ordering_profile")?;
+                    .ok_or_else(|| {
+                        anyhow!(
+                            "ordering_fork base_ordering_id not found: {}",
+                            base_ordering_id
+                        )
+                    })?;
+                let ordering_profile = parse_ordering_profile_field(payload, "ordering_profile")?;
                 if ordering_profile.as_i16() != base.ordering_profile {
                     return Err(anyhow!(
                         "ordering_fork ordering_profile differs from base ordering"
@@ -382,17 +545,47 @@ async fn main() -> Result<()> {
                 }
                 let supplied_vine_type = parse_vine_type_field(payload, "vine_type", false)?;
                 if ordering_profile != OrderingProfile::Vine && supplied_vine_type.is_some() {
-                    return Err(anyhow!(
-                        "vine_type is only valid for vine ordering_profile"
-                    ));
+                    return Err(anyhow!("vine_type is only valid for vine ordering_profile"));
                 }
-                let vine_type = supplied_vine_type
-                    .map(VineType::as_i16)
-                    .or(base.vine_type);
+                let vine_type = supplied_vine_type.map(VineType::as_i16).or(base.vine_type);
+                let base_subject_idea_id = base.subject_idea_id;
                 let speaker_identity_id = stage0_event
                     .speaker_identity_id
                     .ok_or_else(|| anyhow!("missing speaker_identity_id for ordering_fork"))?;
                 let item_idea_ids = parse_uuid_array_field(payload, "item_idea_ids")?;
+                let subject_idea_id =
+                    parse_ordering_subject(payload, ordering_profile, &idea_rows)?;
+                if subject_idea_id != base_subject_idea_id {
+                    return Err(anyhow!(
+                        "ordering_fork subject_idea_id differs from base ordering"
+                    ));
+                }
+                let item_roles =
+                    parse_ordering_item_roles(payload, ordering_profile, item_idea_ids.len())?;
+                let base_roles = ordering_item_rows
+                    .iter()
+                    .filter(|row| row.ordering_id == base_ordering_id)
+                    .map(|row| (row.idea_id, row.item_role))
+                    .collect::<HashMap<_, _>>();
+                for (idea_id, item_role) in item_idea_ids.iter().zip(item_roles.iter()) {
+                    if let Some(base_role) = base_roles.get(idea_id) {
+                        if base_role != item_role {
+                            return Err(anyhow!(
+                                "ordering_fork retained item changed role idea_id={}",
+                                idea_id
+                            ));
+                        }
+                    }
+                }
+                if ordering_profile == OrderingProfile::ActionRail {
+                    let base_lane = base_roles.values().next().copied().flatten();
+                    let fork_lane = item_roles.first().copied().flatten();
+                    if base_lane.is_none() || base_lane != fork_lane {
+                        return Err(anyhow!(
+                            "ordering_fork Action Rail lane differs from base ordering"
+                        ));
+                    }
+                }
                 let step_meta = parse_step_meta(payload, item_idea_ids.len())?;
                 let initial_refs = parse_initial_representation_refs(payload)?;
 
@@ -400,6 +593,7 @@ async fn main() -> Result<()> {
                     ordering_id,
                     ordering_profile: ordering_profile.as_i16(),
                     vine_type,
+                    subject_idea_id,
                     speaker_identity_id,
                     created_block_height: 1,
                     created_event_index: event_index,
@@ -424,52 +618,22 @@ async fn main() -> Result<()> {
                         ordering_id,
                         idx: idx as i32,
                         idea_id,
+                        item_role: item_roles[idx],
                         via_connection_id,
                     });
                 }
             }
             "representation_create" => {
-                let payload = payload_object(&stage0_event.payload)?;
-                let representation_id = parse_uuid_field(payload, "representation_id")?;
-                if !seen_representation_ids.insert(representation_id) {
-                    return Err(anyhow!(
-                        "duplicate representation_id in seed file: {}",
-                        representation_id
-                    ));
-                }
-                let target_kind = parse_target_kind_field(payload, "target_kind")?;
-                let target_object_id = parse_uuid_field(payload, "target_object_id")?;
-                let tier_enum = parse_tier_enum_field(payload, "tier_length")?;
-                let tier_complexity = parse_tier_complexity_field(payload, "tier_complexity")?;
-                let payload_hash = parse_string_field(payload, "payload_hash")?.to_string();
-                let author_identity_id = parse_uuid_field(payload, "author_identity_id")?;
-                let language_locale = optional_string_field(payload, "language_locale")?;
-                let provenance = optional_string_field(payload, "provenance")?;
-                let payload_text = optional_representation_payload_text(payload)?;
-
-                representation_rows.push(RepresentationRow {
-                    representation_id,
-                    target_kind: target_kind.as_i16(),
-                    target_id: target_object_id,
-                    tier_enum: tier_enum.as_i16(),
-                    tier_complexity,
-                    payload_hash: payload_hash.clone(),
-                    payload_text,
-                    author_identity_id,
-                    language_locale,
-                    provenance,
-                    created_block_height: 1,
-                    created_event_index: event_index,
-                    created_event_id: stage0_event.id,
-                });
-                representation_keys.insert(
-                    representation_id,
-                    RepresentationKey {
-                        target_kind,
-                        target_object_id,
-                        tier_enum,
-                    },
-                );
+                let (representation_row, representation_key) = project_representation_row(
+                    &stage0_event,
+                    event_index,
+                    &mut seen_representation_ids,
+                    &seen_identity_ids,
+                    &seen_idea_ids,
+                )?;
+                let representation_id = representation_row.representation_id;
+                representation_rows.push(representation_row);
+                representation_keys.insert(representation_id, representation_key);
             }
             "challenge_finalize_verdict" => {
                 let payload = payload_object(&stage0_event.payload)?;
@@ -485,6 +649,7 @@ async fn main() -> Result<()> {
                     if key.target_kind != update.target_kind
                         || key.target_object_id != update.target_object_id
                         || key.tier_enum != update.tier_enum
+                        || key.tier_complexity != update.tier_complexity
                     {
                         return Err(anyhow!(
                             "challenge_finalize_verdict selection mismatch representation_id={}",
@@ -661,9 +826,1464 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
+fn require_v4_pilot_validate_only(options: &Options) -> Result<()> {
+    if !options.validate_only {
+        return Err(anyhow!(
+            "unsigned noncanonical V4 pilot packages are validate-only and are ineligible for canonical import, signing, or genesis"
+        ));
+    }
+    if options.force {
+        return Err(anyhow!("--force cannot be combined with --validate-only"));
+    }
+    Ok(())
+}
+
+fn validate_v4_pilot_package(
+    manifest_path: &Path,
+    manifest_text: &str,
+    document: Value,
+) -> Result<PilotValidationSummary> {
+    let manifest: PilotManifest =
+        serde_json::from_value(document).context("parsing V4 pilot validation manifest")?;
+
+    if manifest.schema_version != V4_PILOT_SCHEMA_VERSION {
+        return Err(anyhow!(
+            "unsupported V4 pilot schema_version={}",
+            manifest.schema_version
+        ));
+    }
+    if manifest.artifact_type != V4_PILOT_ARTIFACT_TYPE {
+        return Err(anyhow!(
+            "invalid V4 pilot artifact_type={}",
+            manifest.artifact_type
+        ));
+    }
+    validate_pilot_package_status(&manifest)?;
+    validate_manifest_payload_hash(manifest_text, &manifest.manifest_payload_sha256)?;
+
+    let package_dir = manifest_path
+        .parent()
+        .ok_or_else(|| anyhow!("V4 pilot manifest must have a parent directory"))?;
+    let expected_files: BTreeSet<&str> = V4_PILOT_COMPONENT_FILES.iter().copied().collect();
+    let mut observed_files = BTreeSet::new();
+    let mut component_values = BTreeMap::new();
+
+    for component in &manifest.components {
+        if !expected_files.contains(component.file.as_str()) {
+            return Err(anyhow!(
+                "unexpected V4 pilot component file={}",
+                component.file
+            ));
+        }
+        if !observed_files.insert(component.file.as_str()) {
+            return Err(anyhow!(
+                "duplicate V4 pilot component file={}",
+                component.file
+            ));
+        }
+        validate_sha256_hex(
+            &component.sha256,
+            &format!("component {} sha256", component.file),
+        )?;
+        let component_path = resolve_pilot_component_path(package_dir, &component.file)?;
+        let bytes = fs::read(&component_path)
+            .with_context(|| format!("reading V4 pilot component {}", component_path.display()))?;
+        if bytes.len() as u64 != component.byte_length {
+            return Err(anyhow!(
+                "component {} byte_length mismatch: expected {}, got {}",
+                component.file,
+                component.byte_length,
+                bytes.len()
+            ));
+        }
+        let actual_hash = sha256_hex(&bytes);
+        if actual_hash != component.sha256 {
+            return Err(anyhow!(
+                "component {} sha256 mismatch: expected {}, got {}",
+                component.file,
+                component.sha256,
+                actual_hash
+            ));
+        }
+        let value: Value = serde_json::from_slice(&bytes)
+            .with_context(|| format!("parsing V4 pilot component {}", component.file))?;
+        component_values.insert(component.file.clone(), value);
+    }
+
+    if observed_files != expected_files {
+        let missing = expected_files
+            .difference(&observed_files)
+            .copied()
+            .collect::<Vec<_>>();
+        return Err(anyhow!(
+            "missing required V4 pilot components: {}",
+            missing.join(", ")
+        ));
+    }
+    if manifest.component_count != manifest.components.len() + 1 {
+        return Err(anyhow!(
+            "component_count must include the manifest: expected {}, got {}",
+            manifest.components.len() + 1,
+            manifest.component_count
+        ));
+    }
+
+    validate_sha256_hex(
+        &manifest.non_manifest_component_digest_sha256,
+        "non_manifest_component_digest_sha256",
+    )?;
+    let actual_component_digest = component_hash_set_digest(&manifest.components);
+    if actual_component_digest != manifest.non_manifest_component_digest_sha256 {
+        return Err(anyhow!(
+            "non_manifest_component_digest_sha256 mismatch: expected {}, got {}",
+            manifest.non_manifest_component_digest_sha256,
+            actual_component_digest
+        ));
+    }
+
+    let generator = require_component(
+        &component_values,
+        "seed-v4-pilot-generator-provenance.v1.json",
+        "seed-v4-pilot-generator-provenance-v1",
+    )?;
+    validate_generator_provenance(generator, &manifest)?;
+
+    let idea_records = pilot_component_records(
+        require_component(
+            &component_values,
+            "seed-v4-pilot-ideas.v1.json",
+            "seed-v4-pilot-ideas-v1",
+        )?,
+        "seed-v4-pilot-ideas.v1.json",
+        "records",
+        "count",
+    )?;
+    let idea_ids =
+        validate_pilot_ideas(idea_records, &manifest.package_domain, &manifest.frozen_at)?;
+
+    let ordering_records = pilot_component_records(
+        require_component(
+            &component_values,
+            "seed-v4-pilot-orderings.v1.json",
+            "seed-v4-pilot-orderings-v1",
+        )?,
+        "seed-v4-pilot-orderings.v1.json",
+        "records",
+        "count",
+    )?;
+    validate_pilot_orderings(
+        ordering_records,
+        &idea_ids,
+        &manifest.package_domain,
+        &manifest.frozen_at,
+    )?;
+
+    let representation_records = pilot_component_records(
+        require_component(
+            &component_values,
+            "seed-v4-pilot-representations.v1.json",
+            "seed-v4-pilot-representations-v1",
+        )?,
+        "seed-v4-pilot-representations.v1.json",
+        "records",
+        "count",
+    )?;
+    validate_pilot_representations(
+        representation_records,
+        &idea_ids,
+        &manifest.package_domain,
+        &manifest.frozen_at,
+    )?;
+
+    let connection_records = pilot_component_records(
+        require_component(
+            &component_values,
+            "seed-v4-pilot-connections.v1.json",
+            "seed-v4-pilot-connections-v1",
+        )?,
+        "seed-v4-pilot-connections.v1.json",
+        "records",
+        "count",
+    )?;
+    let connection_ids = validate_pilot_connections(
+        connection_records,
+        &idea_ids,
+        &manifest.package_domain,
+        &manifest.frozen_at,
+    )?;
+
+    let importance = require_component(
+        &component_values,
+        "seed-v4-pilot-importance-contexts-and-arguments.v1.json",
+        "seed-v4-pilot-importance-contexts-and-arguments-v1",
+    )?;
+    let universal_records = component_array(importance, "universal_profiles", "importance")?;
+    validate_declared_count(
+        importance,
+        "universal_profile_count",
+        universal_records.len(),
+        "importance",
+    )?;
+    let profile_values = validate_pilot_universal_profiles(universal_records, &idea_ids)?;
+    let relative_records = component_array(importance, "relative_contexts", "importance")?;
+    validate_declared_count(
+        importance,
+        "relative_context_count",
+        relative_records.len(),
+        "importance",
+    )?;
+    validate_pilot_relative_contexts(
+        relative_records,
+        &idea_ids,
+        &connection_ids,
+        &manifest.package_domain,
+        &manifest.frozen_at,
+    )?;
+
+    let derived_records = pilot_component_records(
+        require_component(
+            &component_values,
+            "seed-v4-pilot-derived-importance.v1.json",
+            "seed-v4-pilot-derived-importance-v1",
+        )?,
+        "seed-v4-pilot-derived-importance.v1.json",
+        "records",
+        "count",
+    )?;
+    validate_pilot_derived_importance(derived_records, &profile_values)?;
+
+    let event_templates = pilot_component_records(
+        require_component(
+            &component_values,
+            "seed-v4-pilot-authored-event-templates.v1.json",
+            "seed-v4-pilot-authored-event-templates-v1",
+        )?,
+        "seed-v4-pilot-authored-event-templates.v1.json",
+        "records",
+        "count",
+    )?;
+    validate_pilot_event_templates(
+        event_templates,
+        &idea_ids,
+        &manifest.package_domain,
+        &manifest.frozen_at,
+    )?;
+
+    let import_projection = require_component(
+        &component_values,
+        "seed-v4-pilot-import-projection.v1.json",
+        "seed-v4-pilot-import-projection-v1",
+    )?;
+    validate_import_projection(import_projection)?;
+
+    Ok(PilotValidationSummary {
+        idea_count: idea_records.len(),
+        description_count: representation_records.len(),
+        connection_count: connection_records.len(),
+        ordering_count: ordering_records.len(),
+        universal_profile_count: universal_records.len(),
+        relative_lens_count: relative_records.len(),
+        component_hash_set_digest_sha256: actual_component_digest,
+    })
+}
+
+fn validate_pilot_package_status(manifest: &PilotManifest) -> Result<()> {
+    if manifest.finalized
+        || manifest.signed
+        || manifest.canonical
+        || manifest.import_authorized
+        || manifest.owner_accepted
+        || manifest.owner_review.completed != 0
+        || manifest.owner_review.required != V4_PILOT_IDEA_COUNT
+        || manifest.status != "dependency_pending_50_of_50_owner_review_required"
+    {
+        return Err(anyhow!(
+            "V4 pilot package must be unfinished, unsigned, noncanonical, import-ineligible, unaccepted, and pending 50/50 owner review"
+        ));
+    }
+    if manifest.baseline_authority.open_core != V4_PILOT_OPEN_CORE_BASELINE
+        || manifest.baseline_authority.private_product != V4_PILOT_PRIVATE_BASELINE
+        || manifest.baseline_authority.v3_pair_status != "historical_only"
+    {
+        return Err(anyhow!("V4 pilot baseline authority mismatch"));
+    }
+    let expected_domain = format!(
+        "the-seed-in-my-mind/seed-v4-pilot/{}/{}/{}",
+        V4_PILOT_PRIVATE_BASELINE, V4_PILOT_OPEN_CORE_BASELINE, manifest.frozen_at
+    );
+    if manifest.package_domain != expected_domain {
+        return Err(anyhow!("V4 pilot package_domain mismatch"));
+    }
+    Ok(())
+}
+
+fn validate_manifest_payload_hash(manifest_text: &str, declared: &str) -> Result<()> {
+    validate_sha256_hex(declared, "manifest_payload_sha256")?;
+    let compact = compact_json(manifest_text)?;
+    let bound = format!("\"manifest_payload_sha256\":\"{}\"", declared);
+    if compact.matches(&bound).count() != 1 {
+        return Err(anyhow!(
+            "manifest_payload_sha256 must occur exactly once as its top-level bound value"
+        ));
+    }
+    let payload = compact.replacen(&bound, "\"manifest_payload_sha256\":null", 1);
+    let actual = sha256_hex(payload.as_bytes());
+    if actual != declared {
+        return Err(anyhow!(
+            "manifest_payload_sha256 mismatch: expected {}, got {}",
+            declared,
+            actual
+        ));
+    }
+    Ok(())
+}
+
+fn compact_json(input: &str) -> Result<String> {
+    let mut output = String::with_capacity(input.len());
+    let mut in_string = false;
+    let mut escaped = false;
+    for character in input.chars() {
+        if in_string {
+            output.push(character);
+            if escaped {
+                escaped = false;
+            } else if character == '\\' {
+                escaped = true;
+            } else if character == '"' {
+                in_string = false;
+            }
+        } else if character == '"' {
+            in_string = true;
+            output.push(character);
+        } else if !character.is_whitespace() {
+            output.push(character);
+        }
+    }
+    if in_string || escaped {
+        return Err(anyhow!("manifest JSON string is unterminated"));
+    }
+    Ok(output)
+}
+
+fn resolve_pilot_component_path(package_dir: &Path, relative: &str) -> Result<PathBuf> {
+    if relative.trim().is_empty() || relative.contains('\\') {
+        return Err(anyhow!(
+            "component path must be a non-empty portable relative path"
+        ));
+    }
+    let path = Path::new(relative);
+    if path.is_absolute()
+        || path.components().any(|component| {
+            matches!(
+                component,
+                Component::ParentDir | Component::RootDir | Component::Prefix(_)
+            )
+        })
+    {
+        return Err(anyhow!(
+            "component path must stay within the V4 pilot package"
+        ));
+    }
+    Ok(package_dir.join(path))
+}
+
+fn component_hash_set_digest(components: &[PilotComponent]) -> String {
+    let mut ordered = components.iter().collect::<Vec<_>>();
+    ordered.sort_by(|left, right| left.file.cmp(&right.file));
+    let mut bytes = Vec::new();
+    for component in ordered {
+        bytes.extend_from_slice(format!("{}\t{}\n", component.file, component.sha256).as_bytes());
+    }
+    sha256_hex(&bytes)
+}
+
+fn sha256_hex(bytes: &[u8]) -> String {
+    format!("{:x}", Sha256::digest(bytes))
+}
+
+fn validate_sha256_hex(value: &str, field: &str) -> Result<()> {
+    if value.len() != 64
+        || !value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+    {
+        return Err(anyhow!(
+            "{} must be 64 lowercase hexadecimal characters",
+            field
+        ));
+    }
+    Ok(())
+}
+
+fn require_component<'a>(
+    components: &'a BTreeMap<String, Value>,
+    file: &str,
+    schema: &str,
+) -> Result<&'a Map<String, Value>> {
+    let component = components
+        .get(file)
+        .ok_or_else(|| anyhow!("required component {} is absent", file))?;
+    let object = component
+        .as_object()
+        .ok_or_else(|| anyhow!("component {} must be a JSON object", file))?;
+    if require_string(object, "schema_version", file)? != schema {
+        return Err(anyhow!(
+            "component {} schema_version must be {}",
+            file,
+            schema
+        ));
+    }
+    Ok(object)
+}
+
+fn pilot_component_records<'a>(
+    component: &'a Map<String, Value>,
+    file: &str,
+    records_field: &str,
+    count_field: &str,
+) -> Result<&'a [Value]> {
+    let records = component
+        .get(records_field)
+        .and_then(Value::as_array)
+        .ok_or_else(|| anyhow!("component {} must contain {}", file, records_field))?;
+    validate_declared_count(component, count_field, records.len(), file)?;
+    Ok(records)
+}
+
+fn validate_declared_count(
+    component: &Map<String, Value>,
+    field: &str,
+    actual: usize,
+    context: &str,
+) -> Result<()> {
+    let count = require_i64(component, field, context)?;
+    if count < 0 || count as usize != actual {
+        return Err(anyhow!(
+            "{}.{} count mismatch: declared {}, actual {}",
+            context,
+            field,
+            count,
+            actual
+        ));
+    }
+    Ok(())
+}
+
+fn component_array<'a>(
+    component: &'a Map<String, Value>,
+    field: &str,
+    context: &str,
+) -> Result<&'a [Value]> {
+    component
+        .get(field)
+        .and_then(Value::as_array)
+        .map(Vec::as_slice)
+        .ok_or_else(|| anyhow!("{}.{} must be an array", context, field))
+}
+
+fn validate_generator_provenance(
+    generator: &Map<String, Value>,
+    manifest: &PilotManifest,
+) -> Result<()> {
+    if require_string(generator, "frozen_at", "generator provenance")? != manifest.frozen_at
+        || require_string(generator, "package_domain", "generator provenance")?
+            != manifest.package_domain
+    {
+        return Err(anyhow!("generator provenance package binding mismatch"));
+    }
+    let declaration =
+        require_object_field(generator, "deterministic_uuid_v7", "generator provenance")?;
+    if require_string(declaration, "domain", "deterministic_uuid_v7")? != V4_PILOT_UUID_DOMAIN
+        || require_string(declaration, "timestamp_source", "deterministic_uuid_v7")?
+            != manifest.frozen_at
+        || require_string(declaration, "package_domain", "deterministic_uuid_v7")?
+            != manifest.package_domain
+    {
+        return Err(anyhow!("deterministic UUIDv7 declaration mismatch"));
+    }
+    Ok(())
+}
+
+fn validate_pilot_ideas(
+    records: &[Value],
+    package_domain: &str,
+    frozen_at: &str,
+) -> Result<HashSet<Uuid>> {
+    if records.len() != V4_PILOT_IDEA_COUNT {
+        return Err(anyhow!(
+            "ideas component must contain exactly {} records, got {}",
+            V4_PILOT_IDEA_COUNT,
+            records.len()
+        ));
+    }
+    let mut ids = HashSet::new();
+    let mut slugs = HashSet::new();
+    let mut identity_seen = false;
+    for (index, value) in records.iter().enumerate() {
+        let context = format!("ideas.records[{}]", index);
+        let record = require_object(value, &context)?;
+        let idea_id = validate_uuid_v7(
+            require_string(record, "runtime_idea_id", &context)?,
+            &format!("{}.runtime_idea_id", context),
+        )?;
+        if !ids.insert(idea_id) {
+            return Err(anyhow!("{} duplicate runtime_idea_id={}", context, idea_id));
+        }
+        match record.get("inherited_stable_slug") {
+            Some(Value::String(stable_slug)) => {
+                validate_slug(stable_slug, &format!("{}.inherited_stable_slug", context))?;
+                if !slugs.insert(stable_slug.clone()) {
+                    return Err(anyhow!(
+                        "{} duplicate inherited_stable_slug={}",
+                        context,
+                        stable_slug
+                    ));
+                }
+                validate_deterministic_uuid(
+                    idea_id,
+                    package_domain,
+                    frozen_at,
+                    "idea",
+                    stable_slug,
+                    &context,
+                )?;
+            }
+            Some(Value::Null) if idea_id.to_string() == V4_PILOT_SPEAKER_ID => {
+                identity_seen = true;
+            }
+            _ => {
+                return Err(anyhow!(
+                    "{} inherited_stable_slug must be a slug, except for the DEC-044 identity",
+                    context
+                ))
+            }
+        }
+        let idea_type = require_string(record, "idea_type", &context)?;
+        if !matches!(
+            idea_type,
+            "truth_claim" | "conceptual_idea" | "actionable_idea" | "action" | "identity"
+        ) {
+            return Err(anyhow!("{} invalid idea_type={}", context, idea_type));
+        }
+        let authorship_status = require_string(record, "authorship_status", &context)?;
+        let valid_authorship_status = authorship_status == "speaker_attributed_not_human_authored"
+            || (idea_id.to_string() == V4_PILOT_SPEAKER_ID
+                && authorship_status
+                    == "owner_decision_materialized_not_ordinary_per_record_human_authorship");
+        if require_string(record, "speaker_identity_id", &context)? != V4_PILOT_SPEAKER_ID
+            || !valid_authorship_status
+        {
+            return Err(anyhow!(
+                "{} must retain Kind Gulag Dehl speaker attribution without a human-authorship claim",
+                context
+            ));
+        }
+        validate_provenance_and_review(record, &context)?;
+        let review = require_object_field(record, "review_state", &context)?;
+        if require_bool(
+            review,
+            "human_authorship_claimed",
+            &format!("{}.review_state", context),
+        )? || require_string(
+            review,
+            "owner_acceptance",
+            &format!("{}.review_state", context),
+        )? != "not_requested"
+        {
+            return Err(anyhow!("{} has invalid review/authorship status", context));
+        }
+        reject_live_rail_keys(value, &context)?;
+    }
+    if slugs.len() != V4_PILOT_IDEA_COUNT - 1 || !identity_seen {
+        return Err(anyhow!(
+            "ideas must contain 49 inherited slugs plus the fixed DEC-044 identity"
+        ));
+    }
+    Ok(ids)
+}
+
+fn validate_pilot_representations(
+    records: &[Value],
+    idea_ids: &HashSet<Uuid>,
+    package_domain: &str,
+    frozen_at: &str,
+) -> Result<()> {
+    if records.len() != V4_PILOT_REPRESENTATION_COUNT {
+        return Err(anyhow!(
+            "representations component must contain exactly {} records",
+            V4_PILOT_REPRESENTATION_COUNT
+        ));
+    }
+    let mut ids = HashSet::new();
+    let mut cells = HashMap::<Uuid, HashSet<(String, String)>>::new();
+    for (index, value) in records.iter().enumerate() {
+        let context = format!("representations.records[{}]", index);
+        let record = require_object(value, &context)?;
+        let representation_id = validate_uuid_v7(
+            require_string(record, "representation_id", &context)?,
+            &format!("{}.representation_id", context),
+        )?;
+        if !ids.insert(representation_id) {
+            return Err(anyhow!(
+                "{} duplicate representation_id={}",
+                context,
+                representation_id
+            ));
+        }
+        let target_id = validate_uuid_v7(
+            require_string(record, "target_idea_id", &context)?,
+            &format!("{}.target_idea_id", context),
+        )?;
+        if !idea_ids.contains(&target_id) {
+            return Err(anyhow!("{}.target_idea_id does not resolve", context));
+        }
+        let length = require_string(record, "length", &context)?;
+        let complexity = require_string(record, "complexity", &context)?;
+        if !matches!(length, "sentence" | "paragraph" | "full") {
+            return Err(anyhow!("{} invalid length", context));
+        }
+        if !matches!(
+            complexity,
+            "fundamental" | "standard" | "advanced" | "canonical"
+        ) {
+            return Err(anyhow!("{} invalid complexity", context));
+        }
+        if !cells
+            .entry(target_id)
+            .or_default()
+            .insert((complexity.to_string(), length.to_string()))
+        {
+            return Err(anyhow!("{} duplicate representation cell", context));
+        }
+        let stable_key = match record.get("inherited_stable_slug") {
+            Some(Value::String(slug)) => slug.as_str(),
+            Some(Value::Null) if target_id.to_string() == V4_PILOT_SPEAKER_ID => "kind-gulag-dehl",
+            _ => return Err(anyhow!("{} has invalid inherited_stable_slug", context)),
+        };
+        validate_deterministic_uuid(
+            representation_id,
+            package_domain,
+            frozen_at,
+            "representation",
+            &format!("{}/{}/{}", stable_key, complexity, length),
+            &context,
+        )?;
+        let text = require_string(record, "text", &context)?;
+        let limit = match length {
+            "sentence" => 250,
+            "paragraph" => 1250,
+            "full" => 6250,
+            _ => unreachable!("validated length"),
+        };
+        if text.trim().is_empty() || text.chars().count() > limit || text.contains('\r') {
+            return Err(anyhow!(
+                "{} text violates the {} runtime limit",
+                context,
+                length
+            ));
+        }
+        let text_hash = require_string(record, "text_sha256", &context)?;
+        if sha256_hex(text.as_bytes()) != text_hash {
+            return Err(anyhow!("{} text_sha256 mismatch", context));
+        }
+        if !matches!(
+            record.get("canonical_payload_hash_blake3"),
+            Some(Value::Null)
+        ) || require_string(record, "payload_hash_status", &context)?
+            != "dependency_pending_profile_v0_reference_implementation"
+        {
+            return Err(anyhow!(
+                "{} must retain an explicit unresolved canonical BLAKE3 payload hash",
+                context
+            ));
+        }
+        validate_provenance_and_review(record, &context)?;
+        let review = require_object_field(record, "review_state", &context)?;
+        if require_bool(
+            review,
+            "human_reviewed",
+            &format!("{}.review_state", context),
+        )? || require_bool(
+            review,
+            "human_authorship_claimed",
+            &format!("{}.review_state", context),
+        )? {
+            return Err(anyhow!(
+                "{} falsely claims human review/authorship",
+                context
+            ));
+        }
+        reject_live_rail_keys(value, &context)?;
+    }
+    if cells.len() != V4_PILOT_IDEA_COUNT || cells.values().any(|idea_cells| idea_cells.len() != 12)
+    {
+        return Err(anyhow!(
+            "representations must provide all 12 complexity/length cells for each of 50 ideas"
+        ));
+    }
+    Ok(())
+}
+
+fn validate_pilot_connections(
+    records: &[Value],
+    idea_ids: &HashSet<Uuid>,
+    package_domain: &str,
+    frozen_at: &str,
+) -> Result<HashSet<Uuid>> {
+    let mut ids = HashSet::new();
+    for (index, value) in records.iter().enumerate() {
+        let context = format!("connections.records[{}]", index);
+        let record = require_object(value, &context)?;
+        let connection_id = validate_uuid_v7(
+            require_string(record, "connection_id", &context)?,
+            &format!("{}.connection_id", context),
+        )?;
+        if !ids.insert(connection_id) {
+            return Err(anyhow!(
+                "{} duplicate connection_id={}",
+                context,
+                connection_id
+            ));
+        }
+        validate_deterministic_uuid(
+            connection_id,
+            package_domain,
+            frozen_at,
+            "connection",
+            require_string(record, "inherited_connection_id", &context)?,
+            &context,
+        )?;
+        for field in ["source_idea_id", "target_idea_id"] {
+            let idea_id = validate_uuid_v7(
+                require_string(record, field, &context)?,
+                &format!("{}.{}", context, field),
+            )?;
+            if !idea_ids.contains(&idea_id) {
+                return Err(anyhow!("{}.{} does not resolve", context, field));
+            }
+        }
+        if !matches!(
+            require_string(record, "connection_type", &context)?,
+            "same_as" | "membership" | "relative_importance"
+        ) {
+            return Err(anyhow!("{} invalid connection_type", context));
+        }
+        if require_string(record, "speaker_identity_id", &context)? != V4_PILOT_SPEAKER_ID {
+            return Err(anyhow!("{} speaker identity mismatch", context));
+        }
+        validate_provenance_and_review(record, &context)?;
+        reject_live_rail_keys(value, &context)?;
+    }
+    Ok(ids)
+}
+
+fn validate_pilot_orderings(
+    records: &[Value],
+    idea_ids: &HashSet<Uuid>,
+    package_domain: &str,
+    frozen_at: &str,
+) -> Result<()> {
+    if records.len() != 3 {
+        return Err(anyhow!(
+            "the V4 pilot must contain exactly three native Orderings"
+        ));
+    }
+    let mut ids = HashSet::new();
+    let mut pending_bases = Vec::new();
+    for (index, value) in records.iter().enumerate() {
+        let context = format!("orderings.records[{}]", index);
+        let record = require_object(value, &context)?;
+        let ordering_id = validate_uuid_v7(
+            require_string(record, "ordering_id", &context)?,
+            &format!("{}.ordering_id", context),
+        )?;
+        if !ids.insert(ordering_id) {
+            return Err(anyhow!("{} duplicate ordering_id={}", context, ordering_id));
+        }
+        let event_type = require_string(record, "event_type", &context)?;
+        let profile = require_string(record, "ordering_profile", &context)?;
+        if profile != "vine" {
+            return Err(anyhow!("{} invalid ordering_profile={}", context, profile));
+        }
+        let vine_type = require_string(record, "vine_type", &context)?;
+        let stable_key = match (event_type, vine_type) {
+            ("ordering_create", "narrative_vine") => "pilot-narrative-vine",
+            ("ordering_create", "pathway_vine") => "pilot-pathway-vine",
+            ("ordering_fork", "pathway_vine") => "pilot-pathway-vine-risk-fork",
+            _ => return Err(anyhow!("{} invalid native Ordering/Vine shape", context)),
+        };
+        validate_deterministic_uuid(
+            ordering_id,
+            package_domain,
+            frozen_at,
+            "ordering",
+            stable_key,
+            &context,
+        )?;
+        let items = record
+            .get("item_idea_ids")
+            .and_then(Value::as_array)
+            .ok_or_else(|| anyhow!("{} item_idea_ids must be an array", context))?;
+        if items.is_empty() {
+            return Err(anyhow!("{} item_idea_ids must not be empty", context));
+        }
+        for (item_index, item) in items.iter().enumerate() {
+            let idea_id = validate_uuid_v7(
+                item.as_str().ok_or_else(|| {
+                    anyhow!("{}.item_idea_ids[{}] must be a UUID", context, item_index)
+                })?,
+                &format!("{}.item_idea_ids[{}]", context, item_index),
+            )?;
+            if !idea_ids.contains(&idea_id) {
+                return Err(anyhow!(
+                    "{}.item_idea_ids[{}] does not resolve",
+                    context,
+                    item_index
+                ));
+            }
+        }
+        if require_string(record, "speaker_identity_id", &context)? != V4_PILOT_SPEAKER_ID
+            || require_string(record, "review_state", &context)? != "owner_review_required"
+        {
+            return Err(anyhow!("{} speaker/review boundary mismatch", context));
+        }
+        match (event_type, record.get("base_ordering_id")) {
+            ("ordering_create", Some(Value::Null)) => {}
+            ("ordering_fork", Some(Value::String(base))) => {
+                pending_bases.push((ordering_id, validate_uuid_v7(base, "base_ordering_id")?));
+            }
+            _ => return Err(anyhow!("{} invalid base_ordering_id semantics", context)),
+        }
+        reject_live_rail_keys(value, &context)?;
+    }
+    if pending_bases.len() != 1
+        || pending_bases
+            .iter()
+            .any(|(ordering, base)| ordering == base || !ids.contains(base))
+    {
+        return Err(anyhow!(
+            "ordering_fork must resolve one distinct package base Ordering"
+        ));
+    }
+    Ok(())
+}
+
+fn validate_pilot_universal_profiles(
+    records: &[Value],
+    idea_ids: &HashSet<Uuid>,
+) -> Result<HashMap<Uuid, PilotImportanceProfile>> {
+    if records.len() != V4_PILOT_IDEA_COUNT {
+        return Err(anyhow!(
+            "universal_importance_profiles must contain exactly {} profiles",
+            V4_PILOT_IDEA_COUNT
+        ));
+    }
+    let expected_slots = UNIVERSAL_ORIENTATIONS
+        .iter()
+        .flat_map(|orientation| {
+            IMPORTANCE_HORIZONS
+                .iter()
+                .map(move |horizon| format!("{}__{}", orientation, horizon))
+        })
+        .collect::<BTreeSet<_>>();
+    let mut seen_ideas = HashSet::new();
+    let mut ranks_by_slot: BTreeMap<String, Vec<i64>> = BTreeMap::new();
+    let mut profiles = HashMap::new();
+    let mut unresolved_count = 0;
+
+    for (index, value) in records.iter().enumerate() {
+        let context = format!("universal_importance_profiles.records[{}]", index);
+        let record = require_object(value, &context)?;
+        let idea_id = validate_uuid_v7(
+            require_string(record, "idea_id", &context)?,
+            &format!("{}.idea_id", context),
+        )?;
+        if !idea_ids.contains(&idea_id) || !seen_ideas.insert(idea_id) {
+            return Err(anyhow!("{} idea_id is missing or duplicated", context));
+        }
+        validate_provenance_and_review(record, &context)?;
+
+        let slots = record
+            .get("slots")
+            .and_then(Value::as_array)
+            .ok_or_else(|| anyhow!("{} slots must be an array", context))?;
+        if slots.len() != expected_slots.len() {
+            return Err(anyhow!("{} must contain exactly 20 slots", context));
+        }
+        let mut observed_slots = BTreeSet::new();
+        let mut aggregate_score = 0_i64;
+        let mut has_null_rank = false;
+        let mut computed_horizons: BTreeMap<String, i64> = IMPORTANCE_HORIZONS
+            .iter()
+            .map(|value| (value.to_string(), 0_i64))
+            .collect();
+        for (slot_index, slot) in slots.iter().enumerate() {
+            let slot_context = format!("{}.slots[{}]", context, slot_index);
+            let slot = require_object(slot, &slot_context)?;
+            let orientation = require_string(slot, "orientation", &slot_context)?;
+            let timeframe = require_string(slot, "timeframe", &slot_context)?;
+            let slot_key = format!("{}__{}", orientation, timeframe);
+            if !expected_slots.contains(&slot_key) || !observed_slots.insert(slot_key.clone()) {
+                return Err(anyhow!(
+                    "{} invalid or duplicate slot={}",
+                    slot_context,
+                    slot_key
+                ));
+            }
+            let rank = slot.get("pilot_subset_rank_value");
+            if matches!(rank, Some(Value::Null)) {
+                has_null_rank = true;
+                continue;
+            }
+            let rank_value = rank.and_then(Value::as_i64).ok_or_else(|| {
+                anyhow!(
+                    "{}.pilot_subset_rank_value must be integer or null",
+                    slot_context
+                )
+            })?;
+            if !(1..V4_PILOT_IDEA_COUNT as i64).contains(&rank_value) {
+                return Err(anyhow!(
+                    "{} pilot_subset_rank_value out of range",
+                    slot_context
+                ));
+            }
+            aggregate_score += rank_value;
+            *computed_horizons
+                .get_mut(timeframe)
+                .expect("validated horizon") += rank_value;
+            ranks_by_slot.entry(slot_key).or_default().push(rank_value);
+        }
+        if observed_slots != expected_slots {
+            return Err(anyhow!("{} universal slot coverage mismatch", context));
+        }
+
+        if has_null_rank {
+            if idea_id.to_string() != V4_PILOT_SPEAKER_ID
+                || slots.iter().any(|slot| {
+                    !matches!(
+                        slot.as_object()
+                            .and_then(|object| object.get("pilot_subset_rank_value")),
+                        Some(Value::Null)
+                    )
+                })
+            {
+                return Err(anyhow!(
+                    "{} only the DEC-044 identity may have an entirely unresolved profile",
+                    context
+                ));
+            }
+            unresolved_count += 1;
+            profiles.insert(
+                idea_id,
+                PilotImportanceProfile {
+                    aggregate_score: None,
+                    horizon_subtotals: IMPORTANCE_HORIZONS
+                        .iter()
+                        .map(|horizon| (horizon.to_string(), None))
+                        .collect(),
+                },
+            );
+        } else {
+            profiles.insert(
+                idea_id,
+                PilotImportanceProfile {
+                    aggregate_score: Some(aggregate_score),
+                    horizon_subtotals: computed_horizons
+                        .into_iter()
+                        .map(|(horizon, value)| (horizon, Some(value)))
+                        .collect(),
+                },
+            );
+        }
+        reject_live_rail_keys(value, &context)?;
+    }
+
+    if seen_ideas != *idea_ids {
+        return Err(anyhow!(
+            "universal_importance_profiles must cover every pilot idea exactly once"
+        ));
+    }
+    if unresolved_count != 1 {
+        return Err(anyhow!(
+            "exactly one universal profile must remain unresolved"
+        ));
+    }
+    let expected_ranks = (1..V4_PILOT_IDEA_COUNT as i64).collect::<Vec<_>>();
+    for (slot, ranks) in &mut ranks_by_slot {
+        ranks.sort_unstable();
+        if *ranks != expected_ranks {
+            return Err(anyhow!(
+                "universal rank slot {} must be a complete 1..={} permutation",
+                slot,
+                V4_PILOT_IDEA_COUNT - 1
+            ));
+        }
+    }
+    Ok(profiles)
+}
+
+fn validate_pilot_relative_contexts(
+    records: &[Value],
+    idea_ids: &HashSet<Uuid>,
+    connection_ids: &HashSet<Uuid>,
+    package_domain: &str,
+    frozen_at: &str,
+) -> Result<()> {
+    let mut lens_ids = HashSet::new();
+    for (index, value) in records.iter().enumerate() {
+        let context = format!("relative_contexts[{}]", index);
+        let record = require_object(value, &context)?;
+        let lens_id = validate_uuid_v7(
+            require_string(record, "lens_id", &context)?,
+            &format!("{}.lens_id", context),
+        )?;
+        if !lens_ids.insert(lens_id) {
+            return Err(anyhow!("{} duplicate lens_id", context));
+        }
+        validate_deterministic_uuid(
+            lens_id,
+            package_domain,
+            frozen_at,
+            "relative_importance_lens",
+            require_string(record, "inherited_lens_id", &context)?,
+            &context,
+        )?;
+        let connection_id = validate_uuid_v7(
+            require_string(record, "connection_id", &context)?,
+            &format!("{}.connection_id", context),
+        )?;
+        if !connection_ids.contains(&connection_id) {
+            return Err(anyhow!("{}.connection_id does not resolve", context));
+        }
+        for field in ["reference_idea_id", "source_idea_id", "target_idea_id"] {
+            let idea_id = validate_uuid_v7(
+                require_string(record, field, &context)?,
+                &format!("{}.{}", context, field),
+            )?;
+            if !idea_ids.contains(&idea_id) {
+                return Err(anyhow!("{}.{} does not resolve", context, field));
+            }
+        }
+        if !matches!(
+            require_string(record, "axis", &context)?,
+            "important_to_reference" | "important_for_reference"
+        ) || !IMPORTANCE_HORIZONS.contains(&require_string(record, "timeframe", &context)?)
+            || require_i64(record, "rank_value", &context)? <= 0
+        {
+            return Err(anyhow!(
+                "{} invalid relative-importance coordinate",
+                context
+            ));
+        }
+        validate_provenance_and_review(record, &context)?;
+        reject_live_rail_keys(value, &context)?;
+    }
+    Ok(())
+}
+
+fn validate_pilot_derived_importance(
+    records: &[Value],
+    profiles: &HashMap<Uuid, PilotImportanceProfile>,
+) -> Result<()> {
+    if records.len() != V4_PILOT_IDEA_COUNT {
+        return Err(anyhow!(
+            "derived importance must contain exactly 50 records"
+        ));
+    }
+    let mut seen = HashSet::new();
+    let mut projections = Vec::new();
+    let mut unresolved = 0;
+    for (index, value) in records.iter().enumerate() {
+        let context = format!("derived_importance.records[{}]", index);
+        let record = require_object(value, &context)?;
+        let idea_id = validate_uuid_v7(
+            require_string(record, "idea_id", &context)?,
+            &format!("{}.idea_id", context),
+        )?;
+        let profile = profiles
+            .get(&idea_id)
+            .ok_or_else(|| anyhow!("{}.idea_id has no universal profile", context))?;
+        if !seen.insert(idea_id) {
+            return Err(anyhow!("{} duplicate idea_id", context));
+        }
+        let selection_index = require_i64(
+            require_object_field(record, "creation_order", &context)?,
+            "selection_index",
+            &format!("{}.creation_order", context),
+        )?;
+        if !(1..=V4_PILOT_IDEA_COUNT as i64).contains(&selection_index) {
+            return Err(anyhow!("{} selection_index out of range", context));
+        }
+        match profile.aggregate_score {
+            None => {
+                if idea_id.to_string() != V4_PILOT_SPEAKER_ID
+                    || !matches!(record.get("aggregate_score"), Some(Value::Null))
+                    || !matches!(record.get("cumulative_rank"), Some(Value::Null))
+                {
+                    return Err(anyhow!("{} invalid unresolved DEC-037 projection", context));
+                }
+                unresolved += 1;
+            }
+            Some(expected_score) => {
+                let actual_score = require_i64(record, "aggregate_score", &context)?;
+                if actual_score != expected_score {
+                    return Err(anyhow!("{} aggregate_score mismatch", context));
+                }
+                let declared_horizons =
+                    require_object_field(record, "horizon_subtotals", &context)?;
+                let mut horizons = BTreeMap::new();
+                for horizon in IMPORTANCE_HORIZONS {
+                    let actual = require_i64(
+                        declared_horizons,
+                        horizon,
+                        &format!("{}.horizon_subtotals", context),
+                    )?;
+                    if Some(actual) != profile.horizon_subtotals[horizon] {
+                        return Err(anyhow!("{} {} subtotal mismatch", context, horizon));
+                    }
+                    horizons.insert(horizon.to_string(), actual);
+                }
+                projections.push(UniversalProfileProjection {
+                    idea_id,
+                    aggregate_score: actual_score,
+                    horizon_subtotals: horizons,
+                    selection_index,
+                    cumulative_rank: require_i64(record, "cumulative_rank", &context)?,
+                });
+            }
+        }
+    }
+    if seen.len() != profiles.len() || unresolved != 1 {
+        return Err(anyhow!("derived importance coverage mismatch"));
+    }
+    projections.sort_by_key(|projection| {
+        (
+            projection.aggregate_score,
+            projection.horizon_subtotals["trans_generational"],
+            projection.horizon_subtotals["very_long_term"],
+            projection.horizon_subtotals["long_term"],
+            projection.horizon_subtotals["mid_term"],
+            projection.horizon_subtotals["near_term"],
+            projection.selection_index,
+        )
+    });
+    for (index, projection) in projections.iter().enumerate() {
+        if projection.cumulative_rank != index as i64 + 1 {
+            return Err(anyhow!(
+                "derived importance idea_id={} cumulative_rank mismatch",
+                projection.idea_id
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn validate_pilot_event_templates(
+    records: &[Value],
+    idea_ids: &HashSet<Uuid>,
+    package_domain: &str,
+    frozen_at: &str,
+) -> Result<()> {
+    if records.len() != V4_PILOT_IDEA_COUNT {
+        return Err(anyhow!(
+            "authored event templates must contain exactly 50 records"
+        ));
+    }
+    let mut seen_ideas = HashSet::new();
+    for (index, value) in records.iter().enumerate() {
+        let context = format!("authored_event_templates.records[{}]", index);
+        let record = require_object(value, &context)?;
+        let payload = require_object_field(record, "payload", &context)?;
+        let idea_id = validate_uuid_v7(
+            require_string(payload, "idea_id", &format!("{}.payload", context))?,
+            &format!("{}.payload.idea_id", context),
+        )?;
+        if !idea_ids.contains(&idea_id) || !seen_ideas.insert(idea_id) {
+            return Err(anyhow!("{} payload idea is missing or duplicated", context));
+        }
+        for (field, record_type) in [
+            ("template_id", "authored_event_template"),
+            ("event_id", "event"),
+        ] {
+            let id = validate_uuid_v7(
+                require_string(record, field, &context)?,
+                &format!("{}.{}", context, field),
+            )?;
+            validate_deterministic_uuid(
+                id,
+                package_domain,
+                frozen_at,
+                record_type,
+                &format!("idea_create/{}", idea_id),
+                &context,
+            )?;
+        }
+        if require_string(record, "stage", &context)? != "local_draft"
+            || require_string(record, "signature_profile", &context)? != "ed25519_v0"
+            || require_string(record, "event_type", &context)? != "idea_create"
+            || require_string(record, "speaker_identity_id", &context)? != V4_PILOT_SPEAKER_ID
+            || require_string(record, "payload_binding_mode", &context)? != "embedded_payload"
+            || !require_string(record, "import_eligibility", &context)?.starts_with("blocked_")
+        {
+            return Err(anyhow!(
+                "{} violates the unsigned Profile-v0 template boundary",
+                context
+            ));
+        }
+        for field in [
+            "author_identity_id",
+            "public_key_ref",
+            "payload_hash",
+            "payload_ref",
+            "author_observed_at",
+            "signature",
+        ] {
+            if !matches!(record.get(field), Some(Value::Null)) {
+                return Err(anyhow!("{}.{} must remain null", context, field));
+            }
+        }
+        let provenance = require_object_field(record, "provenance", &context)?;
+        if require_bool(
+            provenance,
+            "human_authorship_claimed",
+            &format!("{}.provenance", context),
+        )? {
+            return Err(anyhow!("{} falsely claims human authorship", context));
+        }
+    }
+    Ok(())
+}
+
+fn validate_import_projection(projection: &Map<String, Value>) -> Result<()> {
+    if !require_bool(projection, "validate_only_required", "import projection")?
+        || !require_bool(
+            projection,
+            "validate_only_zero_canonical_writes_required",
+            "import projection",
+        )?
+        || require_bool(projection, "importer_result_claimed", "import projection")?
+        || !matches!(projection.get("importer_result"), Some(Value::Null))
+    {
+        return Err(anyhow!(
+            "import projection does not preserve validate-only isolation"
+        ));
+    }
+    let state = require_object_field(projection, "package_state", "import projection")?;
+    if require_bool(state, "signed", "import projection.package_state")?
+        || require_bool(state, "canonical", "import projection.package_state")?
+        || require_bool(state, "genesis", "import projection.package_state")?
+        || !require_bool(
+            state,
+            "isolated_local_only",
+            "import projection.package_state",
+        )?
+        || require_bool(state, "owner_accepted", "import projection.package_state")?
+    {
+        return Err(anyhow!(
+            "import projection package_state is not unsigned/noncanonical"
+        ));
+    }
+    Ok(())
+}
+
+fn validate_slug(value: &str, field: &str) -> Result<()> {
+    if value.trim().is_empty()
+        || !value
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
+    {
+        return Err(anyhow!("{} must be lowercase kebab-case", field));
+    }
+    Ok(())
+}
+
+fn validate_deterministic_uuid(
+    actual: Uuid,
+    package_domain: &str,
+    frozen_at: &str,
+    record_type: &str,
+    stable_key: &str,
+    context: &str,
+) -> Result<()> {
+    let expected = deterministic_pilot_uuid_v7(package_domain, frozen_at, record_type, stable_key)?;
+    if actual != expected {
+        return Err(anyhow!(
+            "{} UUIDv7 does not match deterministic derivation: expected {}, got {}",
+            context,
+            expected,
+            actual
+        ));
+    }
+    Ok(())
+}
+
+fn deterministic_pilot_uuid_v7(
+    package_domain: &str,
+    frozen_at: &str,
+    record_type: &str,
+    stable_key: &str,
+) -> Result<Uuid> {
+    let timestamp_ms = parse_exact_utc_millis(frozen_at)?;
+    let digest = Sha256::new()
+        .chain_update(format!("{}\0", V4_PILOT_UUID_DOMAIN))
+        .chain_update(package_domain.as_bytes())
+        .chain_update(b"\0")
+        .chain_update(record_type.as_bytes())
+        .chain_update(b"\0")
+        .chain_update(stable_key.as_bytes())
+        .finalize();
+    let mut bytes = [0_u8; 16];
+    let timestamp_bytes = timestamp_ms.to_be_bytes();
+    bytes[..6].copy_from_slice(&timestamp_bytes[2..]);
+    bytes[6..].copy_from_slice(&digest[..10]);
+    bytes[6] = (bytes[6] & 0x0f) | 0x70;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    Ok(Uuid::from_bytes(bytes))
+}
+
+fn parse_exact_utc_millis(value: &str) -> Result<u64> {
+    if value.len() != 24
+        || &value[4..5] != "-"
+        || &value[7..8] != "-"
+        || &value[10..11] != "T"
+        || &value[13..14] != ":"
+        || &value[16..17] != ":"
+        || &value[19..20] != "."
+        || &value[23..24] != "Z"
+    {
+        return Err(anyhow!("frozen_at must be exact YYYY-MM-DDTHH:MM:SS.mmmZ"));
+    }
+    let parse = |range: std::ops::Range<usize>| -> Result<i64> {
+        value[range]
+            .parse::<i64>()
+            .map_err(|_| anyhow!("frozen_at contains a non-numeric field"))
+    };
+    let year = parse(0..4)?;
+    let month = parse(5..7)?;
+    let day = parse(8..10)?;
+    let hour = parse(11..13)?;
+    let minute = parse(14..16)?;
+    let second = parse(17..19)?;
+    let millis = parse(20..23)?;
+    if !(1..=12).contains(&month)
+        || !(1..=31).contains(&day)
+        || !(0..=23).contains(&hour)
+        || !(0..=59).contains(&minute)
+        || !(0..=59).contains(&second)
+    {
+        return Err(anyhow!("frozen_at contains an out-of-range UTC field"));
+    }
+    let adjusted_year = year - i64::from(month <= 2);
+    let era = if adjusted_year >= 0 {
+        adjusted_year
+    } else {
+        adjusted_year - 399
+    } / 400;
+    let year_of_era = adjusted_year - era * 400;
+    let shifted_month = month + if month > 2 { -3 } else { 9 };
+    let day_of_year = (153 * shifted_month + 2) / 5 + day - 1;
+    let day_of_era = year_of_era * 365 + year_of_era / 4 - year_of_era / 100 + day_of_year;
+    let days_since_epoch = era * 146_097 + day_of_era - 719_468;
+    let total = ((((days_since_epoch * 24) + hour) * 60 + minute) * 60 + second) * 1000 + millis;
+    u64::try_from(total).map_err(|_| anyhow!("frozen_at precedes the Unix epoch"))
+}
+
+fn validate_uuid_v7(value: &str, field: &str) -> Result<Uuid> {
+    let parsed = Uuid::parse_str(value).map_err(|_| anyhow!("{} must be a UUID", field))?;
+    if parsed.get_version_num() != 7 || parsed.to_string() != value {
+        return Err(anyhow!("{} must be canonical lowercase UUIDv7", field));
+    }
+    Ok(parsed)
+}
+
+fn validate_provenance_and_review(record: &Map<String, Value>, context: &str) -> Result<()> {
+    let provenance = require_object_field(record, "provenance", context)?;
+    if provenance.is_empty() {
+        return Err(anyhow!("{}.provenance must not be empty", context));
+    }
+    match (record.get("review_state"), record.get("review_status")) {
+        (Some(Value::Object(review_state)), _) if !review_state.is_empty() => {}
+        (_, Some(Value::String(review_status))) if !review_status.trim().is_empty() => {}
+        _ => {
+            return Err(anyhow!(
+                "{} requires a non-empty review_state object or review_status string",
+                context
+            ))
+        }
+    }
+    Ok(())
+}
+
+fn reject_live_rail_keys(value: &Value, context: &str) -> Result<()> {
+    match value {
+        Value::Object(object) => {
+            for (key, child) in object {
+                if key.starts_with("rail_") {
+                    return Err(anyhow!(
+                        "{} contains forbidden live Rail substrate field={}",
+                        context,
+                        key
+                    ));
+                }
+                reject_live_rail_keys(child, context)?;
+            }
+        }
+        Value::Array(values) => {
+            for child in values {
+                reject_live_rail_keys(child, context)?;
+            }
+        }
+        _ => {}
+    }
+    Ok(())
+}
+
+fn require_object<'a>(value: &'a Value, context: &str) -> Result<&'a Map<String, Value>> {
+    value
+        .as_object()
+        .ok_or_else(|| anyhow!("{} must be a JSON object", context))
+}
+
+fn require_object_field<'a>(
+    object: &'a Map<String, Value>,
+    field: &str,
+    context: &str,
+) -> Result<&'a Map<String, Value>> {
+    object
+        .get(field)
+        .and_then(Value::as_object)
+        .ok_or_else(|| anyhow!("{}.{} must be a JSON object", context, field))
+}
+
+fn require_string<'a>(
+    object: &'a Map<String, Value>,
+    field: &str,
+    context: &str,
+) -> Result<&'a str> {
+    object
+        .get(field)
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("{}.{} must be a string", context, field))
+}
+
+fn require_i64(object: &Map<String, Value>, field: &str, context: &str) -> Result<i64> {
+    object
+        .get(field)
+        .and_then(Value::as_i64)
+        .ok_or_else(|| anyhow!("{}.{} must be an integer", context, field))
+}
+
+fn require_bool(object: &Map<String, Value>, field: &str, context: &str) -> Result<bool> {
+    object
+        .get(field)
+        .and_then(Value::as_bool)
+        .ok_or_else(|| anyhow!("{}.{} must be a boolean", context, field))
+}
+
 fn parse_args() -> Result<Options> {
     let mut file: Option<PathBuf> = None;
     let mut force = false;
+    let mut validate_only = false;
 
     let mut args = env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -677,9 +2297,12 @@ fn parse_args() -> Result<Options> {
             "--force" => {
                 force = true;
             }
+            "--validate-only" => {
+                validate_only = true;
+            }
             _ => {
                 return Err(anyhow!(
-                    "unexpected argument '{}' (usage: seed-importer [--file <path>] [--force])",
+                    "unexpected argument '{}' (usage: seed-importer [--file <path>] [--force] [--validate-only])",
                     arg
                 ));
             }
@@ -691,7 +2314,11 @@ fn parse_args() -> Result<Options> {
         None => default_seed_path()?,
     };
 
-    Ok(Options { file, force })
+    Ok(Options {
+        file,
+        force,
+        validate_only,
+    })
 }
 
 fn default_seed_path() -> Result<PathBuf> {
@@ -872,7 +2499,8 @@ struct RepresentationRow {
     target_kind: i16,
     target_id: Uuid,
     tier_enum: i16,
-    tier_complexity: i16,
+    tier_complexity: Option<i16>,
+    vocabulary_version_id: Option<Uuid>,
     payload_hash: String,
     payload_text: Option<String>,
     author_identity_id: Uuid,
@@ -888,6 +2516,7 @@ struct OrderingRow {
     ordering_id: Uuid,
     ordering_profile: i16,
     vine_type: Option<i16>,
+    subject_idea_id: Option<Uuid>,
     speaker_identity_id: Uuid,
     created_block_height: i64,
     created_event_index: i32,
@@ -902,6 +2531,7 @@ struct OrderingItemRow {
     ordering_id: Uuid,
     idx: i32,
     idea_id: Uuid,
+    item_role: Option<i16>,
     via_connection_id: Option<Uuid>,
 }
 
@@ -1057,6 +2687,7 @@ async fn insert_representations(
               target_id,
               tier_enum,
               tier_complexity,
+              vocabulary_version_id,
               payload_hash,
               payload_text,
               author_identity_id,
@@ -1066,7 +2697,7 @@ async fn insert_representations(
               created_event_index,
               created_event_id
             ) VALUES (
-              $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
+              $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
             )
             "#,
         )
@@ -1075,6 +2706,7 @@ async fn insert_representations(
         .bind(row.target_id)
         .bind(row.tier_enum)
         .bind(row.tier_complexity)
+        .bind(row.vocabulary_version_id)
         .bind(&row.payload_hash)
         .bind(&row.payload_text)
         .bind(row.author_identity_id)
@@ -1097,6 +2729,7 @@ async fn insert_orderings(tx: &mut Transaction<'_, Postgres>, rows: &[OrderingRo
               ordering_id,
               ordering_profile,
               vine_type,
+              subject_idea_id,
               speaker_identity_id,
               created_block_height,
               created_event_index,
@@ -1105,13 +2738,14 @@ async fn insert_orderings(tx: &mut Transaction<'_, Postgres>, rows: &[OrderingRo
               title_representation_id,
               sentence_representation_id
             ) VALUES (
-              $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+              $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
             )
             "#,
         )
         .bind(row.ordering_id)
         .bind(row.ordering_profile)
         .bind(row.vine_type)
+        .bind(row.subject_idea_id)
         .bind(row.speaker_identity_id)
         .bind(row.created_block_height)
         .bind(row.created_event_index)
@@ -1125,7 +2759,10 @@ async fn insert_orderings(tx: &mut Transaction<'_, Postgres>, rows: &[OrderingRo
     Ok(())
 }
 
-async fn insert_ordering_items(tx: &mut Transaction<'_, Postgres>, rows: &[OrderingItemRow]) -> Result<()> {
+async fn insert_ordering_items(
+    tx: &mut Transaction<'_, Postgres>,
+    rows: &[OrderingItemRow],
+) -> Result<()> {
     for row in rows {
         sqlx::query(
             r#"
@@ -1133,15 +2770,17 @@ async fn insert_ordering_items(tx: &mut Transaction<'_, Postgres>, rows: &[Order
               ordering_id,
               idx,
               idea_id,
+              item_role,
               via_connection_id
             ) VALUES (
-              $1, $2, $3, $4
+              $1, $2, $3, $4, $5
             )
             "#,
         )
         .bind(row.ordering_id)
         .bind(row.idx)
         .bind(row.idea_id)
+        .bind(row.item_role)
         .bind(row.via_connection_id)
         .execute(&mut **tx)
         .await?;
@@ -1301,11 +2940,6 @@ fn parse_target_kind_field(
             "ordering" => Ok(TargetKind::Ordering),
             _ => Err(anyhow!("invalid {}", field)),
         },
-        Value::Number(value) => match value.as_u64() {
-            Some(0) => Ok(TargetKind::Idea),
-            Some(1) => Ok(TargetKind::Ordering),
-            _ => Err(anyhow!("invalid {}", field)),
-        },
         _ => Err(anyhow!("invalid {}", field)),
     }
 }
@@ -1319,12 +2953,86 @@ fn parse_ordering_profile_field(
         .ok_or_else(|| anyhow!("missing {}", field))?;
     match value {
         Value::String(value) if value == "vine" => Ok(OrderingProfile::Vine),
-        Value::String(value) if value == "evidence_rail" => {
-            Ok(OrderingProfile::EvidenceRail)
-        }
+        Value::String(value) if value == "evidence_rail" => Ok(OrderingProfile::EvidenceRail),
         Value::String(value) if value == "action_rail" => Ok(OrderingProfile::ActionRail),
         _ => Err(anyhow!("invalid {}", field)),
     }
+}
+
+fn parse_ordering_subject(
+    payload: &serde_json::Map<String, Value>,
+    profile: OrderingProfile,
+    ideas: &[IdeaRow],
+) -> Result<Option<Uuid>> {
+    if profile == OrderingProfile::Vine {
+        if payload.contains_key("subject_idea_id") {
+            return Err(anyhow!("Vine must not carry subject_idea_id"));
+        }
+        return Ok(None);
+    }
+    let subject_id = parse_uuid_field(payload, "subject_idea_id")?;
+    let subject = ideas
+        .iter()
+        .find(|idea| idea.idea_id == subject_id)
+        .ok_or_else(|| anyhow!("ordering subject must exist before use: {}", subject_id))?;
+    let expected_type = match profile {
+        OrderingProfile::EvidenceRail => "truth_claim",
+        OrderingProfile::ActionRail => "actionable_idea",
+        OrderingProfile::Vine => unreachable!(),
+    };
+    if subject.idea_type != expected_type {
+        return Err(anyhow!(
+            "ordering subject {} must have idea_type {}",
+            subject_id,
+            expected_type
+        ));
+    }
+    Ok(Some(subject_id))
+}
+
+fn parse_ordering_item_roles(
+    payload: &serde_json::Map<String, Value>,
+    profile: OrderingProfile,
+    item_count: usize,
+) -> Result<Vec<Option<i16>>> {
+    if profile == OrderingProfile::Vine {
+        if payload.contains_key("item_roles") {
+            return Err(anyhow!("Vine must not carry item_roles"));
+        }
+        return Ok(vec![None; item_count]);
+    }
+    if item_count == 0 {
+        return Err(anyhow!("standardized Ordering requires at least one item"));
+    }
+    let values = payload
+        .get("item_roles")
+        .and_then(Value::as_array)
+        .ok_or_else(|| anyhow!("item_roles array required"))?;
+    if values.len() != item_count {
+        return Err(anyhow!(
+            "item_roles must align one-for-one with item_idea_ids"
+        ));
+    }
+    let mut roles = Vec::with_capacity(values.len());
+    for value in values {
+        let role = match value.as_str() {
+            Some("potential_evidence") => 0,
+            Some("actual_evidence") => 1,
+            Some("potential_action") => 2,
+            Some("proposed_action") => 3,
+            _ => return Err(anyhow!("invalid item_role")),
+        };
+        if (profile == OrderingProfile::EvidenceRail && !matches!(role, 0 | 1))
+            || (profile == OrderingProfile::ActionRail && !matches!(role, 2 | 3))
+        {
+            return Err(anyhow!("item_role is invalid for ordering_profile"));
+        }
+        roles.push(Some(role));
+    }
+    if profile == OrderingProfile::ActionRail && roles.iter().any(|role| *role != roles[0]) {
+        return Err(anyhow!("Action Rail must use one homogeneous lane"));
+    }
+    Ok(roles)
 }
 
 fn parse_vine_type_field(
@@ -1373,13 +3081,6 @@ fn parse_tier_enum_value(value: &Value, field: &str) -> Result<TierEnum> {
             "full" => Ok(TierEnum::Full),
             _ => Err(anyhow!("invalid {}", field)),
         },
-        Value::Number(value) => match value.as_u64() {
-            Some(0) => Ok(TierEnum::Title),
-            Some(1) => Ok(TierEnum::Sentence),
-            Some(2) => Ok(TierEnum::Paragraph),
-            Some(3) => Ok(TierEnum::Full),
-            _ => Err(anyhow!("invalid {}", field)),
-        },
         _ => Err(anyhow!("invalid {}", field)),
     }
 }
@@ -1399,12 +3100,107 @@ fn parse_tier_complexity_field(
             "canonical" => Ok(3),
             _ => Err(anyhow!("invalid {}", field)),
         },
-        Value::Number(value) => match value.as_u64() {
-            Some(raw) if raw <= 3 => Ok(raw as i16),
-            _ => Err(anyhow!("invalid {}", field)),
-        },
         _ => Err(anyhow!("invalid {}", field)),
     }
+}
+
+fn parse_representation_slot(
+    payload: &serde_json::Map<String, Value>,
+) -> Result<(TierEnum, Option<i16>)> {
+    match parse_string_field(payload, "representation_kind")? {
+        "title" => {
+            for field in ["tier_length", "tier_complexity", "vocabulary_version_id"] {
+                if payload.contains_key(field) {
+                    return Err(anyhow!("{} is forbidden for a title representation", field));
+                }
+            }
+            Ok((TierEnum::Title, None))
+        }
+        "description" => {
+            let tier = parse_tier_enum_field(payload, "tier_length")?;
+            if tier == TierEnum::Title {
+                return Err(anyhow!("title is not a description tier_length"));
+            }
+            let complexity = parse_tier_complexity_field(payload, "tier_complexity")?;
+            Ok((tier, Some(complexity)))
+        }
+        _ => Err(anyhow!("invalid representation_kind")),
+    }
+}
+
+fn project_representation_row(
+    event: &Event,
+    event_index: i32,
+    seen_representation_ids: &mut HashSet<Uuid>,
+    seen_identity_ids: &HashSet<Uuid>,
+    seen_idea_ids: &HashSet<Uuid>,
+) -> Result<(RepresentationRow, RepresentationKey)> {
+    let payload = payload_object(&event.payload)?;
+    let representation_id = parse_uuid_field(payload, "representation_id")?;
+    if !seen_representation_ids.insert(representation_id) {
+        return Err(anyhow!(
+            "duplicate representation_id in seed file: {}",
+            representation_id
+        ));
+    }
+    let target_kind = parse_target_kind_field(payload, "target_kind")?;
+    let target_object_id = parse_uuid_field(payload, "target_object_id")?;
+    let (tier_enum, tier_complexity) = parse_representation_slot(payload)?;
+    let payload_hash = parse_string_field(payload, "payload_hash")?.to_string();
+    let author_identity_id = parse_uuid_field(payload, "author_identity_id")?;
+    if !seen_identity_ids.contains(&author_identity_id) {
+        return Err(anyhow!(
+            "representation author identity must exist before use: {}",
+            author_identity_id
+        ));
+    }
+    let vocabulary_version_id = parse_optional_uuid_field(payload, "vocabulary_version_id")?;
+    match tier_complexity {
+        Some(3) => {
+            let vocabulary_id = vocabulary_version_id
+                .ok_or_else(|| anyhow!("canonical description missing vocabulary_version_id"))?;
+            if !seen_idea_ids.contains(&vocabulary_id) {
+                return Err(anyhow!(
+                    "vocabulary idea must exist before use: {}",
+                    vocabulary_id
+                ));
+            }
+        }
+        _ if vocabulary_version_id.is_some() => {
+            return Err(anyhow!(
+                "vocabulary_version_id is forbidden outside canonical descriptions"
+            ))
+        }
+        _ => {}
+    }
+    let language_locale = optional_string_field(payload, "language_locale")?;
+    let provenance = optional_string_field(payload, "provenance")?;
+    let payload_text = optional_representation_payload_text(payload)?;
+
+    Ok((
+        RepresentationRow {
+            representation_id,
+            target_kind: target_kind.as_i16(),
+            target_id: target_object_id,
+            tier_enum: tier_enum.as_i16(),
+            tier_complexity,
+            vocabulary_version_id,
+            payload_hash,
+            payload_text,
+            author_identity_id,
+            language_locale,
+            provenance,
+            created_block_height: 1,
+            created_event_index: event_index,
+            created_event_id: event.id,
+        },
+        RepresentationKey {
+            target_kind,
+            target_object_id,
+            tier_enum,
+            tier_complexity,
+        },
+    ))
 }
 
 fn parse_uuid_array_field(
@@ -1554,11 +3350,7 @@ fn parse_representation_pointer_update_from_object(
     } else {
         parse_uuid_field(payload, "object_id")?
     };
-    let tier_enum = if let Some(value) = payload.get("tier_enum") {
-        parse_tier_enum_value(value, "tier_enum")?
-    } else {
-        parse_tier_enum_field(payload, "tier_length")?
-    };
+    let (tier_enum, tier_complexity) = parse_representation_slot(payload)?;
     let representation_id = if let Some(value) = payload.get("selected_representation_id") {
         let value = value
             .as_str()
@@ -1571,6 +3363,7 @@ fn parse_representation_pointer_update_from_object(
         target_kind,
         target_object_id,
         tier_enum,
+        tier_complexity,
         representation_id,
     })
 }
@@ -1909,7 +3702,6 @@ fn enforce_seed_identity(events: &[SeedEvent], seed_identity_id: Uuid) -> Result
 mod tests {
     use super::*;
     use serde_json::json;
-
     fn v7(id: &str) -> Uuid {
         Uuid::parse_str(id).expect("uuid parse")
     }
@@ -2018,5 +3810,156 @@ mod tests {
         let numeric_fields = numeric.as_object().expect("numeric payload object");
         assert!(parse_ordering_profile_field(numeric_fields, "ordering_profile").is_err());
         assert!(parse_vine_type_field(numeric_fields, "vine_type", false).is_err());
+    }
+
+    #[test]
+    fn unsigned_v4_pilot_is_rejected_for_import_before_database_access() {
+        let options = Options {
+            file: PathBuf::from("unused.json"),
+            force: false,
+            validate_only: false,
+        };
+        let error = require_v4_pilot_validate_only(&options).expect_err("import must fail");
+        assert!(error
+            .to_string()
+            .contains("ineligible for canonical import, signing, or genesis"));
+
+        let force_validate = Options {
+            file: PathBuf::from("unused.json"),
+            force: true,
+            validate_only: true,
+        };
+        assert!(require_v4_pilot_validate_only(&force_validate).is_err());
+    }
+
+    #[test]
+    fn manifest_payload_hash_reconstruction_matches_generator_bytes() {
+        let payload = r#"{"schema_version":"test","manifest_payload_sha256":null}"#;
+        let digest = sha256_hex(payload.as_bytes());
+        let manifest = format!(
+            "{{\n  \"schema_version\": \"test\",\n  \"manifest_payload_sha256\": \"{}\"\n}}\n",
+            digest
+        );
+        validate_manifest_payload_hash(&manifest, &digest).expect("manifest hash");
+    }
+
+    #[test]
+    fn deterministic_uuidv7_matches_exact_v4_pilot_vector() {
+        let frozen_at = "2026-07-26T22:05:23.394Z";
+        let package_domain = format!(
+            "the-seed-in-my-mind/seed-v4-pilot/{}/{}/{}",
+            V4_PILOT_PRIVATE_BASELINE, V4_PILOT_OPEN_CORE_BASELINE, frozen_at
+        );
+        let actual =
+            deterministic_pilot_uuid_v7(&package_domain, frozen_at, "idea", "the-seed-in-my-mind")
+                .expect("deterministic UUID");
+        assert_eq!(actual.to_string(), "019fa076-1e42-7bc7-96be-d88890397179");
+    }
+
+    #[test]
+    fn native_profile_names_do_not_allow_live_rail_substrate_fields() {
+        reject_live_rail_keys(&json!({"ordering_profile": "evidence_rail"}), "profile")
+            .expect("ecosystem profile name remains valid");
+        let error = reject_live_rail_keys(&json!({"rail_id": "legacy"}), "profile")
+            .expect_err("live rail field must fail");
+        assert!(error
+            .to_string()
+            .contains("forbidden live Rail substrate field"));
+    }
+
+    #[test]
+    fn title_representation_projects_as_a_separate_slot() {
+        let author_identity_id = v7("00000000-0000-7000-8000-00000000a001");
+        let target_object_id = v7("00000000-0000-7000-8000-00000000c001");
+        let representation_id = v7("00000000-0000-7000-8000-00000000d001");
+        let event_id = v7("00000000-0000-7000-8000-00000000e001");
+        let event = Event {
+            id: event_id,
+            kind: "representation_create".to_string(),
+            speaker_identity_id: Some(author_identity_id),
+            payload: json!({
+                "representation_id": representation_id,
+                "target_kind": "idea",
+                "target_object_id": target_object_id,
+                "representation_kind": "title",
+                "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                "payload_text": "The Seed in My Mind",
+                "author_identity_id": author_identity_id
+            }),
+        };
+        validate_legacy_import_event(&event).expect("valid title event");
+
+        let mut seen_representation_ids = HashSet::new();
+        let seen_identity_ids = HashSet::from([author_identity_id]);
+        let (row, key) = project_representation_row(
+            &event,
+            2,
+            &mut seen_representation_ids,
+            &seen_identity_ids,
+            &HashSet::new(),
+        )
+        .expect("title projection");
+
+        assert_eq!(row.representation_id, representation_id);
+        assert_eq!(row.target_kind, TargetKind::Idea.as_i16());
+        assert_eq!(row.target_id, target_object_id);
+        assert_eq!(row.tier_enum, TierEnum::Title.as_i16());
+        assert_eq!(row.tier_complexity, None);
+        assert_eq!(row.vocabulary_version_id, None);
+        assert_eq!(row.payload_text.as_deref(), Some("The Seed in My Mind"));
+        assert_eq!(row.author_identity_id, author_identity_id);
+        assert_eq!(row.created_event_id, event_id);
+        assert_eq!(row.created_event_index, 2);
+        assert_eq!(key.target_kind, TargetKind::Idea);
+        assert_eq!(key.target_object_id, target_object_id);
+        assert_eq!(key.tier_enum, TierEnum::Title);
+        assert_eq!(key.tier_complexity, None);
+    }
+
+    #[test]
+    fn canonical_description_rejects_a_forward_vocabulary_reference() {
+        let author_identity_id = v7("00000000-0000-7000-8000-00000000a001");
+        let vocabulary_version_id = v7("00000000-0000-7000-8000-00000000b003");
+        let event = Event {
+            id: v7("00000000-0000-7000-8000-00000000e045"),
+            kind: "representation_create".to_string(),
+            speaker_identity_id: Some(author_identity_id),
+            payload: json!({
+                "representation_id": "00000000-0000-7000-8000-00000000d045",
+                "target_kind": "idea",
+                "target_object_id": "00000000-0000-7000-8000-00000000c001",
+                "representation_kind": "description",
+                "tier_length": "full",
+                "tier_complexity": "canonical",
+                "vocabulary_version_id": vocabulary_version_id,
+                "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                "author_identity_id": author_identity_id
+            }),
+        };
+        validate_legacy_import_event(&event).expect("valid event shape");
+        let seen_identity_ids = HashSet::from([author_identity_id]);
+
+        let error = project_representation_row(
+            &event,
+            1,
+            &mut HashSet::new(),
+            &seen_identity_ids,
+            &HashSet::new(),
+        )
+        .expect_err("a UUID alone cannot satisfy event-order existence");
+        assert!(error
+            .to_string()
+            .contains("vocabulary idea must exist before use"));
+
+        let seen_idea_ids = HashSet::from([vocabulary_version_id]);
+        let (row, _) = project_representation_row(
+            &event,
+            2,
+            &mut HashSet::new(),
+            &seen_identity_ids,
+            &seen_idea_ids,
+        )
+        .expect("pre-existing ordinary idea is sufficient");
+        assert_eq!(row.vocabulary_version_id, Some(vocabulary_version_id));
     }
 }

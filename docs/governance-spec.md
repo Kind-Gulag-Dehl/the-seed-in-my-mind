@@ -49,7 +49,7 @@ This document defines the governance subsystem of the Seed protocol, including h
 ## 0. scope, purpose, and status [anchor: 0_scope_purpose_and_status]
 
 ### 0.1 purpose [anchor: purpose]
-This specification defines the canonical governance subsystem of the Seed. Governance is internal to the graph: rulebooks, proposals, challenges, verdicts, implementations, and activations are all represented as ideas and events within the canonical universe. This document specifies:
+This specification defines the canonical governance subsystem of the Seed. Governance is internal to the graph: rulebooks, proposals, challenges, verdicts, implementations, and activations are all represented through ordinary ideas, connections, descriptions, actions, claims, evidence, and events within the canonical universe. Before genesis, this checked-in specification is a ratified normative source. After genesis, the canonical event log and replay-derived active graph-native rulebook commitments are authoritative; this file is a human-readable projection and cannot amend governance by being edited. This document specifies:
 
 - how governance rules evolve through deliberation,
 - how governance proposals are authored, challenged, voted on, verified, and activated,
@@ -164,7 +164,7 @@ Protocol v5; instead, it uses existing constructs in structured combinations:
 
 - **Verdicts** are canonical events that enshrine the outcome of a governance challenge. A 
   verdict does not itself activate a rulebook; it schedules activation contingent on 
-  implementation and snapshot rules.
+  verified implementation and cycle-boundary rules.
 
 - **Implementations** are **real-world actions** carried out voluntarily by human identities and 
   recorded as **completion truth claims**. Governance rulebooks only activate when their 
@@ -195,7 +195,7 @@ These principles constrain what governance MAY do and what governance MAY NOT ov
 
 - **Anti-capture & decentralization** — governance MUST NOT introduce mechanisms that centralize authority, give special privileges, or allow durable capture by any entity or subgroup.
 
-- **Canonical processes only** — rule changes and rulebook supersession occur only through the ordinary canonical pipeline: challenge → verdict → (optional) implementation → cycle-anchored activation.
+- **Canonical processes only** — rule changes and rulebook supersession occur only through the ordinary canonical pipeline: challenge → verdict → implementation and completion verification → cycle-anchored activation.
 
 These principles form the boundary conditions for every governance rulebook and every governance challenge.
 
@@ -210,6 +210,8 @@ Governance MUST NOT use wall-clock time, block height, snapshot timing, or snaps
 
 
 ### 1.3 classes of governance [anchor: classes_of_governance]
+
+This specification governs canonical protocol decisions, not ownership of external organizations or resources. A company, project, tribe, or individual MAY decide how to control its own code, money, hosting, deployment, or conduct outside the protocol. Those roles, declarations, delegations, proposed actions, performed actions, and completion claims MAY be recorded and challenged through the ordinary graph. Canonical endorsement does not transfer external ownership, compel implementation, or grant the protocol enforcement power over the outside actor.
 
 Governance inside the Seed operates under a single, unified structure. All identities, groups, 
 and tribes use the same challenge primitive, the same voting rules, the same quorum and 
@@ -314,7 +316,7 @@ pools drawn from the same equal-weight set of eligible humans.
 
 ### 2.1 rulebooks as versioned ideas [anchor: rulebooks_as_versioned_ideas]
 
-A rulebook is an immutable **idea** of type `actionable_idea` paired with a structured rulebook object in its metadata. A rulebook specifies the active procedures that nodes and participants MUST use when interpreting governance actions, voting rules, challenge rules, and activation conditions.
+A rulebook is an immutable ordinary **idea** of type `actionable_idea`, interpreted together with its canonical descriptions and connections. A rulebook specifies the active procedures that nodes and participants MUST use when interpreting governance actions, voting rules, challenge rules, and activation conditions. Rulebook version, scope, lineage, commitment hash, and activation provenance are ordinary graph content or replay-derived indexes; they do not form a privileged Rule object family.
 
 Each rulebook instance MUST include:
 
@@ -327,7 +329,7 @@ Each rulebook instance MUST include:
 - **activation timing rules** (cycle-anchored),
 - **executor requirements** for implementing approved governance actions.
 
-Rulebooks become effective only at cycle boundaries as scheduled by governance verdicts and expressed via `activation_cycle_index` (§2.4).
+Rulebooks become effective only after a successful governance verdict, a valid implementation-completion claim with required evidence, and the scheduled cycle boundary expressed via `activation_cycle_index` (§2.4). A verdict alone MUST NOT activate a rulebook.
 
 
 
@@ -638,11 +640,11 @@ This subsection is consistent with Section 2.4 `normative_activation_semantics_d
 
 A successful governance verdict does not activate rule changes immediately.
 
-A rulebook change becomes effective at the start of the scheduled activation cycle.
+A rulebook change becomes effective at the start of the scheduled activation cycle only if its required implementation-completion claim and evidence remain valid.
 
 Formally:
 - For any canonical event `E`, the applicable rulebook version is determined by the derived `cycle_index(E)`.
-- The new rulebook version applies if and only if `cycle_index(E) e activation_cycle_index`.
+- The new rulebook version applies if and only if `cycle_index(E) e activation_cycle_index` and the replay-derived completion predicate is satisfied.
 
 This activation rule is deterministic, replay-verifiable, and independent of wall-clock time, block height, or snapshot timing.
 
@@ -744,11 +746,11 @@ A successful governance challenge produces a **verdict** that records:
 
 Rulebook changes do **not** activate immediately upon verdict.
 
-A rulebook change becomes effective at the start of the scheduled activation cycle.
+A rulebook change becomes effective at the start of the scheduled activation cycle only if its required implementation-completion claim and evidence remain valid.
 
 Formally:
 - For any canonical event `E`, the applicable rulebook version is determined by the derived `cycle_index(E)`.
-- A rulebook change applies if and only if `cycle_index(E) e activation_cycle_index`.
+- A rulebook change applies if and only if `cycle_index(E) e activation_cycle_index` and the replay-derived completion predicate is satisfied.
 
 This ensures:
 - deterministic replay,

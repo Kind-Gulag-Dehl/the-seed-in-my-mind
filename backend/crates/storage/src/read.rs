@@ -165,10 +165,10 @@ impl Storage {
     ) -> Result<Vec<CanonicalOrderingItemRow>> {
         let rows =
             sqlx::query_as::<_, CanonicalOrderingItemRow>(queries::LIST_CANONICAL_ORDERING_ITEMS)
-            .bind(ordering_id)
-            .bind(snapshot_height)
-            .fetch_all(&self.pool)
-            .await?;
+                .bind(ordering_id)
+                .bind(snapshot_height)
+                .fetch_all(&self.pool)
+                .await?;
         Ok(rows)
     }
 
@@ -177,13 +177,28 @@ impl Storage {
         snapshot_height: i64,
         idea_id: Uuid,
     ) -> Result<Vec<CanonicalOrderingSummaryRow>> {
-        let rows =
-            sqlx::query_as::<_, CanonicalOrderingSummaryRow>(queries::LIST_CANONICAL_ORDERINGS_FOR_IDEA)
-                .bind(idea_id)
-                .bind(snapshot_height)
-                .fetch_all(&self.pool)
-                .await?;
+        let rows = sqlx::query_as::<_, CanonicalOrderingSummaryRow>(
+            queries::LIST_CANONICAL_ORDERINGS_FOR_IDEA,
+        )
+        .bind(idea_id)
+        .bind(snapshot_height)
+        .fetch_all(&self.pool)
+        .await?;
         Ok(rows)
+    }
+
+    pub async fn get_canonical_representation(
+        &self,
+        snapshot_height: i64,
+        representation_id: Uuid,
+    ) -> Result<Option<CanonicalRepresentationRow>> {
+        let row =
+            sqlx::query_as::<_, CanonicalRepresentationRow>(queries::GET_CANONICAL_REPRESENTATION)
+                .bind(representation_id)
+                .bind(snapshot_height)
+                .fetch_optional(&self.pool)
+                .await?;
+        Ok(row)
     }
 
     pub async fn get_latest_snapshot(&self) -> Result<Option<SnapshotRow>> {

@@ -1,8 +1,8 @@
 use api_types_canonical::{
-    CanonicalOrderingResponse, CanonicalOrderingsResponse, IdeasTopResponse, IdentityInfo,
-    IdentityResponse, NeighborhoodResponse, RelativeImportanceConnectionsResponse,
-    SearchIdeasResponse, SnapshotCommitListResponse, SnapshotCommitResponse,
-    SnapshotLatestResponse, SnapshotResponse,
+    CanonicalOrderingResponse, CanonicalOrderingsResponse, CanonicalRepresentationResponse,
+    IdeasTopResponse, IdentityInfo, IdentityResponse, NeighborhoodResponse,
+    RelativeImportanceConnectionsResponse, SearchIdeasResponse, SnapshotCommitListResponse,
+    SnapshotCommitResponse, SnapshotLatestResponse, SnapshotResponse,
 };
 use axum::{
     extract::{Path, Query, State},
@@ -20,8 +20,9 @@ use crate::server::helpers::{
     parse_relative_importance_direction, parse_uuid_v7, scoped_neighbor_from_reference,
 };
 use crate::server::mapping::{
-    canonical_ordering_detail, canonical_ordering_summary, connection_summary, idea_detail, idea_summary,
-    snapshot_commit_metadata, snapshot_headers, snapshot_metadata, with_headers,
+    canonical_ordering_detail, canonical_ordering_summary, canonical_representation_detail,
+    connection_summary, idea_detail, idea_summary, snapshot_commit_metadata, snapshot_headers,
+    snapshot_metadata, with_headers,
 };
 use crate::server::types::{
     AppState, IdeasTopOrder, IdeasTopQuery, NeighborhoodQuery, RelativeImportanceConnectionsQuery,
@@ -759,6 +760,56 @@ pub(crate) async fn idea_orderings_handler(
 
     let body = CanonicalOrderingsResponse {
         orderings: rows.iter().map(canonical_ordering_summary).collect(),
+    };
+    let response = (StatusCode::OK, Json(body)).into_response();
+    with_headers(response, headers)
+}
+
+pub(crate) async fn representation_detail_handler(
+    Path(representation_id): Path<String>,
+    State(state): State<AppState>,
+) -> Response {
+    let representation_id = match parse_uuid_v7(&representation_id) {
+        Ok(representation_id) => representation_id,
+        Err(response) => return response,
+    };
+
+    let snapshot = match state.storage.get_latest_snapshot().await {
+        Ok(Some(snapshot)) => snapshot,
+        Ok(None) => return json_error(StatusCode::NOT_FOUND, "not_found", "not found"),
+        Err(err) => {
+            tracing::error!(?err, "failed to load latest snapshot");
+            return json_error(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "internal_error",
+                "internal server error",
+            );
+        }
+    };
+    let headers = match snapshot_headers(&snapshot) {
+        Ok(headers) => headers,
+        Err(response) => return response,
+    };
+
+    let row = match state
+        .storage
+        .get_canonical_representation(snapshot.block_height, representation_id)
+        .await
+    {
+        Ok(Some(row)) => row,
+        Ok(None) => return json_error(StatusCode::NOT_FOUND, "not_found", "not found"),
+        Err(err) => {
+            tracing::error!(?err, "failed to load canonical representation");
+            return json_error(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "internal_error",
+                "internal server error",
+            );
+        }
+    };
+
+    let body = CanonicalRepresentationResponse {
+        representation: canonical_representation_detail(&row),
     };
     let response = (StatusCode::OK, Json(body)).into_response();
     with_headers(response, headers)

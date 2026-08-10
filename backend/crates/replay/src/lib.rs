@@ -13,5 +13,6 @@ pub use profile_v0_admission::{
 };
 pub use replay::{
     ReplayConnectionRow, ReplayCycleStatus, ReplayDriver, ReplayIdeaRow, ReplayObjectKind,
-    ReplayOutput, ReplayPayloadRow, ReplayOrderingItemRow, ReplayOrderingRow, ReplayTempoStatus,
+    ReplayOrderingItemRow, ReplayOrderingRow, ReplayOutput, ReplayPayloadRow,
+    ReplayRepresentationRow, ReplayTempoStatus,
 };

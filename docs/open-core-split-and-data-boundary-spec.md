@@ -101,8 +101,9 @@ Normative pointers:
 `individual / user-controlled`:
 - private keys/identity vault material,
 - local-only notes, annotations, and UI state,
-- private drafts before publication,
-- private overlays not published to canonical log,
+- a mutable private Mindseed journal containing idea-compatible records before publication,
+- private or directly permissioned overlays not published to the canonical log,
+- publication queues, dependency groups, and approved signed candidates awaiting relay,
 - optional encrypted backups controlled by the user.
 
 ### 2.2 data placement matrix (normative) [anchor: data_placement_matrix_normative]
@@ -113,17 +114,20 @@ Normative pointers:
 | canonical query indexes | no (derived) | optional | yes | optional | rebuildable caches |
 | accounts/sessions/auth | no | no | yes | optional | MUST NOT affect replay |
 | rate limits/mod queues | no | no | yes | no | operational only |
-| private drafts (server convenience) | no | no | yes | yes | MUST be labeled non-canonical |
-| private drafts (local) | no | no | no | yes | default behavior |
+| private Mindseed journal (server convenience) | no | no | yes | yes | non-canonical; preferably opaque/encrypted to NODE |
+| private Mindseed journal (local) | no | no | no | yes | mutable, user-controlled default |
 | private notes/annotations | no | no | optional (encrypted blob) | yes | user-controlled |
-| personal overlays (published) | depends | yes (if published) | yes | yes | canonical only when published |
+| persistent public human-authored graph content | yes | yes | yes (host/mirror) | optional cache | MUST enter through canonical publication; no parallel public noncanonical human map |
+| shared Public AI realm | no | no | optional | optional | explicitly noncanonical; contains model output, not human-authored map content |
+| publication queue/dependency state | no | no | optional convenience | yes | private product state; each submitted event remains atomic |
 | keys/identity vault | no | no | no (except opaque blob) | yes | NODE custody never required |
 
 ## 3. code boundary model (open core vs proprietary) [anchor: code_boundary_model_open_core_vs_proprietary]
 
 ### 3.1 open core includes [anchor: open_core_includes]
 `specs + conformance`:
-- `docs/` authoritative Tier 1-3 specs,
+- before genesis, ratified `docs/` Tier 1-3 normative sources,
+- after genesis, human-readable projections of event-log and replay-derived graph-native authority plus hash-addressed source archives,
 - `docs/map.*.md` entrypoints and `docs/authoritative-index.md`,
 - reproducibility verification scripts.
 
@@ -142,6 +146,8 @@ Normative pointers:
 `product experience ui`:
 - builder mode and advanced UX,
 - game layer (for example pixi/gardencanvas),
+- private Mindseed journal, publication queue, dependency grouping, and exact-candidate relay UX,
+- shared Public AI mode, model profiles, model-relative lenses, simulated challenge UX, and noncanonical AI lifecycle behavior,
 - proprietary assets.
 
 `hosted services not required for canonical validation`:
@@ -149,7 +155,7 @@ Normative pointers:
 - AI helper product features (advisory only).
 
 `optional node-only premium features`:
-- private draft storage,
+- private journal storage,
 - premium indexing/search,
 - private collaboration tools.
 
@@ -161,7 +167,7 @@ All above remain non-canonical.
 - backend is structurally close to separable open core.
 - frontend reference surfaces have some coupling risk with builder/private concerns.
 - ordering/domain utilities include both canonical and private overlay concerns in places.
-- the active repository model is now two-repo: this public open-core repo is authoritative for open-core materials, while private companion repositories are authoritative for private/product materials and integration glue.
+- the active repository model is now two-repo: before genesis this public open-core repo is the ratified source for open-core materials, while private companion repositories own private/product materials and integration glue; after genesis the public documents project graph-native authority rather than replacing it.
 
 ### 4.2 target layout (recommended) [anchor: target_layout_recommended]
 `option a (single repo, folder-separated)`:
@@ -178,7 +184,7 @@ All above remain non-canonical.
 
 Both options use identical boundary rules.
 
-In the active two-repo model, the public repo is authoritative for open-core changes. The private repo may mirror or consume those materials, but private copies must be labeled as mirrors/integration references when they duplicate public open-core docs or tooling.
+In the active two-repo model, the public repo owns open-core source and projection changes. The private repo may mirror or consume those materials, but private copies must be labeled as mirrors/integration references when they duplicate public open-core docs or tooling. Repository ownership does not supersede post-genesis graph-native semantic authority.
 
 ## 5. dependency rules (normative) [anchor: dependency_rules_normative]
 
@@ -223,7 +229,8 @@ Eligibility checks may use canonical eligibility state and protocol-authorized i
 
 ### 6.3 node-private apis (node) [anchor: node_private_apis_node]
 - auth/session/account,
-- private drafts and encrypted blob sync,
+- private Mindseed journal, permissioned sharing, publication queue, and encrypted blob sync,
+- shared noncanonical AI-realm hosting and model-profile services,
 - rate limit/moderation controls,
 - premium indexing/search.
 

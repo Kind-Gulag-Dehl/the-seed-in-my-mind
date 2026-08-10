@@ -420,7 +420,7 @@ Given a target object and the active safety rulebook set:
 
 Visibility actions MUST be applicable at multiple granularities, including at minimum:
 
-- idea-level (title and description tiers),
+- idea-level (title representation and description tiers),
 - representation artifact level (sentence, paragraph, full; fundamental, standard, advanced, canonical),
 - argument or evidence attachment level,
 - challenge container level (without affecting voting, tallying, or verdict mechanics),
@@ -1132,5 +1132,4 @@ The responsibilities across specifications are explicitly delegated as follows:
 Safety rulebooks and interfaces are subordinate to the Profile-v0 identity-admission architecture. They MAY impose deterministic, disclosed, and reviewable presentation or process safeguards. They MUST NOT create a canonical `identity_create`, act as a sponsor, fabricate sponsor lineage, fabricate verification or an eligibility lane, reserve or mint invitation capacity, or use private accounts, relay records, AI output, wall-clock time, system emitters, or machine-only boundaries as admission authority.
 
 Safety treatment of a non-canonical admission request does not make that request canonical. Safety restrictions MUST preserve canonical history and replay-derived authority. An authorized emergency rule may freeze capacity only where constitutional and rulebook authority expressly permits; it MUST NOT create emergency invitation capacity or a privileged admission path.
-
 

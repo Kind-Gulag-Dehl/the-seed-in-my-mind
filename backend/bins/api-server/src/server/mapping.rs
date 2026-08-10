@@ -1,6 +1,7 @@
 use api_types_canonical::{
-    AuthorInfo, CanonicalOrderingDetail, CanonicalOrderingRepresentations, CanonicalOrderingSummary,
-    ConnectionSummary, IdeaDetail, IdeaSummary, OrderingItem, SnapshotCommitMetadata, SnapshotMetadata,
+    AuthorInfo, CanonicalOrderingDetail, CanonicalOrderingRepresentations,
+    CanonicalOrderingSummary, CanonicalRepresentationDetail, ConnectionSummary, IdeaDetail,
+    IdeaSummary, OrderingItem, SnapshotCommitMetadata, SnapshotMetadata,
 };
 #[cfg(feature = "full")]
 use api_types_private::{
@@ -12,8 +13,9 @@ use axum::{
 };
 use chrono::DateTime;
 use storage::{
-    CanonicalOrderingItemRow, CanonicalOrderingRow, CanonicalOrderingSummaryRow, ConnectionRow, IdeaDetailRow,
-    IdeaSummaryRow, SnapshotCommitRow, SnapshotRow,
+    CanonicalOrderingItemRow, CanonicalOrderingRow, CanonicalOrderingSummaryRow,
+    CanonicalRepresentationRow, ConnectionRow, IdeaDetailRow, IdeaSummaryRow, SnapshotCommitRow,
+    SnapshotRow,
 };
 #[cfg(feature = "full")]
 use storage::{PrivateIdeaRow, PrivateOrderingItemRow, PrivateOrderingListRow, PrivateOrderingRow};
@@ -238,11 +240,14 @@ pub(crate) fn private_idea_detail(row: &PrivateIdeaRow) -> PrivateIdeaDetail {
     }
 }
 
-pub(crate) fn canonical_ordering_summary(row: &CanonicalOrderingSummaryRow) -> CanonicalOrderingSummary {
+pub(crate) fn canonical_ordering_summary(
+    row: &CanonicalOrderingSummaryRow,
+) -> CanonicalOrderingSummary {
     CanonicalOrderingSummary {
         ordering_id: row.ordering_id.to_string(),
         ordering_profile: ordering_profile_label(row.ordering_profile),
         vine_type: vine_type_label(row.vine_type),
+        subject_idea_id: row.subject_idea_id.map(|value| value.to_string()),
     }
 }
 
@@ -250,6 +255,7 @@ pub(crate) fn canonical_ordering_item(row: &CanonicalOrderingItemRow) -> Orderin
     OrderingItem {
         idx: row.idx.to_string(),
         idea_id: row.idea_id.to_string(),
+        item_role: ordering_item_role_label(row.item_role),
         via_connection_id: row.via_connection_id.map(|value| value.to_string()),
     }
 }
@@ -259,6 +265,7 @@ pub(crate) fn private_ordering_item(row: &PrivateOrderingItemRow) -> OrderingIte
     OrderingItem {
         idx: row.idx.to_string(),
         idea_id: row.idea_id.to_string(),
+        item_role: None,
         via_connection_id: row.via_connection_id.map(|value| value.to_string()),
     }
 }
@@ -271,6 +278,7 @@ pub(crate) fn canonical_ordering_detail(
         ordering_id: row.ordering_id.to_string(),
         ordering_profile: ordering_profile_label(row.ordering_profile),
         vine_type: vine_type_label(row.vine_type),
+        subject_idea_id: row.subject_idea_id.map(|value| value.to_string()),
         author_identity_id: row.author_identity_id.to_string(),
         canonical_representations: CanonicalOrderingRepresentations {
             title_representation_id: row.title_representation_id.map(|value| value.to_string()),
@@ -281,6 +289,74 @@ pub(crate) fn canonical_ordering_detail(
             sentence_payload_hash: row.sentence_payload_hash.clone(),
         },
         items: items.iter().map(canonical_ordering_item).collect(),
+    }
+}
+
+pub(crate) fn canonical_representation_detail(
+    row: &CanonicalRepresentationRow,
+) -> CanonicalRepresentationDetail {
+    CanonicalRepresentationDetail {
+        representation_id: row.representation_id.to_string(),
+        target_kind: representation_target_kind_label(row.target_kind),
+        target_object_id: row.target_id.to_string(),
+        representation_kind: representation_kind_label(row.tier_enum),
+        tier_length: representation_tier_length_label(row.tier_enum),
+        tier_complexity: row
+            .tier_complexity
+            .map(representation_tier_complexity_label),
+        vocabulary_version_id: row.vocabulary_version_id.map(|value| value.to_string()),
+        payload_hash: row.payload_hash.clone(),
+        author_identity_id: row.author_identity_id.to_string(),
+        language_locale: row.language_locale.clone(),
+        provenance: row.provenance.clone(),
+        created_event_id: row.created_event_id.to_string(),
+    }
+}
+
+fn ordering_item_role_label(item_role: Option<i16>) -> Option<String> {
+    match item_role {
+        Some(0) => Some("potential_evidence".to_string()),
+        Some(1) => Some("actual_evidence".to_string()),
+        Some(2) => Some("potential_action".to_string()),
+        Some(3) => Some("proposed_action".to_string()),
+        Some(other) => Some(format!("unknown_{other}")),
+        None => None,
+    }
+}
+
+fn representation_target_kind_label(target_kind: i16) -> String {
+    match target_kind {
+        0 => "idea".to_string(),
+        1 => "ordering".to_string(),
+        other => format!("unknown_{other}"),
+    }
+}
+
+fn representation_kind_label(tier_length: i16) -> String {
+    if tier_length == 0 {
+        "title".to_string()
+    } else {
+        "description".to_string()
+    }
+}
+
+fn representation_tier_length_label(tier_length: i16) -> Option<String> {
+    match tier_length {
+        0 => None,
+        1 => Some("sentence".to_string()),
+        2 => Some("paragraph".to_string()),
+        3 => Some("full".to_string()),
+        other => Some(format!("unknown_{other}")),
+    }
+}
+
+fn representation_tier_complexity_label(tier_complexity: i16) -> String {
+    match tier_complexity {
+        0 => "fundamental".to_string(),
+        1 => "standard".to_string(),
+        2 => "advanced".to_string(),
+        3 => "canonical".to_string(),
+        other => format!("unknown_{other}"),
     }
 }
 
@@ -326,5 +402,67 @@ pub(crate) fn private_ordering_detail(
         created_at: row.created_at.to_rfc3339(),
         updated_at: row.updated_at.to_rfc3339(),
         items: items.iter().map(private_ordering_item).collect(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use api_types_canonical::CanonicalRepresentationResponse;
+
+    fn v7(id: &str) -> Uuid {
+        Uuid::parse_str(id).expect("uuid parse")
+    }
+
+    #[test]
+    fn title_representation_maps_to_the_public_dto_without_description_fields() {
+        let representation_id = v7("00000000-0000-7000-8000-00000000d001");
+        let target_object_id = v7("00000000-0000-7000-8000-00000000c001");
+        let author_identity_id = v7("00000000-0000-7000-8000-00000000a001");
+        let created_event_id = v7("00000000-0000-7000-8000-00000000e001");
+        let payload_hash = "1111111111111111111111111111111111111111111111111111111111111111";
+        let row = CanonicalRepresentationRow {
+            representation_id,
+            target_kind: 0,
+            target_id: target_object_id,
+            tier_enum: 0,
+            tier_complexity: None,
+            vocabulary_version_id: None,
+            payload_hash: payload_hash.to_string(),
+            author_identity_id,
+            language_locale: None,
+            provenance: None,
+            created_event_id,
+        };
+
+        let detail = canonical_representation_detail(&row);
+        assert_eq!(detail.representation_id, representation_id.to_string());
+        assert_eq!(detail.target_kind, "idea");
+        assert_eq!(detail.target_object_id, target_object_id.to_string());
+        assert_eq!(detail.representation_kind, "title");
+        assert_eq!(detail.tier_length, None);
+        assert_eq!(detail.tier_complexity, None);
+        assert_eq!(detail.vocabulary_version_id, None);
+        assert_eq!(detail.payload_hash, payload_hash);
+        assert_eq!(detail.author_identity_id, author_identity_id.to_string());
+        assert_eq!(detail.created_event_id, created_event_id.to_string());
+
+        let body = serde_json::to_value(CanonicalRepresentationResponse {
+            representation: detail,
+        })
+        .expect("serialize representation response");
+        let representation = body
+            .get("representation")
+            .and_then(serde_json::Value::as_object)
+            .expect("representation object");
+        assert_eq!(
+            representation
+                .get("representation_kind")
+                .and_then(serde_json::Value::as_str),
+            Some("title")
+        );
+        assert!(!representation.contains_key("tier_length"));
+        assert!(!representation.contains_key("tier_complexity"));
+        assert!(!representation.contains_key("vocabulary_version_id"));
     }
 }

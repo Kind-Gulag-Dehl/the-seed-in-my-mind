@@ -44,7 +44,7 @@ keywords:
 
 ### 0. Purpose and Scope [anchor: 0_purpose_and_scope]
 
-This document defines the **authoritative, canonical rules** for encoding data into bytes and computing cryptographic commitments within the system.
+Before genesis, this document defines the ratified canonical rules for encoding data into bytes and computing cryptographic commitments within the system. Genesis commits the applicable encoding profile into graph-native protocol and rulebook authority. After genesis, the canonical event log and replay-derived active commitment are authoritative, and this document is a human-readable conformance projection.
 
 Its purpose is to ensure that:
 
@@ -52,7 +52,7 @@ Its purpose is to ensure that:
 * All cryptographic hashes, Merkle roots, and commitments are **deterministic, comparable, and verifiable** across nodes, offline partitions, and archival snapshots.
 * Canonical facts are cleanly separated from derived views, indexes, caches, or local representations.
 
-This document is **normative**. Where conflicts arise, this specification takes precedence over informal descriptions, implementation details, or derived artifacts.
+Before genesis this document is **normative**. After genesis its generated projection describes the encoding commitment active at the identified canonical height. Where conflicts arise, the active graph-native commitment takes precedence over informal descriptions, implementation details, or derived artifacts.
 
 This document defines:
 
@@ -256,6 +256,29 @@ Rules:
 Payload hashes represent **human-readable content**, not derived interpretations.
 
 For representations where `payload_embedded = true`, the embedded bytes MUST match the canonicalized payload bytes exactly.
+
+#### 3.4 Canonical authored-event payload binding [anchor: canonical_authored_event_payload_binding]
+
+Canonical authored-event payloads MUST use the exact deterministic payload encoding
+selected by the applicable Appendix A schema and active versioned profile. A schema may
+select the fully specified canonical JSON encoding used by the current Profile-v0
+authored-candidate surface or a fully specified binary encoding. Implementations MUST
+NOT translate every payload through JSON when the governing schema selects binary
+encoding, and MUST NOT translate a JSON-bound payload through an alternate encoding.
+The exact resulting payload bytes are hashed as the event `payload_hash` used by the
+applicable authored-candidate signature profile.
+
+For `representation_create`, every current-profile payload schema includes
+`representation_kind` and `author_identity_id`. A title representation omits
+`tier_length`, `tier_complexity`, and `vocabulary_version_id`; a description
+representation includes both tier fields and includes `vocabulary_version_id` exactly
+when `tier_complexity = canonical`. For
+`ordering_create` and `ordering_fork`, every applicable payload schema includes
+`subject_idea_id` and the aligned `item_roles` list when the profile is standardized.
+Presence, absence, identifier values, and list order are all committed:
+changing or omitting any one of these fields MUST change the canonical payload bytes,
+payload hash, and ordinary authorship signature preimage. Encoders and validators MUST
+NOT insert defaults or infer omitted fields before hashing.
 
 ### 4. Structured Object Encoding [anchor: 4_structured_object_encoding]
 
@@ -553,14 +576,16 @@ Payload roots are defined per payload tier.
 For Tier 0 (title and sentence payloads), the Tier 0 payload root is computed as a Merkle root over leaf entries defined as:
 
 ```
-leaf_bytes = u8(object_kind) || encode_id(object_id) || u8(tier_enum) || hash32(payload_hash)
+leaf_bytes = u8(object_kind) || encode_id(object_id) || u8(payload_kind) || hash32(payload_hash)
 ```
 
 Rules:
 
 * `object_kind` is `0` for `idea` and `1` for `ordering`.
 * `encode_id(object_id)` MUST follow the identifier encoding defined in §2.2.
-* `tier_enum` is `0` for `title` and `1` for `sentence`.
+* `payload_kind` is `0` for the title representation payload and `1` for the selected
+  Tier 0 sentence-description payload. These codes classify payload-root leaves; `title`
+  is not a description length tier.
 * `payload_hash` MUST be the hash of the canonicalized payload bytes (§3).
 * Leaves MUST be sorted by raw bytewise comparison of `leaf_bytes` prior to Merkle construction.
 * Merkle construction MUST follow §6.
@@ -631,8 +656,10 @@ rulebook_reference =
 
 `capacity_period_id` identifies the rulebook/cycle-defined capacity period. Its
 existence and applicability are replay questions; its canonical type is an `id`.
-`rulebook_reference` identifies the rulebook object and exact version/hash, not a local
-configuration label.
+`rulebook_reference` identifies the ordinary canonical rulebook idea and its exact
+version/hash commitment, not a separate Rule object or a local configuration label.
+`rulebook_id` is therefore the referenced idea identifier. This clarification does not
+change the encoded bytes.
 
 The reduced admission-authorization commitment is exactly:
 
@@ -1063,7 +1090,7 @@ This appendix illustrates Merkle tree construction.
 Leaf bytes:
 
 ```
-u8(object_kind) || encode_id(object_id) || u8(tier_enum) || hash32(payload_hash)
+u8(object_kind) || encode_id(object_id) || u8(payload_kind) || hash32(payload_hash)
 ```
 
 Leaf hash:

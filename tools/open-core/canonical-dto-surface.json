@@ -8,6 +8,8 @@
     { "name": "CanonicalOrderingDetail" },
     { "name": "CanonicalOrderingResponse" },
     { "name": "CanonicalOrderingsResponse" },
+    { "name": "CanonicalRepresentationDetail" },
+    { "name": "CanonicalRepresentationResponse" },
     { "name": "IdeaSummary" },
     { "name": "ConnectionSummary" },
     { "name": "IdeaDetail", "allow_rust_only": ["derived_universal_axis_ranks"] },

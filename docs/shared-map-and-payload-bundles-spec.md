@@ -112,7 +112,7 @@ Near-universal distribution. Small enough to fit on phones and low-bandwidth dev
 **Required contents**
 
 * A Snapshot Format v0 full snapshot at block height H.
-* Title tier text for all ideas and orderings present in the snapshot's state.
+* Title-representation text for all ideas and orderings present in the snapshot's state.
 * Sentence-tier description for all ideas and orderings present in the snapshot's state.
 * Optional minimal UI assets and local search index (non-canonical).
 
@@ -260,7 +260,7 @@ shared_map_commitment(H) =
 Where:
 
 * `state_root_hash(H)` is the canonical facts commitment.
-* `pocket_map_payload_root(H)` is a Merkle root over Tier 0 payload leaf bytes `(object_kind, object_id, tier_enum, payload_hash)` at H, where `object_kind` is `idea` or `ordering`, per the Canonical Encoding and Hashing Specification (v0).
+* `pocket_map_payload_root(H)` is a Merkle root over Tier 0 payload leaf bytes `(object_kind, object_id, payload_kind, payload_hash)` at H, where `object_kind` is `idea` or `ordering` and `payload_kind` distinguishes the title representation from the selected sentence description, per the Canonical Encoding and Hashing Specification (v0).
 
 title_sentence_payload_root(H) equals pocket_map_payload_root(H) and MUST be identical to the Snapshot Format v0 header field title_sentence_payload_root at the same block height H.
 
@@ -282,7 +282,7 @@ Higher tiers extend this, but Tier 0 defines the baseline shared reality.
 
 To prevent “state without meaning,” snapshots MUST embed:
 
-* title tier text for each idea and ordering in snapshot state,
+* title-representation text for each idea and ordering in snapshot state,
 * sentence-tier description for each idea and ordering in snapshot state.
 
 These embedded bytes are:
@@ -388,5 +388,4 @@ the system ensures that:
 * and carry that knowledge forward even when infrastructure fails.
 
 This completes the bridge between **proof of reasoning** and **shared human meaning**.
-
 

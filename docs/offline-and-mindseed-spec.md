@@ -55,13 +55,17 @@ This document specifies how individuals and groups may:
 - preserve reasoning structures under censorship or disconnection,
 - and later publish those records for deterministic ingestion into the canonical public universe.
 
-Offline operation is treated as **delayed publication**, not as a separate mode of reasoning.  
-All offline activity uses the same primitives, lifecycle stages, and constraints defined in Protocol v5.
+Offline operation has two distinct lanes:
+
+- a user-controlled private Mindseed journal for drafting and planning in idea-compatible form; and
+- an append-only signed candidate stream for exact material already approved for possible canonical publication.
+
+Only the second lane is treated as **delayed publication** and uses canonical event schemas, lifecycle constraints, and replay rules. The private journal is outside protocol conformance and canonical replay.
 
 This specification further defines **Mindseeds / SeedPackages** as portable publication artifacts that allow reasoning to continue offline and later reintegrate without semantic divergence, forked meaning, or hidden authority.
 
 This document does not define new protocol objects, meanings, or judgments.  
-Protocol v5 remains the sole source of truth for idea semantics, challenge mechanics, importance logic, governance, safety, and token behavior.
+Before genesis, Protocol v5 and the ratified companion specifications are the normative source. After genesis, the canonical event log and replay-derived active graph-native rulebook commitments are authoritative. This document is then a human-readable projection and editing it does not amend protocol behavior.
 
 ---
 
@@ -222,11 +226,12 @@ Offline systems MUST preserve this invariant exactly.
 
 ### 2.1 offline workspace [anchor: offline_workspace]
 
-An **offline workspace** is a local execution environment in which one or more humans create, evaluate, and record Protocol v5 events without network connectivity.
+An **offline workspace** is a local execution environment in which one or more humans may keep private idea-compatible journal records and may separately author exact Protocol v5 event candidates without network connectivity.
 
 An offline workspace MUST have the following properties:
 
-- an **append-only local event log** containing Protocol v5 events intended for later canonical publication,
+- a user-controlled **private Mindseed journal**, when private drafting is supported,
+- a separate **append-only local publication log** containing exact signed Protocol v5 event candidates already approved for possible later canonical publication,
 - **deterministic local replay** using the same semantics and ordering rules as canonical replay,
 - **provisional local cycle simulation** for planning and pacing, using the same cycle rules defined in Protocol v5 §3 where local inputs permit,
 - **local rate-limit and mana enforcement** using the same per-identity caps and rules defined in Protocol v5 §3,
@@ -234,9 +239,9 @@ An offline workspace MUST have the following properties:
 - the ability to be **shared or transferred** physically or digitally among trusted participants (e.g., files, removable media, direct device transfer).
 - the ability to generate and exchange custody manifests and state witness artifacts during P2P meetings (as defined by the verification specification).
 
-An offline workspace represents a **potential future publication stream**, not a fork of the canonical universe.
+The local publication log represents a **potential future publication stream**, not a fork of the canonical universe. The private journal is not a publication stream.
 
-Local state derived within an offline workspace is non-authoritative and remains inert until its events are published and ingested by canonical nodes.
+All local state is non-authoritative. Private journal state remains outside canon; signed candidates remain inert until published and ingested by canonical nodes.
 
 Offline operation MUST NOT be used to obtain additional canonical throughput. Offline execution speed MUST NOT create additional valid canonical actions beyond what the same identities could have produced under the Protocol v5 cycle and rate-limit rules.
 
@@ -291,11 +296,11 @@ A group workspace MUST NOT allow participants to:
 
 ## 3. event log and replay (offline) [anchor: 3_event_log_and_replay_offline]
 
-### 3.1 local event log [anchor: local_event_log]
+### 3.1 local publication log [anchor: local_event_log]
 
-Offline systems MUST maintain an append-only **local event log** composed exclusively of valid Protocol v5 event types that are intended for later canonical publication.
+Offline systems that support delayed publication MUST maintain an append-only **local publication log** composed exclusively of exact signed Protocol v5 event candidates that a human has approved for possible later canonical publication.
 
-Each event in the local event log MUST include:
+Each event in the local publication log MUST include:
 
 - a `client_event_id` that uniquely identifies the event within the local workspace,
 - a `speaker_identity`, which MAY be:
@@ -307,13 +312,13 @@ Each event in the local event log MUST include:
 
 Local timestamps are **non-authoritative** and MUST NOT be treated as canonical ordering signals, Tempo truth-certainty inputs, or Tempo structural-support inputs during reintegration. They have no canonical effect unless separately represented through valid canonical ideas/connections or through a profile-admitted passive-evidence field that is canonically committed and identically replayable.
 
-Offline systems MAY store additional non-canonical artifacts (including drafts, annotations, prompts, UI state, or speculative actions) for user-experience purposes.
+Offline systems MAY separately store additional non-canonical artifacts (including idea-compatible private records, connections, authored Orderings, ranks, drafts, annotations, prompts, UI state, or speculative actions) in a private Mindseed journal.
 
 Such non-canonical artifacts:
-- MUST be stored outside the protocol event log,
+- MUST be stored outside the local publication log,
 - MUST NOT be interpreted as protocol events,
 - MUST NOT appear in snapshots or SeedPackages as canonical objects,
-- MUST NOT be published unless explicitly emitted as Protocol v5 events.
+- MUST NOT be published merely by changing visibility or copying private identifiers.
 
 Offline systems MAY store non-authoritative canonical anchor references for verification and portability, including:
 - a basis snapshot identifier keyed to block height,
@@ -325,7 +330,13 @@ All such references are advisory metadata only:
 - they MUST NOT introduce new semantics,
 - they MUST NOT affect event meaning, ordering, validity, eligibility, or governance activation.
 
-Offline systems MUST NOT discard, rewrite, or retroactively modify events once recorded in the local event log.
+Offline systems MUST NOT discard, rewrite, or retroactively modify signed candidates once recorded in the local publication log.
+
+### 3.1A private Mindseed journal [anchor: private_mindseed_journal]
+
+The private Mindseed journal is user-controlled local state. It MAY use the same idea, description, connection, Ordering, importance, claim, actionable-idea, action, and evidence shapes used by the wider system so that private planning does not require a second mental model. These records are not canonical Idea objects or events.
+
+The owner MAY edit, delete, prune, compact, reorder, or replace private journal records and MAY choose whether to retain local history. Such operations have no canonical meaning and are not subject to conformance, canonical rate limits, deterministic public replay, or append-only retention. A product MAY offer local audit history, but that history remains private product state and is not a protocol authority.
 
 
 ### 3.2 deterministic local replay [anchor: deterministic_local_replay]
@@ -533,15 +544,15 @@ Offline systems MUST NOT require identity disclosure as a condition of authorshi
 
 ### 5.1 ideas [anchor: ideas]
 
-All ideas and orderings in Protocol v5 are canonical public objects by default.
+All Idea and Ordering objects in Protocol v5 are canonical public objects.
 
-Offline systems MAY create ideas locally and defer their publication, but:
+Offline systems MAY create idea-compatible private records locally and prepare separate publication candidates, but:
 
-- an idea becomes a protocol object only when expressed as a Protocol v5 event intended for publication,
-- unpublished ideas remain local and non-canonical,
-- private drafts are not ideas and are not protocol objects.
+- a canonical Idea becomes a protocol object only through accepted canonical publication,
+- unpublished private records remain local and non-canonical,
+- private records MAY use the standard idea format but are not protocol Idea objects.
 
-A draft becomes an idea **only** when it is emitted as a Protocol v5 event, even if that event is stored offline and published later.
+A private record becomes the source for a distinct canonical Idea **only** when a human approves an exact publication candidate and that candidate is later accepted into canon. Publication assigns new canonical identifiers; it does not expose or promote the private object in place.
 
 Offline systems MUST clearly distinguish drafts from protocol events.
 
@@ -562,25 +573,23 @@ Personal-scope judgments:
 
 Private importance positions are not canonical events, and sharing a view does not convert owner-selected positions into challenge verdicts. A person may separately publish ordinary ideas, connections, or arguments through valid canonical paths.
 
-Personal scope MUST support the following visibility modes:
+Personal scope MUST support the following access modes:
 
 1. **private personal map (default)**  
    Visible only to the owning identity.  
    No other identity may view, interact with, or mutate the map.
 
-2. **public-readable personal map**
-   An owner-selected projection of the map is publicly viewable.
-   The owner continues to modify private rank state directly. Public visibility does not create a challenge, vote, verdict, or canonical rank list.
-
-3. **shared permissioned personal map (optional)**
+2. **shared permissioned personal map (optional)**
    The owner MAY grant selected readers access to a projection or collaboration surface under private-product policy. Such collaboration remains noncanonical unless participants separately use an explicit canonical publication path.
 
-In all cases:
+Persistent public human-authored graph content MUST use the canonical publication path. A node MUST NOT host a publicly readable, noncanonical human map as a parallel public graph. Direct, permissioned sharing among selected participants MAY remain private and noncanonical.
+
+In both access modes:
 
 - private ideas remain private according to owner permissions,
 - referenced canonical ideas remain publicly challengeable in their canonical universal or relative contexts,
 - private rank positions cannot alter universal, public-relative, or tribe-relative state,
-- sharing does not silently publish private rank data as canonical history.
+- permissioned sharing does not silently publish private rank data as canonical history.
 
 Offline operation MUST preserve these distinctions exactly.
 
@@ -633,14 +642,11 @@ Challenge lifecycle progression (argument windows, voting windows, and finalizat
 
 In Universal Partition Mode (§7C), offline groups MAY proceed with universal-scope challenge activity under degraded eligibility and quorum constraints; any locally-finalized outcomes remain provisional until publication, and canonical ingestion MAY mark some events non-effective if eligibility, selection, or pacing constraints cannot be validated against the receiving canonical node’s authoritative state.
 
-Visibility defaults upon publication are as follows:
+Visibility after canonical publication is as follows:
 
 - **universal scope:** publicly visible
 - **tribe scope:** publicly visible (with voting restricted to eligible tribe members)
-- **personal scope:** visibility determined by the personal map’s visibility mode:
-  - private,
-  - public-readable,
-  - optional fully public.
+- **personal scope:** private personal judgments are not canonical publications; any separately published underlying ideas, connections, or arguments are ordinary public canonical objects.
 
 Personal-scope mutation rights:
 
@@ -1120,14 +1126,18 @@ Derived exclusions MUST be distinguishable from safety redactions in user-facing
 
 ### 9.1 publication model [anchor: publication_model]
 
-Reintegration is defined as **publication** of a selected subset of an offline event log to the canonical network.
+Reintegration is defined as **publication** of selected exact candidates from the local publication log to the canonical network.
 
 Reintegration is NOT consensus merging.
 There is no fork resolution, averaging, reconciliation of state, or negotiation of outcomes.
 
 Offline partitions MAY independently publish overlapping or conflicting event histories. Canonical nodes MUST ingest each publication deterministically; conflicts are preserved as explicit competing claims and MUST be resolved through ordinary challenge mechanisms rather than by any reintegration-time merge negotiation.
 
-Publication consists solely of submitting signed authored Protocol v5 event candidates for canonical evaluation under the currently active rulebooks.
+Publication consists solely of submitting signed authored Protocol v5 event candidates for canonical evaluation under the currently active rulebooks. A publication candidate derived from private work uses new canonical identifiers and contains only the content and provenance explicitly approved for publication. The private identifier, private journal history, prompts, rejected drafts, and local edit history remain undisclosed unless the human separately includes them in the approved candidate.
+
+Publication selection, queue order, dependency grouping, and retry policy are private product state, not canonical objects. Products MAY group dependent candidates so that submission waits until enough canonical write capacity has accrued, but canonical validation and rate limits still apply to each event atomically. A group does not create an atomic multi-event protocol transaction.
+
+After a human has reviewed, approved, and signed the exact immutable candidate bytes, a product MAY relay those same bytes automatically when canonical capacity becomes available. The relay MUST NOT create, edit, substitute, reorder within a signed dependency constraint, or reapprove content on the human’s behalf. Any changed bytes require new explicit human approval and signature.
 
 Offline-produced events may therefore exist in three distinct states during reintegration:
 
@@ -1160,10 +1170,10 @@ Publication packs:
 
 Canonical nodes MUST verify publication packs exclusively through deterministic replay and MUST NOT trust any included derived state.
 
-Draft artifacts:
+Private journal artifacts:
 - MUST NOT be included in any publication pack,
 - MUST NOT appear as protocol objects,
-- MAY only be included if they have been explicitly emitted as Protocol v5 events intended for publication.
+- MAY serve only as sources for separately approved candidates with new canonical identifiers.
 
 Offline systems MAY also produce **cycle export packs**, which are distinct from publication packs.
 
@@ -1446,22 +1456,22 @@ Loss of export packs MUST NOT compromise canonical recoverability or survivabili
 
 ### 11.2 deferred publication [anchor: deferred_publication]
 
-Users MAY delay publication of offline-authored events indefinitely.
+Users MAY delay publication of signed offline-authored candidates indefinitely.
 
-Deferred publication:
+For the append-only publication log, deferred publication:
 
 - does not invalidate events,
-- does not weaken their auditable history,
+- does not weaken the auditability of the signed candidate bytes,
 - does not alter their semantics.
 
-When publication eventually occurs, the published record MUST be:
+When publication eventually occurs, the published candidate stream MUST be:
 
-- complete, including all events intended for publication,
-- auditable, with preserved ordering, authorship, and metadata,
+- complete for the selected signed candidates and their declared canonical dependencies,
+- auditable, with preserved candidate bytes, signatures, and approved dependency order,
 - replayable under canonical deterministic rules,
 - publicly legible, subject only to canonical safety and visibility lenses.
 
-The protocol MUST allow a complete epistemic history to survive suppression locally and re-enter the public canonical universe intact when conditions permit.
+Private journal history need not be published or retained. The protocol MUST allow approved signed candidate history to survive suppression locally and enter the public canonical universe intact when conditions permit.
 
 
 
@@ -1481,8 +1491,8 @@ This specification explicitly does NOT attempt to provide or support the followi
 - **hidden rulebook activation**  
   Rulebooks cannot activate offline, implicitly, or without appearing in the canonical event log and completing the full governance lifecycle.
 
-- **event deletion or retroactive modification**  
-  Offline systems must preserve authored events. Events may be marked non-effective, but MUST NOT be deleted, rewritten, or retroactively altered.
+- **signed-candidate deletion or retroactive modification**
+  Offline systems must preserve candidates after they enter the append-only local publication log. Candidates may be marked non-effective, but MUST NOT be deleted, rewritten, or retroactively altered. This exclusion does not apply to user-controlled private Mindseed journal records.
 
 Any behavior that would introduce these properties is out of scope and non-conformant.
 

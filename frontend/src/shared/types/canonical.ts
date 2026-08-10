@@ -8,10 +8,24 @@ export interface AuthorInfo {
 export type RelativeImportanceDirection = "incoming" | "outgoing" | "both";
 export type OrderingProfile = "vine" | "evidence_rail" | "action_rail";
 export type VineType = "pathway_vine" | "narrative_vine";
+export type OrderingItemRole =
+  | "potential_evidence"
+  | "actual_evidence"
+  | "potential_action"
+  | "proposed_action";
+export type RepresentationTargetKind = "idea" | "ordering";
+export type RepresentationKind = "title" | "description";
+export type RepresentationTierLength = "sentence" | "paragraph" | "full";
+export type RepresentationTierComplexity =
+  | "fundamental"
+  | "standard"
+  | "advanced"
+  | "canonical";
 
 export interface OrderingItem {
   idx: string;
   idea_id: string;
+  item_role: OrderingItemRole | null;
   via_connection_id?: string | null;
 }
 
@@ -26,12 +40,14 @@ export interface CanonicalOrderingSummary {
   ordering_id: string;
   ordering_profile: OrderingProfile;
   vine_type?: VineType | null;
+  subject_idea_id: string | null;
 }
 
 export interface CanonicalOrderingDetail {
   ordering_id: string;
   ordering_profile: OrderingProfile;
   vine_type?: VineType | null;
+  subject_idea_id: string | null;
   author_identity_id: string;
   canonical_representations: CanonicalOrderingRepresentations;
   items: OrderingItem[];
@@ -43,6 +59,25 @@ export interface CanonicalOrderingResponse {
 
 export interface CanonicalOrderingsResponse {
   orderings: CanonicalOrderingSummary[];
+}
+
+export interface CanonicalRepresentationDetail {
+  representation_id: string;
+  target_kind: RepresentationTargetKind;
+  target_object_id: string;
+  representation_kind: RepresentationKind;
+  tier_length?: RepresentationTierLength;
+  tier_complexity?: RepresentationTierComplexity;
+  vocabulary_version_id?: string;
+  payload_hash: string;
+  author_identity_id: string;
+  language_locale: string | null;
+  provenance: string | null;
+  created_event_id: string;
+}
+
+export interface CanonicalRepresentationResponse {
+  representation: CanonicalRepresentationDetail;
 }
 
 export interface IdeaSummary {

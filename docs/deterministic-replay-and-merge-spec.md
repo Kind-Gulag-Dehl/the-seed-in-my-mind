@@ -50,9 +50,9 @@ keywords:
 
 This specification defines the **deterministic replay procedures** required so that any two conformant implementations, given the same canonical event log and rulebook set, reconstruct **identical canonical state** at every height.
 
-It further defines **deterministic merge and publication procedures** for offline logs (including Mindseed logs and Seed/Publication Packages) such that delayed or disconnected activity can be reintegrated into the canonical universe **without ambiguity, reordering discretion, or semantic drift**.
+It further defines **deterministic merge and publication procedures** for offline publication logs and Seed/Publication Packages such that delayed or disconnected activity can be reintegrated into the canonical universe **without ambiguity, reordering discretion, or semantic drift**. Mutable private Mindseed journals are outside this replay boundary.
 
-The intent of this document is to make all algorithmic assumptions implicit in Protocol v5 explicit, testable, and interoperable, while preserving Protocol v5 as the sole source of semantic authority.
+The intent of this document is to make all algorithmic assumptions implicit in Protocol v5 explicit, testable, and interoperable. Before genesis, Protocol v5 and its ratified subordinate specifications are the source of semantic authority. After genesis, the canonical event log and replay-derived active graph-native rulebook commitments are authoritative, and this document is their conformance projection.
 
 ### 0.2 Scope [anchor: scope]
 
@@ -484,19 +484,20 @@ Replay MUST apply governance rule changes using canonical scheduling inputs only
 - `decision_event` confirmed at cycle close,
 - `decision_cycle_index` from canonical log order,
 - `change_class` from verdict metadata,
-- `delay_policy_version` active at `decision_cycle_index`.
+- `delay_policy_version` active at `decision_cycle_index`,
+- a valid canonical implementation-completion claim and the evidence status required by the active rulebook.
 
 Nodes MUST deterministically compute:
 - `delay_cycles = delay_policy(change_class)` under `delay_policy_version`,
 - `activation_cycle_index = decision_cycle_index + delay_cycles`.
 
-Rule changes become active at the start of `activation_cycle_index` (inclusive). Snapshot boundaries are verification/checkpoint artifacts and MUST NOT define governance activation boundaries. This bridge is authoritative for replay/conformance and aligns with Protocol v5 + Governance specs.
+Rule changes become active at the start of `activation_cycle_index` (inclusive) only when the required completion claim remains valid at that boundary. A successful governance verdict without qualifying implementation-completion evidence MUST NOT activate a rule change. Snapshot boundaries are verification/checkpoint artifacts and MUST NOT define governance activation boundaries. This bridge is authoritative for replay/conformance and aligns with Protocol v5 + Governance specs.
 
 After invariant validation, events MUST be validated against the **active rulebook set**.
 
 Rulebook validation follows these rules:
 
-- The applicable rulebook set is the set that is **active at the replay height immediately following the most recent snapshot boundary**.
+- The applicable rulebook set is derived from ordinary rulebook ideas, governance verdicts, qualifying implementation-completion evidence, and cycle-boundary activation history at the event’s replay position.
 - Rulebook supersession and activation MUST follow the governance rules defined in Protocol v5.
 - Events that depend on permissions, thresholds, or procedures defined by rulebooks MUST satisfy those conditions exactly.
 Replay height corresponds to block height as defined in snapshot-format-v0.md. State reconstruction at snapshot boundaries uses the specified `state_root_hash`, `title_sentence_payload_root` (equal to `pocket_map_payload_root`), and derived `shared_map_commitment`.
@@ -617,18 +618,26 @@ Ordering/vine events are applied as deterministic stored-state transitions:
 
 - `ordering_create`
   - Adds a new Ordering object with ordered `item_idea_ids`, explicit `ordering_profile`, and profile-valid metadata.
+  - A Vine has no subject or standardized roles. An Evidence Rail references an already-existing `truth_claim` subject and has one aligned `potential_evidence`/`actual_evidence` role per item. An Action Rail references an already-existing `actionable_idea` subject and is one role-homogeneous `potential_action` or `proposed_action` lane.
 
 - `ordering_fork`
   - Adds a new Ordering object that references `base_ordering_id`, repeats the base Ordering's `ordering_profile`, and carries a full replacement ordered item list.
-  - A fork whose profile differs from its base is invalid.
+  - A fork whose profile or subject differs from its base is invalid. A retained item whose role differs from its base role is invalid, and an Action Rail fork whose lane differs from its base lane is invalid.
   - Existing Orderings are not edited in place (fork-only model).
 
 - `representation_create`
   - Creates candidate/competing representation objects for both ideas and orderings, without pointer selection changes.
+  - Replay requires the payload and materialized row to preserve `author_identity_id`; the author MUST equal the event speaker and MUST already exist at the event position.
+  - `vocabulary_version_id` is required exactly for `tier_complexity = canonical`, forbidden otherwise, and MUST reference an already-existing ordinary idea. Replay never substitutes an active, latest, title-derived, or text-derived vocabulary.
 
 `representation_create` is the only live representation-creation event for Ordering targets. No Ordering-specific compatibility alias is valid.
 
 Deterministic event ordering is sufficient to merge concurrent Ordering activity. No additional Ordering-specific merge heuristic is permitted.
+
+Subjects, roles, authors, and vocabulary references are canonical facts. They are
+included in replay state and snapshot commitments, and divergence in any one produces a
+different state commitment. Selected/completed action state remains derived from
+challenge and action events; replay MUST NOT infer it from Action Rail membership.
 
 ### 5.5 Overlay event application semantics [anchor: overlay_event_application_semantics]
 
@@ -967,10 +976,10 @@ All offline-produced canonical events are subject to the same validation, orderi
 
 ### 9.1 Offline log structure [anchor: offline_log_structure]
 
-Offline activity is recorded as:
+Offline publication activity is recorded as:
 
 - **append-only local event logs**
-  - events follow the same schema, signing, and authorship rules as online events
+  - exact signed candidates follow the same schema, signing, and authorship rules as online events
 
 - **deterministic local replay**
   - local state may be replayed deterministically for user feedback and drafting
@@ -978,6 +987,8 @@ Offline activity is recorded as:
 - **local snapshots (non-canonical accelerators)**
   - local snapshots MAY exist for performance
   - local snapshots are non-authoritative and MUST NOT be treated as canonical
+
+A user-controlled private Mindseed journal is separate from these replayable publication logs. Its idea-compatible records MAY be edited, deleted, pruned, or compacted under private-product policy and are outside deterministic protocol replay until a human separately approves and signs new canonical publication candidates.
 
 Offline logs MAY contain additional non-canonical material (drafts, annotations, private structures) that is ignored during canonical reintegration.
 
@@ -1324,7 +1335,7 @@ These vectors ensure that breach detection and lineage continuity are implemente
 
 ## B. Basic Offline Publication Pack [anchor: b_basic_offline_publication_pack]
 
-- Local events: Two idea_create (personal scope)
+- Local events: Two signed ordinary idea_create candidates
 - Pack: Signed bundle
 - Merge: Publication order ingestion
 - Expected post-merge roots

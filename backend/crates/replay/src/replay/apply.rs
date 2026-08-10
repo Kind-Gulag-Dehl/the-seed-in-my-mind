@@ -49,17 +49,23 @@ pub(super) fn apply_events_with_verification(
 ) -> Result<ApplyResult, ReplayError> {
     let mut ideas = Vec::new();
     let mut orderings = Vec::new();
+    let mut replay_representations = Vec::new();
     let mut connections = Vec::new();
     let mut payloads = Vec::new();
     let mut seen_ideas = BTreeSet::new();
     let mut seen_orderings = BTreeSet::new();
     let mut seen_connections = BTreeSet::new();
     let mut seen_representations = BTreeSet::new();
+    let mut seen_identities = BTreeSet::new();
+    let mut idea_types: HashMap<Uuid, String> = HashMap::new();
     let mut idea_pointers: HashMap<Uuid, PointerSlots> = HashMap::new();
     let mut ordering_pointers: HashMap<Uuid, PointerSlots> = HashMap::new();
     let mut representations: HashMap<Uuid, ReplayRepresentation> = HashMap::new();
     let mut ordering_profiles: HashMap<Uuid, OrderingProfile> = HashMap::new();
     let mut ordering_vine_type: HashMap<Uuid, Option<String>> = HashMap::new();
+    let mut ordering_subjects: HashMap<Uuid, Option<Uuid>> = HashMap::new();
+    let mut ordering_item_roles: HashMap<Uuid, HashMap<Uuid, Option<i16>>> = HashMap::new();
+    let mut ordering_action_lanes: HashMap<Uuid, i16> = HashMap::new();
     let mut tempo_idx = 0usize;
     let mut tempo_state = TempoState::default();
     let mut cycle_index: i64 = 0;
@@ -316,7 +322,17 @@ pub(super) fn apply_events_with_verification(
         }
 
         match event.kind.as_str() {
-            "genesis" | "noop" | "identity_create" | "snapshot_commit" => {}
+            "genesis" | "noop" | "snapshot_commit" => {}
+            "identity_create" => {
+                let payload = payload_object(&row.payload_json)?;
+                let identity_id = parse_uuid_payload(payload, "identity_id")?;
+                if !seen_identities.insert(identity_id) {
+                    return Err(ReplayError::new(
+                        "duplicate_identity",
+                        format!("duplicate identity_id {}", identity_id),
+                    ));
+                }
+            }
             "blocked_submission" => {
                 let payload = payload_object(&row.payload_json)?;
                 let speaker_identity_id = row.speaker_identity_id.ok_or_else(|| {
@@ -978,6 +994,8 @@ pub(super) fn apply_events_with_verification(
                     ));
                 }
 
+                idea_types.insert(idea.idea_id, idea.idea_type.clone());
+
                 ideas.push(ReplayIdeaRow {
                     idea_id: idea.idea_id,
                     idea_type: idea.idea_type.clone(),
@@ -1000,7 +1018,10 @@ pub(super) fn apply_events_with_verification(
                 {
                     return Err(ReplayError::new(
                         "ordering_event_mismatch",
-                        format!("ordering row ordering mismatch for event_id={}", row.event_id),
+                        format!(
+                            "ordering row ordering mismatch for event_id={}",
+                            row.event_id
+                        ),
                     ));
                 }
 
@@ -1031,11 +1052,62 @@ pub(super) fn apply_events_with_verification(
                     ));
                 }
 
+                let subject_idea_id = match ordering_profile {
+                    OrderingProfile::Vine => {
+                        if payload.contains_key("subject_idea_id") {
+                            return Err(ReplayError::new(
+                                "invalid_field",
+                                "Vine must not carry subject_idea_id",
+                            ));
+                        }
+                        None
+                    }
+                    OrderingProfile::EvidenceRail | OrderingProfile::ActionRail => {
+                        Some(parse_uuid_payload(payload, "subject_idea_id")?)
+                    }
+                };
+                if ordering.subject_idea_id != subject_idea_id {
+                    return Err(ReplayError::new(
+                        "ordering_event_mismatch",
+                        format!(
+                            "subject_idea_id mismatch for ordering_id={}",
+                            ordering.ordering_id
+                        ),
+                    ));
+                }
+                if let Some(subject_id) = subject_idea_id {
+                    let expected_type = match ordering_profile {
+                        OrderingProfile::EvidenceRail => "truth_claim",
+                        OrderingProfile::ActionRail => "actionable_idea",
+                        OrderingProfile::Vine => unreachable!(),
+                    };
+                    match idea_types.get(&subject_id) {
+                        Some(actual) if actual == expected_type => {}
+                        Some(actual) => {
+                            return Err(ReplayError::new(
+                                "invalid_subject_type",
+                                format!(
+                                    "ordering_id={} requires {} subject, found {}",
+                                    ordering.ordering_id, expected_type, actual
+                                ),
+                            ))
+                        }
+                        None => {
+                            return Err(ReplayError::new(
+                                "missing_subject",
+                                format!(
+                                    "ordering_id={} subject_idea_id={} must exist before use",
+                                    ordering.ordering_id, subject_id
+                                ),
+                            ))
+                        }
+                    }
+                }
+
                 let row_vine_type = parse_vine_type(ordering.vine_type)?;
                 let mut vine_type = parse_vine_type_payload(
                     payload,
-                    event.kind == "ordering_create"
-                        && ordering_profile == OrderingProfile::Vine,
+                    event.kind == "ordering_create" && ordering_profile == OrderingProfile::Vine,
                 )?;
                 if event.kind == "ordering_fork" {
                     let base_ordering_id = ordering.base_ordering_id.ok_or_else(|| {
@@ -1047,15 +1119,16 @@ pub(super) fn apply_events_with_verification(
                             ),
                         )
                     })?;
-                    let base_profile = ordering_profiles.get(&base_ordering_id).ok_or_else(|| {
-                        ReplayError::new(
-                            "invalid_field",
-                            format!(
-                                "ordering_fork base_ordering_id not found: {}",
-                                base_ordering_id
-                            ),
-                        )
-                    })?;
+                    let base_profile =
+                        ordering_profiles.get(&base_ordering_id).ok_or_else(|| {
+                            ReplayError::new(
+                                "invalid_field",
+                                format!(
+                                    "ordering_fork base_ordering_id not found: {}",
+                                    base_ordering_id
+                                ),
+                            )
+                        })?;
                     if *base_profile != ordering_profile {
                         return Err(ReplayError::new(
                             "ordering_event_mismatch",
@@ -1065,11 +1138,27 @@ pub(super) fn apply_events_with_verification(
                             ),
                         ));
                     }
+                    let base_subject =
+                        ordering_subjects.get(&base_ordering_id).ok_or_else(|| {
+                            ReplayError::new(
+                                "invalid_field",
+                                format!(
+                                    "ordering_fork base subject not found: {}",
+                                    base_ordering_id
+                                ),
+                            )
+                        })?;
+                    if *base_subject != subject_idea_id {
+                        return Err(ReplayError::new(
+                            "ordering_event_mismatch",
+                            format!(
+                                "ordering_fork subject differs from base for ordering_id={}",
+                                ordering.ordering_id
+                            ),
+                        ));
+                    }
                     if vine_type.is_none() && ordering_profile == OrderingProfile::Vine {
-                        vine_type = ordering_vine_type
-                            .get(&base_ordering_id)
-                            .cloned()
-                            .flatten();
+                        vine_type = ordering_vine_type.get(&base_ordering_id).cloned().flatten();
                     }
                 }
                 if vine_type.is_none() {
@@ -1087,7 +1176,10 @@ pub(super) fn apply_events_with_verification(
                 if row_vine_type.is_some() && row_vine_type != vine_type {
                     return Err(ReplayError::new(
                         "ordering_event_mismatch",
-                        format!("vine_type mismatch for ordering_id={}", ordering.ordering_id),
+                        format!(
+                            "vine_type mismatch for ordering_id={}",
+                            ordering.ordering_id
+                        ),
                     ));
                 }
 
@@ -1095,6 +1187,48 @@ pub(super) fn apply_events_with_verification(
                     .get(&ordering.ordering_id)
                     .cloned()
                     .unwrap_or_default();
+                let payload_item_ids = payload
+                    .get("item_idea_ids")
+                    .and_then(Value::as_array)
+                    .ok_or_else(|| {
+                        ReplayError::new("missing_field", "item_idea_ids array required")
+                    })?;
+                if payload_item_ids.len() != item_rows.len() {
+                    return Err(ReplayError::new(
+                        "ordering_event_mismatch",
+                        format!(
+                            "item count mismatch for ordering_id={}",
+                            ordering.ordering_id
+                        ),
+                    ));
+                }
+                let payload_roles = match ordering_profile {
+                    OrderingProfile::Vine => vec![None; item_rows.len()],
+                    OrderingProfile::EvidenceRail | OrderingProfile::ActionRail => {
+                        let values = payload
+                            .get("item_roles")
+                            .and_then(Value::as_array)
+                            .ok_or_else(|| {
+                                ReplayError::new("missing_field", "item_roles array required")
+                            })?;
+                        if values.len() != item_rows.len() {
+                            return Err(ReplayError::new(
+                                "ordering_event_mismatch",
+                                format!(
+                                    "item_roles count mismatch for ordering_id={}",
+                                    ordering.ordering_id
+                                ),
+                            ));
+                        }
+                        values
+                            .iter()
+                            .map(parse_ordering_item_role_value)
+                            .map(|result| result.map(Some))
+                            .collect::<Result<Vec<_>, _>>()?
+                    }
+                };
+                let mut row_roles = HashMap::new();
+                let mut standardized_item_ids = BTreeSet::new();
                 for (expected_idx, item) in item_rows.iter().enumerate() {
                     if item.idx != expected_idx as i32 {
                         return Err(ReplayError::new(
@@ -1105,12 +1239,93 @@ pub(super) fn apply_events_with_verification(
                             ),
                         ));
                     }
+                    let payload_idea_id =
+                        parse_uuid_value(&payload_item_ids[expected_idx], "item_idea_ids")?;
+                    if payload_idea_id != item.idea_id
+                        || payload_roles[expected_idx] != item.item_role
+                    {
+                        return Err(ReplayError::new(
+                            "ordering_event_mismatch",
+                            format!(
+                                "item or role mismatch ordering_id={} idx={}",
+                                ordering.ordering_id, expected_idx
+                            ),
+                        ));
+                    }
+                    if ordering_profile != OrderingProfile::Vine
+                        && !standardized_item_ids.insert(item.idea_id)
+                    {
+                        return Err(ReplayError::new(
+                            "duplicate_ordering_item",
+                            format!(
+                                "standardized ordering_id={} contains duplicate idea_id={}",
+                                ordering.ordering_id, item.idea_id
+                            ),
+                        ));
+                    }
+                    row_roles.insert(item.idea_id, item.item_role);
+                }
+                if ordering_profile == OrderingProfile::ActionRail {
+                    let lane = item_rows
+                        .first()
+                        .and_then(|item| item.item_role)
+                        .ok_or_else(|| {
+                            ReplayError::new(
+                                "invalid_field",
+                                "Action Rail requires at least one role-bearing item",
+                            )
+                        })?;
+                    if !matches!(lane, 2 | 3)
+                        || item_rows.iter().any(|item| item.item_role != Some(lane))
+                    {
+                        return Err(ReplayError::new(
+                            "invalid_action_lane",
+                            format!(
+                                "Action Rail ordering_id={} must use one homogeneous lane",
+                                ordering.ordering_id
+                            ),
+                        ));
+                    }
+                    if let Some(base_id) = ordering.base_ordering_id {
+                        if ordering_action_lanes.get(&base_id) != Some(&lane) {
+                            return Err(ReplayError::new(
+                                "ordering_event_mismatch",
+                                format!(
+                                    "Action Rail fork ordering_id={} changed base lane",
+                                    ordering.ordering_id
+                                ),
+                            ));
+                        }
+                    }
+                    ordering_action_lanes.insert(ordering.ordering_id, lane);
+                }
+                if let Some(base_id) = ordering.base_ordering_id {
+                    let base_roles = ordering_item_roles.get(&base_id).ok_or_else(|| {
+                        ReplayError::new(
+                            "invalid_field",
+                            format!("ordering_fork base items not found: {}", base_id),
+                        )
+                    })?;
+                    for (idea_id, role) in &row_roles {
+                        if let Some(base_role) = base_roles.get(idea_id) {
+                            if base_role != role {
+                                return Err(ReplayError::new(
+                                    "ordering_event_mismatch",
+                                    format!(
+                                        "ordering_fork retained item changed role idea_id={}",
+                                        idea_id
+                                    ),
+                                ));
+                            }
+                        }
+                    }
                 }
                 let items = item_rows
                     .into_iter()
                     .map(|item| ReplayOrderingItemRow {
                         idx: item.idx,
                         idea_id: item.idea_id,
+                        item_role: ordering_item_role_label(item.item_role),
                         via_connection_id: item.via_connection_id,
                     })
                     .collect::<Vec<_>>();
@@ -1123,11 +1338,14 @@ pub(super) fn apply_events_with_verification(
                 }
                 ordering_profiles.insert(ordering.ordering_id, ordering_profile);
                 ordering_vine_type.insert(ordering.ordering_id, vine_type.clone());
+                ordering_subjects.insert(ordering.ordering_id, subject_idea_id);
+                ordering_item_roles.insert(ordering.ordering_id, row_roles);
 
                 orderings.push(ReplayOrderingRow {
                     ordering_id: ordering.ordering_id,
                     ordering_profile: ordering_profile_to_string(ordering_profile).to_string(),
                     vine_type,
+                    subject_idea_id,
                     speaker_identity_id: ordering.speaker_identity_id,
                     created_event_id: ordering.created_event_id,
                     created_block_height: ordering.created_block_height,
@@ -1255,6 +1473,7 @@ pub(super) fn apply_events_with_verification(
 
                 if representation.created_block_height != row.block_height
                     || representation.created_event_index != row.event_index
+                    || representation.created_event_id != row.event_id
                 {
                     return Err(ReplayError::new(
                         "representation_event_mismatch",
@@ -1275,8 +1494,105 @@ pub(super) fn apply_events_with_verification(
                     ));
                 }
 
+                let payload = payload_object(&row.payload_json)?;
                 let target_kind = parse_target_kind(representation.target_kind)?;
                 let tier_enum = parse_tier_enum(representation.tier_enum)?;
+                let tier_complexity = parse_tier_complexity(representation.tier_complexity)?;
+                let (payload_tier, payload_complexity) =
+                    parse_representation_slot_payload(payload)?;
+                if payload_tier != tier_enum || payload_complexity != tier_complexity {
+                    return Err(ReplayError::new(
+                        "representation_event_mismatch",
+                        format!(
+                            "representation slot mismatch for representation_id={}",
+                            representation.representation_id
+                        ),
+                    ));
+                }
+                let payload_author = parse_uuid_payload(payload, "author_identity_id")?;
+                if payload_author != representation.author_identity_id
+                    || row.speaker_identity_id != Some(representation.author_identity_id)
+                {
+                    return Err(ReplayError::new(
+                        "representation_event_mismatch",
+                        format!(
+                            "representation author mismatch for representation_id={}",
+                            representation.representation_id
+                        ),
+                    ));
+                }
+                if !seen_identities.contains(&representation.author_identity_id) {
+                    return Err(ReplayError::new(
+                        "missing_author_identity",
+                        format!(
+                            "representation author must exist before use: {}",
+                            representation.author_identity_id
+                        ),
+                    ));
+                }
+                let payload_vocabulary = parse_optional_uuid(payload, "vocabulary_version_id")?;
+                if payload_vocabulary != representation.vocabulary_version_id {
+                    return Err(ReplayError::new(
+                        "representation_event_mismatch",
+                        format!(
+                            "representation vocabulary mismatch for representation_id={}",
+                            representation.representation_id
+                        ),
+                    ));
+                }
+                match tier_complexity {
+                    Some(TierComplexity::Canonical) => {
+                        let vocabulary_id =
+                            representation.vocabulary_version_id.ok_or_else(|| {
+                                ReplayError::new(
+                                    "missing_field",
+                                    "canonical description requires vocabulary_version_id",
+                                )
+                            })?;
+                        if !seen_ideas.contains(&vocabulary_id) {
+                            return Err(ReplayError::new(
+                                "missing_vocabulary",
+                                format!("vocabulary idea must exist before use: {}", vocabulary_id),
+                            ));
+                        }
+                    }
+                    Some(
+                        TierComplexity::Fundamental
+                        | TierComplexity::Standard
+                        | TierComplexity::Advanced,
+                    )
+                    | None => {
+                        if representation.vocabulary_version_id.is_some() {
+                            return Err(ReplayError::new(
+                                "invalid_field",
+                                "vocabulary_version_id is forbidden outside canonical descriptions",
+                            ));
+                        }
+                    }
+                }
+                replay_representations.push(ReplayRepresentationRow {
+                    representation_id: representation.representation_id,
+                    target_kind: target_kind_label(target_kind).to_string(),
+                    target_object_id: representation.target_id,
+                    representation_kind: if tier_enum == TierEnum::Title {
+                        "title".to_string()
+                    } else {
+                        "description".to_string()
+                    },
+                    tier_length: tier_length_label(tier_enum).map(str::to_string),
+                    tier_complexity: tier_complexity
+                        .map(tier_complexity_label)
+                        .map(str::to_string),
+                    vocabulary_version_id: representation.vocabulary_version_id,
+                    payload_hash: representation.payload_hash.clone(),
+                    payload_text: representation.payload_text.clone(),
+                    author_identity_id: representation.author_identity_id,
+                    language_locale: representation.language_locale.clone(),
+                    provenance: representation.provenance.clone(),
+                    created_event_id: representation.created_event_id,
+                    created_block_height: representation.created_block_height,
+                    created_event_index: representation.created_event_index,
+                });
                 representations.insert(
                     representation.representation_id,
                     ReplayRepresentation {
@@ -1284,6 +1600,7 @@ pub(super) fn apply_events_with_verification(
                         target_kind,
                         target_id: representation.target_id,
                         tier_enum,
+                        tier_complexity,
                         payload_hash: representation.payload_hash.clone(),
                         payload_text: representation.payload_text.clone(),
                     },
@@ -1436,6 +1753,7 @@ pub(super) fn apply_events_with_verification(
                     if representation.target_kind != update.target_kind
                         || representation.target_id != update.target_object_id
                         || representation.tier_enum != update.tier_enum
+                        || representation.tier_complexity != update.tier_complexity
                     {
                         return Err(ReplayError::new(
                             "invalid_field",
@@ -1471,8 +1789,9 @@ pub(super) fn apply_events_with_verification(
                                     ),
                                 ));
                             }
-                            let pointers =
-                                ordering_pointers.entry(update.target_object_id).or_default();
+                            let pointers = ordering_pointers
+                                .entry(update.target_object_id)
+                                .or_default();
                             apply_pointer_update(pointers, &update);
                         }
                     }
@@ -1621,6 +1940,7 @@ pub(super) fn apply_events_with_verification(
     Ok(ApplyResult {
         ideas,
         orderings,
+        representations: replay_representations,
         connections,
         payloads,
         cycle_status,
@@ -1686,5 +2006,51 @@ pub(super) fn apply_pointer_update(
             pointers.sentence_representation_id = Some(update.representation_id);
         }
         TierEnum::Paragraph | TierEnum::Full => {}
+    }
+}
+
+fn parse_ordering_item_role_value(value: &Value) -> Result<i16, ReplayError> {
+    match value.as_str() {
+        Some("potential_evidence") => Ok(0),
+        Some("actual_evidence") => Ok(1),
+        Some("potential_action") => Ok(2),
+        Some("proposed_action") => Ok(3),
+        _ => Err(ReplayError::new("invalid_field", "invalid item_role")),
+    }
+}
+
+fn ordering_item_role_label(value: Option<i16>) -> Option<String> {
+    match value {
+        Some(0) => Some("potential_evidence".to_string()),
+        Some(1) => Some("actual_evidence".to_string()),
+        Some(2) => Some("potential_action".to_string()),
+        Some(3) => Some("proposed_action".to_string()),
+        Some(other) => Some(format!("unknown_{other}")),
+        None => None,
+    }
+}
+
+fn target_kind_label(value: TargetKind) -> &'static str {
+    match value {
+        TargetKind::Idea => "idea",
+        TargetKind::Ordering => "ordering",
+    }
+}
+
+fn tier_length_label(value: TierEnum) -> Option<&'static str> {
+    match value {
+        TierEnum::Title => None,
+        TierEnum::Sentence => Some("sentence"),
+        TierEnum::Paragraph => Some("paragraph"),
+        TierEnum::Full => Some("full"),
+    }
+}
+
+fn tier_complexity_label(value: TierComplexity) -> &'static str {
+    match value {
+        TierComplexity::Fundamental => "fundamental",
+        TierComplexity::Standard => "standard",
+        TierComplexity::Advanced => "advanced",
+        TierComplexity::Canonical => "canonical",
     }
 }

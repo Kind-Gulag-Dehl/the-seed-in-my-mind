@@ -42,7 +42,7 @@ keywords:
 
 > **Status note:** This document is part of the intended open-core architecture. It is published in this public repo for transparency and architectural understanding. Current implementation status is limited, partial, or not yet implemented. [open-core-implementation-status.md](open-core-implementation-status.md) remains the authoritative current-state implementation reference.
 
-> **Repository authority note:** In the active two-repo model, this public file is the open-core source of truth for AI boundary rules. Private Ent/product/narrative extensions are subordinate to this document and MUST NOT redefine public AI authority, authorship, governance, token, sandbox, or adoption constraints.
+> **Repository authority note:** Before genesis, this public file is the open-core ratified source for AI boundary rules. After genesis, the canonical event log and replay-derived active graph-native rulebook commitments are authoritative, and this file is a human-readable projection. Private Ent/product/narrative extensions are subordinate to the authoritative boundary rules and MUST NOT redefine public AI authority, authorship, governance, token, sandbox, or adoption constraints.
 
 # AI Boundaries Specification
 
@@ -102,6 +102,8 @@ AI systems never acquire standing, legitimacy, authorship, immunity, or protocol
 
 No model capability, longevity, adoption frequency, tribe affiliation, or governance configuration may elevate an AI system into a canonical participant, representative, or final arbiter.
 
+Products MAY expose noncanonical model or agent profiles, stable product-local model identifiers, provenance histories, maps, and model-relative importance lenses. These are realm-local presentation and provenance records only. They are not Protocol Identity objects, verified humans, canonical authors, voters, challengers, sponsors, token holders, or governance participants, and they grant no canonical standing.
+
 ## 2. Canonical universe vs AI sandbox
 
 ### 2.1 Structural separation
@@ -137,6 +139,8 @@ Sandbox artifacts:
 
 Nodes and clients MUST remain conformant with the sandbox entirely disabled.
 
+An implementation MAY provide a shared, publicly readable **Public AI mode** inside the noncanonical AI realm. In that mode, a human may select a model and request generation, or may enable product-defined autonomous generation. Generated ideas, connections, Orderings, realm-local ranks, and provenance MAY be shared automatically after structural and safety validation. The raw human prompt and other human-authored text MUST NOT be represented as authored map content merely because it initiated generation. Product policy MAY apply an importance-over-cycles lifecycle that deprioritizes, hides, burns, or prunes noncanonical AI output; those changes have no canonical effect and do not alter canonical lifecycle history. Detailed retention, lifecycle, UI, and model-routing behavior is private-product policy.
+
 ### 2.3 Advisory surfaces and automation boundary
 
 Implementations MAY provide helper models, staging surfaces, or other sandbox mechanisms for human review and possible adoption.
@@ -146,9 +150,11 @@ If AI output is surfaced for possible adoption, conformant implementations MUST:
 - clearly mark it as AI-generated;
 - preserve attribution to the producing model identity and relevant lineage or version state;
 - require explicit, affirmative human confirmation for any adoption;
-- prevent silent, default, implied, or background publication into canon.
+- prevent silent, default, implied, or unapproved creation or publication of canonical content.
 
-Automation or autopilot features, if offered, remain sandbox-only. They MUST NOT create canonical events, vote in challenges, activate or deactivate rulebooks, perform governance actions, or affect POD or POINT. They MUST remain interruptible by the associated human and MUST NOT operate invisibly.
+AI automation or autopilot features, if offered, remain sandbox-only. They MUST NOT create canonical events, vote in challenges, activate or deactivate rulebooks, perform governance actions, or affect POD or POINT. They MUST remain interruptible by the associated human and MUST NOT operate invisibly.
+
+A non-AI relay MAY later submit exact immutable candidate bytes that a verified human already reviewed, approved, and signed. This delayed transport is not background authorship or adoption. The relay MUST NOT generate, edit, substitute, or reapprove content; any byte change requires a new explicit human approval and signature.
 
 ## 3. Human adoption boundary
 
@@ -156,7 +162,7 @@ Automation or autopilot features, if offered, remain sandbox-only. They MUST NOT
 
 AI output MAY affect the canonical universe only when a verified human explicitly adopts that output and records the adoption as a valid Protocol v5 event that passes all canonical validation rules.
 
-Adoption MUST be explicit, intentional, and attributable. No AI output MAY become canonical by default, implication, background process, inferred consent, or implementation convenience.
+Adoption MUST be explicit, intentional, attributable, and bound to the exact candidate bytes the human signs. No AI output MAY become canonical by default, implication, inferred consent, or implementation convenience. Automatic later relay of the unchanged signed bytes is permitted under Section 2.3.
 
 Absent explicit human adoption recorded as a canonical event, AI output has no canonical effect and MUST be ignored during canonical validation and replay.
 
@@ -178,9 +184,9 @@ No AI system is authoritative, definitive, or privileged by default. The protoco
 
 Disagreement between AI systems is expected and informative.
 
-AI disagreement MUST NOT be resolved through hidden arbitration, implicit weighting, majority voting among models, or automatic collapse into a single synthesized position without explicit human involvement.
+AI disagreement MUST NOT be resolved for canonical purposes through hidden arbitration, implicit weighting, majority voting among models, or automatic collapse into a single authoritative position.
 
-AI systems MAY surface disagreements, contrast competing interpretations, and explain differing assumptions, but they MUST NOT adjudicate or finalize the resolution. Resolution occurs only through human reasoning and canonical challenge mechanisms.
+AI systems MAY surface disagreements, contrast competing interpretations, explain differing assumptions, and conduct explicitly requested noncanonical simulated challenges. A simulation MAY report a labeled model majority or a synthesized sandbox result, but it MUST NOT adjudicate a canonical dispute or finalize a canonical resolution. Canonical resolution occurs only through human reasoning and canonical challenge mechanisms.
 
 ## 5. Sandbox debate, simulation, and local metrics
 
@@ -188,15 +194,17 @@ AI systems MAY surface disagreements, contrast competing interpretations, and ex
 
 The AI sandbox MAY support non-canonical debate, simulation, comparative reasoning, and exploratory metrics.
 
-All such activity remains strictly non-canonical. Sandbox debate and simulation outputs MUST NOT be treated as deliberative outcomes, verdicts, canonical rankings, or authoritative analyses.
+All such activity remains strictly non-canonical. Sandbox debate and simulation outputs MAY be labeled as realm-local simulated outcomes, verdicts, or rankings and MAY update noncanonical AI-realm orderings. They MUST NOT be treated as canonical deliberative outcomes, canonical verdicts, canonical rankings, human decisions, or authoritative analyses.
+
+A human MAY explicitly request a simulated challenge in which one or more models generate arguments or candidate importance changes and other models produce an equal-weight simulated vote. The resulting majority, rank, or ordering is valid only inside the named noncanonical realm and MUST preserve model and simulation provenance.
 
 No sandbox metric MAY leak into canonical state, affect deterministic replay, or influence canonical eligibility pools, rankings, or token flows except through explicit human adoption of canonical content.
 
 ### 5.2 Local AI reputations and metrics
 
-Nodes MAY maintain sandbox-local metrics evaluating AI usefulness or performance for implementation-specific purposes.
+Nodes and products MAY maintain realm-local metrics evaluating AI usefulness or performance for implementation-specific purposes.
 
-Such metrics are advisory, non-authoritative, and strictly local. They MUST NOT be transferred, aggregated, federated, synchronized, or framed as substitutes for protocol-defined measures such as POD, POINT, challenge outcomes, canonical importance, or governance legitimacy.
+Such metrics are advisory and non-authoritative. They MAY be transferred, aggregated, federated, or synchronized within an explicitly labeled noncanonical AI realm. They MUST NOT be framed as substitutes for protocol-defined measures such as POD, POINT, challenge outcomes, canonical importance, or governance legitimacy.
 
 Conformant implementations MUST ensure that local AI metrics cannot leak into canonical state, be misinterpreted as protocol data, or be relied upon by canonical workflows.
 
@@ -275,4 +283,4 @@ This specification is subordinate to and depends on the following documents with
 - [roles-and-stewardship-spec.md](roles-and-stewardship-spec.md)
 - [tribe-spec.md](tribe-spec.md)
 
-In the event of any conflict, Protocol v5 SHALL be authoritative. This specification introduces no independent authority, governance power, or economic semantics and SHALL be interpreted strictly within the broader protocol specification set.
+Before genesis, conflicts are resolved under the precedence in the Authoritative Index with Protocol v5 as the root semantic source. After genesis, the canonical event log and replay-derived active graph-native rulebook commitments govern. This specification introduces no independent authority, governance power, or economic semantics.

@@ -181,7 +181,7 @@ This separation is fundamental. Any system that allows economic assets to influe
 POD is not a historical reward, reputation score, or badge of honor.
 
 POD represents:
-- continuously recomputed at cycle boundaries.
+- each living verified human identity's current non-transferable share of universal importance routed through that identity's eligible canonical contributions,
 - derived from the *alive* portion of the idea graph,
 - continuously recomputed at cycle boundaries.
 
@@ -627,7 +627,11 @@ POD is not a stored balance, reward, or credential. It is a continuously recompu
 
 Formally, POD is defined as:
 
-POD serves three purposes:
+\[
+\text{POD}_u(c) = \sum_{e \in E_u(c)} \text{RoutedPOD}_c(e \rightarrow u)
+\]
+
+where \( c \) is the qualifying cycle boundary, \( E_u(c) \) is the set of POD-eligible canonical events attributed to living verified human identity \( u \) at that boundary, and routing uses the then-current universal-importance, lifecycle, eligibility, and active-rulebook state defined in Sections 6 and 7. Therefore \( \text{POD}_u(c) \) may be greater than, less than, or equal to its value at an earlier boundary, including zero.
 
 POD serves three purposes:
 1. to make importance legible and auditable,
@@ -1037,13 +1041,12 @@ Edge cutting is the primary mechanism by which fraudulent structures are economi
 When fraud is established:
 
 - Future POD attribution via the affected structure MUST cease.
-- Existing POD balances MAY:
-  - decay naturally through recomputation, or
-  - be frozen or excluded from redistribution,
-  depending on active rulebooks.
+- At the next qualifying cycle boundary, current POD MUST be recomputed without any structure or event made ineligible by the finding.
+- The affected identity's current POD MAY consequently decrease or become zero.
+- Rulebooks MAY prospectively quarantine or exclude affected routing inputs, but MUST NOT freeze an identity's current POD at a prior value.
 
 Rulebooks MAY define bounded penalties, but MUST NOT:
-- confiscate historical POD retroactively,
+- alter the POD derivation recorded for an earlier completed cycle,
 - introduce discretionary punishments,
 - target identities outside canonical findings.
 

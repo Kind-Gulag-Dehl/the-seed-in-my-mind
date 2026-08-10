@@ -35,8 +35,9 @@ use crate::server::handlers::private::{
 };
 use crate::server::handlers::public::{
     health_check, idea_detail_handler, idea_neighborhood, idea_orderings_handler, ideas_top,
-    identity_detail_handler, latest_snapshot, ordering_detail_handler, relative_importance_connections,
-    search_ideas, snapshot_by_height, snapshot_commit_by_height, snapshot_commit_list,
+    identity_detail_handler, latest_snapshot, ordering_detail_handler,
+    relative_importance_connections, representation_detail_handler, search_ideas,
+    snapshot_by_height, snapshot_commit_by_height, snapshot_commit_list,
 };
 use crate::server::types::AppState;
 
@@ -64,8 +65,18 @@ pub(crate) fn build_app(state: AppState) -> Router {
         .route("/api/v0/ideas/top", get(ideas_top))
         .route("/api/v0/coordinates", get(canonical_coordinates))
         .route("/api/v0/idea/:idea_id", get(idea_detail_handler))
-        .route("/api/v0/ordering/:ordering_id", get(ordering_detail_handler))
-        .route("/api/v0/idea/:idea_id/orderings", get(idea_orderings_handler))
+        .route(
+            "/api/v0/ordering/:ordering_id",
+            get(ordering_detail_handler),
+        )
+        .route(
+            "/api/v0/representation/:representation_id",
+            get(representation_detail_handler),
+        )
+        .route(
+            "/api/v0/idea/:idea_id/orderings",
+            get(idea_orderings_handler),
+        )
         .route("/api/v0/idea/:idea_id/neighborhood", get(idea_neighborhood))
         .route(
             "/api/v0/connections/relative-importance",

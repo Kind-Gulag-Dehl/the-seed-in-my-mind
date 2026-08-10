@@ -145,10 +145,24 @@ enum TargetKind {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum RepresentationKind {
+    Title,
+    Description,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum OrderingProfile {
     Vine,
     EvidenceRail,
     ActionRail,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum TierComplexity {
+    Fundamental,
+    Standard,
+    Advanced,
+    Canonical,
 }
 
 fn validate_idea_create(
@@ -318,15 +332,14 @@ fn validate_ordering_create(
     let ordering_profile = parse_ordering_profile(payload, "ordering_profile")?;
     validate_profile_vine_type(payload, ordering_profile, true)?;
     let item_count = validate_item_idea_ids(payload)?;
+    validate_ordering_profile_bindings(payload, ordering_profile, item_count)?;
     validate_step_meta(payload, item_count)?;
     validate_initial_representation_refs(payload)?;
 
-    if let Some(value) = payload.get("speaker_identity_id") {
-        let payload_speaker = value.as_str().ok_or_else(|| {
-            ValidationError::new("invalid_field", "speaker_identity_id must be string")
-        })?;
-        validate_id(payload_speaker).map_err(|err| ValidationError::new("invalid_id", err))?;
-    }
+    validate_payload_speaker_identity(
+        payload,
+        speaker_identity_id.expect("speaker checked above"),
+    )?;
 
     Ok(())
 }
@@ -345,16 +358,15 @@ fn validate_ordering_fork(
 
     let ordering_profile = parse_ordering_profile(payload, "ordering_profile")?;
     let item_count = validate_item_idea_ids(payload)?;
+    validate_ordering_profile_bindings(payload, ordering_profile, item_count)?;
     validate_step_meta(payload, item_count)?;
     validate_profile_vine_type(payload, ordering_profile, false)?;
     validate_initial_representation_refs(payload)?;
 
-    if let Some(value) = payload.get("speaker_identity_id") {
-        let payload_speaker = value.as_str().ok_or_else(|| {
-            ValidationError::new("invalid_field", "speaker_identity_id must be string")
-        })?;
-        validate_id(payload_speaker).map_err(|err| ValidationError::new("invalid_id", err))?;
-    }
+    validate_payload_speaker_identity(
+        payload,
+        speaker_identity_id.expect("speaker checked above"),
+    )?;
 
     Ok(())
 }
@@ -382,14 +394,53 @@ fn validate_representation_create(
     let target_object_id = require_string(payload, "target_object_id")?;
     validate_id(target_object_id).map_err(|err| ValidationError::new("invalid_id", err))?;
 
-    parse_tier_enum(payload, "tier_length")?;
-    parse_tier_complexity(payload, "tier_complexity")?;
+    let representation_kind = parse_representation_kind(payload)?;
 
     let payload_hash = require_string(payload, "payload_hash")?;
     validate_hex_64(payload_hash, "payload_hash")?;
 
     let author_identity_id = require_string(payload, "author_identity_id")?;
     validate_id(author_identity_id).map_err(|err| ValidationError::new("invalid_id", err))?;
+    let speaker_identity_id = speaker_identity_id.expect("speaker checked above");
+    if author_identity_id != speaker_identity_id.to_string() {
+        return Err(ValidationError::new(
+            "invalid_field",
+            "author_identity_id must match event speaker_identity_id",
+        ));
+    }
+
+    match representation_kind {
+        RepresentationKind::Title => {
+            for field in ["tier_length", "tier_complexity", "vocabulary_version_id"] {
+                if payload.contains_key(field) {
+                    return Err(ValidationError::new(
+                        "invalid_field",
+                        format!("{field} is forbidden for a title representation"),
+                    ));
+                }
+            }
+        }
+        RepresentationKind::Description => {
+            parse_description_tier_length(payload, "tier_length")?;
+            match parse_tier_complexity(payload, "tier_complexity")? {
+                TierComplexity::Canonical => {
+                    let vocabulary_version_id = require_string(payload, "vocabulary_version_id")?;
+                    validate_id(vocabulary_version_id)
+                        .map_err(|err| ValidationError::new("invalid_id", err))?;
+                }
+                TierComplexity::Fundamental
+                | TierComplexity::Standard
+                | TierComplexity::Advanced => {
+                    if payload.contains_key("vocabulary_version_id") {
+                        return Err(ValidationError::new(
+                            "invalid_field",
+                            "vocabulary_version_id is only valid for canonical complexity",
+                        ));
+                    }
+                }
+            }
+        }
+    }
 
     let _language_locale = optional_string(payload, "language_locale")?;
     let _provenance = optional_string(payload, "provenance")?;
@@ -1043,25 +1094,40 @@ fn parse_vine_type(
     }
 }
 
-fn parse_tier_enum(
+fn parse_representation_kind(
+    payload: &serde_json::Map<String, Value>,
+) -> Result<RepresentationKind, ValidationError> {
+    match payload.get("representation_kind") {
+        None => Err(ValidationError::new(
+            "missing_field",
+            "representation_kind required",
+        )),
+        Some(Value::String(value)) if value == "title" => Ok(RepresentationKind::Title),
+        Some(Value::String(value)) if value == "description" => Ok(RepresentationKind::Description),
+        Some(_) => Err(ValidationError::new(
+            "invalid_field",
+            "representation_kind must be title or description",
+        )),
+    }
+}
+
+fn parse_description_tier_length(
     payload: &serde_json::Map<String, Value>,
     field: &str,
 ) -> Result<(), ValidationError> {
-    let value = payload
-        .get(field)
-        .ok_or_else(|| ValidationError::new("missing_field", format!("{field} required")))?;
-    parse_tier_enum_value(value, field)
-}
-
-fn parse_tier_enum_value(value: &Value, field: &str) -> Result<(), ValidationError> {
-    match value {
-        Value::String(v) if matches!(v.as_str(), "title" | "sentence" | "paragraph" | "full") => {
+    match payload.get(field) {
+        Some(Value::String(value))
+            if matches!(value.as_str(), "sentence" | "paragraph" | "full") =>
+        {
             Ok(())
         }
-        Value::Number(v) if matches!(v.as_u64(), Some(0) | Some(1) | Some(2) | Some(3)) => Ok(()),
-        _ => Err(ValidationError::new(
+        Some(_) => Err(ValidationError::new(
             "invalid_field",
-            format!("{field} has unsupported value"),
+            format!("{field} must be sentence, paragraph, or full"),
+        )),
+        None => Err(ValidationError::new(
+            "missing_field",
+            format!("{field} required"),
         )),
     }
 }
@@ -1069,24 +1135,112 @@ fn parse_tier_enum_value(value: &Value, field: &str) -> Result<(), ValidationErr
 fn parse_tier_complexity(
     payload: &serde_json::Map<String, Value>,
     field: &str,
-) -> Result<(), ValidationError> {
+) -> Result<TierComplexity, ValidationError> {
     let value = payload
         .get(field)
         .ok_or_else(|| ValidationError::new("missing_field", format!("{field} required")))?;
     match value {
-        Value::String(v)
-            if matches!(
-                v.as_str(),
-                "fundamental" | "standard" | "advanced" | "canonical"
-            ) =>
-        {
-            Ok(())
-        }
-        Value::Number(v) if matches!(v.as_u64(), Some(0) | Some(1) | Some(2) | Some(3)) => Ok(()),
+        Value::String(v) if v == "fundamental" => Ok(TierComplexity::Fundamental),
+        Value::String(v) if v == "standard" => Ok(TierComplexity::Standard),
+        Value::String(v) if v == "advanced" => Ok(TierComplexity::Advanced),
+        Value::String(v) if v == "canonical" => Ok(TierComplexity::Canonical),
         _ => Err(ValidationError::new(
             "invalid_field",
             format!("{field} has unsupported value"),
         )),
+    }
+}
+
+fn validate_ordering_profile_bindings(
+    payload: &serde_json::Map<String, Value>,
+    ordering_profile: OrderingProfile,
+    item_count: usize,
+) -> Result<(), ValidationError> {
+    match ordering_profile {
+        OrderingProfile::Vine => {
+            if payload.contains_key("subject_idea_id") || payload.contains_key("item_roles") {
+                return Err(ValidationError::new(
+                    "invalid_field",
+                    "Vines must not carry subject_idea_id or item_roles",
+                ));
+            }
+            Ok(())
+        }
+        OrderingProfile::EvidenceRail | OrderingProfile::ActionRail => {
+            if item_count == 0 {
+                return Err(ValidationError::new(
+                    "invalid_field",
+                    "standardized Orderings require at least one item",
+                ));
+            }
+
+            let subject_idea_id = require_string(payload, "subject_idea_id")?;
+            validate_id(subject_idea_id).map_err(|err| ValidationError::new("invalid_id", err))?;
+
+            let item_idea_ids = payload["item_idea_ids"]
+                .as_array()
+                .expect("item_idea_ids checked above");
+            let mut unique_ids = std::collections::HashSet::with_capacity(item_count);
+            for idea_id in item_idea_ids {
+                let idea_id = idea_id
+                    .as_str()
+                    .expect("item_idea_ids entries checked above");
+                if !unique_ids.insert(idea_id) {
+                    return Err(ValidationError::new(
+                        "invalid_field",
+                        "standardized Orderings must not contain duplicate item IDs",
+                    ));
+                }
+            }
+
+            let roles = payload
+                .get("item_roles")
+                .ok_or_else(|| ValidationError::new("missing_field", "item_roles required"))?
+                .as_array()
+                .ok_or_else(|| ValidationError::new("invalid_field", "item_roles must be array"))?;
+            if roles.len() != item_count {
+                return Err(ValidationError::new(
+                    "invalid_field",
+                    "item_roles must align one-for-one with item_idea_ids",
+                ));
+            }
+
+            let role_strings = roles
+                .iter()
+                .map(|role| {
+                    role.as_str().ok_or_else(|| {
+                        ValidationError::new("invalid_field", "item_roles entries must be strings")
+                    })
+                })
+                .collect::<Result<Vec<_>, _>>()?;
+
+            match ordering_profile {
+                OrderingProfile::EvidenceRail => {
+                    if role_strings
+                        .iter()
+                        .any(|role| !matches!(*role, "potential_evidence" | "actual_evidence"))
+                    {
+                        return Err(ValidationError::new(
+                            "invalid_field",
+                            "Evidence Rail roles must be potential_evidence or actual_evidence",
+                        ));
+                    }
+                }
+                OrderingProfile::ActionRail => {
+                    let first = role_strings[0];
+                    if !matches!(first, "potential_action" | "proposed_action")
+                        || role_strings.iter().any(|role| *role != first)
+                    {
+                        return Err(ValidationError::new(
+                            "invalid_field",
+                            "Action Rail roles must form one homogeneous potential or proposed lane",
+                        ));
+                    }
+                }
+                OrderingProfile::Vine => unreachable!(),
+            }
+            Ok(())
+        }
     }
 }
 
@@ -1200,11 +1354,28 @@ fn validate_representation_pointer_update(value: &Value) -> Result<(), Validatio
         .ok_or_else(|| ValidationError::new("invalid_field", "target_object_id must be string"))?;
     validate_id(target_object_id).map_err(|err| ValidationError::new("invalid_id", err))?;
 
-    let tier_value = object
-        .get("tier_length")
-        .or_else(|| object.get("tier_enum"))
-        .ok_or_else(|| ValidationError::new("missing_field", "tier_length required"))?;
-    parse_tier_enum_value(tier_value, "tier_length")?;
+    match parse_representation_kind(object)? {
+        RepresentationKind::Title => {
+            for field in ["tier_length", "tier_complexity", "vocabulary_version_id"] {
+                if object.contains_key(field) {
+                    return Err(ValidationError::new(
+                        "invalid_field",
+                        format!("{field} is forbidden for a title representation pointer"),
+                    ));
+                }
+            }
+        }
+        RepresentationKind::Description => {
+            parse_description_tier_length(object, "tier_length")?;
+            parse_tier_complexity(object, "tier_complexity")?;
+            if object.contains_key("vocabulary_version_id") {
+                return Err(ValidationError::new(
+                    "invalid_field",
+                    "representation pointer updates must not repeat vocabulary_version_id",
+                ));
+            }
+        }
+    }
 
     let representation_id = object
         .get("representation_id")
@@ -1859,20 +2030,143 @@ mod tests {
     }
 
     #[test]
+    fn representation_kind_separates_title_from_description_cells() {
+        let speaker = v7("00000000-0000-7000-8000-00000000a070");
+        let base = |id: &str, payload: Value| Event {
+            id: v7(id),
+            kind: "representation_create".to_string(),
+            payload,
+            speaker_identity_id: Some(speaker),
+        };
+
+        let title = base(
+            "00000000-0000-7000-8000-000000000270",
+            json!({
+                "representation_id": "00000000-0000-7000-8000-00000000b270",
+                "target_kind": "idea",
+                "target_object_id": "00000000-0000-7000-8000-00000000c270",
+                "representation_kind": "title",
+                "payload_hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                "author_identity_id": speaker
+            }),
+        );
+        assert!(validate_event(&title).is_ok());
+
+        let title_with_tier = base(
+            "00000000-0000-7000-8000-000000000271",
+            json!({
+                "representation_id": "00000000-0000-7000-8000-00000000b271",
+                "target_kind": "idea",
+                "target_object_id": "00000000-0000-7000-8000-00000000c270",
+                "representation_kind": "title",
+                "tier_length": "title",
+                "tier_complexity": "standard",
+                "payload_hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                "author_identity_id": speaker
+            }),
+        );
+        assert_eq!(
+            validate_event(&title_with_tier)
+                .expect_err("title tier fields must be rejected")
+                .code,
+            "invalid_field"
+        );
+
+        let canonical = base(
+            "00000000-0000-7000-8000-000000000272",
+            json!({
+                "representation_id": "00000000-0000-7000-8000-00000000b272",
+                "target_kind": "idea",
+                "target_object_id": "00000000-0000-7000-8000-00000000c270",
+                "representation_kind": "description",
+                "tier_length": "sentence",
+                "tier_complexity": "canonical",
+                "vocabulary_version_id": "00000000-0000-7000-8000-00000000d270",
+                "payload_hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                "author_identity_id": speaker
+            }),
+        );
+        assert!(validate_event(&canonical).is_ok());
+
+        let canonical_without_vocabulary = base(
+            "00000000-0000-7000-8000-000000000273",
+            json!({
+                "representation_id": "00000000-0000-7000-8000-00000000b273",
+                "target_kind": "idea",
+                "target_object_id": "00000000-0000-7000-8000-00000000c270",
+                "representation_kind": "description",
+                "tier_length": "sentence",
+                "tier_complexity": "canonical",
+                "payload_hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                "author_identity_id": speaker
+            }),
+        );
+        assert_eq!(
+            validate_event(&canonical_without_vocabulary)
+                .expect_err("canonical vocabulary is required")
+                .code,
+            "missing_field"
+        );
+
+        let noncanonical_with_vocabulary = base(
+            "00000000-0000-7000-8000-000000000274",
+            json!({
+                "representation_id": "00000000-0000-7000-8000-00000000b274",
+                "target_kind": "idea",
+                "target_object_id": "00000000-0000-7000-8000-00000000c270",
+                "representation_kind": "description",
+                "tier_length": "paragraph",
+                "tier_complexity": "standard",
+                "vocabulary_version_id": "00000000-0000-7000-8000-00000000d270",
+                "payload_hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                "author_identity_id": speaker
+            }),
+        );
+        assert_eq!(
+            validate_event(&noncanonical_with_vocabulary)
+                .expect_err("noncanonical vocabulary is forbidden")
+                .code,
+            "invalid_field"
+        );
+    }
+
+    #[test]
     fn native_ordering_conformance_vectors_match_validation_and_hashing() {
+        #[derive(Clone)]
+        struct FixtureOrdering {
+            profile: String,
+            subject_idea_id: Option<Uuid>,
+            item_roles: HashMap<Uuid, String>,
+            action_lane: Option<String>,
+        }
+
         let fixture: Value = serde_json::from_str(include_str!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../docs/conformance/native-ordering.vectors.json"
         )))
         .expect("native Ordering fixture must parse");
+        let idea_types: HashMap<Uuid, String> = fixture["idea_types"]
+            .as_object()
+            .expect("idea_types object")
+            .iter()
+            .map(|(idea_id, idea_type)| {
+                (
+                    v7(idea_id),
+                    idea_type.as_str().expect("idea type string").to_string(),
+                )
+            })
+            .collect();
 
         for vector in fixture["vectors"]
             .as_array()
             .expect("vectors must be an array")
         {
-            let mut profiles: HashMap<Uuid, String> = HashMap::new();
+            let mut orderings: HashMap<Uuid, FixtureOrdering> = HashMap::new();
             let mut actual_code: Option<String> = None;
-            for fixture_event in vector["events"].as_array().expect("events must be an array") {
+            for fixture_event in vector["events"]
+                .as_array()
+                .expect("events must be an array")
+            {
                 let event = Event {
                     id: v7(fixture_event["id"].as_str().expect("event id")),
                     kind: fixture_event["kind"]
@@ -1880,11 +2174,9 @@ mod tests {
                         .expect("event kind")
                         .to_string(),
                     payload: fixture_event["payload"].clone(),
-                    speaker_identity_id: Some(v7(
-                        fixture_event["speaker_identity_id"]
-                            .as_str()
-                            .expect("speaker_identity_id"),
-                    )),
+                    speaker_identity_id: Some(v7(fixture_event["speaker_identity_id"]
+                        .as_str()
+                        .expect("speaker_identity_id"))),
                 };
 
                 if let Err(error) = validate_event(&event) {
@@ -1894,34 +2186,97 @@ mod tests {
 
                 if matches!(event.kind.as_str(), "ordering_create" | "ordering_fork") {
                     let payload = event.payload.as_object().expect("Ordering payload object");
-                    let ordering_id = v7(
-                        payload["ordering_id"]
-                            .as_str()
-                            .expect("ordering_id string"),
-                    );
+                    let ordering_id =
+                        v7(payload["ordering_id"].as_str().expect("ordering_id string"));
                     let profile = match &payload["ordering_profile"] {
                         Value::String(value) => value.clone(),
                         _ => panic!("validator accepted invalid ordering_profile"),
                     };
+                    let subject_idea_id = payload
+                        .get("subject_idea_id")
+                        .and_then(Value::as_str)
+                        .map(v7);
+                    if let Some(subject_idea_id) = subject_idea_id {
+                        let expected_type = match profile.as_str() {
+                            "evidence_rail" => Some("truth_claim"),
+                            "action_rail" => Some("actionable_idea"),
+                            _ => None,
+                        };
+                        if expected_type.is_some_and(|expected| {
+                            idea_types.get(&subject_idea_id).map(String::as_str) != Some(expected)
+                        }) {
+                            actual_code = Some("subject_type_mismatch".to_string());
+                            break;
+                        }
+                    }
+                    let item_ids = payload["item_idea_ids"]
+                        .as_array()
+                        .expect("item_idea_ids")
+                        .iter()
+                        .map(|value| v7(value.as_str().expect("item idea ID")))
+                        .collect::<Vec<_>>();
+                    let roles = payload
+                        .get("item_roles")
+                        .and_then(Value::as_array)
+                        .map(|values| {
+                            values
+                                .iter()
+                                .map(|value| value.as_str().expect("item role").to_string())
+                                .collect::<Vec<_>>()
+                        })
+                        .unwrap_or_default();
+                    let item_roles = item_ids
+                        .iter()
+                        .copied()
+                        .zip(roles.iter().cloned())
+                        .collect::<HashMap<_, _>>();
+                    let action_lane = if profile == "action_rail" {
+                        roles.first().cloned()
+                    } else {
+                        None
+                    };
                     if event.kind == "ordering_fork" {
-                        let base_ordering_id = v7(
-                            payload["base_ordering_id"]
-                                .as_str()
-                                .expect("base_ordering_id string"),
-                        );
-                        match profiles.get(&base_ordering_id) {
+                        let base_ordering_id = v7(payload["base_ordering_id"]
+                            .as_str()
+                            .expect("base_ordering_id string"));
+                        match orderings.get(&base_ordering_id) {
                             None => {
                                 actual_code = Some("base_ordering_not_found".to_string());
                                 break;
                             }
-                            Some(base_profile) if base_profile != &profile => {
+                            Some(base) if base.profile != profile => {
                                 actual_code = Some("ordering_profile_mismatch".to_string());
                                 break;
                             }
-                            Some(_) => {}
+                            Some(base) => {
+                                if base.subject_idea_id != subject_idea_id {
+                                    actual_code = Some("ordering_subject_mismatch".to_string());
+                                    break;
+                                }
+                                if base.item_roles.iter().any(|(idea_id, base_role)| {
+                                    item_roles
+                                        .get(idea_id)
+                                        .is_some_and(|fork_role| fork_role != base_role)
+                                }) {
+                                    actual_code = Some("ordering_item_role_mismatch".to_string());
+                                    break;
+                                }
+                                if profile == "action_rail" && base.action_lane != action_lane {
+                                    actual_code = Some("action_lane_mismatch".to_string());
+                                    break;
+                                }
+                            }
                         }
                     }
-                    profiles.insert(ordering_id, profile);
+                    orderings.insert(
+                        ordering_id,
+                        FixtureOrdering {
+                            profile,
+                            subject_idea_id,
+                            item_roles,
+                            action_lane,
+                        },
+                    );
                 }
             }
 
@@ -1965,5 +2320,141 @@ mod tests {
                 vector["id"].as_str().unwrap_or("unknown")
             );
         }
+    }
+
+    #[test]
+    fn seed_conformance_binding_vectors_match_validation_and_hashing() {
+        fn position(value: &Value) -> (i64, i64) {
+            (
+                value["block_height"].as_i64().expect("block_height"),
+                value["event_index"].as_i64().expect("event_index"),
+            )
+        }
+
+        let fixture: Value = serde_json::from_str(include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../docs/conformance/seed-conformance-bindings.vectors.json"
+        )))
+        .expect("Seed conformance-binding fixture must parse");
+        let identity_positions: HashMap<Uuid, (i64, i64)> = fixture["identity_positions"]
+            .as_object()
+            .expect("identity_positions object")
+            .iter()
+            .map(|(identity_id, value)| (v7(identity_id), position(value)))
+            .collect();
+        let idea_positions: HashMap<Uuid, (i64, i64)> = fixture["idea_positions"]
+            .as_object()
+            .expect("idea_positions object")
+            .iter()
+            .map(|(idea_id, value)| (v7(idea_id), position(value)))
+            .collect();
+
+        for vector in fixture["vectors"]
+            .as_array()
+            .expect("vectors must be an array")
+        {
+            let mut actual_code: Option<String> = None;
+            for fixture_event in vector["events"].as_array().expect("events array") {
+                let event = Event {
+                    id: v7(fixture_event["id"].as_str().expect("event id")),
+                    kind: fixture_event["kind"]
+                        .as_str()
+                        .expect("event kind")
+                        .to_string(),
+                    payload: fixture_event["payload"].clone(),
+                    speaker_identity_id: Some(v7(fixture_event["speaker_identity_id"]
+                        .as_str()
+                        .expect("speaker identity ID"))),
+                };
+                if let Err(error) = validate_event(&event) {
+                    actual_code = Some(error.code.to_string());
+                    break;
+                }
+
+                let event_position = (
+                    fixture_event["block_height"]
+                        .as_i64()
+                        .expect("block_height"),
+                    fixture_event["event_index"].as_i64().expect("event_index"),
+                );
+                let payload = event.payload.as_object().expect("payload object");
+                let author_identity_id =
+                    v7(payload["author_identity_id"].as_str().expect("author ID"));
+                match identity_positions.get(&author_identity_id) {
+                    None => {
+                        actual_code = Some("unknown_author".to_string());
+                        break;
+                    }
+                    Some(author_position) if *author_position >= event_position => {
+                        actual_code = Some("author_not_preexisting".to_string());
+                        break;
+                    }
+                    Some(_) => {}
+                }
+                if let Some(vocabulary_id) =
+                    payload.get("vocabulary_version_id").and_then(Value::as_str)
+                {
+                    match idea_positions.get(&v7(vocabulary_id)) {
+                        None => {
+                            actual_code = Some("unknown_vocabulary".to_string());
+                            break;
+                        }
+                        Some(vocabulary_position) if *vocabulary_position >= event_position => {
+                            actual_code = Some("vocabulary_not_preexisting".to_string());
+                            break;
+                        }
+                        Some(_) => {}
+                    }
+                }
+            }
+
+            let expected_accept = vector["expected"]["accept"]
+                .as_bool()
+                .expect("expected.accept");
+            let expected_code = vector["expected"]["code"].as_str().map(str::to_string);
+            assert_eq!(
+                actual_code.is_none(),
+                expected_accept,
+                "{} acceptance mismatch",
+                vector["id"].as_str().unwrap_or("unknown")
+            );
+            assert_eq!(
+                actual_code,
+                expected_code,
+                "{} error-code mismatch",
+                vector["id"].as_str().unwrap_or("unknown")
+            );
+        }
+
+        let mut hash_mismatches = Vec::new();
+        for vector in fixture["hash_vectors"]
+            .as_array()
+            .expect("hash_vectors must be an array")
+        {
+            let payload = &vector["payload"];
+            let canonical_bytes =
+                canonical_json_payload_bytes(payload).expect("canonical JSON bytes");
+            assert_eq!(
+                String::from_utf8(canonical_bytes).expect("canonical JSON is UTF-8"),
+                vector["canonical_json_utf8"]
+                    .as_str()
+                    .expect("canonical_json_utf8")
+            );
+            let actual_hash =
+                canonical_json_payload_hash_hex(payload).expect("canonical JSON hash");
+            let expected_hash = vector["blake3"].as_str().expect("blake3");
+            if actual_hash != expected_hash {
+                hash_mismatches.push(format!(
+                    "{}={}",
+                    vector["id"].as_str().unwrap_or("unknown"),
+                    actual_hash
+                ));
+            }
+        }
+        assert!(
+            hash_mismatches.is_empty(),
+            "BLAKE3 mismatches: {}",
+            hash_mismatches.join(", ")
+        );
     }
 }

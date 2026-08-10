@@ -6,7 +6,7 @@ pub(super) enum TargetKind {
     Ordering,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(super) enum TierEnum {
     Title,
     Sentence,
@@ -21,6 +21,14 @@ pub(super) enum OrderingProfile {
     ActionRail,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(super) enum TierComplexity {
+    Fundamental,
+    Standard,
+    Advanced,
+    Canonical,
+}
+
 #[derive(Debug, Clone, Default)]
 pub(super) struct PointerSlots {
     pub(super) title_representation_id: Option<Uuid>,
@@ -33,6 +41,7 @@ pub(super) struct ReplayRepresentation {
     pub(super) target_kind: TargetKind,
     pub(super) target_id: Uuid,
     pub(super) tier_enum: TierEnum,
+    pub(super) tier_complexity: Option<TierComplexity>,
     pub(super) payload_hash: String,
     pub(super) payload_text: Option<String>,
 }
@@ -42,6 +51,7 @@ pub(super) struct RepresentationPointerUpdate {
     pub(super) target_kind: TargetKind,
     pub(super) target_object_id: Uuid,
     pub(super) tier_enum: TierEnum,
+    pub(super) tier_complexity: Option<TierComplexity>,
     pub(super) representation_id: Uuid,
 }
 
@@ -127,6 +137,7 @@ pub(super) struct WriterVerificationState {
 pub(super) struct ApplyResult {
     pub(super) ideas: Vec<ReplayIdeaRow>,
     pub(super) orderings: Vec<ReplayOrderingRow>,
+    pub(super) representations: Vec<ReplayRepresentationRow>,
     pub(super) connections: Vec<ReplayConnectionRow>,
     pub(super) payloads: Vec<ReplayPayloadRow>,
     pub(super) cycle_status: ReplayCycleStatus,

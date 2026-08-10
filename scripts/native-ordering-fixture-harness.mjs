@@ -47,6 +47,7 @@ function validateEvent(event, state) {
     return "invalid_field";
   }
   if (declaredProfile === "vine") {
+    if (payload.subject_idea_id !== undefined || payload.item_roles !== undefined) return "invalid_field";
     if (event.kind === "ordering_create" && !["pathway_vine", "narrative_vine"].includes(payload.vine_type)) {
       return payload.vine_type === undefined ? "missing_field" : "invalid_field";
     }
@@ -59,23 +60,75 @@ function validateEvent(event, state) {
     }
   } else if (payload.vine_type !== undefined && payload.vine_type !== null) {
     return "invalid_field";
+  } else {
+    if (payload.item_idea_ids.length === 0) return "invalid_field";
+    if (!uuidV7.test(payload.subject_idea_id ?? "")) {
+      return payload.subject_idea_id === undefined ? "missing_field" : "invalid_id";
+    }
+    const expectedType = declaredProfile === "evidence_rail" ? "truth_claim" : "actionable_idea";
+    if (fixture.idea_types[payload.subject_idea_id] !== expectedType) return "subject_type_mismatch";
+    if (!Array.isArray(payload.item_roles)) {
+      return payload.item_roles === undefined ? "missing_field" : "invalid_field";
+    }
+    if (payload.item_roles.length !== payload.item_idea_ids.length) return "invalid_field";
+    if (new Set(payload.item_idea_ids).size !== payload.item_idea_ids.length) return "invalid_field";
+    if (
+      declaredProfile === "evidence_rail" &&
+      payload.item_roles.some((role) => !["potential_evidence", "actual_evidence"].includes(role))
+    ) {
+      return "invalid_field";
+    }
+    if (declaredProfile === "action_rail") {
+      const lane = payload.item_roles[0];
+      if (
+        !["potential_action", "proposed_action"].includes(lane) ||
+        payload.item_roles.some((role) => role !== lane)
+      ) {
+        return "invalid_field";
+      }
+    }
   }
 
   if (event.kind === "ordering_fork") {
     if (!uuidV7.test(payload.base_ordering_id ?? "")) {
       return payload.base_ordering_id ? "invalid_id" : "missing_field";
     }
-    const baseProfile = state.get(payload.base_ordering_id);
-    if (!baseProfile) return "base_ordering_not_found";
-    if (baseProfile !== declaredProfile) return "ordering_profile_mismatch";
+    const base = state.get(payload.base_ordering_id);
+    if (!base) return "base_ordering_not_found";
+    if (base.profile !== declaredProfile) return "ordering_profile_mismatch";
+    if (base.subjectIdeaId !== (payload.subject_idea_id ?? null)) return "ordering_subject_mismatch";
+    const forkRoles = new Map(
+      payload.item_idea_ids.map((ideaId, index) => [ideaId, payload.item_roles?.[index] ?? null]),
+    );
+    for (const [ideaId, role] of base.itemRoles) {
+      if (forkRoles.has(ideaId) && forkRoles.get(ideaId) !== role) {
+        return "ordering_item_role_mismatch";
+      }
+    }
+    if (declaredProfile === "action_rail" && base.actionLane !== payload.item_roles[0]) {
+      return "action_lane_mismatch";
+    }
   }
   if (state.has(payload.ordering_id)) return "duplicate_ordering";
-  state.set(payload.ordering_id, declaredProfile);
+  state.set(payload.ordering_id, {
+    profile: declaredProfile,
+    subjectIdeaId: payload.subject_idea_id ?? null,
+    itemRoles: new Map(
+      payload.item_idea_ids.map((ideaId, index) => [ideaId, payload.item_roles?.[index] ?? null]),
+    ),
+    actionLane: declaredProfile === "action_rail" ? payload.item_roles[0] : null,
+  });
   return null;
 }
 
 if (fixture.schema !== schema.properties.schema.const) fail("schema identifier mismatch");
 if (stableJson(fixture.profile_codes) !== stableJson(expectedCodes)) fail("profile code mismatch");
+for (const [ideaId, ideaType] of Object.entries(fixture.idea_types)) {
+  if (!uuidV7.test(ideaId)) fail(`invalid fixture idea ID ${ideaId}`);
+  if (!["conceptual_idea", "truth_claim", "actionable_idea", "identity", "action"].includes(ideaType)) {
+    fail(`invalid fixture idea type ${ideaType}`);
+  }
+}
 if (fixture.vectors.length < schema.properties.vectors.minItems) fail("insufficient vectors");
 if (new Set(fixture.vectors.map((vector) => vector.id)).size !== fixture.vectors.length) {
   fail("duplicate vector id");

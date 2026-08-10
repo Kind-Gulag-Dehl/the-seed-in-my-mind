@@ -64,6 +64,7 @@ pub struct ReplayIdeaRow {
 pub struct ReplayOrderingItemRow {
     pub idx: i32,
     pub idea_id: Uuid,
+    pub item_role: Option<String>,
     pub via_connection_id: Option<Uuid>,
 }
 
@@ -72,6 +73,7 @@ pub struct ReplayOrderingRow {
     pub ordering_id: Uuid,
     pub ordering_profile: String,
     pub vine_type: Option<String>,
+    pub subject_idea_id: Option<Uuid>,
     pub speaker_identity_id: Uuid,
     pub created_event_id: Uuid,
     pub created_block_height: i64,
@@ -80,6 +82,25 @@ pub struct ReplayOrderingRow {
     pub title_representation_id: Option<Uuid>,
     pub sentence_representation_id: Option<Uuid>,
     pub items: Vec<ReplayOrderingItemRow>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ReplayRepresentationRow {
+    pub representation_id: Uuid,
+    pub target_kind: String,
+    pub target_object_id: Uuid,
+    pub representation_kind: String,
+    pub tier_length: Option<String>,
+    pub tier_complexity: Option<String>,
+    pub vocabulary_version_id: Option<Uuid>,
+    pub payload_hash: String,
+    pub payload_text: Option<String>,
+    pub author_identity_id: Uuid,
+    pub language_locale: Option<String>,
+    pub provenance: Option<String>,
+    pub created_event_id: Uuid,
+    pub created_block_height: i64,
+    pub created_event_index: i32,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -118,6 +139,7 @@ pub struct ReplayOutput {
     pub approximate_timestamp: DateTime<Utc>,
     pub ideas: Vec<ReplayIdeaRow>,
     pub orderings: Vec<ReplayOrderingRow>,
+    pub representations: Vec<ReplayRepresentationRow>,
     pub connections: Vec<ReplayConnectionRow>,
     pub payloads: Vec<ReplayPayloadRow>,
     pub cycle_status: ReplayCycleStatus,
@@ -193,6 +215,7 @@ struct OrderingRow {
     ordering_id: Uuid,
     ordering_profile: i16,
     vine_type: Option<i16>,
+    subject_idea_id: Option<Uuid>,
     speaker_identity_id: Uuid,
     created_event_id: Uuid,
     created_block_height: i64,
@@ -205,6 +228,7 @@ struct OrderingItemRow {
     ordering_id: Uuid,
     idx: i32,
     idea_id: Uuid,
+    item_role: Option<i16>,
     via_connection_id: Option<Uuid>,
 }
 
@@ -229,8 +253,13 @@ struct RepresentationRow {
     target_kind: i16,
     target_id: Uuid,
     tier_enum: i16,
+    tier_complexity: Option<i16>,
+    vocabulary_version_id: Option<Uuid>,
     payload_hash: String,
     payload_text: Option<String>,
+    author_identity_id: Uuid,
+    language_locale: Option<String>,
+    provenance: Option<String>,
     created_event_id: Uuid,
     created_block_height: i64,
     created_event_index: i32,
@@ -381,6 +410,7 @@ impl ReplayDriver {
               ordering_id,
               ordering_profile,
               vine_type,
+              subject_idea_id,
               speaker_identity_id,
               created_event_id,
               created_block_height,
@@ -402,6 +432,7 @@ impl ReplayDriver {
               ri.ordering_id,
               ri.idx,
               ri.idea_id,
+              ri.item_role,
               ri.via_connection_id
             FROM ordering_items ri
             JOIN orderings r ON r.ordering_id = ri.ordering_id
@@ -445,8 +476,13 @@ impl ReplayDriver {
               target_kind,
               target_id,
               tier_enum,
+              tier_complexity,
+              vocabulary_version_id,
               payload_hash,
               payload_text,
+              author_identity_id,
+              language_locale,
+              provenance,
               created_event_id,
               created_block_height,
               created_event_index
@@ -567,7 +603,10 @@ impl ReplayDriver {
             .collect();
         let mut ordering_items_by_ordering: HashMap<Uuid, Vec<OrderingItemRow>> = HashMap::new();
         for row in ordering_item_rows {
-            ordering_items_by_ordering.entry(row.ordering_id).or_default().push(row);
+            ordering_items_by_ordering
+                .entry(row.ordering_id)
+                .or_default()
+                .push(row);
         }
         let connection_by_event: HashMap<Uuid, ConnectionRow> = connection_rows
             .into_iter()
@@ -612,6 +651,7 @@ impl ReplayDriver {
             approximate_timestamp,
             ideas: apply.ideas,
             orderings: apply.orderings,
+            representations: apply.representations,
             connections: apply.connections,
             payloads: apply.payloads,
             cycle_status: apply.cycle_status,

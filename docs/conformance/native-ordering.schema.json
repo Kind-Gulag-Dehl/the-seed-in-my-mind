@@ -7,6 +7,7 @@
   "required": [
     "schema",
     "profile_codes",
+    "idea_types",
     "forbidden_legacy_event_types",
     "vectors",
     "hash_vectors"
@@ -20,6 +21,19 @@
         "vine": 0,
         "evidence_rail": 1,
         "action_rail": 2
+      }
+    },
+    "idea_types": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "enum": [
+          "conceptual_idea",
+          "truth_claim",
+          "actionable_idea",
+          "identity",
+          "action"
+        ]
       }
     },
     "forbidden_legacy_event_types": {
@@ -38,7 +52,7 @@
     },
     "vectors": {
       "type": "array",
-      "minItems": 10,
+      "minItems": 20,
       "items": {
         "type": "object",
         "additionalProperties": false,

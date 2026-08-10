@@ -157,6 +157,49 @@ Responses use JSON objects with the following common schemas (fields are normati
 }
 ```
 
+### CanonicalRepresentationDetail (target; pending verification)
+
+Title representation:
+```json
+{
+  "representation_id": "UUIDv7 string",
+  "target_kind": "string (idea | ordering)",
+  "target_object_id": "UUIDv7 string",
+  "representation_kind": "title",
+  "payload_hash": "hex string",
+  "author_identity_id": "UUIDv7 string",
+  "language_locale": "string | null",
+  "provenance": "string | null",
+  "created_event_id": "UUIDv7 string"
+}
+```
+
+A title response MUST omit `tier_length`, `tier_complexity`, and
+`vocabulary_version_id`.
+
+Description representation:
+```json
+{
+  "representation_id": "UUIDv7 string",
+  "target_kind": "string (idea | ordering)",
+  "target_object_id": "UUIDv7 string",
+  "representation_kind": "description",
+  "tier_length": "string (sentence | paragraph | full)",
+  "tier_complexity": "string (fundamental | standard | advanced | canonical)",
+  "vocabulary_version_id": "UUIDv7 string (present only when tier_complexity = canonical)",
+  "payload_hash": "hex string",
+  "author_identity_id": "UUIDv7 string",
+  "language_locale": "string | null",
+  "provenance": "string | null",
+  "created_event_id": "UUIDv7 string"
+}
+```
+
+A description response MUST include both tier fields.
+`vocabulary_version_id` MUST be present exactly for canonical-complexity descriptions
+and omitted for every other complexity. Clients MUST NOT substitute a current or latest
+vocabulary.
+
 ### OverlayConnectionSummary
 Reserved for the spec/future overlay endpoints in section 4.11. It is not currently used by the open-core runtime router.
 ```json
@@ -376,9 +419,14 @@ Success Response (200 OK):
 }
 ```
 
-### 4.10 Stage-0 Extension Endpoints (implemented)
+### 4.10 Stage-0 Extension Endpoints
 
-The following read endpoints are implemented in the current open-core runtime as extension endpoints. They are canonical read views derived from replayed canonical state, but are outside the minimal core set in sections 4.1-4.6.
+The following read endpoints are extension endpoints outside the minimal core set in
+sections 4.1-4.6. Existing fields remain implemented as stated. The new
+`subject_idea_id`, `item_role`, representation kind/tier/author/vocabulary bindings, and
+`GET /representation/{representation_id}` surface are target/pending contract until
+runtime, replay, snapshot, import, and conformance verification is complete; their
+presence here does not claim implementation acceptance.
 
 Stability expectations for Stage 0:
 * Endpoint paths are stable within their current versioned namespace.
@@ -397,6 +445,7 @@ Success Response (200 OK):
     "ordering_id": "UUIDv7 string",
     "ordering_profile": "string (vine | evidence_rail | action_rail)",
     "vine_type": "string | null",
+    "subject_idea_id": "UUIDv7 string | null",
     "author_identity_id": "UUIDv7 string",
     "canonical_representations": {
       "title_representation_id": "UUIDv7 string | null",
@@ -408,6 +457,7 @@ Success Response (200 OK):
       {
         "idx": "decimal string",
         "idea_id": "UUIDv7 string",
+        "item_role": "string (potential_evidence | actual_evidence | potential_action | proposed_action) | null",
         "via_connection_id": "UUIDv7 string | null"
       }
     ]
@@ -430,7 +480,8 @@ Success Response (200 OK):
     {
       "ordering_id": "UUIDv7 string",
       "ordering_profile": "string (vine | evidence_rail | action_rail)",
-      "vine_type": "string | null"
+      "vine_type": "string | null",
+      "subject_idea_id": "UUIDv7 string | null"
     }
   ]
 }
@@ -458,7 +509,26 @@ Ordering:
 Errors:
 * 400 Bad Request if `idea_ids` is missing, invalid, or exceeds 200 IDs.
 
-#### 4.10.4 GET /identity/{identity_id}
+#### 4.10.4 GET /representation/{representation_id} (target; pending verification)
+
+Path Parameter:
+* `representation_id`: UUIDv7 string
+
+Success Response (200 OK):
+```json
+{
+  "representation": "CanonicalRepresentationDetail"
+}
+```
+
+The response is snapshot-bounded and exposes the exact author and conditional
+vocabulary-version binding carried by canonical replay state. It never supplies an
+inferred vocabulary.
+
+Errors:
+* 404 Not Found if the representation does not exist in the latest canonical snapshot.
+
+#### 4.10.5 GET /identity/{identity_id}
 
 Path Parameter:
 * `identity_id`: UUIDv7 string
@@ -476,7 +546,7 @@ Success Response (200 OK):
 Errors:
 * 404 Not Found if identity is absent.
 
-#### 4.10.5 GET /snapshots/commits
+#### 4.10.6 GET /snapshots/commits
 
 Returns recent snapshot commit metadata records.
 
@@ -490,7 +560,7 @@ Success Response (200 OK):
 }
 ```
 
-#### 4.10.6 GET /snapshots/commits/{height}
+#### 4.10.7 GET /snapshots/commits/{height}
 
 Path Parameter:
 * `height`: decimal string (block height)
@@ -505,7 +575,7 @@ Success Response (200 OK):
 Errors:
 * 404 Not Found if height unavailable.
 
-#### 4.10.7 GET /coordinates
+#### 4.10.8 GET /coordinates
 
 Returns the current Stage 0 coordinate projection of the canonical idea map.
 
@@ -535,7 +605,7 @@ Success Response (200 OK):
 }
 ```
 
-#### 4.10.8 GET /api/v1/canonical/cycles/current
+#### 4.10.9 GET /api/v1/canonical/cycles/current
 
 Returns current derived cycle status.
 
@@ -556,7 +626,7 @@ Success Response (200 OK):
 }
 ```
 
-#### 4.10.9 GET /api/v1/canonical/event-log
+#### 4.10.10 GET /api/v1/canonical/event-log
 
 Returns the current canonical event log view and its derived block/cycle bands.
 
@@ -606,7 +676,7 @@ Success Response (200 OK):
 
 For Profile-v0 signed rows, the event-log DTO exposes public authorship audit fields needed to reconstruct the signed authored candidate and verify its publication wrapper. Legacy/bootstrap rows that were admitted before Profile-v0 signed ingress remain readable with `authorship_status = "legacy_or_unsigned"` and null signed-candidate fields; null signed fields MUST NOT be interpreted as newly verified human signatures.
 
-#### 4.10.10 GET /api/v1/canonical/tempo/status
+#### 4.10.11 GET /api/v1/canonical/tempo/status
 
 Returns current derived tempo status.
 
@@ -662,7 +732,7 @@ Success Response (200 OK):
 }
 ```
 
-#### 4.10.11 GET /api/v1/canonical/verification/{identity_id}
+#### 4.10.12 GET /api/v1/canonical/verification/{identity_id}
 
 This is an implemented transitional runtime read, not the future Profile-v0 identity-admission projection. Its `canonical_writer_level`, `email_verified`, and `active_verifier` fields are compatibility/materialized values and MUST NOT be treated as final replay-derived verification, VH, VI, writer, inviter, voting, governance, Tempo, or key-control authority. The planned public projection is defined in `canonical-identity-admission-api-contract-v0.md`.
 
@@ -687,7 +757,7 @@ Success Response (200 OK):
 Errors:
 * 404 Not Found if the identity has no verification state.
 
-#### 4.10.12 GET /api/v1/canonical/challenges/{challenge_id}
+#### 4.10.13 GET /api/v1/canonical/challenges/{challenge_id}
 
 Path Parameter:
 * `challenge_id`: UUIDv7 string

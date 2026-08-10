@@ -1,0 +1,759 @@
+{
+  "schema": "seed.conformance.seed_conformance_bindings.v1",
+  "identity_positions": {
+    "00000000-0000-7000-8000-00000000a001": {
+      "block_height": 0,
+      "event_index": 0
+    },
+    "00000000-0000-7000-8000-00000000a002": {
+      "block_height": 5,
+      "event_index": 0
+    },
+    "00000000-0000-7000-8000-00000000a004": {
+      "block_height": 0,
+      "event_index": 1
+    }
+  },
+  "idea_positions": {
+    "00000000-0000-7000-8000-00000000b001": {
+      "idea_type": "conceptual_idea",
+      "block_height": 0,
+      "event_index": 2
+    },
+    "00000000-0000-7000-8000-00000000b002": {
+      "idea_type": "conceptual_idea",
+      "block_height": 0,
+      "event_index": 3
+    },
+    "00000000-0000-7000-8000-00000000b003": {
+      "idea_type": "conceptual_idea",
+      "block_height": 5,
+      "event_index": 1
+    }
+  },
+  "vectors": [
+    {
+      "id": "SCB-001",
+      "description": "The separate title slot carries no description-tier or vocabulary fields.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e001",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 0,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d001",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "title",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": true,
+        "code": null
+      }
+    },
+    {
+      "id": "SCB-002",
+      "description": "All three lengths by four complexities form exactly twelve valid description cells.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e010",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 1,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d010",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "sentence",
+            "tier_complexity": "fundamental",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e011",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 2,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d011",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "sentence",
+            "tier_complexity": "standard",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e012",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 3,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d012",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "sentence",
+            "tier_complexity": "advanced",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e013",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 4,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d013",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "sentence",
+            "tier_complexity": "canonical",
+            "vocabulary_version_id": "00000000-0000-7000-8000-00000000b001",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e014",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 5,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d014",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "paragraph",
+            "tier_complexity": "fundamental",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e015",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 6,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d015",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "paragraph",
+            "tier_complexity": "standard",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e016",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 7,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d016",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "paragraph",
+            "tier_complexity": "advanced",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e017",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 8,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d017",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "paragraph",
+            "tier_complexity": "canonical",
+            "vocabulary_version_id": "00000000-0000-7000-8000-00000000b001",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e018",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 9,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d018",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "full",
+            "tier_complexity": "fundamental",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e019",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 10,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d019",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "full",
+            "tier_complexity": "standard",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e020",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 11,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d020",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "full",
+            "tier_complexity": "advanced",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        },
+        {
+          "id": "00000000-0000-7000-8000-00000000e021",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 12,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d021",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "full",
+            "tier_complexity": "canonical",
+            "vocabulary_version_id": "00000000-0000-7000-8000-00000000b001",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": true,
+        "code": null
+      }
+    },
+    {
+      "id": "SCB-003",
+      "description": "A title rejects tier_length.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e030",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 20,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d030",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "title",
+            "tier_length": "sentence",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "SCB-004",
+      "description": "A title rejects tier_complexity.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e031",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 21,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d031",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "title",
+            "tier_complexity": "standard",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "SCB-005",
+      "description": "A title rejects vocabulary_version_id.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e032",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 22,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d032",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "title",
+            "vocabulary_version_id": "00000000-0000-7000-8000-00000000b001",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "SCB-006",
+      "description": "representation_kind is mandatory and is never inferred from tier fields.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e033",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 23,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d033",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "tier_length": "sentence",
+            "tier_complexity": "standard",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "missing_field"
+      }
+    },
+    {
+      "id": "SCB-007",
+      "description": "Numeric representation-kind storage codes are not current-profile event values.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e034",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 24,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d034",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": 0,
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "SCB-008",
+      "description": "A description requires tier_length.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e035",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 25,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d035",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_complexity": "standard",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "missing_field"
+      }
+    },
+    {
+      "id": "SCB-009",
+      "description": "A description requires tier_complexity.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e036",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 26,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d036",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "sentence",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "missing_field"
+      }
+    },
+    {
+      "id": "SCB-010",
+      "description": "Numeric complexity storage codes are not current-profile event values.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e037",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 27,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d037",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "sentence",
+            "tier_complexity": 1,
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "SCB-011",
+      "description": "The historical title-as-tier value is rejected.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e038",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 28,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d038",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "title",
+            "tier_complexity": "standard",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "SCB-012",
+      "description": "Canonical descriptions require an explicit vocabulary version.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e039",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 29,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d039",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "sentence",
+            "tier_complexity": "canonical",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "missing_field"
+      }
+    },
+    {
+      "id": "SCB-013",
+      "description": "Noncanonical descriptions reject a vocabulary version.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e040",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 30,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d040",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "full",
+            "tier_complexity": "advanced",
+            "vocabulary_version_id": "00000000-0000-7000-8000-00000000b001",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "SCB-014",
+      "description": "The representation author must equal the event speaker.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e041",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 31,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d041",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "title",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a004"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "invalid_field"
+      }
+    },
+    {
+      "id": "SCB-015",
+      "description": "An unknown author cannot be inferred or materialized.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e042",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a003",
+          "block_height": 2,
+          "event_index": 32,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d042",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "title",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a003"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "unknown_author"
+      }
+    },
+    {
+      "id": "SCB-016",
+      "description": "A later identity cannot author an earlier representation.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e043",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a002",
+          "block_height": 2,
+          "event_index": 33,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d043",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "title",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a002"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "author_not_preexisting"
+      }
+    },
+    {
+      "id": "SCB-017",
+      "description": "An unknown vocabulary version cannot be inferred from active configuration.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e044",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 34,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d044",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "full",
+            "tier_complexity": "canonical",
+            "vocabulary_version_id": "00000000-0000-7000-8000-00000000b004",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "unknown_vocabulary"
+      }
+    },
+    {
+      "id": "SCB-018",
+      "description": "A later vocabulary idea cannot bind an earlier canonical description.",
+      "events": [
+        {
+          "id": "00000000-0000-7000-8000-00000000e045",
+          "kind": "representation_create",
+          "speaker_identity_id": "00000000-0000-7000-8000-00000000a001",
+          "block_height": 2,
+          "event_index": 35,
+          "payload": {
+            "representation_id": "00000000-0000-7000-8000-00000000d045",
+            "target_kind": "idea",
+            "target_object_id": "00000000-0000-7000-8000-00000000c001",
+            "representation_kind": "description",
+            "tier_length": "full",
+            "tier_complexity": "canonical",
+            "vocabulary_version_id": "00000000-0000-7000-8000-00000000b003",
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+          }
+        }
+      ],
+      "expected": {
+        "accept": false,
+        "code": "vocabulary_not_preexisting"
+      }
+    }
+  ],
+  "hash_vectors": [
+    {
+      "id": "SCB-HASH-001",
+      "payload": {
+        "representation_id": "00000000-0000-7000-8000-00000000d001",
+        "target_kind": "idea",
+        "target_object_id": "00000000-0000-7000-8000-00000000c001",
+        "representation_kind": "title",
+        "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+      },
+      "canonical_json_utf8": "{\"author_identity_id\":\"00000000-0000-7000-8000-00000000a001\",\"payload_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"representation_id\":\"00000000-0000-7000-8000-00000000d001\",\"representation_kind\":\"title\",\"target_kind\":\"idea\",\"target_object_id\":\"00000000-0000-7000-8000-00000000c001\"}",
+      "blake3": "02e2c7953b5a9b96f995a3f601afc0cc926864969c8f69c63ef902da44c26880"
+    },
+    {
+      "id": "SCB-HASH-002",
+      "payload": {
+        "representation_id": "00000000-0000-7000-8000-00000000d001",
+        "target_kind": "idea",
+        "target_object_id": "00000000-0000-7000-8000-00000000c001",
+        "representation_kind": "title",
+        "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "author_identity_id": "00000000-0000-7000-8000-00000000a004"
+      },
+      "canonical_json_utf8": "{\"author_identity_id\":\"00000000-0000-7000-8000-00000000a004\",\"payload_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"representation_id\":\"00000000-0000-7000-8000-00000000d001\",\"representation_kind\":\"title\",\"target_kind\":\"idea\",\"target_object_id\":\"00000000-0000-7000-8000-00000000c001\"}",
+      "blake3": "f1d53786c062e96a1754094af0fe40d8c6b8203229f4ed09fc934440faf86254"
+    },
+    {
+      "id": "SCB-HASH-003",
+      "payload": {
+        "representation_id": "00000000-0000-7000-8000-00000000d013",
+        "target_kind": "idea",
+        "target_object_id": "00000000-0000-7000-8000-00000000c001",
+        "representation_kind": "description",
+        "tier_length": "sentence",
+        "tier_complexity": "canonical",
+        "vocabulary_version_id": "00000000-0000-7000-8000-00000000b001",
+        "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+      },
+      "canonical_json_utf8": "{\"author_identity_id\":\"00000000-0000-7000-8000-00000000a001\",\"payload_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"representation_id\":\"00000000-0000-7000-8000-00000000d013\",\"representation_kind\":\"description\",\"target_kind\":\"idea\",\"target_object_id\":\"00000000-0000-7000-8000-00000000c001\",\"tier_complexity\":\"canonical\",\"tier_length\":\"sentence\",\"vocabulary_version_id\":\"00000000-0000-7000-8000-00000000b001\"}",
+      "blake3": "a121e2ae3cb3167bc07d5816b3874a08a668d296ad0399f376151e395ec70c7f"
+    },
+    {
+      "id": "SCB-HASH-004",
+      "payload": {
+        "representation_id": "00000000-0000-7000-8000-00000000d013",
+        "target_kind": "idea",
+        "target_object_id": "00000000-0000-7000-8000-00000000c001",
+        "representation_kind": "description",
+        "tier_length": "sentence",
+        "tier_complexity": "canonical",
+        "vocabulary_version_id": "00000000-0000-7000-8000-00000000b002",
+        "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "author_identity_id": "00000000-0000-7000-8000-00000000a001"
+      },
+      "canonical_json_utf8": "{\"author_identity_id\":\"00000000-0000-7000-8000-00000000a001\",\"payload_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"representation_id\":\"00000000-0000-7000-8000-00000000d013\",\"representation_kind\":\"description\",\"target_kind\":\"idea\",\"target_object_id\":\"00000000-0000-7000-8000-00000000c001\",\"tier_complexity\":\"canonical\",\"tier_length\":\"sentence\",\"vocabulary_version_id\":\"00000000-0000-7000-8000-00000000b002\"}",
+      "blake3": "e45ed25359cf17b4fcf16b4bdc31228a9a0404461d7e91d5655233495dbeed33"
+    }
+  ]
+}

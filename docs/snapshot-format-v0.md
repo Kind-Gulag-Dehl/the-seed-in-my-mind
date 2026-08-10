@@ -57,18 +57,25 @@ This document defines the derived, verifiable Snapshot Format v0 used by Stage L
 - Snapshots are derived, verifiable artifacts emitted at deterministic derived block-height intervals (default: every 100 blocks, where each derived block contains a fixed number of events, default 50). For convenience, implementations MAY prioritize scheduling at block heights immediately following a block that contains a `cycle_close` event, but snapshots remain block-keyed and cycles do not define snapshot identity, keys, or boundaries.
 - The canonical log MAY include a mechanical `snapshot_commit` boundary event that indexes a derived snapshot artifact. The artifact itself remains derived-only and replay-verifiable.
 - Provides a deterministic serialization format, hashing rules, and verification procedure.
-- Requires embedded title + sentence-tier text for all ideas and orderings present in snapshot state.
+- Requires embedded title-representation text plus the selected Tier 0
+  sentence-description text for all ideas and orderings present in snapshot state.
 - Includes sufficient tables and indexes to serve the read-only API without guessing.
 
 ### stage 0 snapshot scope (minimal canonical materialization)
 Stage 0 is permitted to emit a **reduced snapshot profile** derived from the minimal materialized tables currently required by the read-only API. This profile is authoritative for Stage 0 only and MUST be replaced by the full Snapshot Format v0 sections once the canonical materialization tables exist.
 
 **Stage 0 canonical facts scope (state_root_hash):**
-The Stage 0 `state_root_hash` MUST commit to **only** the following materialized sections, in the order listed:
-1) `ideas_s0` (stage0 ideas section)
-2) `connections_s0` (stage0 connections section)
+The current pre-genesis Stage 0 profile commits to the following materialized fact
+sections, concatenated by ascending section ID:
+1) `orderings_s0` (`0x000F`)
+2) `ideas_s0` (`0x8001`)
+3) `connections_s0` (`0x8002`)
+4) `representations_s0` (`0x8003`)
 
-All other canonical sections defined in this document (identities, representations, challenges, verdicts, rulebook_set, etc.) are **out of scope for Stage 0** and MUST NOT be assumed to exist until Stage 1+ materialization is implemented.
+The `ordering_representation_index` (`0x0010`) is included in the artifact but remains
+an index-only section excluded from `state_root_hash`. Identities, challenges, verdicts,
+rulebook_set, and other full-profile sections remain outside this reduced Stage 0 state
+root until their current-profile materializations are implemented.
 
 **Stage 0 section hashing:**
 Each Stage 0 section hash MUST be computed as:
@@ -78,14 +85,18 @@ section_hash = HASH("snapshot_section" || u16(section_id) || section_bytes)
 using the canonical encoding rules defined in `canonical-encoding-and-hashing-spec.md`.
 
 Stage 0 section IDs (extension range reserved for temporary profiles):
+- `orderings_s0` = `0x000F`
+- `ordering_representation_index` = `0x0010` (index-only; excluded from state root)
 - `ideas_s0` = `0x8001`
 - `connections_s0` = `0x8002`
+- `representations_s0` = `0x8003`
 
 **Stage 0 state_root_hash:**
 ```
 state_root_hash = HASH("snapshot_state_root" || concat(section_hashes_in_id_order))
 ```
-where `section_hashes_in_id_order` is `[ideas_s0, connections_s0]`.
+where `section_hashes_in_id_order` is
+`[orderings_s0, ideas_s0, connections_s0, representations_s0]`.
 
 **Stage 0 section contents and ordering:**
 Stage 0 sections MUST be encoded using canonical primitive encodings (big-endian integers, varint string lengths, UTF-8, NFC normalization, LF line endings, explicit presence flags for optional fields). Records MUST be ordered by canonical log order, not by identifiers.
@@ -111,18 +122,79 @@ Stage 0 sections MUST be encoded using canonical primitive encodings (big-endian
 10) `created_block_height` (u64)
 11) `created_event_index` (u32)
 
+`orderings_s0` records (one per Ordering at `H`), ordered by
+`(created_block_height ASC, created_event_index ASC)`:
+1) `ordering_id` (id)
+2) `ordering_profile` (u8)
+3) `vine_type_present` (u8) + `vine_type` (u8, if present)
+4) `subject_idea_id_present` (u8) + `subject_idea_id` (id, if present)
+5) `speaker_identity_id` (id)
+6) `created_event_id` (id)
+7) `base_ordering_id_present` (u8) + `base_ordering_id` (id, if present)
+8) `item_count` (u32)
+9) ordered item records: `idea_id` (id), `item_role_present` (u8) +
+   `item_role` (u8, if present)
+10) aligned step-metadata count and optional `via_connection_id` values
+
+Stage 0 uses these exact `u8` enum codes:
+- `ordering_profile`: `0 = vine`, `1 = evidence_rail`, `2 = action_rail`;
+- `vine_type`: `0 = pathway_vine`, `1 = narrative_vine`;
+- `item_role`: `0 = potential_evidence`, `1 = actual_evidence`,
+  `2 = potential_action`, `3 = proposed_action`;
+- representation `target_kind`: `0 = idea`, `1 = ordering`;
+- representation `representation_kind`: `0 = title`, `1 = description`;
+- description `tier_length`: `0 = sentence`, `1 = paragraph`, `2 = full`;
+- representation `tier_complexity`: `0 = fundamental`, `1 = standard`,
+  `2 = advanced`, `3 = canonical`.
+
+All other `u8` values are invalid. The profile/subject/role and fork invariants are those
+in Appendix A; snapshots MUST reject mismatched materialized rows and duplicate item IDs
+in standardized Rails.
+
+`representations_s0` records (one per representation at `H`), ordered by
+`(created_block_height ASC, created_event_index ASC)`:
+1) `representation_id` (id)
+2) `target_kind` (u8)
+3) `target_object_id` (id)
+4) `representation_kind` (u8)
+5) conditional kind fields:
+   - for `title`: no tier fields;
+   - for `description`: `tier_length` (u8), then `tier_complexity` (u8)
+6) `vocabulary_version_id_present` (u8) + `vocabulary_version_id` (id, if present)
+7) `author_identity_id` (id)
+8) `payload_hash` (hash32)
+9) `payload_embedded` (u8) + `payload_bytes` (bytes, if present)
+10) `language_locale_present` (u8) + `language_locale` (string, if present)
+11) `provenance_present` (u8) + `provenance` (string, if present)
+12) `created_event_id` (id)
+13) `created_block_height` (u64)
+14) `created_event_index` (u32)
+
+For a title row, `vocabulary_version_id_present` MUST be zero. It MUST be one exactly for
+a canonical-complexity description and zero for every other description. A title row
+carrying a tier or vocabulary identifier, a canonical-complexity description without a
+vocabulary reference, a noncanonical-complexity description with one, or a row whose
+author differs from its event speaker is invalid. Title and selected Tier 0 sentence
+payloads MUST be embedded. No snapshot builder may repair or infer any field.
+
 **Stage 0 title_sentence_payload_root:**
-For Stage 0, `title_sentence_payload_root` MUST be computed over title and sentence payloads for all included ideas and orderings:
-- For each included object (`idea` and `ordering`) at height `H`, resolve canonical title and sentence representation payload bytes for that object.
+For Stage 0, `title_sentence_payload_root` MUST be computed over title-representation
+payloads and selected Tier 0 sentence-description payloads for all included ideas and
+orderings:
+- For each included object (`idea` and `ordering`) at height `H`, resolve the canonical
+  title representation and the selected Tier 0 sentence-description representation
+  payload bytes for that object.
 - Canonicalize each payload per `canonical-encoding-and-hashing-spec.md` (UTF-8, NFC, LF normalization).
 - Compute `payload_hash = HASH(canonical_bytes)` (no domain tag).
-- Build leaf bytes as `u8(object_kind) || encode_id(object_id) || u8(tier_enum) || hash32(payload_hash)` where:
+- Build leaf bytes as `u8(object_kind) || encode_id(object_id) || u8(payload_kind) || hash32(payload_hash)` where:
   - `object_kind` is `0` for idea and `1` for ordering.
-  - `tier_enum` is `0` for title and `1` for sentence.
+  - `payload_kind` is `0` for title and `1` for the selected sentence description.
+    These are payload-root leaf codes, not description length-tier codes.
 - Sort leaves by raw bytewise comparison of full `leaf_bytes`.
 - Compute the Merkle root using the Merkle construction rules in `canonical-encoding-and-hashing-spec.md`.
 
-If any included idea or ordering at height `H` lacks a title or sentence payload, the Stage 0 snapshot is invalid.
+If any included idea or ordering at height `H` lacks a title payload or the selected
+Tier 0 sentence-description payload, the Stage 0 snapshot is invalid.
 
 **Stage 0 empty-root constants:**
 If there are zero included ideas and orderings at height `H`, the `title_sentence_payload_root` MUST be:
@@ -186,7 +258,10 @@ Snapshots MUST NOT define governance activation boundaries. This document define
 
 Each snapshot defines:
 - `state_root_hash`: Merkle root over canonical facts only (identities, ideas, orderings, representations with payload_hash pointers, connections, challenges, verdicts, active rulebook set).
-- `title_sentence_payload_root`: Merkle root over Tier 0 leaf bytes `(object_kind, object_id, tier_enum, payload_hash)` for title and sentence payloads across ideas and orderings, ordered deterministically by full encoded leaf bytes.
+- `title_sentence_payload_root`: Merkle root over Tier 0 leaf bytes
+  `(object_kind, object_id, payload_kind, payload_hash)` for title-representation and
+  selected sentence-description payloads across ideas and orderings, ordered
+  deterministically by full encoded leaf bytes.
 - `shared_map_commitment`: HASH("shared_map_commitment_v0" || state_root_hash || pocket_map_payload_root) — baseline commitment for verifying shared canonical reality and Tier 0 meaning preservation (as defined in Canonical Encoding and Hashing Specification (v0); referenced here).
 - `snapshot_hash`: HASH(domain_snapshot || entire_snapshot_bytes) — content-addressable artifact identifier.
 
@@ -454,35 +529,63 @@ Fields:
 #### 4.3.3 representations (`0x0003`)
 Primary key: `representation_id`
 
-Each record represents a canonical description/representation object. Title and sentence tiers MUST be present for every idea and every ordering and MUST include embedded payload bytes (Section 5).
+Each record represents a canonical title or description representation object. The
+canonical title representation and selected Tier 0 sentence-description representation
+MUST be present for every idea and ordering and MUST include embedded payload bytes
+(Section 5).
 
 Fields:
 - `representation_id` (id)
-- `target_kind` (u8)  // enum: idea, ordering
+- `target_kind` (u8)  // `0 = idea`, `1 = ordering`
 - `target_object_id` (id)
-- `representation_type` (u8)  // enum: title, sentence, paragraph, full, abstracted, jurisdictional_safe, diff, other
+- `representation_kind` (u8)  // `0 = title`, `1 = description`
+- if `representation_kind = description`, `tier_length` (u8)
+  // `0 = sentence`, `1 = paragraph`, `2 = full`
+- if `representation_kind = description`, `tier_complexity` (u8)
+  // `0 = fundamental`, `1 = standard`, `2 = advanced`, `3 = canonical`
+- `vocabulary_version_id_present` (bool)
+- `vocabulary_version_id` (id, if present)
+- `author_identity_id` (id)
 - `payload_hash` (hash32)
 - `payload_class` (u8)  // enum per safety rulebooks: normal, sensitive_abstracted, non_distributable_blocked
-- `language_locale_present` (bool)
-- `language_locale` (string, if present)
-- `author_identity_id_present` (bool)
-- `author_identity_id` (id, if present)
 - `payload_embedded` (bool)
 - `payload_bytes` (bytes, if payload_embedded = true)
+- `language_locale_present` (bool)
+- `language_locale` (string, if present)
+- `provenance_present` (bool)
+- `provenance` (string, if present)
+- `created_event_id` (id)
+- `created_block_height` (u64)
+- `created_event_index` (u32)
 
 Rules:
-- For `representation_type = title` and `representation_type = sentence`, `payload_embedded` MUST be true and `payload_bytes` MUST be present.
-- For other representation types, `payload_embedded` MAY be false and `payload_bytes` MAY be omitted if the `payload_hash` is present.
+- A title has no `tier_length` or `tier_complexity`; the canonical title payload MUST be
+  embedded.
+- A description has both tier fields. The selected Tier 0 sentence-description payload
+  MUST be embedded; other description payloads MAY be omitted when `payload_hash` is
+  present.
+- `vocabulary_version_id_present` MUST be false for title, true exactly for a
+  canonical-complexity description, and false for every other description complexity.
+- `author_identity_id` MUST equal the source `representation_create` event speaker, and
+  both that identity and the vocabulary idea when present MUST predate the representation.
+- Enum values outside the exact code sets above are invalid. Snapshot builders MUST NOT
+  infer, default, or repair any binding.
 
 #### 4.3.4 idea_representation_index (`0x0004`)
 Primary key: `idea_id`
 
 Fields:
 - `idea_id` (id)
-- `title_representation_id` (id)
-- `sentence_representation_id` (id)
+- `title_representation_id` (id)  // canonical pointer for the one title slot
+- `sentence_representation_id` (id)  // rulebook-selected Tier 0 sentence-description pointer
 - `other_representation_count` (u32)
 - `other_representation_ids` (id list, sorted)
+
+The title pointer MUST reference `representation_kind = title`. The sentence pointer
+MUST reference `representation_kind = description` with `tier_length = sentence`.
+Together with `other_representation_ids`, the index preserves the active pointers for
+the twelve description cells; each description ID's row supplies its exact length and
+complexity. Candidate representations remain in `representations` even when not selected.
 
 #### 4.3.4A orderings (`0x000F`)
 Primary key: `ordering_id`
@@ -491,30 +594,46 @@ Fields:
 - `ordering_id` (id)
 - `ordering_profile` (u8)  // 0=vine, 1=evidence_rail, 2=action_rail
 - `vine_type_present` (bool)
-- `vine_type` (u8, if present)  // enum: pathway_vine, narrative_vine
+- `vine_type` (u8, if present)  // `0 = pathway_vine`, `1 = narrative_vine`
+- `subject_idea_id_present` (bool)
+- `subject_idea_id` (id, if present)
 - `speaker_identity_id` (id)
 - `created_event_id` (id)
 - `base_ordering_id_present` (bool)
 - `base_ordering_id` (id, if present)
 - `item_count` (u32)
 - `item_idea_ids` (id list, ordered)
+- `item_role_count` (u32)
+- `item_roles` (u8 list, ordered and aligned one-for-one with `item_idea_ids`)
 - `step_meta_count` (u32)
 - `step_meta` (list; each entry MAY include `via_connection_id` as optional id)
 
 Profile invariants:
 - `vine_type_present` MUST be true for an `ordering_create` Vine and MAY inherit from the base for an `ordering_fork` Vine.
 - `vine_type_present` MUST be false for Evidence Rail and Action Rail profiles.
-- A fork's `ordering_profile` MUST equal its base Ordering's profile.
+- A Vine MUST have `subject_idea_id_present = false` and `item_role_count = 0`.
+- An Evidence Rail MUST reference a `truth_claim`; its aligned roles use only
+  `0 = potential_evidence` or `1 = actual_evidence`.
+- An Action Rail MUST reference an `actionable_idea`; all aligned roles in one Ordering
+  use exactly one lane, either `2 = potential_action` or `3 = proposed_action`.
+- Standardized Rails require at least one item and forbid duplicate item IDs.
+- A fork's `ordering_profile`, subject, retained-item roles, and Action Rail lane MUST
+  equal its base Ordering's corresponding values.
+- Enum values outside the exact code sets above are invalid. Snapshot builders MUST NOT
+  infer subjects or roles.
 
 #### 4.3.4B ordering_representation_index (`0x0010`)
 Primary key: `ordering_id`
 
 Fields:
 - `ordering_id` (id)
-- `title_representation_id` (id)
-- `sentence_representation_id` (id)
+- `title_representation_id` (id)  // canonical pointer for the one title slot
+- `sentence_representation_id` (id)  // rulebook-selected Tier 0 sentence-description pointer
 - `other_representation_count` (u32)
 - `other_representation_ids` (id list, sorted)
+
+The kind, Tier 0 selection, twelve-cell mapping, and candidate-preservation rules for
+`idea_representation_index` apply identically to this Ordering index.
 
 #### 4.3.5 connections (`0x0005`)
 Primary key: `connection_id`
@@ -680,20 +799,24 @@ Fields:
 - `tag` (string)
 
 
-## 5. embedded text rules (title + sentence tier)
+## 5. embedded text rules (title representation + selected sentence description)
 
-The snapshot MUST embed title-tier text and sentence-tier text for every idea and every ordering present in snapshot state.
+The snapshot MUST embed the canonical title-representation text and selected Tier 0
+sentence-description text for every idea and every ordering present in snapshot state.
 
 Requirements:
-- Each idea MUST have exactly one title representation and one sentence representation.
-- Each ordering MUST have exactly one title representation and one sentence representation.
+- Each idea MUST have exactly one canonical title representation and one selected
+  Tier 0 sentence-description representation.
+- Each ordering MUST have exactly one canonical title representation and one selected
+  Tier 0 sentence-description representation.
 - These representations MUST appear in `representations` with `payload_embedded = true` and their payload bytes present.
 - The embedded bytes MUST be the canonical payload bytes whose hash equals the `payload_hash` field.
 - Embedded payload bytes MUST be canonicalized and validated exactly as defined by the Canonical Encoding and Hashing Specification (v0), including all normalization and rejection rules.
 - `idea_representation_index` MUST reference title/sentence representation IDs for ideas.
 - `ordering_representation_index` MUST reference title/sentence representation IDs for orderings.
 
-If any idea or ordering lacks a title or sentence representation, or if embedded bytes do not hash to the declared `payload_hash`, the snapshot is invalid.
+If any idea or ordering lacks either required representation, or if embedded bytes do
+not hash to the declared `payload_hash`, the snapshot is invalid.
 
 
 
@@ -773,17 +896,24 @@ active_rulebook_set_hash = HASH("snapshot_rulebook_set" || rulebook_set_section_
 
 ### 7.3 title_sentence_payload_root (Tier 0 root)
 
-Let `P` be the ordered list of leaves for all title and sentence representations across all ideas and orderings, where each leaf commits to the tuple `(object_kind, object_id, tier_enum, payload_hash)` in canonical byte order.
+Let `P` be the ordered list of leaves for all canonical title representations and
+selected Tier 0 sentence-description representations across all ideas and orderings,
+where each leaf commits to the tuple
+`(object_kind, object_id, payload_kind, payload_hash)` in canonical byte order.
 
 - `object_kind` is a u8 with:
   - `0 = idea`
   - `1 = ordering`
-- `tier_enum` is a u8 with:
+- `payload_kind` is a u8 with:
   - `0 = title`
-  - `1 = sentence`
+  - `1 = selected sentence description`
+
+`payload_kind` classifies Tier 0 payload-root leaves. It is not the description
+`tier_length` enum, and title is not a description tier.
 
 Leaf encoding:
-- leaf bytes MUST be `u8(object_kind) || encode_id(object_id) || u8(tier_enum) || hash32(payload_hash)`.
+- leaf bytes MUST be
+  `u8(object_kind) || encode_id(object_id) || u8(payload_kind) || hash32(payload_hash)`.
 - `encode_id(object_id)` MUST use the canonical `id` encoding defined in the Canonical Encoding and Hashing Specification (v0).
 - `hash32(payload_hash)` MUST be the canonical 32-byte hash encoding as defined in the Canonical Encoding and Hashing Specification (v0).
 
@@ -884,13 +1014,14 @@ Values MAY be marked TODO initially, but the fixture structure and required fiel
 
 ## B. Single-Idea Snapshot
 
-- Event 1: idea_create
-  - idea_id: computed from payload
-  - title: "Fundamental Truth"
-  - sentence: "Collective reasoning requires verifiable shared reality."
+- Materialized state contains one idea plus two selected representation objects:
+  - `representation_kind = title`, payload "Fundamental Truth", with no tier fields;
+  - `representation_kind = description`, `tier_length = sentence`, with a valid
+    complexity tier and payload "Collective reasoning requires verifiable shared
+    reality."
 - Embedded Tier 0 payloads normalized
 - state_root_hash: Merkle over single idea entry
-- title_sentence_payload_root: Merkle over two leaves (title + sentence)
+- title_sentence_payload_root: Merkle over two payload-kind leaves (title + selected sentence)
 - Full header + sections bytes provided
 - Expected:
   - state_root_hash: [hex]

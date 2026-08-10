@@ -43,6 +43,66 @@ fn tempo_row(
     }
 }
 
+fn identity_create_event(event_id: Uuid, identity_id: Uuid, event_index: i32) -> EventRow {
+    EventRow {
+        block_height: 1,
+        event_index,
+        event_id,
+        event_type: "identity_create".to_string(),
+        speaker_identity_id: Some(identity_id),
+        payload_json: json!({
+            "identity_id": identity_id,
+            "title": "Representation author",
+            "speaker_identity_id": identity_id
+        }),
+    }
+}
+
+fn idea_create_fixture(
+    event_id: Uuid,
+    idea_id: Uuid,
+    speaker_identity_id: Uuid,
+    event_index: i32,
+    title: &str,
+) -> (EventRow, IdeaRow, IdeaPayloadRow) {
+    let sentence = format!("{title} sentence");
+    let payload_hash =
+        encoding::payload::payload_hash_hex(title, &sentence, None, None).expect("payload hash");
+    (
+        EventRow {
+            block_height: 1,
+            event_index,
+            event_id,
+            event_type: "idea_create".to_string(),
+            speaker_identity_id: Some(speaker_identity_id),
+            payload_json: json!({
+                "idea_id": idea_id,
+                "idea_type": "conceptual_idea",
+                "speaker_identity_id": speaker_identity_id,
+                "title": title,
+                "sentence": sentence,
+                "payload_hash": payload_hash
+            }),
+        },
+        IdeaRow {
+            idea_id,
+            idea_type: "conceptual_idea".to_string(),
+            speaker_identity_id,
+            created_event_id: event_id,
+            created_block_height: 1,
+            created_event_index: event_index,
+        },
+        IdeaPayloadRow {
+            idea_id,
+            title: Some(title.to_string()),
+            sentence: Some(sentence),
+            paragraph: None,
+            full: None,
+            payload_hash: Some(payload_hash),
+        },
+    )
+}
+
 fn forced_cycle_close_payload(cycle_index: i64, closure_block_height: i64) -> Value {
     json!({
         "cycle_index": cycle_index,
@@ -246,6 +306,194 @@ fn replay_is_deterministic() {
 }
 
 #[test]
+fn title_representation_replays_as_a_separate_slot() {
+    let author_identity_id = v7("00000000-0000-7000-8000-00000000a001");
+    let target_idea_id = v7("00000000-0000-7000-8000-00000000c001");
+    let representation_id = v7("00000000-0000-7000-8000-00000000d001");
+    let identity_event_id = v7("00000000-0000-7000-8000-00000000e000");
+    let target_event_id = v7("00000000-0000-7000-8000-00000000e100");
+    let representation_event_id = v7("00000000-0000-7000-8000-00000000e001");
+    let title = "The Seed in My Mind";
+    let payload_hash = "1111111111111111111111111111111111111111111111111111111111111111";
+    let (target_event, target_row, target_payload) = idea_create_fixture(
+        target_event_id,
+        target_idea_id,
+        author_identity_id,
+        1,
+        "Target idea",
+    );
+    let representation_event = EventRow {
+        block_height: 1,
+        event_index: 2,
+        event_id: representation_event_id,
+        event_type: "representation_create".to_string(),
+        speaker_identity_id: Some(author_identity_id),
+        payload_json: json!({
+            "representation_id": representation_id,
+            "target_kind": "idea",
+            "target_object_id": target_idea_id,
+            "representation_kind": "title",
+            "payload_hash": payload_hash,
+            "payload_text": title,
+            "author_identity_id": author_identity_id
+        }),
+    };
+    let representation_row = RepresentationRow {
+        representation_id,
+        target_kind: 0,
+        target_id: target_idea_id,
+        tier_enum: 0,
+        tier_complexity: None,
+        vocabulary_version_id: None,
+        payload_hash: payload_hash.to_string(),
+        payload_text: Some(title.to_string()),
+        author_identity_id,
+        language_locale: None,
+        provenance: None,
+        created_event_id: representation_event_id,
+        created_block_height: 1,
+        created_event_index: 2,
+    };
+    let events = vec![
+        identity_create_event(identity_event_id, author_identity_id, 0),
+        target_event,
+        representation_event,
+    ];
+    let mut idea_by_event = HashMap::new();
+    idea_by_event.insert(target_event_id, target_row);
+    let mut representation_by_event = HashMap::new();
+    representation_by_event.insert(representation_event_id, representation_row);
+    let mut payload_by_idea = HashMap::new();
+    payload_by_idea.insert(target_idea_id, target_payload);
+
+    let output = apply_events(
+        &events,
+        &idea_by_event,
+        &HashMap::new(),
+        &HashMap::new(),
+        &HashMap::new(),
+        &representation_by_event,
+        &payload_by_idea,
+        &[
+            tempo_row(1, 0, false, false),
+            tempo_row(1, 1, false, false),
+            tempo_row(1, 2, false, false),
+        ],
+        &HashMap::new(),
+    )
+    .expect("title representation replay");
+
+    assert_eq!(output.representations.len(), 1);
+    let replayed = &output.representations[0];
+    assert_eq!(replayed.representation_id, representation_id);
+    assert_eq!(replayed.target_kind, "idea");
+    assert_eq!(replayed.target_object_id, target_idea_id);
+    assert_eq!(replayed.representation_kind, "title");
+    assert_eq!(replayed.tier_length, None);
+    assert_eq!(replayed.tier_complexity, None);
+    assert_eq!(replayed.vocabulary_version_id, None);
+    assert_eq!(replayed.payload_hash, payload_hash);
+    assert_eq!(replayed.payload_text.as_deref(), Some(title));
+    assert_eq!(replayed.author_identity_id, author_identity_id);
+    assert_eq!(replayed.created_event_id, representation_event_id);
+}
+
+#[test]
+fn replay_rejects_a_materialized_but_later_vocabulary_idea() {
+    let author_identity_id = v7("00000000-0000-7000-8000-00000000a001");
+    let target_idea_id = v7("00000000-0000-7000-8000-00000000c001");
+    let vocabulary_version_id = v7("00000000-0000-7000-8000-00000000b003");
+    let identity_event_id = v7("00000000-0000-7000-8000-00000000e000");
+    let target_event_id = v7("00000000-0000-7000-8000-00000000e100");
+    let representation_event_id = v7("00000000-0000-7000-8000-00000000e045");
+    let vocabulary_event_id = v7("00000000-0000-7000-8000-00000000e101");
+    let (target_event, target_row, target_payload) = idea_create_fixture(
+        target_event_id,
+        target_idea_id,
+        author_identity_id,
+        1,
+        "Target idea",
+    );
+    let (vocabulary_event, vocabulary_row, vocabulary_payload) = idea_create_fixture(
+        vocabulary_event_id,
+        vocabulary_version_id,
+        author_identity_id,
+        3,
+        "Vocabulary version",
+    );
+    let representation_event = EventRow {
+        block_height: 1,
+        event_index: 2,
+        event_id: representation_event_id,
+        event_type: "representation_create".to_string(),
+        speaker_identity_id: Some(author_identity_id),
+        payload_json: json!({
+            "representation_id": "00000000-0000-7000-8000-00000000d045",
+            "target_kind": "idea",
+            "target_object_id": target_idea_id,
+            "representation_kind": "description",
+            "tier_length": "full",
+            "tier_complexity": "canonical",
+            "vocabulary_version_id": vocabulary_version_id,
+            "payload_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "author_identity_id": author_identity_id
+        }),
+    };
+    let representation_row = RepresentationRow {
+        representation_id: v7("00000000-0000-7000-8000-00000000d045"),
+        target_kind: 0,
+        target_id: target_idea_id,
+        tier_enum: 3,
+        tier_complexity: Some(3),
+        vocabulary_version_id: Some(vocabulary_version_id),
+        payload_hash: "1111111111111111111111111111111111111111111111111111111111111111"
+            .to_string(),
+        payload_text: None,
+        author_identity_id,
+        language_locale: None,
+        provenance: None,
+        created_event_id: representation_event_id,
+        created_block_height: 1,
+        created_event_index: 2,
+    };
+    let events = vec![
+        identity_create_event(identity_event_id, author_identity_id, 0),
+        target_event,
+        representation_event,
+        vocabulary_event,
+    ];
+    let mut idea_by_event = HashMap::new();
+    idea_by_event.insert(target_event_id, target_row);
+    idea_by_event.insert(vocabulary_event_id, vocabulary_row);
+    let mut representation_by_event = HashMap::new();
+    representation_by_event.insert(representation_event_id, representation_row);
+    let mut payload_by_idea = HashMap::new();
+    payload_by_idea.insert(target_idea_id, target_payload);
+    payload_by_idea.insert(vocabulary_version_id, vocabulary_payload);
+
+    let error = apply_events(
+        &events,
+        &idea_by_event,
+        &HashMap::new(),
+        &HashMap::new(),
+        &HashMap::new(),
+        &representation_by_event,
+        &payload_by_idea,
+        &[
+            tempo_row(1, 0, false, false),
+            tempo_row(1, 1, false, false),
+            tempo_row(1, 2, false, false),
+            tempo_row(1, 3, false, false),
+        ],
+        &HashMap::new(),
+    )
+    .expect_err("a globally materialized later idea cannot satisfy pre-use");
+
+    assert_eq!(error.code, "missing_vocabulary");
+    assert!(error.message.contains(&vocabulary_version_id.to_string()));
+}
+
+#[test]
 fn native_ordering_create_and_fork_replay_deterministically() {
     let speaker = v7("00000000-0000-7000-8000-00000000a010");
     let create_event_id = v7("00000000-0000-7000-8000-000000000110");
@@ -291,6 +539,7 @@ fn native_ordering_create_and_fork_replay_deterministically() {
             ordering_id: base_ordering_id,
             ordering_profile: 0,
             vine_type: Some(1),
+            subject_idea_id: None,
             speaker_identity_id: speaker,
             created_event_id: create_event_id,
             created_block_height: 1,
@@ -304,6 +553,7 @@ fn native_ordering_create_and_fork_replay_deterministically() {
             ordering_id: fork_ordering_id,
             ordering_profile: 0,
             vine_type: Some(1),
+            subject_idea_id: None,
             speaker_identity_id: speaker,
             created_event_id: fork_event_id,
             created_block_height: 1,
@@ -318,6 +568,7 @@ fn native_ordering_create_and_fork_replay_deterministically() {
             ordering_id: base_ordering_id,
             idx: 0,
             idea_id: idea_a,
+            item_role: None,
             via_connection_id: None,
         }],
     );
@@ -328,20 +579,19 @@ fn native_ordering_create_and_fork_replay_deterministically() {
                 ordering_id: fork_ordering_id,
                 idx: 0,
                 idea_id: idea_a,
+                item_role: None,
                 via_connection_id: None,
             },
             OrderingItemRow {
                 ordering_id: fork_ordering_id,
                 idx: 1,
                 idea_id: idea_b,
+                item_role: None,
                 via_connection_id: None,
             },
         ],
     );
-    let tempo_rows = vec![
-        tempo_row(1, 0, false, false),
-        tempo_row(1, 1, false, false),
-    ];
+    let tempo_rows = vec![tempo_row(1, 0, false, false), tempo_row(1, 1, false, false)];
     let run = || {
         apply_events(
             &events,
@@ -1021,8 +1271,14 @@ fn replay_rejects_non_system_cycle_close_and_system_non_boundary() {
 
 #[test]
 fn replay_rejects_duplicate_importance_challenge_instance() {
-    let (mut idea_map, ordering_map, ordering_items, connection_map, representation_map, mut payload_map) =
-        empty_maps();
+    let (
+        mut idea_map,
+        ordering_map,
+        ordering_items,
+        connection_map,
+        representation_map,
+        mut payload_map,
+    ) = empty_maps();
     let speaker = v7("00000000-0000-7000-8000-00000000a110");
     let idea_a_id = v7("00000000-0000-7000-8000-00000000b110");
     let idea_b_id = v7("00000000-0000-7000-8000-00000000b111");

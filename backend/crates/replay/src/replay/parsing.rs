@@ -98,6 +98,22 @@ pub(super) fn parse_tier_enum(value: i16) -> Result<TierEnum, ReplayError> {
     }
 }
 
+pub(super) fn parse_tier_complexity(
+    value: Option<i16>,
+) -> Result<Option<TierComplexity>, ReplayError> {
+    match value {
+        None => Ok(None),
+        Some(0) => Ok(Some(TierComplexity::Fundamental)),
+        Some(1) => Ok(Some(TierComplexity::Standard)),
+        Some(2) => Ok(Some(TierComplexity::Advanced)),
+        Some(3) => Ok(Some(TierComplexity::Canonical)),
+        Some(other) => Err(ReplayError::new(
+            "invalid_field",
+            format!("invalid tier_complexity {}", other),
+        )),
+    }
+}
+
 pub(super) fn parse_initial_representation_refs(
     payload: &serde_json::Map<String, Value>,
 ) -> Result<PointerSlots, ReplayError> {
@@ -193,11 +209,7 @@ pub(super) fn parse_representation_pointer_update_object(
         .ok_or_else(|| ReplayError::new("missing_field", "target_object_id required"))?;
     let target_object_id = parse_uuid_value(target_object_value, "target_object_id")?;
 
-    let tier_value = payload
-        .get("tier_length")
-        .or_else(|| payload.get("tier_enum"))
-        .ok_or_else(|| ReplayError::new("missing_field", "tier_length required"))?;
-    let tier_enum = parse_tier_enum_value(tier_value)?;
+    let (tier_enum, tier_complexity) = parse_representation_slot_payload(payload)?;
 
     let representation_value = payload
         .get("representation_id")
@@ -209,6 +221,7 @@ pub(super) fn parse_representation_pointer_update_object(
         target_kind,
         target_object_id,
         tier_enum,
+        tier_complexity,
         representation_id,
     })
 }
@@ -220,32 +233,68 @@ pub(super) fn parse_target_kind_value(value: &Value) -> Result<TargetKind, Repla
             "ordering" => Ok(TargetKind::Ordering),
             _ => Err(ReplayError::new("invalid_field", "invalid target_kind")),
         },
-        Value::Number(value) => match value.as_u64() {
-            Some(0) => Ok(TargetKind::Idea),
-            Some(1) => Ok(TargetKind::Ordering),
-            _ => Err(ReplayError::new("invalid_field", "invalid target_kind")),
-        },
         _ => Err(ReplayError::new("invalid_field", "invalid target_kind")),
     }
 }
 
-pub(super) fn parse_tier_enum_value(value: &Value) -> Result<TierEnum, ReplayError> {
-    match value {
-        Value::String(value) => match value.as_str() {
-            "title" => Ok(TierEnum::Title),
-            "sentence" => Ok(TierEnum::Sentence),
-            "paragraph" => Ok(TierEnum::Paragraph),
-            "full" => Ok(TierEnum::Full),
-            _ => Err(ReplayError::new("invalid_field", "invalid tier_length")),
-        },
-        Value::Number(value) => match value.as_u64() {
-            Some(0) => Ok(TierEnum::Title),
-            Some(1) => Ok(TierEnum::Sentence),
-            Some(2) => Ok(TierEnum::Paragraph),
-            Some(3) => Ok(TierEnum::Full),
-            _ => Err(ReplayError::new("invalid_field", "invalid tier_length")),
-        },
-        _ => Err(ReplayError::new("invalid_field", "invalid tier_length")),
+pub(super) fn parse_representation_slot_payload(
+    payload: &serde_json::Map<String, Value>,
+) -> Result<(TierEnum, Option<TierComplexity>), ReplayError> {
+    let kind = payload
+        .get("representation_kind")
+        .and_then(Value::as_str)
+        .ok_or_else(|| ReplayError::new("missing_field", "representation_kind required"))?;
+    match kind {
+        "title" => {
+            for field in ["tier_length", "tier_complexity", "vocabulary_version_id"] {
+                if payload.contains_key(field) {
+                    return Err(ReplayError::new(
+                        "invalid_field",
+                        format!("{field} is forbidden for a title representation"),
+                    ));
+                }
+            }
+            Ok((TierEnum::Title, None))
+        }
+        "description" => {
+            let tier_enum = match payload.get("tier_length").and_then(Value::as_str) {
+                Some("sentence") => TierEnum::Sentence,
+                Some("paragraph") => TierEnum::Paragraph,
+                Some("full") => TierEnum::Full,
+                Some(_) => {
+                    return Err(ReplayError::new(
+                        "invalid_field",
+                        "invalid description tier_length",
+                    ))
+                }
+                None => {
+                    return Err(ReplayError::new(
+                        "missing_field",
+                        "tier_length required for description",
+                    ))
+                }
+            };
+            let tier_complexity = match payload.get("tier_complexity").and_then(Value::as_str) {
+                Some("fundamental") => TierComplexity::Fundamental,
+                Some("standard") => TierComplexity::Standard,
+                Some("advanced") => TierComplexity::Advanced,
+                Some("canonical") => TierComplexity::Canonical,
+                Some(_) => {
+                    return Err(ReplayError::new("invalid_field", "invalid tier_complexity"))
+                }
+                None => {
+                    return Err(ReplayError::new(
+                        "missing_field",
+                        "tier_complexity required for description",
+                    ))
+                }
+            };
+            Ok((tier_enum, Some(tier_complexity)))
+        }
+        _ => Err(ReplayError::new(
+            "invalid_field",
+            "invalid representation_kind",
+        )),
     }
 }
 

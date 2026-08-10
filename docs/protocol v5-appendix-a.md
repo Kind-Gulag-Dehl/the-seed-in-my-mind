@@ -15,7 +15,7 @@ This appendix defines the **canonical data model and event schemas** required fo
 - the event types that may create, modify, or transform canonical state,
 - the deterministic validation rules that govern acceptance or rejection of events.
 
-This appendix is the binding interface between:
+Before genesis, this appendix is the binding interface between:
 
 - the normative protocol text,
 - governance and rulebook logic,
@@ -23,7 +23,7 @@ This appendix is the binding interface between:
 - deterministic replay and fork resolution,
 - and all conformant implementations (including reference clients and nodes).
 
-Any conformant implementation MUST be able to serialize, validate, replay, and reconstruct canonical state using only the definitions in this appendix and the main Protocol v5 text.
+Genesis commits the operative protocol and rulebook meaning into the canonical event sequence. After genesis, this appendix is a human-readable projection of the replay-derived graph-native authority; editing it does not change canonical semantics. Any conformant implementation MUST be able to serialize, validate, replay, and reconstruct canonical state using the event schemas ratified at the relevant replay height and the active graph-native rulebook commitments.
 
 ---
 
@@ -44,7 +44,7 @@ This appendix defines schemas for the following canonical object classes:
 - **ordering** (ordered sequence object; vines are ordering specializations)
 - **block**
 - **snapshot**
-- **rulebook reference objects** (interface only; rulebook content is governed elsewhere)
+- **ordinary rulebook ideas and their deterministic commitment fields** (interface only; rulebook content is governed elsewhere)
 
 Each object class defined here MUST have a stable, deterministic schema.
 
@@ -306,16 +306,20 @@ All fields not explicitly listed are FORBIDDEN.
 For representation semantics in this appendix, the following terms are normative:
 
 - **representation object**
-  A separate canonical object that references one textual payload for one target object (`idea` or `ordering`) at one `(tier_length, tier_complexity)` slot.
+  A separate canonical object that references one textual payload for one target object
+  (`idea` or `ordering`). `representation_kind` distinguishes the single `title` slot
+  from a `description` in one of twelve `(tier_length, tier_complexity)` cells.
 
 - **candidate representation** (also called **competing representation**)
   A representation object present in canonical history that is not currently selected by the canonical pointer for its slot.
 
 - **canonical representation pointer**
-  The object-level pointer from a specific `(tier_length, tier_complexity)` slot to the currently selected `representation_id`.
+  The object-level pointer from the title slot or a specific description
+  `(tier_length, tier_complexity)` cell to the currently selected `representation_id`.
 
-- **proposed description**
-  Synonymous with a candidate representation object not currently selected by the canonical representation pointer.
+- **proposed title or description**
+  A title or description candidate representation not currently selected by the
+  corresponding canonical representation pointer.
 
 Representations are canonical objects; pointer selection changes over time only through replay of finalized representation challenge verdicts, while representation objects remain preserved in history.
 
@@ -437,14 +441,13 @@ REQUIRED:
 #### A2.2.2 Optional core fields [anchor: a2_2_2_optional_core_fields]
 
 OPTIONAL:
-- `title`  
-  Short human-readable label.
-
 - `short_label`  
   Extremely compact label for dense views or summaries.
 
 - `canonical_representation_ids`
-  Deterministic mapping from `(tier_length, tier_complexity)` slots to the currently canonical `representation_id` values for this idea.
+  Deterministic mapping from the one title slot and twelve description
+  `(tier_length, tier_complexity)` cells to the currently canonical `representation_id`
+  values for this idea.
 
 - `tags`  
   Rulebook-extensible string tags used for filtering or categorization.  
@@ -535,23 +538,35 @@ REQUIRED:
   - `ordering`
 - `target_object_id`
   Canonical identifier of the represented target object.
-- `tier_length`
-  Enumeration for description length tier:
-  - `sentence`
-  - `paragraph`
-  - `full`
-- `tier_complexity`
-  Enumeration for complexity tier:
-  - `fundamental`
-  - `standard`
-  - `advanced`
-  - `canonical`
+- `representation_kind`
+  Enumeration:
+  - `title`
+  - `description`
 - `payload_hash` (`hash32`)
   Deterministic hash of the canonical representation payload bytes.
 - `author_identity_id`
   Identity that authored this representation payload.
 - `created_event_id`
   Reference to the canonical event that created this representation object.
+
+CONDITIONAL:
+- If `representation_kind = title`:
+  - `tier_length`, `tier_complexity`, and `vocabulary_version_id` MUST be absent.
+- If `representation_kind = description`:
+  - `tier_length` MUST be present and MUST be one of:
+    - `sentence`
+    - `paragraph`
+    - `full`
+  - `tier_complexity` MUST be present and MUST be one of:
+    - `fundamental`
+    - `standard`
+    - `advanced`
+    - `canonical`
+  - `vocabulary_version_id` MUST be present exactly when
+    `tier_complexity = canonical`; it references an already-existing ordinary governed
+    idea identifying the exact canonical-vocabulary version used.
+  - `vocabulary_version_id` MUST be absent for `fundamental`, `standard`, and
+    `advanced`.
 
 #### A2.3.2 Optional fields [anchor: a2_3_2_optional_fields]
 
@@ -564,9 +579,29 @@ OPTIONAL:
 
 #### A2.3.3 Invariants [anchor: a2_3_3_invariants]
 
-- Canonical selection of which representation is active for any `(tier_length, tier_complexity)` slot MUST be determined by replay of finalized representation challenge verdicts (`challenge_finalize_verdict`) and canonical pointer updates, not mutable local flags.
+- Canonical selection of which representation is active for the title slot or any
+  description `(tier_length, tier_complexity)` cell MUST be determined by replay of
+  finalized representation challenge verdicts (`challenge_finalize_verdict`) and
+  canonical pointer updates, not mutable local flags.
+- Each target has one title slot and exactly twelve description cells. Title is not a
+  fourth length tier and never has a complexity tier.
+- Title replacement and title-level `same_as` evaluation use the ordinary representation
+  challenge process and title pointer; they MUST NOT be translated into description-tier
+  operations.
 - Representation objects MUST NOT modify the semantic identity of the target object they describe.
 - Representation payload bytes are content-addressed blobs keyed by `payload_hash`; events and state objects reference payloads by hash.
+- For canonical `representation_create`, `author_identity_id` MUST equal the event
+  `speaker_identity_id`, and that identity MUST already exist at the event's canonical
+  position. DEC-044 Genesis Seed Package authorization does not waive either rule for a
+  `representation_create` event. Genesis bootstrap state may instead be materialized
+  through separate explicit versioned package records that preserve package provenance
+  and are not rewritten as ordinary authored events.
+- `vocabulary_version_id`, when required for a canonical-complexity description, is
+  committed event data. Nodes MUST NOT default or infer it from text, title, event
+  position, active configuration, current rulebook, or latest vocabulary. It is
+  forbidden for title representations. The referenced idea is governed through the
+  ordinary idea/action lifecycle; this field does not create a privileged Vocabulary
+  object type.
 
 ---
 
@@ -652,7 +687,9 @@ REQUIRED:
 - `created_event_id`
   Reference to the canonical event that created the ordering.
 - `canonical_representation_ids`
-  Deterministic mapping from `(tier_length, tier_complexity)` slots to the currently canonical `representation_id` values for this ordering.
+  Deterministic mapping from the one title slot and twelve description
+  `(tier_length, tier_complexity)` cells to the currently canonical `representation_id`
+  values for this ordering.
 - `item_idea_ids`
   Ordered list of `idea_id` values.
 
@@ -661,6 +698,17 @@ CONDITIONAL:
   - `pathway_vine`
   - `narrative_vine`
 - If `ordering_profile = evidence_rail` or `ordering_profile = action_rail`, `vine_type` MUST be absent.
+- If `ordering_profile = vine`, `subject_idea_id` and `item_roles` MUST be absent.
+- If `ordering_profile = evidence_rail`:
+  - `subject_idea_id` MUST reference an existing `truth_claim`;
+  - `item_roles` MUST have exactly one entry per `item_idea_ids` entry; and
+  - every role MUST be `potential_evidence` or `actual_evidence`.
+- If `ordering_profile = action_rail`:
+  - `subject_idea_id` MUST reference an existing `actionable_idea`;
+  - `item_roles` MUST have exactly one entry per `item_idea_ids` entry;
+  - every role MUST be `potential_action` or `proposed_action`; and
+  - every item in one Ordering MUST use the same one of those two roles. Potential and
+    proposed spectra remain two separate Orderings for the subject.
 
 OPTIONAL:
 - `base_ordering_id`
@@ -673,6 +721,14 @@ Invariants:
 - Orderings/vines MUST NOT introduce new connection types or alter base connection semantics.
 - For `pathway_vine`, each adjacent step MAY include optional `via_connection_id` provenance.
 - For `narrative_vine`, no underlying-edge requirement exists.
+- A standardized Rail MUST contain at least one item.
+- A standardized Rail MUST NOT contain duplicate `idea_id` values. This makes a
+  retained item's identity and role deterministic across forks.
+- A fork MUST preserve `ordering_profile` and `subject_idea_id`. A retained item MUST
+  preserve its role; an Action Rail fork MUST preserve the base potential/proposed lane.
+- No node may infer a subject or role from the Ordering title, first item, position, or
+  neighboring graph connections. Selection and completion remain challenge/action-event
+  state, not Ordering metadata.
 
 ---
 
@@ -842,15 +898,15 @@ Safety classifications MUST NOT affect canonical replay.
 
 ---
 
-### A2.9 Rulebook reference objects (interface-level) [anchor: a2_9_rulebook_reference_objects_interface_level]
+### A2.9 Rulebook idea commitments (interface-level) [anchor: a2_9_rulebook_reference_objects_interface_level]
 
-Rulebook objects are referenced canonically but defined elsewhere.
+Rulebooks are ordinary canonical ideas. There is no separate Rule or rulebook-reference object family and no rulebook-only creation event. A rulebook commitment is a replay-derived record that references the ordinary rulebook idea.
 
 REQUIRED:
-- `rulebook_id`
+- `rulebook_id` (equal to the ordinary rulebook idea identifier)
 - `rulebook_version`
 - `rulebook_hash`
-- `activation_event_id`
+- the canonical governance verdict, implementation-completion evidence, and computed activation-cycle provenance from which activation is derived
 
 Snapshots MUST record the active rulebook set deterministically.
 
@@ -1042,6 +1098,9 @@ Implementation validators SHOULD NOT accept undocumented aliases as canonical Pr
 `genesis`, `noop`, `vote_session_open`, `canonical_writer_grant`, and
 `canonical_writer_revoke` are not Protocol v5 canonical event types unless a future Appendix A
 revision explicitly adds them.
+Historical compatibility entries explicitly labeled non-live below are retained only so
+old artifacts can be verified. They are not counted as members of the clean live catalog
+and ordinary ingress MUST reject them.
 
 Each event type defined below:
 - uses the canonical event envelope defined in Section A3,
@@ -1330,7 +1389,10 @@ Effects:
 
 ### A4.2.3 `idea_update_representation` [anchor: a4_2_3_idea_update_representation]
 
-Deprecated compatibility alias of `representation_create` for idea targets.
+Historical compatibility record only. It is not a live canonical event in the clean
+Profile-v0 catalog, and ordinary ingress MUST reject it. A replay or import verifier MAY
+recognize it only when an explicit versioned historical manifest authorizes that exact
+legacy record; new canonical state MUST use `representation_create`.
 
 REQUIRED payload fields:
 - `representation_id`
@@ -1345,10 +1407,12 @@ OPTIONAL payload fields:
 - `language_locale`
 - `provenance`
 
-Effects:
-- Creates a new candidate/competing representation object for the target idea.
+Historical verification effect:
+- Preserves an explicitly authorized legacy representation record.
+- MUST NOT be accepted as a new ordinary authored event.
 - MUST NOT update canonical representation pointers.
-- Payload encoding and semantics are identical to `representation_create`.
+- Any manifest-bound legacy title-as-tier encoding remains historical only and MUST NOT
+  be interpreted as the current-profile `representation_create` schema.
 
 ---
 
@@ -1374,10 +1438,17 @@ REQUIRED payload fields:
 - `representation_id`
 - `target_kind`  // enum: `idea`, `ordering`
 - `target_object_id`
-- `tier_length`
-- `tier_complexity`
+- `representation_kind`  // enum: `title`, `description`
 - `payload_hash` (`hash32`)
 - `author_identity_id`
+
+CONDITIONAL payload fields:
+- If `representation_kind = title`, `tier_length`, `tier_complexity`, and
+  `vocabulary_version_id` MUST be absent.
+- If `representation_kind = description`, `tier_length` and `tier_complexity` MUST be
+  present with the exact A2.3 enums.
+- For a description, `vocabulary_version_id` is REQUIRED exactly when
+  `tier_complexity = canonical` and MUST be absent for every other complexity tier.
 
 OPTIONAL payload fields:
 - `language_locale`
@@ -1392,6 +1463,13 @@ Effects:
 Invariants:
 - `representation_create` is the authoritative canonical path for creating candidate/competing representations for ideas and orderings.
 - Payload bytes are content-addressed blobs keyed by `payload_hash` and MAY be distributed independently of the event log.
+- `author_identity_id` MUST equal `speaker_identity_id`, and the identity MUST already
+  exist at this event's canonical position.
+- The canonical event payload, including `representation_kind`, `author_identity_id`,
+  every conditionally present description-tier field, and conditional
+  `vocabulary_version_id`, is included in the canonical payload hash and therefore in
+  the ordinary authorship signature preimage. Field presence and absence are committed;
+  no title or description field is defaulted or inferred.
 
 ---
 
@@ -1409,6 +1487,15 @@ REQUIRED payload fields:
 
 CONDITIONAL payload fields:
 - If `ordering_profile = vine`, `vine_type` MUST be present and MUST be one of `pathway_vine`, `narrative_vine`.
+- If `ordering_profile = evidence_rail`, `subject_idea_id` MUST reference an existing
+  `truth_claim` and `item_roles` MUST align one-for-one with `item_idea_ids` using only
+  `potential_evidence` or `actual_evidence`; `item_idea_ids` MUST contain no duplicates.
+- If `ordering_profile = action_rail`, `subject_idea_id` MUST reference an existing
+  `actionable_idea` and `item_roles` MUST align one-for-one with `item_idea_ids`. One
+  Ordering is the potential lane (all `potential_action`) or the proposed lane (all
+  `proposed_action`); the two lanes MUST NOT be collapsed and `item_idea_ids` MUST
+  contain no duplicates.
+- For `ordering_profile = vine`, `subject_idea_id` and `item_roles` MUST be absent.
 
 OPTIONAL payload fields:
 - `initial_representation_refs`
@@ -1430,6 +1517,12 @@ REQUIRED payload fields:
 - `speaker_identity_id`
 - `item_idea_ids` (full ordered replacement list)
 
+CONDITIONAL payload fields:
+- Standardized profiles repeat the base `subject_idea_id` and carry a full aligned
+  `item_roles` list under the same profile rules as `ordering_create`, including the
+  duplicate-item prohibition.
+- Vines MUST omit `subject_idea_id` and `item_roles`.
+
 OPTIONAL payload fields:
 - `vine_type` (valid only for `ordering_profile = vine`; if omitted, inherits from the base Ordering)
 - `step_meta`
@@ -1438,6 +1531,8 @@ Effects:
 - Creates a new Ordering object in canonical history.
 - Records lineage through `base_ordering_id`.
 - `ordering_profile` MUST equal the base Ordering's profile.
+- `subject_idea_id` MUST equal the base Ordering's subject. Any retained item MUST retain
+  its base role, and an Action Rail fork MUST retain the base potential/proposed lane.
 - Fork-only mutation model: existing Orderings are not edited in place.
 - `representation_create` with `target_kind = ordering` is the sole live path for creating an Ordering representation.
 
@@ -1594,8 +1689,12 @@ Effects:
 - Enables downstream state transformations.
 - For a winning `importance_challenge`, if the challenger is still below the target in the exact declared context, deterministic replay MUST remove the challenger from its current position and insert it immediately above the target while preserving the relative order of all other ideas. A losing challenge, or a challenger that is no longer below the target at application time, has no rank-mutation effect under the base rule.
 - Universal aggregate fields MUST be recomputed only after affected universal-axis state is updated. A verdict MUST NOT directly author an aggregate universal value.
-- For `representation_challenge` verdicts, deterministic replay MUST update canonical representation pointer selection for the target (`idea` or `ordering`) slot by selecting exactly one canonical representation and superseding prior selection without deleting history.
-- Canonical representation pointers MUST NOT be updated by `representation_create` or `idea_update_representation`.
+- For `representation_challenge` verdicts, deterministic replay MUST update canonical
+  representation pointer selection for the target (`idea` or `ordering`) title slot or
+  description cell by selecting exactly one canonical representation and superseding
+  prior selection without deleting history.
+- Canonical representation pointers MUST NOT be updated by `representation_create` or
+  by a historically authorized `idea_update_representation` compatibility record.
 
 ---
 
@@ -1717,14 +1816,11 @@ Debate about governance proposals MUST use the same argument mechanisms as all o
   - `usage = importance_argument`
   - and where applicable `usage = evidence_for` / `usage = evidence_against`.
 
-### A4.6.2 Rulebook references (interface-level) [anchor: a4_6_2_rulebook_references_interface_level]
+### A4.6.2 Rulebook idea commitments (interface-level) [anchor: a4_6_2_rulebook_references_interface_level]
 
-A rulebook’s **content** is defined outside Appendix A, but its **identity and commitment** MUST be representable canonically.
+A rulebook’s **content** is expressed by ordinary ideas, descriptions, and connections. Its **identity and commitment** MUST be representable canonically without introducing a privileged rule object.
 
-A conformant implementation MUST represent a rulebook commitment using one of:
-
-- a rulebook idea whose canonical representation commits to a `rulebook_hash`, or
-- a dedicated rulebook reference object as defined in Section A2.9, created via events defined by the governing rulebooks.
+A conformant implementation MUST represent a rulebook commitment through an ordinary rulebook idea whose canonical representation commits to a `rulebook_hash`. `rulebook_id` MUST equal that idea’s identifier. Active-rulebook sets and version/hash indexes are derived records, not independently authored objects or events.
 
 At minimum, the canonical universe MUST have a deterministic way to reference:
 - `rulebook_id`
@@ -2544,9 +2640,11 @@ These interfaces ensure separation of concerns while maintaining deterministic b
 
 The Offline & Mindseed system enables local operation and later reintegration without breaking canonical determinism.
 
-#### A6.1.1 Seed package contents [anchor: a6_1_1_seed_package_contents]
+The offline Mindseed package in this section is distinct from the Genesis Seed Package. The Genesis Seed Package is the ratified complete bootstrap input for a universe; a Mindseed is a portable user or node package used after that boundary.
 
-An offline seed package MUST include, at minimum:
+#### A6.1.1 Publication package contents [anchor: a6_1_1_seed_package_contents]
+
+An offline publication package MUST include, at minimum:
 - a sequence of canonical events authored locally,
 - identity references sufficient to verify authorship,
 - any required representations referenced by those events.

@@ -18,19 +18,41 @@ This repo intentionally publishes a curated public subset of the wider source-tr
 This index is authoritative for:
 - public document classification,
 - public reading order,
-- precedence rules between public docs.
+- precedence rules between public docs during the pre-genesis drafting and
+  ratification phase.
 
 It is not authoritative for:
 - protocol semantics themselves,
 - implementation status beyond the reviewer-facing status split in `open-core-implementation-status.md`.
 
+Authority changes at the ratified graph-native genesis boundary:
+
+- before genesis, the checked-in specifications identified below are the
+  ratified source material used to construct and validate the genesis
+  candidate;
+- genesis commits the initial canonical event sequence, graph-native protocol
+  and rulebook ideas, their ordinary connections and representations, and the
+  exact bootstrap/conformance profile required to replay them;
+- after genesis, the canonical event log and the replay-derived active
+  graph-native rulebook commitments are the semantic authority;
+- Markdown specifications are then human-readable and conformance-oriented
+  projections of that authority. Source documents retained for provenance are
+  hashed archives, not a parallel source of protocol meaning.
+
+Until the graph-native genesis package is generated, ratified, and activated,
+this transition has not occurred and the current pre-genesis precedence rules
+remain in force.
+
 ---
 
 ## 1. public document classes
 
-### 1.1 authoritative public specs
+### 1.1 pre-genesis authoritative public specs
 
-These documents define protocol or system behavior within the public repo.
+These documents define protocol or system behavior within the public repo
+during pre-genesis construction. After the graph-native authority transition,
+their maintained successors are projections of canonical graph state and MUST
+NOT override the canonical event log or active rulebook commitments.
 
 - `protocol v5.md`
 - `protocol v5-appendix-a.md`
@@ -45,7 +67,7 @@ These documents define protocol or system behavior within the public repo.
 - `cycle-spec.md`
 - `shared-map-and-payload-bundles-spec.md`
 
-### 1.2 authoritative public specs published for transparency
+### 1.2 pre-genesis authoritative public specs published for transparency
 
 These documents are part of the intended open-core architecture and are public in this repo for architectural transparency. They are not, by themselves, evidence that the described runtime is fully implemented.
 
@@ -108,9 +130,21 @@ When public documents conflict, resolve them in this order.
 
 ### 2.2 root protocol semantics
 
+Before the graph-native genesis authority transition:
+
 1) `protocol v5.md` is the public root for constitutional invariants and core semantics.
 2) `protocol v5-appendix-a.md` is subordinate to `protocol v5.md`.
 3) Subsystem specs are authoritative within their scope, but may not contradict `protocol v5.md`.
+
+After that transition:
+
+1) the canonical event log is the historical authority;
+2) replay-derived active graph-native rulebook commitments govern prospective
+   semantics at each canonical position;
+3) generated protocol/specification projections explain and test that state but
+   do not independently change it;
+4) archived source documents provide provenance and reconstruction evidence,
+   not competing semantic authority.
 
 Cycle/Tempo scope split:
 - `protocol v5.md` owns root normative cycle invariants, structural/consequential authority separation, and sealing semantics.
@@ -176,3 +210,9 @@ Identity admission scope split:
 - If a public map references a document that is not present in this repo, either remove the reference or mark it clearly as not included in this public repo.
 - If implementation status changes, update `open-core-implementation-status.md` rather than implying implementation through map or index wording.
 - Derived docs must not introduce new semantics.
+- A generated post-genesis protocol projection MUST identify the canonical
+  height, active rulebook-set commitment, and projection format/version from
+  which it was produced.
+- Editing a projection or archived source file does not amend the protocol.
+  Semantic amendment must use ordinary canonical governance, implementation,
+  completion-verification, and cycle-activation procedures.

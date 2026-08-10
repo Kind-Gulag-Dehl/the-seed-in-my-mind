@@ -490,6 +490,7 @@ SELECT
   r.ordering_id,
   r.ordering_profile,
   r.vine_type,
+  r.subject_idea_id,
   r.speaker_identity_id AS author_identity_id,
   r.title_representation_id,
   r.sentence_representation_id,
@@ -506,6 +507,7 @@ pub const LIST_CANONICAL_ORDERING_ITEMS: &str = r#"
 SELECT
   ri.idx,
   ri.idea_id,
+  ri.item_role,
   ri.via_connection_id
 FROM ordering_items ri
 JOIN orderings r ON r.ordering_id = ri.ordering_id
@@ -518,7 +520,8 @@ pub const LIST_CANONICAL_ORDERINGS_FOR_IDEA: &str = r#"
 SELECT
   r.ordering_id,
   r.ordering_profile,
-  r.vine_type
+  r.vine_type,
+  r.subject_idea_id
 FROM orderings r
 WHERE r.created_block_height <= $2
   AND EXISTS (
@@ -528,4 +531,22 @@ WHERE r.created_block_height <= $2
       AND ri.idea_id = $1
   )
 ORDER BY r.created_block_height ASC, r.created_event_index ASC, r.ordering_id ASC
+"#;
+
+pub const GET_CANONICAL_REPRESENTATION: &str = r#"
+SELECT
+  representation_id,
+  target_kind,
+  target_id,
+  tier_enum,
+  tier_complexity,
+  vocabulary_version_id,
+  payload_hash,
+  author_identity_id,
+  language_locale,
+  provenance,
+  created_event_id
+FROM representations
+WHERE representation_id = $1
+  AND created_block_height <= $2
 "#;
