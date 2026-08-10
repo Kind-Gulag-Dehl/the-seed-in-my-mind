@@ -9,11 +9,13 @@ scope:
   - Defines staged canonical publication profiles for single-node bootstrap, witnessed single-publisher operation, and full multi-node prefix finality.
   - Defines canonical publication authority objects, deterministic ordering of prefix extensions, availability certification, omission auditability, and finalized-prefix continuity.
   - Defines how derived publication blocks preserve the public `(block_height, event_index)` address surface without acting as the authority source for order.
+  - Defines explicit catastrophe-successor lineages without weakening or rewriting ordinary finality.
 
 authoritative_for:
   - Canonical publication order across Profiles 0, 1, and 2.
   - Availability attestations, prefix certificates, omission proofs, and profile transition rules.
   - Deterministic mapping from finalized canonical sequence to derived publication blocks.
+  - CatastropheSuccessorDeclaration structure, successor-root publication rules, competing successor preservation, and later recognition boundaries.
 
 not_authoritative_for:
   - Truth, importance, action, governance, safety, token, or challenge semantics beyond assigning canonical publication order.
@@ -119,6 +121,12 @@ This specification does not:
 - **Omission proof**
   A minimal challenge artifact showing that an event was in the committed ready frontier for a certificate but was excluded in violation of deterministic ordering and capacity rules.
 
+- **CatastropheSuccessorDeclaration**
+  An immutable, signed declaration that names a frozen verified prefix and starts
+  a separately identified successor lineage. It is not an ordinary
+  `PrefixCertificate`, does not extend the original certificate chain, and does
+  not prove uninterrupted original canon.
+
 ## 3. Canonical authority objects [anchor: canonical_authority_objects]
 
 ### 3.1 AuthoredEvent [anchor: authored_event]
@@ -202,7 +210,9 @@ Each signer signs `prefix_certificate_hash`.
 
 Validation rules:
 
-- `certificate_ordinal = parent.certificate_ordinal + 1`,
+- for ordinary certificates, `certificate_ordinal = parent.certificate_ordinal + 1`,
+- the first certificate of a catastrophe-successor lineage MUST instead satisfy
+  the successor-root exception in Section 5.6.4; no other exception exists,
 - `parent_canonical_event_count + extension_event_count` MUST equal the finalized canonical event count after this certificate,
 - `extension_events_root` MUST commit to the ordered extension event hashes exactly as finalized,
 - `ready_frontier_root` MUST commit to the ordered ready frontier used for omission auditability,
@@ -238,6 +248,55 @@ Derived blocks:
 - MAY span certificate boundaries,
 - MAY be omitted, regenerated, or re-served without changing canonical meaning.
 
+### 3.5 CatastropheSuccessorDeclaration [anchor: catastrophe_successor_declaration]
+
+The canonical declaration body contains these fields in order:
+
+1. `declaration_version` (`u16`) = `0`
+2. `parent_lineage_mode` (`u8`): `0` original, `1` prior successor
+3. `parent_lineage_identifier` (`hash32`): the genesis snapshot hash when mode
+   is `0`, or the parent `CatastropheSuccessorDeclaration` hash when mode is `1`
+4. `frozen_parent_prefix_certificate_hash` (`hash32`)
+5. `frozen_parent_canonical_event_count` (`u64`)
+6. `frozen_parent_snapshot_hash` (`hash32`)
+7. `frozen_parent_shared_map_commitment` (`hash32`)
+8. `frozen_parent_active_rulebook_set_hash` (`hash32`)
+9. `recovery_evidence_root` (`hash32`)
+10. `successor_publication_profile_id` (`u8`) = `0`
+11. `successor_publisher_identity_id` (`id`)
+12. `successor_publisher_public_key_ref` (`hash32`)
+13. `recovery_reason_payload_hash` (`hash32`)
+
+The declaration hash and exact domain separation are defined in the Canonical
+Encoding and Hashing Specification. The signed envelope appends:
+
+1. `supporter_count` (`u16`)
+2. supporter tuples sorted by raw `supporter_identity_id`, each containing:
+   - `supporter_identity_id` (`id`)
+   - `public_key_ref` (`hash32`)
+   - `signature_byte_length` (`u32`)
+   - `signature` (exactly `signature_byte_length` raw bytes)
+
+Each supporter signs the declaration hash. Supporters MUST be distinct verified
+humans whose keys were authorized at the frozen parent prefix. The declared
+successor publisher MUST be a supporter and MUST sign with
+`successor_publisher_public_key_ref`. Additional support is preservation and
+legitimacy evidence; it does not turn the declaration into an original-lineage
+quorum certificate.
+
+`supporter_count` MUST be at least `1` and equal the number of tuples. Encoded
+supporter identifiers MUST be strictly increasing; duplicate or out-of-order
+tuples and trailing bytes are invalid.
+
+`recovery_evidence_root` commits, using the exact catastrophe-recovery evidence
+leaf/node tags and Merkle rules in the Canonical Encoding and Hashing
+Specification, to the sorted hashes of every prefix certificate, conflict proof,
+availability artifact, and recovery-status record used to choose the frozen
+parent. The set MUST be non-empty. All such evidence MUST be carried by a
+`full_recovery_v0` successor package. `recovery_reason_payload_hash` is the
+ordinary canonical text-payload hash of human-readable explanatory material;
+the payload is not a canonical event and not authority.
+
 ## 4. Event states [anchor: event_states]
 
 Every event moves through the following states:
@@ -252,7 +311,9 @@ Every event moves through the following states:
   - Profile 2: required
 
 - **canonical**
-  The event appears in the ordered extension of a valid finalized `PrefixCertificate`.
+  The event appears in the ordered extension of a valid finalized
+  `PrefixCertificate`, with its original or successor lineage identifier kept as
+  part of the publication context.
 
 No event becomes canonical by attestation alone.
 
@@ -267,7 +328,9 @@ All profiles share the following invariants:
 - blocks are derived packaging only,
 - offline work remains delayed publication,
 - no profile may use wall-clock time, timestamps, or local receipt order as authority,
-- governance activates profile changes only at deterministic cycle boundaries.
+- governance activates ordinary profile changes only at deterministic cycle
+  boundaries; the separately labeled catastrophe-successor root exception is
+  defined only by Section 5.6.
 
 ### 5.1.1 Active publication parameters [anchor: active_publication_parameters]
 
@@ -346,7 +409,104 @@ Rules:
 - Profile 0 -> Profile 1 -> Profile 2 is the normal forward path,
 - silent downgrade is forbidden,
 - if Profile 2 loses quorum, canonical publication stalls rather than reverting automatically to Profile 1 or Profile 0,
-- downgrade or recovery requires explicit governance or an explicit catastrophe-restart lineage procedure defined elsewhere.
+- downgrade or recovery requires explicit ordinary governance or the explicit
+  catastrophe-successor procedure in Section 5.6.
+
+### 5.6 Catastrophe-successor lineage procedure [anchor: catastrophe_successor_lineage_procedure]
+
+#### 5.6.1 Entry boundary [anchor: catastrophe_successor_entry_boundary]
+
+Loss of quorum, censorship, elapsed local time, disappearance of known nodes,
+or an operator's belief that catastrophe occurred MUST NOT weaken an ordinary
+publication threshold. If a valid ordinary certificate can still be produced,
+ordinary publication remains the only way to extend the original lineage.
+
+Because global disappearance cannot be proven from a partition, there is no
+automatic canonical catastrophe trigger. A carrier that cannot obtain ordinary
+finality MAY create a `CatastropheSuccessorDeclaration`; doing so creates a new,
+explicitly labeled lineage rather than resuming original canon.
+
+#### 5.6.2 Frozen parent selection [anchor: catastrophe_successor_frozen_parent]
+
+The declarants MUST verify all available certificate chains and commit the
+examined artifacts through `recovery_evidence_root`.
+
+- If the evidence contains conflicting valid finalized certificates, the frozen
+  parent is their greatest common finalized ancestor.
+- Otherwise, the frozen parent is the highest valid finalized certificate for
+  which the declarants possess the complete certificate, event, snapshot, and
+  active-rulebook closure required by `full_recovery_v0`.
+- A declaration MUST NOT skip a known valid ancestor, select a conflicting
+  child, rewrite any event, or mutate the frozen snapshot.
+
+The selection is deterministic relative to the committed evidence set. Later
+discovery of older or competing evidence does not rewrite the declaration; it
+is preserved as new recovery evidence and may justify a competing declaration.
+
+#### 5.6.3 Declaration and lineage identity [anchor: catastrophe_successor_lineage_identity]
+
+The successor lineage identifier is exactly the
+`catastrophe_successor_declaration_hash`. Every snapshot, bundle, custody claim,
+API response, and user interface derived from the successor MUST expose that
+identifier and the frozen parent link. An original-lineage identifier and a
+successor-lineage identifier MUST never compare equal.
+
+Known competing valid declarations from the same or different frozen parents
+MUST be retained and surfaced. Nodes MUST NOT select among them using chain
+length, event count, storage volume, token holdings, publisher identity, or an
+implementation default.
+
+#### 5.6.4 Successor-root publication [anchor: catastrophe_successor_root_publication]
+
+A successor begins in Profile 0 under the declared successor publisher. Its
+first `PrefixCertificate` uses the ordinary certificate body with these exact
+root exceptions:
+
+- `profile_id = 0`;
+- `certificate_ordinal = 0`;
+- `parent_certificate_hash = catastrophe_successor_declaration_hash`;
+- `parent_canonical_event_count = frozen_parent_canonical_event_count`;
+- `committee_basis_snapshot_hash = frozen_parent_snapshot_hash`;
+- the singleton committee and signer are the declared successor publisher;
+- the successor-root publication context uses the declared publisher as its
+  lineage-local `bootstrap_publisher_identity_id`; this is the only root-local
+  publication-parameter substitution and it does not mutate the frozen parent
+  rulebook or original lineage;
+- replay begins from the immutable frozen parent snapshot and appends only the
+  extension events committed by the successor certificate.
+
+All other Profile 0 validation, authorship, ordering, availability, replay, and
+derived-block rules remain in force. Subsequent successor certificates descend
+normally from that root certificate and may later transition through Profiles
+1 and 2 only by forward governance inside that successor lineage.
+
+Events finalized this way are canonical only within the named successor
+lineage. They MUST NOT be described, indexed, or exported as certificates or
+events finalized by the original lineage.
+
+Derived publication blocks retain their existing non-authoritative header
+format. A successor-derived block MUST therefore travel with explicit successor
+lineage context; its block hash alone is never evidence of original continuity.
+
+#### 5.6.5 Recognition and bridging [anchor: catastrophe_successor_recognition]
+
+A functioning lineage MAY later recognize a successor declaration or define a
+forward bridge through ordinary governance under its then-active rules. Version
+0 provides no automatic merge or winning-branch rule. A bridge is valid only
+after an applicable canonical event schema and active rulebook define its exact
+forward effects.
+
+Recognition or bridging MUST NOT:
+
+- rewrite either lineage's prior certificates or events;
+- relabel successor history as uninterrupted original history;
+- import successor events as though they occupied original canonical positions;
+- erase competing declarations or their reasoning;
+- retroactively change identity, truth, importance, governance, token, or
+  challenge state.
+
+Any adopted meaning or action proceeds through new forward canonical events
+with explicit provenance links to the preserved successor artifacts.
 
 ## 6. Candidate event intake and dissemination [anchor: candidate_event_intake_and_dissemination]
 
@@ -557,13 +717,16 @@ No financial slashing is assumed by this specification.
 
 ### 10.1 Finalized means canonical [anchor: finalized_means_canonical]
 
-An event becomes canonical only when included in a valid finalized `PrefixCertificate`.
+An event becomes original-lineage canonical only when included in a valid
+ordinary finalized `PrefixCertificate` descended from genesis. An event in an
+explicit catastrophe successor becomes canonical only within that named
+successor lineage under Section 5.6.
 
 Unfinalized proposals, partial signature sets, and transport-layer votes are not canonical.
 
 ### 10.2 Canonical certificate chain selection [anchor: canonical_certificate_chain_selection]
 
-Canonical replay considers only the chain of valid finalized prefix certificates descended from genesis.
+Original-lineage canonical replay considers only the chain of valid finalized prefix certificates descended from genesis. Successor replay is a separate, explicitly identified chain rooted in one valid `CatastropheSuccessorDeclaration`.
 
 Selection rule:
 
@@ -737,3 +900,9 @@ A conformant Profile 2 node MUST additionally:
     - the corresponding authored event bytes,
     - the snapshot / bundle artifacts needed for verification,
     - and the governance rules required to resume publication.
+  - `full_recovery_v0` defines the operational data closure and Archive Shards
+    define a bounded-loss reconstruction path.
+  - A carrier that cannot obtain ordinary finality may start only an explicitly
+    linked successor under Section 5.6. It cannot lower the original threshold,
+    rewrite the parent prefix, suppress competing declarations, or claim
+    uninterrupted original canon.

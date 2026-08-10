@@ -132,9 +132,9 @@ Default offline encyclopedia for ordinary users.
 **Required contents**
 
 * Tier 0 contents.
-* Paragraph-tier descriptions for the top-K ideas by replay-derived `overall_universal_rank` at H. That ordering is derived from each idea's twenty pairwise-produced universal-axis positions through the exact Protocol v5 position sum/mean and deterministic tie-break; public-relative and tribe-relative ranks are not inputs.
-* Paragraph-tier descriptions for top-K truth claims (across truth subtypes).
-* Minimal reasoning summaries (deterministically selected tiers, not full history).
+* Paragraph-tier descriptions for the first `citizen_top_ideas_k` ideas by replay-derived `overall_universal_rank` at H. That ordering is derived from each idea's twenty pairwise-produced universal-axis positions through the exact Protocol v5 position sum/mean and deterministic tie-break; public-relative and tribe-relative ranks are not inputs.
+* Paragraph-tier descriptions for the first `citizen_top_truth_claims_k` truth claims (across truth subtypes) under the same ordering.
+* The deterministic Citizen explanatory closure defined by `collective-seedpackage-and-recovery-profile-v0.md`, including bounded direct supporting and opposing reasoning.
 
 **Properties**
 
@@ -152,9 +152,9 @@ Communities, schools, libraries, research groups.
 **Required contents**
 
 * Tier 1 contents.
-* Full-tier descriptions for top-K ideas and truth claims.
-* Argument and evidence text payloads that justify the current rankings/verdicts for top-K.
-* Multiple snapshot checkpoints (e.g., last N large snapshots).
+* Full-tier descriptions for the first `civic_top_ideas_k` ideas and first `civic_top_truth_claims_k` truth claims under the Tier 1 ordering rule.
+* The deterministic Civic explanatory closure defined by `collective-seedpackage-and-recovery-profile-v0.md`.
+* The last `civic_checkpoint_count` applicable snapshot checkpoints, or all applicable checkpoints when fewer exist.
 
 **Properties**
 
@@ -171,9 +171,9 @@ Long-term preservation and deep auditing.
 
 **Required contents**
 
-* All payload bundles.
-* Full canonical event log (or complete snapshot chain + deltas).
-* All description tiers and historical reasoning artifacts.
+* All payload bundles and the Archive Pack.
+* Full canonical event log from genesis through the declared finalized prefix, with the certificate and snapshot closure required by `full_archive_v0`.
+* All publicly distributable description tiers and historical reasoning artifacts.
 
 **Properties**
 
@@ -192,9 +192,25 @@ This section defines a dissemination policy over existing canonical artifacts (S
 - **N_pocket_blocks**: block interval for Pocket Map (Tier 0) publication.
 - **N_citizen_blocks**: block interval for Citizen Map (Tier 1) publication.
 - **N_archive_blocks**: block interval for Civic Archive (Tier 2) publication.
+- **N_full_archive_blocks**: block interval for Full Archive (Tier 3) publication.
+- **N_full_recovery_blocks**: block interval for Full Recovery Bundle publication.
 - **keep_last_pocket**: number of most recent Pocket bundles to retain.
 - **keep_last_citizen**: number of most recent Citizen bundles to retain.
 - **keep_last_archive**: number of most recent Archive bundles to retain.
+- **keep_last_full_archive**: number of most recent Full Archive bundles to retain as whole copies.
+- **keep_last_full_recovery**: number of most recent Full Recovery Bundles to retain as whole or reconstructible copies.
+
+The active packaging rulebook MUST define every variable above and every
+higher-tier selection parameter required by
+`collective-seedpackage-and-recovery-profile-v0.md`. Missing values make the
+affected publication profile unavailable; implementations MUST NOT invent local
+defaults.
+
+Every `N_*_blocks` value MUST be a positive integer aligned to a Snapshot Format
+v0 boundary. Every `keep_last_*` value MUST be an integer of at least `1`.
+Higher-tier selection counts may be zero only where the Collective SeedPackage
+profile explicitly permits a non-negative count; the mandatory inherited lower
+tier and explanatory rules still apply.
 
 ### Defaults (non-normative example)
 
@@ -204,9 +220,13 @@ Example defaults aligned to the Snapshot Format v0 snapshot interval:
 N_pocket_blocks = the Snapshot Format v0 snapshot interval (see snapshot-format-v0.md)
 N_citizen_blocks = 10 * N_pocket_blocks
 N_archive_blocks = 100 * N_pocket_blocks
+N_full_archive_blocks = 10 * N_archive_blocks
+N_full_recovery_blocks = N_full_archive_blocks
 keep_last_pocket = 30
 keep_last_citizen = 12
 keep_last_archive = 24
+keep_last_full_archive = 4
+keep_last_full_recovery = 4
 ```
 
 ### Normative rules
@@ -228,7 +248,9 @@ For each tier, bundle membership MUST be computable from:
 
 * snapshot state at block height H,
 * importance ranks at H,
-* idea type and description tier metadata.
+* idea type and description tier metadata,
+* the active packaging-rulebook values and deterministic explanatory-closure
+  rules in `collective-seedpackage-and-recovery-profile-v0.md`.
 
 No human curation or discretionary inclusion is permitted for core tiers.
 
@@ -237,6 +259,15 @@ This ensures:
 * independent nodes compute identical bundle contents,
 * custody claims are verifiable,
 * disagreements are detectable.
+
+Universal importance remains the primary selection signal. Explanatory closure
+preserves the direct reasons, challenges, and serious opposing reasoning needed
+to understand a selected subject; it does not create a second ranking system.
+Minority, novelty, language, or random-sampling status MUST NOT change universal
+rank or core-tier selection. Cycle Delta Packs, PCS/CCS custody, archival
+retention, and optional non-authoritative preservation policies provide
+additional time and redundancy for material that has not yet acquired universal
+importance.
 
 ---
 
@@ -265,6 +296,14 @@ Where:
 title_sentence_payload_root(H) equals pocket_map_payload_root(H) and MUST be identical to the Snapshot Format v0 header field title_sentence_payload_root at the same block height H.
 
 This commitment is stable across derived view recomputation and changes only when canonical facts or the Tier 0 payload set changes.
+
+`shared_map_commitment(H)` proves shared canonical facts plus the complete Tier
+0 meaning surface. It does not, by itself, prove identical Tier 1, Tier 2, Tier
+3, executable, or recovery contents. A packaged higher tier MUST additionally
+publish its canonical SeedPackage manifest hash under
+`collective-seedpackage-and-recovery-profile-v0.md`; exact payload-pack
+commitments remain governed by
+`canonical-preservation-and-provenance-spine-spec.md`.
 
 **Interpretation**
 
@@ -388,4 +427,3 @@ the system ensures that:
 * and carry that knowledge forward even when infrastructure fails.
 
 This completes the bridge between **proof of reasoning** and **shared human meaning**.
-

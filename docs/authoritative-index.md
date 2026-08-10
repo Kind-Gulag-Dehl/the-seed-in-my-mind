@@ -66,6 +66,7 @@ NOT override the canonical event log or active rulebook commitments.
 - `offline-and-mindseed-spec.md`
 - `cycle-spec.md`
 - `shared-map-and-payload-bundles-spec.md`
+- `collective-seedpackage-and-recovery-profile-v0.md`
 
 ### 1.2 pre-genesis authoritative public specs published for transparency
 
@@ -159,6 +160,15 @@ Identity admission scope split:
 - `canonical-event-authorship-and-signature-profile-v0.md` owns exact authored-candidate signature construction, key descriptors, `public_key_ref`, signature verification, and replay-derived identity key-state mechanics.
 - Replay, verification, cycle, snapshot, API, node/conformance, and subsystem specifications retain authority within their scoped domains and must reconcile with the Profile-v0 admission architecture without redefining it.
 
+Collective preservation and recovery scope split:
+- `shared-map-and-payload-bundles-spec.md` owns Tier 0 Pocket Map, Tier 1 Citizen Map, Tier 2 Civic Archive, and Tier 3 Full Archive membership semantics.
+- `canonical-preservation-and-provenance-spine-spec.md` owns payload-pack computation, commitments, serving proofs, and preservation evidence.
+- `offline-and-mindseed-spec.md` owns private Mindseed state, offline publication-candidate separation, custody sets, and reintegration behavior.
+- `collective-seedpackage-and-recovery-profile-v0.md` owns the artifact crosswalk, closed SeedPackage profile identifiers, exact package composition, container paths, manifest fields, Full Recovery Bundle, and deterministic Archive Shard Set.
+- `canonical-encoding-and-hashing-spec.md` owns the exact primitive encodings and domain-separated package, shard, and catastrophe-successor hashes.
+- `pod-consensus-and-canonical-publication-spec.md` owns ordinary finality, catastrophe-successor declarations, competing successor lineages, and any later forward-only recognition or bridge.
+- No packaging, custody, or recovery document may weaken ordinary quorum, rewrite a finalized prefix, make a successor appear to be uninterrupted original canon, or alter universal importance rank.
+
 ### 2.3 reviewer and navigation documents
 
 1) `open-core-implementation-status.md` is authoritative for current implementation status in the public package.
@@ -194,13 +204,15 @@ Identity admission scope split:
 13) `safety-rulebook-interface-mechanics-spec.md`
 14) `snapshot-format-v0.md`
 15) `shared-map-and-payload-bundles-spec.md`
-16) `offline-and-mindseed-spec.md`
-17) `verification-spec.md`
-18) `identity-admission-and-invitation-capacity-spec-v0.md`
-19) `privacy-and-high-risk-submission-spec.md`
-20) `tribe-spec.md`
-21) `roles-and-stewardship-spec.md`
-22) `ai-boundaries-spec.md`
+16) `canonical-preservation-and-provenance-spine-spec.md`
+17) `offline-and-mindseed-spec.md`
+18) `collective-seedpackage-and-recovery-profile-v0.md`
+19) `verification-spec.md`
+20) `identity-admission-and-invitation-capacity-spec-v0.md`
+21) `privacy-and-high-risk-submission-spec.md`
+22) `tribe-spec.md`
+23) `roles-and-stewardship-spec.md`
+24) `ai-boundaries-spec.md`
 
 ---
 

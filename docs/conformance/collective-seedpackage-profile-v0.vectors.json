@@ -1,0 +1,533 @@
+{
+  "schema": "seed.conformance.collective_seedpackage_profile.v0",
+  "spec_version": 0,
+  "hash_algorithm": "blake3-256",
+  "closed_profile_ids": [
+    "pocket_map_v0",
+    "citizen_map_v0",
+    "civic_archive_v0",
+    "full_archive_v0",
+    "playable_offline_v1",
+    "full_recovery_v0",
+    "archive_shard_set_v0"
+  ],
+  "canonical_vectors": [
+    {
+      "id": "artifact_abc",
+      "artifact_kind": "artifact",
+      "domain_tag_ascii": "seedpackage_artifact_v0",
+      "canonical_bytes_hex": "616263",
+      "expected_blake3_256": "e1f338524025981132ae16f126f6721baf54d0479b56db0b8390acd2bc91f44e",
+      "meaning": "Exact raw artifact bytes for ASCII abc."
+    },
+    {
+      "id": "minimal_manifest_encoding",
+      "artifact_kind": "seedpackage_manifest",
+      "domain_tag_ascii": "seedpackage_manifest_v0",
+      "canonical_bytes_hex": "000000000000000d706f636b65745f6d61705f7630000000000000000000000000000000000000000000000000000000000000000000000000000000011111111111111111111111111111111111111111111111111111111111111111222222222222222222222222222222222222222222222222222222222222222233333333333333333333333333333333333333333333333333333333333333330000001563616e6f6e6963616c5f656e636f64696e675f763000000012736e617073686f745f666f726d61745f7630000044444444444444444444444444444444444444444444444444444444444444440000000000000000010000001b736e617073686f74732f62617369732e736e617073686f742d76300000000b736e617073686f745f76300000000000000003555555555555555555555555555555555555555555555555555555555555555501",
+      "expected_blake3_256": "56a313c9b7e20bd79dbc873ac64f834bf3aa5f7d2477275e7a50f7867a0476a1",
+      "meaning": "Manifest field-order vector with profile pocket_map_v0, basis height 1, no optional hashes, no pack commitments, and one required basis-snapshot descriptor. It tests canonical bytes only, not complete Pocket profile membership."
+    },
+    {
+      "id": "shard_00010203",
+      "artifact_kind": "archive_shard",
+      "domain_tag_ascii": "archive_shard_v0",
+      "canonical_bytes_hex": "00010203",
+      "expected_blake3_256": "197a32a6cab1994aca3f406bc115daea6b2a177bbdb0070af4c2a9a054c23008",
+      "meaning": "Exact four-byte raw shard."
+    },
+    {
+      "id": "minimal_shard_manifest_encoding",
+      "artifact_kind": "archive_shard_manifest",
+      "domain_tag_ascii": "archive_shard_manifest_v0",
+      "canonical_bytes_hex": "000000000000000a786f72385f316d5f7630aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa000000000000007b001000000000000800000001000000010000000100000000010000100000bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "expected_blake3_256": "d55f657a27abef85abb6dbc0654c4165640338606b5c1e51611874a8f84c1648",
+      "meaning": "Shard-manifest field-order and hash vector with one parity descriptor. It tests canonical bytes only and is not a valid complete group, which requires nine descriptors."
+    },
+    {
+      "id": "catastrophe_declaration_encoding",
+      "artifact_kind": "catastrophe_successor_declaration",
+      "domain_tag_ascii": "catastrophe_successor_declaration_v0",
+      "canonical_bytes_hex": "0000001010101010101010101010101010101010101010101010101010101010101010202020202020202020202020202020202020202020202020202020202020202000000000000000073030303030303030303030303030303030303030303030303030303030303030404040404040404040404040404040404040404040404040404040404040404050505050505050505050505050505050505050505050505050505050505050506060606060606060606060606060606060606060606060606060606060606060000000002430313839306633652d376234642d376363322d386131622d31323334353637383961626370707070707070707070707070707070707070707070707070707070707070708080808080808080808080808080808080808080808080808080808080808080",
+      "expected_blake3_256": "504ca28aa683cff773fa3dc2ba0069aa84847c11addb4c0a70c62952134f4b2a",
+      "meaning": "Original-parent declaration at frozen event count 7 for publisher 01890f3e-7b4d-7cc2-8a1b-123456789abc. Signer tuples are excluded from the declaration body hash."
+    }
+  ],
+  "behavior_vectors": [
+    {
+      "id": "accept_pocket_profile",
+      "kind": "profile",
+      "expected": "accept",
+      "input": {
+        "profile_id": "pocket_map_v0",
+        "has_full_snapshot": true,
+        "has_all_titles_and_sentences": true
+      },
+      "assertions": [
+        "Pocket Map is a closed public profile and proves only its declared Tier 0 closure."
+      ]
+    },
+    {
+      "id": "accept_citizen_profile",
+      "kind": "profile",
+      "expected": "accept",
+      "input": {
+        "profile_id": "citizen_map_v0",
+        "has_pocket_contents": true,
+        "has_selection_parameters": true,
+        "has_citizen_explanatory_closure": true
+      },
+      "assertions": [
+        "Citizen selection is deterministic and includes bounded direct supporting and opposing reasoning, prioritizing unresolved and current-result challenge material."
+      ]
+    },
+    {
+      "id": "accept_civic_profile",
+      "kind": "profile",
+      "expected": "accept",
+      "input": {
+        "profile_id": "civic_archive_v0",
+        "has_citizen_contents": true,
+        "has_civic_explanatory_closure": true,
+        "checkpoint_count_matches_rulebook": true
+      },
+      "assertions": [
+        "Civic Archive includes complete direct explanatory closure at its basis height."
+      ]
+    },
+    {
+      "id": "accept_full_archive_profile",
+      "kind": "history",
+      "expected": "accept",
+      "input": {
+        "profile_id": "full_archive_v0",
+        "genesis_to_head_log_complete": true,
+        "certificate_chain_complete": true,
+        "archive_pack_complete": true,
+        "replay_matches_basis_snapshot": true
+      },
+      "assertions": [
+        "Full Archive establishes complete declared public history closure."
+      ]
+    },
+    {
+      "id": "accept_playable_offline_profile",
+      "kind": "profile",
+      "expected": "accept",
+      "input": {
+        "profile_id": "playable_offline_v1",
+        "has_citizen_contents": true,
+        "trusted_basis_declared": true,
+        "continuation_delta_complete": true,
+        "offline_interface_present": true
+      },
+      "assertions": [
+        "Playable Offline can continue from its declared trusted basis without claiming omitted pre-basis history."
+      ]
+    },
+    {
+      "id": "accept_full_recovery_profile",
+      "kind": "history",
+      "expected": "accept",
+      "input": {
+        "profile_id": "full_recovery_v0",
+        "has_full_archive": true,
+        "has_playable_offline": true,
+        "has_identity_key_eligibility_state": true,
+        "has_publication_evidence": true,
+        "preserves_known_successor_and_competing_declarations": true,
+        "has_conformance_fixtures": true,
+        "has_authoritative_specs_and_schemas": true,
+        "has_node_verifier_and_package_tool_source": true,
+        "has_database_schema_migrations_and_genesis_material": true,
+        "has_offline_dependencies_and_build_toolchain": true,
+        "has_verifier_executable_for_declared_target": true,
+        "has_operator_recovery_guide": true,
+        "contains_private_secrets": false
+      },
+      "assertions": [
+        "Full Recovery can be independently verified, replayed, inspected, and used to attempt compatible restart."
+      ]
+    },
+    {
+      "id": "accept_archive_shard_profile",
+      "kind": "shards",
+      "expected": "accept",
+      "input": {
+        "profile_id": "archive_shard_set_v0",
+        "shard_profile_id": "xor8_1m_v0",
+        "max_missing_per_group": 1,
+        "reconstructed_full_recovery_verifies": true
+      },
+      "assertions": [
+        "One missing shard per group is recoverable and the reconstructed Full Recovery Bundle still must verify."
+      ]
+    },
+    {
+      "id": "reject_parallel_profile_name",
+      "kind": "profile",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_PROFILE_UNKNOWN",
+      "input": {
+        "profile_id": "ark_seed_v0"
+      },
+      "assertions": [
+        "Pocket, Living, or Ark seed aliases are not public protocol profiles."
+      ]
+    },
+    {
+      "id": "accept_unresolved_reasoning_priority",
+      "kind": "selection",
+      "expected": "accept",
+      "input": {
+        "citizen_reasoning_per_polarity_k": 1,
+        "opposing_candidates": [
+          {
+            "id": "active_unresolved_lower_rank",
+            "bucket": 1,
+            "overall_universal_rank": 900
+          },
+          {
+            "id": "general_higher_rank",
+            "bucket": 3,
+            "overall_universal_rank": 10
+          }
+        ],
+        "selected": "active_unresolved_lower_rank"
+      },
+      "assertions": [
+        "Challenge relevance bucket precedes item universal rank within explanatory closure."
+      ]
+    },
+    {
+      "id": "reject_missing_selection_parameter",
+      "kind": "selection",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_RULEBOOK_PARAMETER_MISSING",
+      "input": {
+        "profile_id": "citizen_map_v0",
+        "missing_parameter": "citizen_reasoning_per_polarity_k"
+      },
+      "assertions": [
+        "An implementation cannot invent a local higher-tier selection default."
+      ]
+    },
+    {
+      "id": "reject_rank_mutation_for_diversity",
+      "kind": "selection",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_RANK_MUTATION",
+      "input": {
+        "selection_signal": "minority_status",
+        "mutates_overall_universal_rank": true
+      },
+      "assertions": [
+        "Minority, novelty, language, and random-storage status cannot mutate universal importance."
+      ]
+    },
+    {
+      "id": "reject_parent_path",
+      "kind": "container",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_PATH_UNSAFE",
+      "input": {
+        "path": "payloads/../runtime/start.exe"
+      },
+      "assertions": [
+        "Parent path segments are forbidden."
+      ]
+    },
+    {
+      "id": "reject_backslash_path",
+      "kind": "container",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_PATH_UNSAFE",
+      "input": {
+        "path": "snapshots\\basis.snapshot-v0"
+      },
+      "assertions": [
+        "Manifest paths use ASCII forward slashes only."
+      ]
+    },
+    {
+      "id": "reject_case_collision",
+      "kind": "container",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_PATH_COLLISION",
+      "input": {
+        "paths": [
+          "payloads/A.bin",
+          "payloads/a.bin"
+        ]
+      },
+      "assertions": [
+        "Case-colliding paths are forbidden even on case-sensitive hosts."
+      ]
+    },
+    {
+      "id": "reject_symbolic_link_entry",
+      "kind": "container",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_ENTRY_NOT_REGULAR_FILE",
+      "input": {
+        "path": "runtime/current",
+        "entry_type": "symbolic_link"
+      },
+      "assertions": [
+        "Container entries are regular files only."
+      ]
+    },
+    {
+      "id": "reject_open_with_autorun",
+      "kind": "container",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_AUTORUN_FORBIDDEN",
+      "input": {
+        "open_action": "execute_runtime_and_connect_network"
+      },
+      "assertions": [
+        "Opening a SeedPackage performs verification only and never executes or connects."
+      ]
+    },
+    {
+      "id": "reject_missing_required_artifact",
+      "kind": "container",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_REQUIRED_ARTIFACT_MISSING",
+      "input": {
+        "descriptor_path": "snapshots/basis.snapshot-v0",
+        "descriptor_required": true,
+        "entry_present": false
+      },
+      "assertions": [
+        "Every required manifest descriptor must have one exact regular-file entry."
+      ]
+    },
+    {
+      "id": "reject_unknown_required_artifact_kind",
+      "kind": "container",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_ARTIFACT_KIND_UNKNOWN",
+      "input": {
+        "artifact_kind": "future_magic_runtime",
+        "required": 1
+      },
+      "assertions": [
+        "Version 0 required artifacts use the closed artifact-kind vocabulary."
+      ]
+    },
+    {
+      "id": "accept_optional_extension_artifact_kind",
+      "kind": "container",
+      "expected": "accept",
+      "input": {
+        "artifact_kind": "x-community-index-v1",
+        "required": 0,
+        "hash_and_length_match": true
+      },
+      "assertions": [
+        "Unknown optional x- artifacts remain ignorable and integrity checked."
+      ]
+    },
+    {
+      "id": "reject_artifact_hash_mismatch",
+      "kind": "container",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_ARTIFACT_HASH_MISMATCH",
+      "input": {
+        "declared_hash_matches": false,
+        "declared_length_matches": true
+      },
+      "assertions": [
+        "Wrapper integrity does not substitute for the domain-separated artifact hash."
+      ]
+    },
+    {
+      "id": "reject_artifact_length_mismatch",
+      "kind": "container",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_ARTIFACT_LENGTH_MISMATCH",
+      "input": {
+        "declared_hash_matches": true,
+        "declared_length_matches": false
+      },
+      "assertions": [
+        "The exact extracted byte length must match the descriptor."
+      ]
+    },
+    {
+      "id": "reject_shared_map_only_for_higher_tier",
+      "kind": "commitment",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_HIGHER_TIER_UNCOMMITTED",
+      "input": {
+        "profile_id": "civic_archive_v0",
+        "shared_map_commitment_valid": true,
+        "seedpackage_manifest_hash_present": false
+      },
+      "assertions": [
+        "The shared-map commitment proves Tier 0 meaning, not identical Civic contents."
+      ]
+    },
+    {
+      "id": "reject_full_recovery_without_source",
+      "kind": "history",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_RECOVERY_CLOSURE_INCOMPLETE",
+      "input": {
+        "profile_id": "full_recovery_v0",
+        "has_verifier_binary": true,
+        "has_node_verifier_and_package_tool_source": false,
+        "has_offline_dependencies_and_build_toolchain": false
+      },
+      "assertions": [
+        "A portable binary alone is not an independently rebuildable recovery environment."
+      ]
+    },
+    {
+      "id": "reject_partial_as_complete_history",
+      "kind": "history",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_HISTORY_CLAIM_FALSE",
+      "input": {
+        "profile_id": "playable_offline_v1",
+        "contains_pre_basis_history": false,
+        "claims_genesis_to_head_reconstruction": true
+      },
+      "assertions": [
+        "Hashes and a trusted basis do not recreate omitted pre-basis event bytes."
+      ]
+    },
+    {
+      "id": "accept_successor_labeling",
+      "kind": "lineage",
+      "expected": "accept",
+      "input": {
+        "lineage_mode": 1,
+        "declaration_present": true,
+        "frozen_parent_present": true,
+        "successor_identifier_exposed": true,
+        "known_competing_declarations_preserved": true,
+        "claims_uninterrupted_original_canon": false
+      },
+      "assertions": [
+        "A valid successor package exposes discontinuity and preserves its parent and known competitors."
+      ]
+    },
+    {
+      "id": "reject_successor_mode_mismatch",
+      "kind": "lineage",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_LINEAGE_MODE_MISMATCH",
+      "input": {
+        "lineage_mode": 0,
+        "catastrophe_successor_declaration_hash_present": true
+      },
+      "assertions": [
+        "The optional declaration hash is present exactly when lineage_mode is successor."
+      ]
+    },
+    {
+      "id": "reject_uninterrupted_successor_claim",
+      "kind": "lineage",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_FALSE_CONTINUITY",
+      "input": {
+        "lineage_mode": 1,
+        "claims_uninterrupted_original_canon": true
+      },
+      "assertions": [
+        "A successor cannot be relabeled as an uninterrupted extension of the frozen original prefix."
+      ]
+    },
+    {
+      "id": "reject_hidden_competing_declaration",
+      "kind": "lineage",
+      "expected": "reject",
+      "expected_error": "ERR_SEEDPACKAGE_COMPETING_LINEAGE_OMITTED",
+      "input": {
+        "known_competing_declaration_count": 2,
+        "preserved_competing_declaration_count": 1
+      },
+      "assertions": [
+        "Known competing valid successor declarations remain available and visible."
+      ]
+    },
+    {
+      "id": "reject_original_quorum_lowering",
+      "kind": "lineage",
+      "expected": "reject",
+      "expected_error": "ERR_PUBLICATION_SILENT_DOWNGRADE",
+      "input": {
+        "original_profile": 2,
+        "ordinary_quorum_available": false,
+        "attempted_original_profile": 0,
+        "has_successor_declaration": false
+      },
+      "assertions": [
+        "Quorum loss freezes original canon; it never silently converts original publication to Profile 0."
+      ]
+    },
+    {
+      "id": "reject_incomplete_shard_group_descriptors",
+      "kind": "shards",
+      "expected": "reject",
+      "expected_error": "ERR_ARCHIVE_SHARD_DESCRIPTOR_COUNT",
+      "input": {
+        "profile": "xor8_1m_v0",
+        "group_count": 1,
+        "descriptor_count": 1
+      },
+      "assertions": [
+        "Every declared group has eight data descriptors followed by one parity descriptor."
+      ]
+    },
+    {
+      "id": "accept_one_missing_data_shard",
+      "kind": "shards",
+      "expected": "accept",
+      "input": {
+        "profile": "xor8_1m_v0",
+        "missing_in_group": [
+          "d3"
+        ],
+        "other_data_shards_present": 7,
+        "parity_present": true,
+        "reconstructed_hash_matches": true
+      },
+      "assertions": [
+        "The missing data shard is the bytewise XOR of the seven data shards and parity shard."
+      ]
+    },
+    {
+      "id": "reject_two_missing_shards_same_group",
+      "kind": "shards",
+      "expected": "reject",
+      "expected_error": "ERR_ARCHIVE_SHARD_GROUP_UNRECOVERABLE",
+      "input": {
+        "profile": "xor8_1m_v0",
+        "missing_in_group": [
+          "d3",
+          "p0"
+        ]
+      },
+      "assertions": [
+        "Version 0 honestly reports more than one missing shard in a group as unrecoverable."
+      ]
+    },
+    {
+      "id": "accept_custody_claim_with_manifest",
+      "kind": "custody",
+      "expected": "accept",
+      "input": {
+        "declared_profile": "full_recovery_v0",
+        "seedpackage_manifest_hash_present": true,
+        "serving_challenge_verified": true,
+        "grants_canonical_authority": false
+      },
+      "assertions": [
+        "Custody is verifiable availability evidence and never publication authority."
+      ]
+    }
+  ]
+}

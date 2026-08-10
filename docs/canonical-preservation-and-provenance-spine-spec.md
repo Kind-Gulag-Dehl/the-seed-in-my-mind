@@ -601,10 +601,10 @@ Offline operation is not an edge case; it is a first-class design requirement.
 
 ### 7.2 Portable seed bundles [anchor: portable_seed_bundles]
 
-The system defines **portable seed bundles** as self-contained collections of data sufficient to:
+The system defines **portable seed bundles** as self-contained collections of data sufficient, within their declared profile, to:
 
 - verify integrity locally,
-- replay canonical history deterministically,
+- replay the included canonical history deterministically when that profile carries replay history,
 - browse and interact with ideas and explanations,
 - resume participation after reconnection.
 
@@ -615,12 +615,19 @@ A seed bundle MAY include:
 - block headers and pack commitments,
 - client software or a compatible UI/game build.
 
+The interoperable profile identifiers, exact composition, container, manifest,
+Full Recovery Bundle, and Archive Shard Set are defined by
+`collective-seedpackage-and-recovery-profile-v0.md`. A smaller package MUST NOT
+claim to reconstruct omitted history merely because its included snapshot and
+payloads verify.
+
 ### 7.3 Local replay guarantee [anchor: local_replay_guarantee]
 
 Given a valid seed bundle, a user MUST be able to:
 
 - verify all included data against hashes and commitments,
-- reconstruct derived state via deterministic replay,
+- reconstruct derived state via deterministic replay across the package's
+  declared historical closure,
 - browse ideas, orderings, descriptions, and provenance,
 - interact with the system locally within the limits of offline operation.
 
@@ -1071,6 +1078,7 @@ This specification depends on and MUST be interpreted consistently with the foll
 - **Deterministic Replay & Merge Specification** - defines how canonical logs are replayed and merged.
 - **Node & Conformance Specification** - defines baseline node behavior and network expectations.
 - **Offline & Mindseed Specification** - defines offline operation and merge semantics.
+- **Collective SeedPackage and Recovery Profile v0** - defines package profiles, exact container and manifest composition, Full Recovery, and Archive Shards.
 - **Token Specification** - defines economic effects that may depend on derived state.
 - **Tribe Specification** - defines scoped interaction without altering canonical preservation.
 - **Safety and Safety Rulebook Specifications** - define visibility and redaction rules that may affect presentation but not integrity.
@@ -1561,35 +1569,42 @@ Failure evidence MUST be verifiable by third parties.
 
 #### A8.1 Playable Offline Bundle v1 (required) [anchor: a8_1_playable_offline_bundle_v1_required]
 
-The Playable Offline Bundle v1 MUST include:
-
-- the canonical event log up to a defined cycle boundary,
-- the snapshot at the block height used for that boundary,
-- at least one standard pack profile sufficient to render the living map,
-- the bundle manifest.
+The Playable Offline Bundle v1 MUST include the contents and historical closure
+defined for `playable_offline_v1` in
+`collective-seedpackage-and-recovery-profile-v0.md`, including at least the
+Citizen Map, a declared basis snapshot, exact continuation deltas through the
+package head, the required Living Map / Core Library material, and the
+SeedPackage manifest.
 
 This bundle MUST be sufficient to run a conformant interactive interface fully offline.
 
-#### A8.2 Archive Bundle (optional) [anchor: a8_2_archive_bundle_optional]
+#### A8.2 Full Archive, Full Recovery, and archive-shard profiles [anchor: a8_2_archive_bundle_optional]
 
-An Archive Bundle MAY include:
+The interoperable archival profiles are `full_archive_v0`, `full_recovery_v0`,
+and `archive_shard_set_v0`. Their composition and reconstruction closure are
+defined by `collective-seedpackage-and-recovery-profile-v0.md`. In particular,
+a Full Archive includes:
 
 - the full canonical event log,
 - all snapshots,
 - the Archive Pack,
-- the bundle manifest.
+- the SeedPackage manifest and required certificate closure.
+
+Full Recovery also includes the Playable Offline closure and adds the
+conformance, source, dependency/toolchain, schema/migration, rulebook,
+identity/key, packaging-tool, and operator-recovery material needed to verify
+and restart compatible operation. Archive shards are derived availability
+artifacts and never grant canonical authority.
 
 #### A8.3 Bundle manifest schema and hashing [anchor: a8_3_bundle_manifest_schema_and_hashing]
 
-A bundle manifest MUST include the following fields:
+A SeedPackage manifest MUST use the exact field set, field order, artifact
+descriptors, path rules, and profile closure in
+`collective-seedpackage-and-recovery-profile-v0.md`. Pack commitment objects and
+pack membership remain governed by this preservation specification.
 
-- bundle_version (uint32),
-- snapshot_identifier (fixed-length identifier),
-- list of included block header hashes,
-- list of included pack commitment identifiers,
-- list of included payload hashes.
-
-Bundle manifest canonicalization and hashing (including schema-to-bytes rules, domain tags, and hash input layout) MUST follow the Canonical Encoding and Hashing Specification (v0). This section defines required manifest fields and preservation semantics; hashing bytes are defined in the canonical spec.
+Manifest and artifact canonicalization and hashing, including domain tags, MUST
+follow the Canonical Encoding and Hashing Specification (v0).
 
 The manifest MUST NOT include its own hash as a field. The manifest hash is treated as an external label and verification target.
 
@@ -1603,15 +1618,22 @@ To verify a bundle, a node MUST:
 3. verify all payload hashes,
 4. replay the canonical event log to the snapshot block height.
 
+For snapshot-based profiles, step 4 begins at the explicitly trusted basis and
+replays the exact continuation history. For `full_archive_v0` and
+`full_recovery_v0`, replay MUST establish the complete declared genesis-to-head
+closure.
+
 #### A8.5 Bundle verification closure [anchor: a8_5_bundle_verification_closure]
 
 A bundle is valid if and only if all of the following conditions hold:
 
 1. the bundle manifest hash verifies correctly,
-2. all referenced block headers verify against their predecessor headers,
+2. all referenced finalized-prefix certificates and derived block headers verify against their predecessors,
 3. all pack commitments verify against their payload Merkle roots,
 4. all included payload hashes match the referenced payload bytes,
-5. deterministic replay from the included event log and snapshot produces a consistent canonical state.
+5. deterministic replay across the profile's declared historical closure produces a consistent canonical state,
+6. every profile-required artifact and every artifact descriptor verifies, and
+7. catastrophe-successor material, when declared, is labeled and linked without pretending to extend the frozen parent certificate chain.
 
 Failure of any condition invalidates the bundle.
 

@@ -62,7 +62,10 @@ Offline operation has two distinct lanes:
 
 Only the second lane is treated as **delayed publication** and uses canonical event schemas, lifecycle constraints, and replay rules. The private journal is outside protocol conformance and canonical replay.
 
-This specification further defines **Mindseeds / SeedPackages** as portable publication artifacts that allow reasoning to continue offline and later reintegrate without semantic divergence, forked meaning, or hidden authority.
+This specification further defines the private and offline behavior carried by
+**Mindseeds / SeedPackages**. Exact public package profiles, container paths,
+manifest fields, Full Recovery composition, and Archive Shards are owned by
+`collective-seedpackage-and-recovery-profile-v0.md`.
 
 This document does not define new protocol objects, meanings, or judgments.  
 Before genesis, Protocol v5 and the ratified companion specifications are the normative source. After genesis, the canonical event log and replay-derived active graph-native rulebook commitments are authoritative. This document is then a human-readable projection and editing it does not amend protocol behavior.
@@ -110,7 +113,7 @@ Private drafts are explicitly **out of protocol conformance scope**.
 
 Drafts become ideas **only** when emitted as Protocol v5 events and published, either directly to the canonical network or into an offline event log explicitly intended for later canonical publication.
 
-This specification composes with the Shared Map of Reality and Payload Bundle Specification, including Tier 0/1/2 bundle definitions and the shared_map_commitment(H) = HASH("shared_map_commitment_v0" || state_root_hash(H) || pocket_map_payload_root(H)) baseline commitment at block height H.
+This specification composes with the Shared Map of Reality and Payload Bundle Specification, including Tier 0/1/2/3 bundle definitions and the shared_map_commitment(H) = HASH("shared_map_commitment_v0" || state_root_hash(H) || pocket_map_payload_root(H)) baseline commitment at block height H.
 The authoritative definition of `shared_map_commitment` is in the Canonical Encoding and Hashing Specification (v0); this document repeats it only for readability and does not redefine byte-level hashing, tags, or encodings.
 The `HASH(...)` notation and domain tag strings are symbolic references; their concrete byte encoding, hash algorithm, and domain separation behavior are defined exclusively by the Canonical Encoding and Hashing Specification (v0).
 
@@ -1192,7 +1195,7 @@ Mindseeds / SeedPackages MAY include standardized bundle tiers that package cano
 
 In particular:
 
-SeedPackages MAY contain Tier 0 / Tier 1 / Tier 2 bundles as defined by the Shared Map of Reality and Payload Bundle Specification (Pocket Map, Citizen Map, Civic Archive), including any required payload packs and optional non-canonical UI assets. Offline packages and mindseeds anchor to block-height snapshots verified via `shared_map_commitment`.
+SeedPackages MAY contain Tier 0 / Tier 1 / Tier 2 / Tier 3 bundles as defined by the Shared Map of Reality and Payload Bundle Specification (Pocket Map, Citizen Map, Civic Archive, Full Archive), including any required payload packs and optional non-canonical UI assets. Interoperable packages MUST use the applicable profile and manifest closure in `collective-seedpackage-and-recovery-profile-v0.md`. Offline packages and mindseeds anchor to block-height snapshots verified via `shared_map_commitment`.
 
 SeedPackages MAY include optional rank packs aligned with bundle tiers (e.g., smaller bundles include sparse rank samples; larger bundles include denser or full rank materializations). Offline browsing SHOULD surface rank history at the resolution provided by included packs, and MAY compute finer-grained history by deterministic replay when the required log segments and checkpoints are available.
 
@@ -1220,6 +1223,11 @@ Custody manifests MAY declare bundle tier coverage and MAY include the roots nee
 - “stores full archive” (declaring the highest-tier coverage and/or full pack roots).
 
 Such declarations MAY be used for survivability analysis, redundancy tracking, and replication assistance; however, custody manifests remain non-authoritative and MUST NOT alter canonical semantics, validity, replay, or governance activation.
+
+For Tier 1-3 and recovery packages, the custody declaration SHOULD also name the
+SeedPackage manifest hash. `shared_map_commitment` alone proves the Tier 0
+baseline and MUST NOT be represented as proof of identical higher-tier,
+history, runtime, or recovery contents.
 
 
 ### 9.2 canonical ingestion [anchor: canonical_ingestion]
@@ -1453,6 +1461,14 @@ Export packs are always optional and MUST be treated as non-authoritative and fu
 
 Loss of export packs MUST NOT compromise canonical recoverability or survivability.
 
+Full catastrophe recovery requires the additional certificate, history,
+rulebook, conformance, source, and operator material in `full_recovery_v0`.
+When a carrier cannot obtain ordinary publication finality, it MUST preserve the
+last uncontested prefix rather than lower quorum locally. Any attempted restart
+uses the explicitly linked catastrophe-successor procedure in
+`pod-consensus-and-canonical-publication-spec.md`, is not ordinary continuity,
+and preserves competing successor declarations.
+
 
 ### 11.2 deferred publication [anchor: deferred_publication]
 
@@ -1525,5 +1541,10 @@ This specification composes with and is subordinate to the following documents. 
 
 - **Verification specification**
 Defines P2P meetup attestations and P2P state/log witness artifacts (including custody manifests and state witness attestations) used by offline groups to reconcile and evidence replication without conferring authority.
+
+- **Collective SeedPackage and Recovery Profile v0**
+Defines the unified public artifact crosswalk, exact SeedPackage profiles and
+container, Full Recovery Bundle, and deterministic Archive Shard Set. It does
+not govern private Mindseed journal contents or reintegration authority.
 
 This specification introduces no independent canonical semantics. It specifies offline packaging, local execution, and reintegration behavior that MUST remain semantically equivalent to Protocol v5 under the constraints defined by the specifications above.

@@ -109,6 +109,36 @@ note: IDs do not define canonical ordering; ordering is derived from the canonic
 - scope: snapshot spec, node spec, offline spec, api contracts
 - enforcement: verifier checks
 
+### 4.3 one public SeedPackage vocabulary
+- statement: public portable artifacts use the existing Pocket Map, Citizen Map, Civic Archive, Full Archive, Playable Offline Bundle, Full Recovery Bundle, and Archive Shard Set profiles. Documents must not introduce a parallel Pocket/Living/Ark seed taxonomy or conflate private Mindseed journals with public recovery packages.
+- canonical home: `collective-seedpackage-and-recovery-profile-v0.md`
+- scope: bundles, preservation, offline, nodes, clients, documentation
+- enforcement: profile-id and terminology fixtures
+
+### 4.4 higher-tier identity is explicit
+- statement: `shared_map_commitment` proves canonical facts plus Tier 0 meaning only. Tier 1-3, playable, recovery, and shard claims require the applicable SeedPackage manifest hash and pack commitments.
+- canonical home: `canonical-encoding-and-hashing-spec.md`, `collective-seedpackage-and-recovery-profile-v0.md`
+- scope: bundle publication, custody manifests, APIs, verification, UI
+- enforcement: manifest and coverage-claim fixtures
+
+### 4.5 universal importance remains primary
+- statement: Citizen and Civic selection uses replay-derived universal importance plus deterministic explanatory closure. Minority, novelty, language, or random-storage status cannot change universal rank or mandatory core-tier membership; delta, PCS/CCS, archive, and optional preservation policies provide separate redundancy.
+- canonical home: `shared-map-and-payload-bundles-spec.md`, `collective-seedpackage-and-recovery-profile-v0.md`
+- scope: ranks, bundles, custody, clients
+- enforcement: deterministic selection and rank-noninterference fixtures
+
+### 4.6 reconstruction claims match retained bytes
+- statement: a partial dataset can verify only its declared closure. Complete historical reconstruction requires a valid Full Archive, Full Recovery Bundle, or sufficient verified Archive Shards; hashes do not recreate universally lost bytes.
+- canonical home: `collective-seedpackage-and-recovery-profile-v0.md`
+- scope: protocol claims, packages, nodes, recovery guides, UI
+- enforcement: incomplete-closure rejection fixtures
+
+### 4.7 catastrophe recovery never rewrites continuity
+- statement: ordinary quorum loss freezes the original prefix. Continued operation requires an explicitly linked, separately identified catastrophe successor; ordinary thresholds are never silently lowered, competing declarations remain preserved, and later recognition or bridging is forward-only.
+- canonical home: `pod-consensus-and-canonical-publication-spec.md`
+- scope: publication, replay, snapshots, packages, nodes, APIs, clients
+- enforcement: lineage, certificate-root, labeling, and competing-declaration fixtures
+
 ---
 
 ## 5. cycles and tempo

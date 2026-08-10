@@ -713,6 +713,68 @@ effects.
 
 ---
 
+#### 7.6 Collective SeedPackage, archive-shard, and catastrophe-successor commitments [anchor: collective_seedpackage_archive_shard_and_catastrophe_successor_commitments]
+
+The artifacts owned by `collective-seedpackage-and-recovery-profile-v0.md` and
+the catastrophe-successor declaration owned by
+`pod-consensus-and-canonical-publication-spec.md` use the canonical primitive
+encodings in this specification and the exact field order in their owner
+specification.
+
+The following primary hashes are normative:
+
+```text
+seedpackage_artifact_hash = HASH(
+    "seedpackage_artifact_v0" || artifact_file_bytes
+)
+
+seedpackage_manifest_hash = HASH(
+    "seedpackage_manifest_v0" || canonical_seedpackage_manifest_bytes
+)
+
+archive_shard_hash = HASH(
+    "archive_shard_v0" || raw_shard_bytes
+)
+
+archive_shard_manifest_hash = HASH(
+    "archive_shard_manifest_v0" || canonical_archive_shard_manifest_bytes
+)
+
+catastrophe_successor_declaration_hash = HASH(
+    "catastrophe_successor_declaration_v0"
+ || canonical_catastrophe_successor_declaration_body_bytes
+)
+
+catastrophe_recovery_evidence_leaf_hash = HASH(
+    "catastrophe_recovery_evidence_leaf_v0" || evidence_artifact_hash32
+)
+
+catastrophe_recovery_evidence_node_hash = HASH(
+    "catastrophe_recovery_evidence_node_v0" || left_hash32 || right_hash32
+)
+```
+
+The quoted domain tags are exact ASCII bytes with no length prefix and no NUL
+terminator. `HASH` is the protocol hash primitive in Section 5. Artifact-file
+and shard hashes bind the exact raw file bytes; container compression, entry
+order, timestamps, permissions, and other wrapper metadata are excluded.
+
+SeedPackage manifests, shard manifests, and catastrophe-successor declarations
+MUST reject unknown trailing fields under version 0. A new field set requires a
+new manifest, shard-manifest, or declaration version. Signatures attached to a
+catastrophe-successor declaration sign its declaration hash and are not included
+in the declaration body hash, preventing circular encodings.
+
+`recovery_evidence_root` sorts the raw evidence artifact hashes ascending,
+constructs leaves and internal nodes with the two evidence tags above, and uses
+the Section 6 odd-node duplication rule. An empty evidence set is invalid.
+
+These commitments are packaging and lineage-label commitments. They MUST NOT
+change an authored event hash, snapshot hash, state root, shared-map commitment,
+ordinary prefix-certificate hash, or canonical replay result.
+
+---
+
 ### 8. Shared Map Commitment [anchor: 8_shared_map_commitment]
 
 The shared map commitment represents the system's collectively agreed, human-readable map of reality.
@@ -934,6 +996,9 @@ A conformant implementation MUST be able to:
 * Compute section hashes, Merkle roots, and commitments.
 * Verify snapshots, bundles, and manifests deterministically.
 * Reject non-conformant encodings.
+* Reproduce the SeedPackage, archive-shard, and catastrophe-successor byte/hash
+  vectors in `docs/conformance/collective-seedpackage-profile-v0.vectors.json`
+  when claiming those artifact profiles.
 
 ---
 
@@ -1170,6 +1235,10 @@ This appendix defines mandatory test vectors that conformant implementations MUS
 Domain tags are UTF-8 encoded strings defined in implementation (e.g., "seed-primitive").
 
 (Provide 3–5 vectors with computed BLAKE3 outputs once reference implementation available.)
+
+The five computed Profile-v0 package/recovery vectors in
+`docs/conformance/collective-seedpackage-profile-v0.vectors.json` are normative
+for their domains and supplement the older placeholder examples above.
 
 #### D.3 Merkle Tree Constructions [anchor: d_3_merkle_tree_constructions]
 

@@ -442,13 +442,29 @@ More strongly, the protocol SHALL be designed such that a future individual with
 
 - this specification,  
 - a finite set of trusted snapshot hashes or mindseeds, and  
-- at least one valid snapshot or partial dataset,
+- a complete Full Recovery Bundle or sufficient verified Archive Shards,
 
 CAN, in principle, reconstruct and verify the entire canonical universe without relying on any live service, proprietary software, or centralized infrastructure.
+
+A valid snapshot or partial dataset can verify and preserve only its declared
+contents and cryptographic relationship to a canonical boundary. It cannot
+recreate omitted event or payload bytes from hashes alone. Smaller Pocket Map,
+Citizen Map, Civic Archive, and Playable Offline profiles remain essential for
+broad distribution, reading, and continuation from an explicitly trusted basis,
+but MUST NOT claim complete genesis-to-head reconstruction unless they carry the
+required complete history.
 
 Snapshots and mindseeds MUST contain sufficient data and references (including cryptographic commitments and minimal explanatory metadata) to enable offline validation and replay. Implementations SHOULD support exporting and importing such packs to portable media and SHOULD NOT assume persistent connectivity.
 
 Through these mechanisms, the protocol SHALL serve as a long-term repository of human claims, reasoning, and action that cannot be permanently silenced or controlled, and SHALL remain reconstructible even in the face of global infrastructure disruption or long-term authoritarian control.
+
+If ordinary publication loses quorum, the original finalized prefix SHALL
+freeze; no node may silently lower quorum or rewrite that prefix. Surviving
+humans MAY continue only through an explicit catastrophe-successor declaration
+linked to the frozen prefix. A successor is separately identified, preserves
+known competing successor declarations, and MUST NOT pretend to be uninterrupted
+original canon. Later recognition or bridging is forward-only ordinary
+governance and cannot retroactively relabel or erase either history.
 
 ---
 
@@ -3987,14 +4003,22 @@ Conformant nodes and clients are NOT required to store or distribute full determ
 
 Readable state snapshots MAY be distributed independently of full deterministic history, provided they include cryptographic anchors sufficient to verify correspondence to a specific canonical snapshot boundary. Such anchors MAY include snapshot hashes, Merkle roots, or other deterministic commitments that allow a recipient to verify that the readable snapshot corresponds to a valid canonical state, even if the recipient does not possess the full history.
 
-To support wide distribution, offline use, and resilience under constrained conditions, implementations MAY package readable snapshots and partial history into portable units (such as seedpacks or Mindseeds) at multiple scales. These scales MAY include, but are not limited to:
+To support wide distribution, offline use, and resilience under constrained
+conditions, implementations MAY package readable snapshots and history as
+SeedPackages. Interoperable packages use the existing standardized scales:
 
-- a minimal readable core containing the most important canonical ideas and their immediate connections,
-- an expanded readable state containing all currently active public ideas and rankings,
-- readable state plus recent deltas sufficient to track near-term evolution,
-- full deterministic replay history.
+- Tier 0 Pocket Map,
+- Tier 1 Citizen Map,
+- Tier 2 Civic Archive,
+- Tier 3 Full Archive,
+- Playable Offline Bundle,
+- Full Recovery Bundle and its deterministic Archive Shard Set.
 
-The protocol does not mandate a specific distribution scale. However, rulebooks MAY define default packaging profiles or importance-weighted inclusion strategies intended to maximize the redundancy and survivability of the most important ideas, descriptions, and verdicts across the network.
+Exact package identifiers, composition, manifests, and reconstruction claims are
+defined by `collective-seedpackage-and-recovery-profile-v0.md`. Rulebooks define
+the numeric selection, cadence, and retention parameters. Universal importance
+remains the primary higher-tier selection signal; deterministic explanatory
+closure preserves why selected subjects matter without changing their rank.
 
 This separation between readable state and deterministic history allows the system to maximize the spread of epistemically important content—especially in offline, low-bandwidth, or adversarial environments—without imposing prohibitive storage or bandwidth requirements on all participants. At the same time, it preserves long-term verifiability, auditability, and the ability to reconstruct the full canonical universe wherever sufficient history is retained.
 

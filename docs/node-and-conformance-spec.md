@@ -2086,6 +2086,37 @@ The executable fixture set is
 `docs/conformance/seed-conformance-bindings.schema.json` and its harness is
 `scripts/seed-conformance-bindings-harness.mjs`.
 
+### 13.2D Collective SeedPackage and recovery conformance [anchor: collective_seedpackage_and_recovery_conformance]
+
+A node or standalone verifier claiming Collective SeedPackage Profile v0
+conformance MUST:
+
+- recognize only the closed profile identifiers in
+  `collective-seedpackage-and-recovery-profile-v0.md`;
+- decode the canonical manifest field order and verify its domain-separated
+  hash;
+- reject unsafe, duplicate, case-colliding, undeclared, missing, length-mismatched,
+  or hash-mismatched entries without auto-running package content;
+- verify the exact Tier 0-3 selection and explanatory closure applicable at the
+  basis snapshot and active packaging rulebook;
+- distinguish `shared_map_commitment` coverage from higher-tier SeedPackage
+  manifest and pack-commitment coverage;
+- reject a Full Archive or Full Recovery claim without its required historical,
+  certificate, payload, replay, playable-interface, specification, source,
+  dependency/toolchain, schema/migration, and recovery-guide closure;
+- reconstruct `xor8_1m_v0` only when no group exceeds its one-missing-shard
+  bound, and verify the fully reconstructed package;
+- keep original and catastrophe-successor lineages distinct, preserve competing
+  declarations, and reject any successor package that claims uninterrupted
+  original canon; and
+- treat a missing packaging rulebook parameter as profile unavailability rather
+  than inventing a local default.
+
+The static requirement set is
+`docs/conformance/collective-seedpackage-profile-v0.vectors.json`; its schema is
+`docs/conformance/collective-seedpackage-profile-v0.schema.json`. Static fixture
+existence alone is not runtime conformance.
+
 ### 13.3 Tooling [anchor: tooling]
 
 The conformance ecosystem SHOULD provide:
@@ -2147,7 +2178,11 @@ These mitigations form the core of canonical integrity.
 Nodes MUST maintain canonical publication integrity by validating:
 
 - **Finalized prefix history**
-  Divergent finalized prefix histories MUST be rejected unless they result from a recognized canonical recovery procedure.
+  Divergent ordinary finalized prefix histories MUST halt at their greatest
+  common finalized ancestor. A catastrophe successor is accepted only as a
+  separately identified lineage rooted in a valid
+  `CatastropheSuccessorDeclaration`; recognition never makes its earlier
+  certificates part of the original chain.
 
 - **Hash continuity**
   Every finalized prefix commitment, derived block hash, and snapshot hash MUST match deterministic reconstruction.
