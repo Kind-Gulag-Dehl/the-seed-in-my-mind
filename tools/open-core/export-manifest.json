@@ -5,6 +5,8 @@
     ".github/workflows/open-core-boundary.yml",
     "backend/**",
     "docs/authoritative-index.md",
+    "docs/conformance/**",
+    "docs/identity-admission-and-invitation-capacity-spec-v0.md",
     "docs/api-contract-read-only.md",
     "docs/canonical-encoding-and-hashing-spec.md",
     "docs/canonical-preservation-and-provenance-spine-spec.md",
@@ -16,6 +18,18 @@
     "docs/ai-boundaries-spec.md",
     "docs/map.encoding-snapshots-bundles.md",
     "docs/map.index.md",
+    "docs/conformance/canonical-event-signature-profile-v0.vectors.json",
+    "docs/conformance/profile-v0-identity-admission.vectors.json",
+    "docs/conformance/native-ordering.schema.json",
+    "docs/conformance/native-ordering.vectors.json",
+    "docs/conformance/seed-conformance-bindings.schema.json",
+    "docs/conformance/seed-conformance-bindings.vectors.json",
+    "docs/conformance/tempo-cycle-fixtures.schema.v1.json",
+    "docs/conformance/tempo-cycle-fixtures.v1.json",
+    "scripts/tempo-cycle-fixture-harness.mjs",
+    "scripts/native-ordering-fixture-harness.mjs",
+    "scripts/identity-source-integrity-harness.mjs",
+    "scripts/seed-conformance-bindings-harness.mjs",
     "docs/map.node-and-replay.md",
     "docs/map.offline-and-preservation.md",
     "docs/map.protocol-v5.md",
@@ -49,6 +63,7 @@
     "scripts/check-open-core-boundaries.mjs",
     "scripts/grant-reviewer-quickstart.ps1",
     "scripts/open-core-demo.ps1",
+    "scripts/verify-seed-conformance-bindings-postgres.ps1",
     "scripts/verify-open-core-export.mjs",
     "tools/open-core/**",
     "seed/**",
@@ -167,9 +182,23 @@
     "docs/open-core-implementation-status.md",
     "docs/open-core-reviewer-guide.md",
     "docs/authoritative-index.md",
+    "docs/identity-admission-and-invitation-capacity-spec-v0.md",
     "docs/map.index.md",
+    "docs/conformance/canonical-event-signature-profile-v0.vectors.json",
+    "docs/conformance/profile-v0-identity-admission.vectors.json",
+    "docs/conformance/native-ordering.schema.json",
+    "docs/conformance/native-ordering.vectors.json",
+    "docs/conformance/seed-conformance-bindings.schema.json",
+    "docs/conformance/seed-conformance-bindings.vectors.json",
+    "docs/conformance/tempo-cycle-fixtures.schema.v1.json",
+    "docs/conformance/tempo-cycle-fixtures.v1.json",
+    "scripts/tempo-cycle-fixture-harness.mjs",
+    "scripts/native-ordering-fixture-harness.mjs",
+    "scripts/identity-source-integrity-harness.mjs",
+    "scripts/seed-conformance-bindings-harness.mjs",
     "scripts/grant-reviewer-quickstart.ps1",
     "scripts/check-open-core-boundaries.mjs",
+    "scripts/verify-seed-conformance-bindings-postgres.ps1",
     "scripts/open-core-demo.ps1",
     "scripts/verify-open-core-export.mjs",
     "tools/open-core/verify-canonical-dto.mjs",
@@ -178,12 +207,23 @@
   ],
   "verification_commands": [
     [
+      "npm",
+      "run",
+      "conformance"
+    ],
+    [
+      "node",
+      "scripts/identity-source-integrity-harness.mjs"
+    ],
+    [
       "node",
       "tools/open-core/verify-canonical-dto.mjs"
     ],
     [
       "node",
-      "scripts/verify-open-core-export.mjs"
+      "scripts/verify-open-core-export.mjs",
+      "--export-root",
+      "{export_root}"
     ]
   ],
   "required_npm_projects": [
@@ -196,10 +236,24 @@
         "build"
       ],
       "commands": [
-        ["npm", "install"],
-        ["npm", "run", "lint:boundaries"],
-        ["npm", "test"],
-        ["npm", "run", "build"]
+        [
+          "npm",
+          "install"
+        ],
+        [
+          "npm",
+          "run",
+          "lint:boundaries"
+        ],
+        [
+          "npm",
+          "test"
+        ],
+        [
+          "npm",
+          "run",
+          "build"
+        ]
       ]
     }
   ],
@@ -220,14 +274,24 @@
         "bins/seed-importer"
       ],
       "commands": [
-        ["cargo", "build"],
-        ["cargo", "test"]
+        [
+          "cargo",
+          "build"
+        ],
+        [
+          "cargo",
+          "test"
+        ]
       ]
     }
   ],
   "boundary_check_command": [
     "node",
     "scripts/check-open-core-boundaries.mjs",
+    "scripts/tempo-cycle-fixture-harness.mjs",
+    "scripts/native-ordering-fixture-harness.mjs",
+    "scripts/identity-source-integrity-harness.mjs",
+    "scripts/seed-conformance-bindings-harness.mjs",
     "--frontend-dir",
     "frontend/open-core-reference"
   ]

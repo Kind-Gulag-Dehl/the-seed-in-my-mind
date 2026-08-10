@@ -4,7 +4,7 @@ use encoding::hash::hash_with_domain;
 use replay::ReplayDriver;
 use snapshot::{
     compute_title_sentence_payload_root, sha256_hex, to_hex, CONNECTIONS_SECTION_ID,
-    IDEAS_SECTION_ID, ORDERINGS_SECTION_ID,
+    IDEAS_SECTION_ID, ORDERINGS_SECTION_ID, REPRESENTATIONS_SECTION_ID,
 };
 use sqlx::{postgres::PgPoolOptions, FromRow, PgPool};
 use std::collections::BTreeMap;
@@ -582,10 +582,14 @@ fn compute_stage0_state_root(hashes: &BTreeMap<u16, Vec<u8>>) -> Result<Vec<u8>>
     let orderings = hashes
         .get(&ORDERINGS_SECTION_ID)
         .ok_or_else(|| anyhow!("missing orderings section"))?;
+    let representations = hashes
+        .get(&REPRESENTATIONS_SECTION_ID)
+        .ok_or_else(|| anyhow!("missing representations section"))?;
     let mut payload = Vec::new();
     payload.extend_from_slice(ideas);
     payload.extend_from_slice(connections);
     payload.extend_from_slice(orderings);
+    payload.extend_from_slice(representations);
     Ok(hash_with_domain("snapshot_state_root", &payload))
 }
 
@@ -617,15 +621,22 @@ fn resolve_artifact_path(artifact_path: &str) -> Result<PathBuf> {
             .to_string();
     }
 
-    let rel = Path::new(&normalized);
-    let mut use_repo_root = false;
-    if let Some(Component::Normal(component)) = rel.components().next() {
-        if component == "backend" {
-            use_repo_root = true;
+    let artifact_base = match env::var_os("SEED_SNAPSHOT_ARTIFACT_BASE_DIR") {
+        Some(configured) => {
+            let configured = PathBuf::from(configured);
+            if !configured.is_absolute() {
+                return Err(anyhow!(
+                    "SEED_SNAPSHOT_ARTIFACT_BASE_DIR must be an absolute path"
+                ));
+            }
+            configured
         }
-    }
-    let base = if use_repo_root {
-        repo_root
+        None => repo_root.to_path_buf(),
+    };
+    let rel = Path::new(&normalized);
+    let base = if matches!(rel.components().next(), Some(Component::Normal(component)) if component == "backend")
+    {
+        &artifact_base
     } else {
         &backend_root
     };
@@ -639,4 +650,41 @@ fn backend_root() -> Result<PathBuf> {
         .and_then(|path| path.parent())
         .ok_or_else(|| anyhow!("unable to resolve backend root"))?;
     Ok(backend_root.to_path_buf())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn state_hashes() -> BTreeMap<u16, Vec<u8>> {
+        BTreeMap::from([
+            (IDEAS_SECTION_ID, vec![0x11; 32]),
+            (CONNECTIONS_SECTION_ID, vec![0x22; 32]),
+            (ORDERINGS_SECTION_ID, vec![0x33; 32]),
+            (REPRESENTATIONS_SECTION_ID, vec![0x44; 32]),
+        ])
+    }
+
+    #[test]
+    fn representation_bearing_stage0_state_root_matches_golden() {
+        let root = compute_stage0_state_root(&state_hashes()).expect("state root");
+        assert_eq!(
+            to_hex(&root),
+            "74ab1087cb87ee22a51ef9c4cd1e428a874f00d3aa20ef29a6b03c0c3f29cac2"
+        );
+
+        let mut changed = state_hashes();
+        changed.insert(REPRESENTATIONS_SECTION_ID, vec![0x45; 32]);
+        assert_ne!(
+            root,
+            compute_stage0_state_root(&changed).expect("changed state root")
+        );
+    }
+
+    #[test]
+    fn stage0_state_root_requires_representations() {
+        let mut hashes = state_hashes();
+        hashes.remove(&REPRESENTATIONS_SECTION_ID);
+        assert!(compute_stage0_state_root(&hashes).is_err());
+    }
 }

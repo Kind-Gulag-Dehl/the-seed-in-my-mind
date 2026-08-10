@@ -1,6 +1,6 @@
 # the-seed-in-my-mind
 
-This repo is the public infrastructure layer for The Seed in My Mind. It contains the backend, reference frontend, docs, and export tooling needed to inspect and verify a shared idea graph without the private product layer. A reviewer can verify today that public seed data imports cleanly, replay and snapshot outputs are reproducible, a read-only API serves the verified state, and the open-core export boundary is enforced. It is a real runnable open-core package, not the full end-user product.
+This repo is the public infrastructure layer for The Seed in My Mind. It contains the backend, reference frontend, docs, and export tooling needed to inspect and verify a shared idea graph without the private product layer. The package contains the code and guarded tooling for deterministic Seed import, replay, snapshot construction and verification, read-only serving, and export-boundary enforcement. The database-backed reviewer proof requires an explicitly disposable PostgreSQL administrator URL; ordinary runtime databases are rejected. It is a real runnable open-core package, not the full end-user product.
 
 The Seed in My Mind open-core repo is the public infrastructure package for a deterministic canonical-history substrate and its reference reviewer surface.
 
@@ -36,7 +36,7 @@ Implemented now:
 
 Public spec-only or not yet operational in the public runtime:
 - multi-node consensus and committee-based canonical publication,
-- public canonical write flows in the exported open-core package,
+- broader public canonical write flows beyond the narrow signed idea/connection ingress,
 - governance activation using the live system,
 - token/economic runtime enforcement beyond specs and partial code paths,
 - the full game layer and broader product UX.
@@ -116,51 +116,29 @@ seed/                         Deterministic public seed/demo data
 - Rust stable
 - Node.js 20+
 - Postgres with `psql` on PATH
-- `DATABASE_URL` set in the environment, or `backend/.env` created from `backend/.env.example`
+- SEED_TEST_DATABASE_ADMIN_URL set process-locally to the postgres maintenance database on a disposable local PostgreSQL server with create/drop privileges
 
 Runtime details: [stage0-runtime-configuration.md](docs/stage0-runtime-configuration.md)
 
 ## Minimal local setup (quickstart)
 
-Local/dev example only:
+Reviewer scripts never reset an ordinary DATABASE_URL. Set SEED_TEST_DATABASE_ADMIN_URL process-locally to the postgres maintenance database on a disposable PostgreSQL server. The scripts create only seed_opencore_m1_reviewer_repair_001_* databases, verify exact-name cleanup, and preserve existing databases.
 
-- example database name: `seed_open_core`
-- example user: `seed_local`
-- example password: `seed_local_pw`
-- exact `DATABASE_URL`:
-
-```text
-postgres://seed_local:seed_local_pw@127.0.0.1:5432/seed_open_core
-```
-
-PowerShell example:
-
-```powershell
-$env:DATABASE_URL="postgres://seed_local:seed_local_pw@127.0.0.1:5432/seed_open_core"
-```
-
-Or put the same value in `backend/.env` as:
-
-```text
-DATABASE_URL=postgres://seed_local:seed_local_pw@127.0.0.1:5432/seed_open_core
-```
-
-This example is for local reviewer setup only. It is not production guidance.
-
+Do not put the administrator URL in this repository or paste it into review evidence.
 ## Export the public open-core package
 
 From the repo root:
 
 ```powershell
-npm run extract:open-core
+npm run extract:open-core:dir -- C:\Temp\seed-open-core-export
 ```
 
 That command:
-- creates `_export/open-core`,
+- creates the explicitly supplied isolated export directory,
 - verifies the export is clean and publishable,
 - runs build/test/smoke checks against the exported tree,
 - writes `EXPORT_INFO.txt`,
-- produces `tools/open-core/dist/open-core-export.zip`.
+- does not create a zip unless the separate zip path is explicitly requested.
 
 ## Verification commands
 
@@ -194,7 +172,7 @@ npm run verify:open-core-export
 npm run verify:export-working-tree
 ```
 
-`npm run verify:generated-export` validates `_export/open-core` after `npm run extract:open-core`; `npm run verify:open-core-export` is a compatibility alias for that generated-export check. `npm run verify:export-working-tree` intentionally treats the current repo tree as if it were a shippable export package; it should fail if local generated artifacts such as `node_modules`, `dist`, `backend/var`, or `tsconfig.tsbuildinfo` are present. This keeps local working-tree verification distinct from generated export cleanliness.
+`npm run verify:generated-export` is a read-only compatibility check for an already-present legacy `_export/open-core` tree. New exports must use an explicit external root, for example `npm run extract:open-core:dir -- C:\Temp\seed-open-core-export`, and the generator verifies that root directly. `npm run verify:export-working-tree` intentionally treats the current repo tree as if it were shippable and should fail when local build/runtime artifacts are present.
 
 ## Current status
 

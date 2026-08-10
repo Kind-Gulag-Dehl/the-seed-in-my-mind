@@ -3,84 +3,43 @@ doc_id: open_core_demo_flow
 title: Open-Core Demo Flow
 status: derived
 version: v0
-last_reviewed: 2026-03-05
+last_reviewed: 2026-08-10
 scope:
-  - Documents the deterministic reviewer demo path and what each step proves.
+  - Documents the guarded deterministic reviewer demo path.
 authoritative_for:
   - Demo instructions only.
 not_authoritative_for:
   - Canonical semantics
 depends_on:
-  - stage0-runtime-configuration.md
-  - api-contract-read-only.md
+  - open-core-implementation-status.md
 ---
 
 # Open-Core Demo Flow
 
 ## 1. Purpose
 
-The demo flow is designed to prove a real end-to-end path, not just static documentation.
+The demo proves deterministic current-profile Seed ingestion, replay, representation-bearing snapshot construction and independent verification, read-only API serving, and optionally an isolated reference-frontend build. It does not prove the full public specification.
 
-It shows:
-- canonical event ingestion,
-- deterministic replay,
-- snapshot generation,
-- snapshot verification,
-- read-only API serving of verified state,
-- optional reference-frontend build against that API surface.
+## 2. Safety prerequisite
 
-It does not prove the full public spec set. It proves the currently implemented open-core runtime path described in `open-core-implementation-status.md`.
+Set SEED_TEST_DATABASE_ADMIN_URL process-locally to the postgres maintenance database on a disposable PostgreSQL server with create/drop privileges. Do not store or paste the URL.
 
-## 2. Command
+The script rejects ordinary database targets. It generates only seed_opencore_m1_reviewer_repair_001_* databases, owns only its spawned API process, writes Cargo/frontend/snapshot output below a temporary run directory, and verifies exact database cleanup. It never removes source-tree node_modules, lockfiles, build output, or unrelated processes.
 
-From the repo root:
+## 3. Commands
 
-```powershell
-npm run review:demo
-```
+From the repository root:
 
-Optional:
+    npm run review:demo
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/open-core-demo.ps1 -BuildReferenceFrontend
-```
+Optional isolated frontend build:
 
-## 3. What the script does
+    powershell -ExecutionPolicy Bypass -File scripts/open-core-demo.ps1 -BuildReferenceFrontend
 
-The script:
+The fuller reviewer path also runs the migration-0025 semantic matrix:
 
-1. resets the local Postgres schema,
-2. applies the backend migrations,
-3. imports `seed/reviewer-demo.seed-data-v0.json`,
-4. runs `snapshot-builder`,
-5. runs `snapshot-verify --latest --profile stage0`,
-6. starts `api-server` in `open_core` mode,
-7. queries `/api/v0/snapshot/latest`, `/api/v0/ideas/top`, and a specific `/api/v0/idea/{id}` route,
-8. prints a short verification report with snapshot commitments and the imported demo idea.
+    powershell -ExecutionPolicy Bypass -File scripts/grant-reviewer-quickstart.ps1 -Profile 30
 
-If `-BuildReferenceFrontend` is used, it also:
-- installs the reference frontend dependencies,
-- runs its tests,
-- builds the frontend bundle.
+## 4. Evidence
 
-## 4. Demo dataset
-
-The demo uses a tiny public seed file:
-
-- [reviewer-demo.seed-data-v0.json](../seed/reviewer-demo.seed-data-v0.json)
-
-That file is intentionally small so reviewers can inspect it quickly and understand what was imported.
-
-## 5. What success looks like
-
-Success means the script prints:
-- snapshot height,
-- snapshot hash,
-- shared map commitment,
-- event count,
-- the imported demo idea title and sentence,
-- a short statement of what the run proved.
-
-This is the minimal credible proof that the public open core is real and executable.
-
-It is not proof that multi-node canonical publication, full governance/token runtime, or the private/product layer are already operational in this repo.
+Success prints snapshot height/hash/shared-map commitment, imported ideas, exact task-prefixed database creation, exact-name dropped=true cleanup, preserved admission-database counts, and PASS open-core-demo.

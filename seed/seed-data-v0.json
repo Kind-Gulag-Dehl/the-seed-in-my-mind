@@ -19,6 +19,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "59427f80-5901-7128-990e-90b49f288bcc",
+        "idea_type": "conceptual_idea",
         "title": "abstraction over redaction",
         "sentence": "abstraction over redaction",
         "paragraph": "Abstraction preserves meaning at safe levels; redaction is a last-resort, explicit action.",
@@ -32,6 +33,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e4eb0525-bba3-764f-96c7-f4afdb0f99c5",
+        "idea_type": "conceptual_idea",
         "title": "acceleration capture",
         "sentence": "acceleration capture",
         "paragraph": "Speed and volume allow coordinated actors to force outcomes before others can examine or respond, creating brittle and unaccountable power.",
@@ -45,6 +47,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0cc62835-6d37-75b6-bc5a-7ea0c73afa89",
+        "idea_type": "conceptual_idea",
         "title": "accountability and budgets",
         "sentence": "accountability and budgets",
         "paragraph": "accountability and budgets",
@@ -58,6 +61,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "bd938c68-8f49-777c-bfc5-37c6b9222e2c",
+        "idea_type": "conceptual_idea",
         "title": "action",
         "sentence": "action",
         "paragraph": "action",
@@ -71,6 +75,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "bc8819ce-64a3-7bb1-952c-02fdf8bcb4ea",
+        "idea_type": "conceptual_idea",
         "title": "action accountability",
         "sentence": "action accountability",
         "paragraph": "Completed actions require completion truth claims and remain challengeable like any other claim.",
@@ -84,6 +89,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "2d7806a5-d5ba-7d91-b14c-f54e55060e47",
+        "idea_type": "conceptual_idea",
         "title": "action budgets and constraints",
         "sentence": "action budgets and constraints",
         "paragraph": "Budgets and limits are action-scoped and challengeable, not implicit or hidden.",
@@ -97,6 +103,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ba31067b-1fa1-736f-8796-a1087db4ddc1",
+        "idea_type": "conceptual_idea",
         "title": "action model",
         "sentence": "action model",
         "paragraph": "action model",
@@ -110,6 +117,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "8c9975c4-15e3-7470-b540-7abcf8b8b2e8",
+        "idea_type": "conceptual_idea",
         "title": "action selection",
         "sentence": "action selection",
         "paragraph": "Actionable ideas are proposed, compared, and authorized through action challenges, with execution remaining voluntary.",
@@ -123,6 +131,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "5f6d5cea-f7b8-76b4-873f-0c0e3c7d3727",
+        "idea_type": "conceptual_idea",
         "title": "action verification",
         "sentence": "action verification",
         "paragraph": "Action completion remains challengeable, and invalid completions do not create canonical effects.",
@@ -136,6 +145,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fd2c234a-f7c9-7c34-8256-31d31e75ba3c",
+        "idea_type": "conceptual_idea",
         "title": "actionable ideas",
         "sentence": "actionable ideas",
         "paragraph": "Plans and proposals exist as actionable ideas that must pass action challenges to become authorized.",
@@ -149,6 +159,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "6e6751e1-13e8-7782-8eed-2fb78721e40a",
+        "idea_type": "conceptual_idea",
         "title": "actions and completion claims",
         "sentence": "actions and completion claims",
         "paragraph": "Real-world actions are recorded as action ideas and validated via completion truth claims.",
@@ -162,6 +173,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "7afce759-e902-788d-976d-c074fe0ae72e",
+        "idea_type": "conceptual_idea",
         "title": "adoption and activation",
         "sentence": "adoption and activation",
         "paragraph": "Rulebooks are adopted through action challenges and activate only at snapshot boundaries after verified implementation.",
@@ -175,6 +187,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "67a76403-0838-7a28-9163-cb92f3e5d041",
+        "idea_type": "conceptual_idea",
         "title": "advisory-only ai",
         "sentence": "advisory-only ai",
         "paragraph": "advisory-only ai",
@@ -188,6 +201,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "7383656a-6d95-7cff-9899-6fa1931eba38",
+        "idea_type": "conceptual_idea",
         "title": "ai layer",
         "sentence": "ai layer",
         "paragraph": "ai layer",
@@ -201,6 +215,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d199d70b-132a-7638-8352-9ef8e46a8176",
+        "idea_type": "conceptual_idea",
         "title": "ai non-authority",
         "sentence": "ai non-authority",
         "paragraph": "AI systems cannot author canonical events, vote, or govern; they are advisory only.",
@@ -214,6 +229,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0a9ad002-f753-7b20-8829-593cf17347d5",
+        "idea_type": "conceptual_idea",
         "title": "ai visibility limits",
         "sentence": "ai visibility limits",
         "paragraph": "AI access to sensitive payloads is constrained by safety rulebooks and visibility rules.",
@@ -227,6 +243,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "262ddc1b-00a2-734b-ba9e-1f5c1f0f9029",
+        "idea_type": "conceptual_idea",
         "title": "ai-driven misinformation",
         "sentence": "ai-driven misinformation",
         "paragraph": "Synthetic content floods discourse, making it hard to distinguish reliable claims from persuasive noise without structured contestation.",
@@ -240,6 +257,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "eeccd602-35f8-764f-b68e-c2f309b90357",
+        "idea_type": "conceptual_idea",
         "title": "an agent says",
         "sentence": "an agent says",
         "paragraph": "Each idea is explicitly tied to a speaker identity, preserving accountability and provenance.",
@@ -253,6 +271,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "8095dc84-098f-78a4-87d4-d94ca1be01be",
+        "idea_type": "conceptual_idea",
         "title": "anonymous and pseudonymous authorship",
         "sentence": "anonymous and pseudonymous authorship",
         "paragraph": "Public identity can be masked while still requiring a real verified human author behind every canonical event.",
@@ -266,6 +285,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "103bea4c-c05b-717c-90f9-53d20bb76965",
+        "idea_type": "conceptual_idea",
         "title": "anti-capture safeguards",
         "sentence": "anti-capture safeguards",
         "paragraph": "Slow governance, transparency, and challengeability prevent silent rule changes or elite control.",
@@ -279,6 +299,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "54c7cb98-4a40-7f34-bbe8-a2fa6a0167d0",
+        "idea_type": "conceptual_idea",
         "title": "append-only event log",
         "sentence": "append-only event log",
         "paragraph": "Canonical history is an ordered, immutable record of human-authored events with no retroactive edits.",
@@ -292,6 +313,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0e91f203-3e29-77d2-a652-d05bfa73f4d5",
+        "idea_type": "conceptual_idea",
         "title": "arguments and evidence",
         "sentence": "arguments and evidence",
         "paragraph": "arguments and evidence",
@@ -305,6 +327,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "603580a4-a7ae-705c-b2b7-9f365facbd7d",
+        "idea_type": "conceptual_idea",
         "title": "arguments as ideas",
         "sentence": "arguments as ideas",
         "paragraph": "Arguments and evidence are ordinary ideas connected by relative_importance usage metadata, not special object types.",
@@ -318,6 +341,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "c68b4d35-cbea-74ab-8aae-8a52368b1529",
+        "idea_type": "conceptual_idea",
         "title": "attention and legitimacy crises",
         "sentence": "attention and legitimacy crises",
         "paragraph": "attention and legitimacy crises",
@@ -331,6 +355,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "bcdc760b-ba51-71af-a28b-a6ce3fc62efb",
+        "idea_type": "conceptual_idea",
         "title": "attention economy distortion",
         "sentence": "attention economy distortion",
         "paragraph": "Engagement-optimized systems amplify virality and short-term emotion over long-term importance, eroding shared meaning and honest deliberation.",
@@ -344,6 +369,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e12976d3-3f0f-7746-a855-101b56889452",
+        "idea_type": "conceptual_idea",
         "title": "authority limits",
         "sentence": "authority limits",
         "paragraph": "Governance cannot override constitutional invariants, human primacy, or deterministic replay.",
@@ -357,6 +383,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "2d0ce783-061b-78d7-bc16-c033d6b3d234",
+        "idea_type": "conceptual_idea",
         "title": "autopilot constraints",
         "sentence": "autopilot constraints",
         "paragraph": "Autopilot may draft or analyze but cannot perform canonical actions or exceed human limits.",
@@ -370,6 +397,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "4dcaf625-2370-7e0c-a293-5c1c11d9e6b6",
+        "idea_type": "conceptual_idea",
         "title": "axes, scopes, and poles",
         "sentence": "axes, scopes, and poles",
         "paragraph": "axes, scopes, and poles",
@@ -383,6 +411,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "68663ec2-497e-78c9-856b-82c3994bd7fb",
+        "idea_type": "conceptual_idea",
         "title": "be excellent to each other",
         "sentence": "be excellent to each other",
         "paragraph": "The system assumes respectful, patient engagement as a functional requirement for deliberation, not a mood or preference.",
@@ -396,6 +425,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e6cb2759-19db-7435-8e5a-38c133b5d03a",
+        "idea_type": "conceptual_idea",
         "title": "block packaging",
         "sentence": "block packaging",
         "paragraph": "Blocks are deterministic event bundles for integrity and transport, not sources of authority.",
@@ -409,6 +439,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "9d93c062-23af-76c5-a576-907256012646",
+        "idea_type": "conceptual_idea",
         "title": "blocked submissions",
         "sentence": "blocked submissions",
         "paragraph": "Illegal payloads are recorded as blocked_submission events with safe summaries and explanations.",
@@ -422,6 +453,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fafa2cb5-680d-7a0c-9d77-441f3dd0a6bd",
+        "idea_type": "conceptual_idea",
         "title": "blocks, errors, and continuity",
         "sentence": "blocks, errors, and continuity",
         "paragraph": "blocks, errors, and continuity",
@@ -435,6 +467,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "f406eb50-6fc2-7870-95e9-759dbe7fa359",
+        "idea_type": "conceptual_idea",
         "title": "bounded growth",
         "sentence": "bounded growth",
         "paragraph": "Token mechanics prevent runaway accumulation and long-term entrenchment.",
@@ -448,6 +481,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "aeacab31-77fc-7381-9111-5ae7bc853b7c",
+        "idea_type": "conceptual_idea",
         "title": "bundle tiers",
         "sentence": "bundle tiers",
         "paragraph": "Pocket map, citizen map, civic archive, and full archive tiers define deterministic payload coverage.",
@@ -461,6 +495,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "51810dfa-4dde-7acb-b4d0-d46ce94fbb18",
+        "idea_type": "conceptual_idea",
         "title": "canonical encoding and hashing",
         "sentence": "canonical encoding and hashing",
         "paragraph": "Byte-level canonicalization defines how all objects are serialized and hashed.",
@@ -474,6 +509,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ef6bacb5-79c9-7930-a769-5697391cace2",
+        "idea_type": "conceptual_idea",
         "title": "canonical ontology",
         "sentence": "canonical ontology",
         "paragraph": "canonical ontology",
@@ -487,6 +523,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "20dad398-22cc-72e5-8bf9-352fd57789cb",
+        "idea_type": "conceptual_idea",
         "title": "canonical ordering",
         "sentence": "canonical ordering",
         "paragraph": "Event ordering derives solely from canonical log position, not from timestamps or client state.",
@@ -500,6 +537,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e4c0b322-69fa-713d-bb86-f251d8572eac",
+        "idea_type": "conceptual_idea",
         "title": "canonical structure",
         "sentence": "canonical structure",
         "paragraph": "canonical structure",
@@ -513,6 +551,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a2690ac0-4e06-7798-98d1-c03c3560bd5b",
+        "idea_type": "conceptual_idea",
         "title": "censorship and capture pressure",
         "sentence": "censorship and capture pressure",
         "paragraph": "States, platforms, and elites can suppress or rewrite records when history is not cryptographically preserved and widely replicated.",
@@ -526,6 +565,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0e59924b-bbcf-79b3-b5fa-d3e7971c388e",
+        "idea_type": "conceptual_idea",
         "title": "certainty and challengeability",
         "sentence": "certainty and challengeability",
         "paragraph": "certainty and challengeability",
@@ -539,6 +579,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "3b9bcbb3-8d39-7a13-9fbd-1227ae8dfc53",
+        "idea_type": "conceptual_idea",
         "title": "certainty bands",
         "sentence": "certainty bands",
         "paragraph": "Truth status is expressed as derived certainty levels that can rise or fall as challenges are resolved over time.",
@@ -552,6 +593,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "c28a3478-8d64-7515-8f29-fcfb793149e4",
+        "idea_type": "conceptual_idea",
         "title": "certainty derivation",
         "sentence": "certainty derivation",
         "paragraph": "Truth certainty is computed from challenge outcomes and evidence accumulation, not by direct author edits.",
@@ -565,6 +607,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d0b34e54-55f8-7089-88f9-61d0bfd2c04a",
+        "idea_type": "conceptual_idea",
         "title": "challenge as core primitive",
         "sentence": "challenge as core primitive",
         "paragraph": "All consequential changes to truth, importance, action, or representation occur only through challenge verdicts.",
@@ -578,6 +621,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "08d27414-8fa1-7b47-bfa7-c787c1cf4060",
+        "idea_type": "conceptual_idea",
         "title": "challenge domains",
         "sentence": "challenge domains",
         "paragraph": "The protocol defines exactly four domains: truth, importance, action, and representation.",
@@ -591,6 +635,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a73cc764-f305-75e4-bd3e-9f195333f30c",
+        "idea_type": "conceptual_idea",
         "title": "challenge lifecycle",
         "sentence": "challenge lifecycle",
         "paragraph": "Challenges progress through deterministic phases (arguments, voting, verdict) defined by cycle-anchored windows.",
@@ -604,6 +649,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "6a580084-4860-711c-b761-c82c8110afbb",
+        "idea_type": "conceptual_idea",
         "title": "challenges",
         "sentence": "challenges",
         "paragraph": "challenges",
@@ -617,6 +663,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "4d0d1338-9d91-77e8-a543-7de164723201",
+        "idea_type": "conceptual_idea",
         "title": "civic posture",
         "sentence": "civic posture",
         "paragraph": "civic posture",
@@ -630,6 +677,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ad47fea8-d1e8-7868-8576-e7e9b9531e46",
+        "idea_type": "conceptual_idea",
         "title": "closed tribe overlays",
         "sentence": "closed tribe overlays",
         "paragraph": "Gatekept overlays may restrict action eligibility without restricting visibility.",
@@ -643,6 +691,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "665f2512-5e38-719d-8647-db97f8802a83",
+        "idea_type": "conceptual_idea",
         "title": "cognitive sovereignty",
         "sentence": "cognitive sovereignty",
         "paragraph": "Individuals retain the right to think, refuse, and dissent without coercive cognitive instrumentation.",
@@ -656,6 +705,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "85b134a2-1b31-7b31-8bbc-2495a8f801b8",
+        "idea_type": "conceptual_idea",
         "title": "collective planning continuity",
         "sentence": "collective planning continuity",
         "paragraph": "Long-horizon plans remain legible and revisitable across generations.",
@@ -669,6 +719,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a516b54c-9776-7069-9784-254fb569381c",
+        "idea_type": "conceptual_idea",
         "title": "commit-reveal option",
         "sentence": "commit-reveal option",
         "paragraph": "Rulebooks may enable commit-reveal voting without altering one-person-one-vote.",
@@ -682,6 +733,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fccc95d5-b8b2-7dad-b34d-a1709359cc4c",
+        "idea_type": "conceptual_idea",
         "title": "compatibility with institutions",
         "sentence": "compatibility with institutions",
         "paragraph": "It is designed to coexist with lawful governance while remaining auditable and neutral.",
@@ -695,6 +747,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "985fcbf5-fa25-7ff0-bd59-c0e0fbdb1401",
+        "idea_type": "conceptual_idea",
         "title": "conflict preservation",
         "sentence": "conflict preservation",
         "paragraph": "Conflicting claims coexist until resolved by challenge verdicts.",
@@ -708,6 +761,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "aef35e5d-06c1-730c-86a8-26765004f2d5",
+        "idea_type": "conceptual_idea",
         "title": "conflict resolution through ideas",
         "sentence": "conflict resolution through ideas",
         "paragraph": "Disputes are resolved through challengeable ideas rather than coercive authority over people.",
@@ -721,6 +775,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "39f223c5-4f8d-7048-bc90-2f4a007dea46",
+        "idea_type": "conceptual_idea",
         "title": "conformance testing",
         "sentence": "conformance testing",
         "paragraph": "Implementations must pass deterministic test vectors for replay, encoding, and safety handling.",
@@ -734,6 +789,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "abdbc8ae-5091-796c-b2a1-49a596228754",
+        "idea_type": "conceptual_idea",
         "title": "constitutional breach handling",
         "sentence": "constitutional breach handling",
         "paragraph": "Breaches produce lineage separation without erasing history.",
@@ -747,6 +803,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "2f6878b2-871b-7a3e-8590-87cc4b649ee6",
+        "idea_type": "conceptual_idea",
         "title": "constitutional commitments",
         "sentence": "constitutional commitments",
         "paragraph": "constitutional commitments",
@@ -760,6 +817,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "f1e4fbfe-e6e0-7441-b2dd-2f72443f37e8",
+        "idea_type": "conceptual_idea",
         "title": "constitutional layer",
         "sentence": "constitutional layer",
         "paragraph": "constitutional layer",
@@ -773,6 +831,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "3ab76db8-5166-7908-a2d5-d3da895326a8",
+        "idea_type": "conceptual_idea",
         "title": "coordination and memory failures",
         "sentence": "coordination and memory failures",
         "paragraph": "coordination and memory failures",
@@ -786,6 +845,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0630e7ab-b4be-7998-aae1-b6b865587af2",
+        "idea_type": "conceptual_idea",
         "title": "coordination failure",
         "sentence": "coordination failure",
         "paragraph": "Large-scale problems require shared prioritization and action without coercion, but current systems cannot align across tribes or time horizons.",
@@ -799,6 +859,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "5af498ca-689b-75d6-9f5f-ac81feaff96e",
+        "idea_type": "conceptual_idea",
         "title": "core mechanics",
         "sentence": "core mechanics",
         "paragraph": "core mechanics",
@@ -812,6 +873,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "27ca50aa-7b80-7ab8-935d-2ee20a7e144f",
+        "idea_type": "conceptual_idea",
         "title": "custody manifests",
         "sentence": "custody manifests",
         "paragraph": "Nodes can publish custody claims and proofs of serving without altering canonical meaning.",
@@ -825,6 +887,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "94ed3fcd-a80e-7049-b6a2-54b5233be8e8",
+        "idea_type": "conceptual_idea",
         "title": "custody obligations",
         "sentence": "custody obligations",
         "paragraph": "Personal and collective custody sets define who must retain which bundles for survivability.",
@@ -838,6 +901,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "85af7c6f-a5e7-7dd8-af71-9bca16a25869",
+        "idea_type": "conceptual_idea",
         "title": "cycle-based recompute",
         "sentence": "cycle-based recompute",
         "paragraph": "POD and POINT are recomputed deterministically at cycle boundaries using living-map eligibility.",
@@ -851,6 +915,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "4fe2fe34-656c-7baf-90f9-fbcea6ceb2eb",
+        "idea_type": "conceptual_idea",
         "title": "cycles and tempo",
         "sentence": "cycles and tempo",
         "paragraph": "cycles and tempo",
@@ -864,6 +929,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "b06cc8b8-2448-7168-98f1-0ae1994aadd0",
+        "idea_type": "conceptual_idea",
         "title": "cycles as pacing",
         "sentence": "cycles as pacing",
         "paragraph": "Cycles pace recomputation and legitimacy without relying on clocks or wall time.",
@@ -877,6 +943,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e47152db-2620-7ade-9dd9-8bdfa8351b91",
+        "idea_type": "conceptual_idea",
         "title": "death and succession",
         "sentence": "death and succession",
         "paragraph": "Identity termination and succession are recorded without retroactive edits or hidden transfers.",
@@ -890,6 +957,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "6f5e94ee-2543-787b-b03f-a9609d6243ea",
+        "idea_type": "conceptual_idea",
         "title": "defensive purpose",
         "sentence": "defensive purpose",
         "paragraph": "The system defends deliberation, memory, and accountability rather than seeking political dominance.",
@@ -903,6 +971,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "1f552238-5de3-7d57-8827-58fdb454bba2",
+        "idea_type": "conceptual_idea",
         "title": "derived state isolation",
         "sentence": "derived state isolation",
         "paragraph": "Rankings, token balances, and safety outputs are derived and never canonical facts.",
@@ -916,6 +985,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "715f4480-b5c9-7d51-917d-446cfe03e280",
+        "idea_type": "conceptual_idea",
         "title": "deterministic classification",
         "sentence": "deterministic classification",
         "paragraph": "Safety labels and emotional-load scores are deterministic and replayable under the active rulebooks.",
@@ -929,6 +999,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "950fd03b-7cd9-773f-af3d-5ea69f723920",
+        "idea_type": "conceptual_idea",
         "title": "deterministic ranking",
         "sentence": "deterministic ranking",
         "paragraph": "Rankings are derived deterministically from relative_importance connections and challenge outcomes.",
@@ -942,6 +1013,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fa3a8e33-5991-7b33-a737-9bf33aee8e7f",
+        "idea_type": "conceptual_idea",
         "title": "deterministic reintegration",
         "sentence": "deterministic reintegration",
         "paragraph": "Offline logs merge into canonical history by deterministic ordering and validation rules.",
@@ -955,6 +1027,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "1e02b941-9333-7a2a-a5e1-992a37cb5036",
+        "idea_type": "conceptual_idea",
         "title": "deterministic replay",
         "sentence": "deterministic replay",
         "paragraph": "Any conformant node reconstructs identical state from the same log and rulebooks.",
@@ -968,6 +1041,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "7f64f432-38c9-7fc3-8fd7-b79d5f1b3a6a",
+        "idea_type": "conceptual_idea",
         "title": "dignity and cognition",
         "sentence": "dignity and cognition",
         "paragraph": "dignity and cognition",
@@ -981,6 +1055,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "1375fd70-4c50-7150-a0f7-643362e20f71",
+        "idea_type": "conceptual_idea",
         "title": "distributed identity authorities",
         "sentence": "distributed identity authorities",
         "paragraph": "Verification relies on plural evidence, not a single centralized identity authority.",
@@ -994,6 +1069,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "b6bc9a59-209a-78ac-80fe-6e93feee3b18",
+        "idea_type": "conceptual_idea",
         "title": "domain separation",
         "sentence": "domain separation",
         "paragraph": "Truth, importance, and action are distinct domains with distinct challenge semantics and no cross-authority.",
@@ -1007,6 +1083,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "85bb89a9-9f4b-7902-9dc2-afc1116244a7",
+        "idea_type": "conceptual_idea",
         "title": "domain-separated hashing",
         "sentence": "domain-separated hashing",
         "paragraph": "Commitments use explicit domain tags to prevent ambiguity and cross-scheme drift.",
@@ -1020,6 +1097,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "aa057410-327f-7e65-a6e6-165aedd91397",
+        "idea_type": "conceptual_idea",
         "title": "dual poles of universal importance",
         "sentence": "dual poles of universal importance",
         "paragraph": "Universal importance is anchored to the individual human and to all life, consciousness, and intelligence through time.",
@@ -1033,6 +1111,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "c9825e97-a2ac-7428-96e7-068779f91b80",
+        "idea_type": "conceptual_idea",
         "title": "embedded text tiers",
         "sentence": "embedded text tiers",
         "paragraph": "Title and sentence tiers are embedded for portability and verification of meaning.",
@@ -1046,6 +1125,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "83e17de6-6df8-7937-8745-e97ef82a5709",
+        "idea_type": "conceptual_idea",
         "title": "emerging risks",
         "sentence": "emerging risks",
         "paragraph": "emerging risks",
@@ -1059,6 +1139,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "90b10de0-0ca7-790f-bb51-be6866afdf49",
+        "idea_type": "conceptual_idea",
         "title": "emotional load spectrum",
         "sentence": "emotional load spectrum",
         "paragraph": "Emotional impact is scored on a continuous scale with user-controlled visibility thresholds.",
@@ -1072,6 +1153,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "f723dc7e-3844-7961-acfd-6487d5dabca4",
+        "idea_type": "conceptual_idea",
         "title": "encoding, hashing, and commitments",
         "sentence": "encoding, hashing, and commitments",
         "paragraph": "encoding, hashing, and commitments",
@@ -1085,6 +1167,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "5e4b2ba3-fcf5-76b4-bbd0-631ff57b56c7",
+        "idea_type": "conceptual_idea",
         "title": "ent models and growth rings",
         "sentence": "ent models and growth rings",
         "paragraph": "Stewardship-oriented AI lineages are tracked with growth rings for auditability.",
@@ -1098,6 +1181,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "574b11f9-3ac0-76d3-9083-9d8939d28a91",
+        "idea_type": "conceptual_idea",
         "title": "epistemic dignity and non-humiliation",
         "sentence": "epistemic dignity and non-humiliation",
         "paragraph": "Being wrong is never a basis for humiliation; the system protects participation while challenging ideas.",
@@ -1111,6 +1195,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "9ee5545d-3d4d-72aa-ad7b-946e22de7d38",
+        "idea_type": "conceptual_idea",
         "title": "ethical exclusions",
         "sentence": "ethical exclusions",
         "paragraph": "Harmful or illegal actions may remain visible but are excluded from token routing and rewards.",
@@ -1124,6 +1209,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "890963ed-2d00-7bb7-b322-0bd4a7bfbaaa",
+        "idea_type": "conceptual_idea",
         "title": "event log and determinism",
         "sentence": "event log and determinism",
         "paragraph": "event log and determinism",
@@ -1137,6 +1223,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "3734cbb6-513d-79ae-b443-e65ae52334d5",
+        "idea_type": "conceptual_idea",
         "title": "evidence plurality",
         "sentence": "evidence plurality",
         "paragraph": "Truth can be supported by multiple evidence channels, with deterministic aggregation and challengeability.",
@@ -1150,6 +1237,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "004e50c8-f794-7668-94ce-e5d49ae40d59",
+        "idea_type": "conceptual_idea",
         "title": "evidence usage",
         "sentence": "evidence usage",
         "paragraph": "Evidence and counter-evidence are expressed as relative_importance connections with truth-specific usage values.",
@@ -1163,6 +1251,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d58e0839-64f9-70a8-ad28-79ecee604e3c",
+        "idea_type": "conceptual_idea",
         "title": "execution boundary",
         "sentence": "execution boundary",
         "paragraph": "Authorization permits but does not execute; execution remains a separate voluntary event.",
@@ -1176,6 +1265,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "5025341c-872e-74cf-b398-0ede06ca6e49",
+        "idea_type": "conceptual_idea",
         "title": "explainable exclusions",
         "sentence": "explainable exclusions",
         "paragraph": "Every ranking exclusion or lifecycle change must be explainable and challengeable.",
@@ -1189,6 +1279,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "dd708bf7-14f9-77c1-8de4-084343513ae0",
+        "idea_type": "conceptual_idea",
         "title": "explainable views",
         "sentence": "explainable views",
         "paragraph": "Every ranking, filter, and exclusion must offer a clear explanation path.",
@@ -1202,6 +1293,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "8cb3b83f-d8ef-719d-a30b-1ac5f5108799",
+        "idea_type": "conceptual_idea",
         "title": "explanation chains",
         "sentence": "explanation chains",
         "paragraph": "Truth statuses can be accompanied by explainer claims that document why a status holds.",
@@ -1215,6 +1307,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ed5c923c-6ffa-78c2-bb09-b94dbfe5c695",
+        "idea_type": "conceptual_idea",
         "title": "fallibility and mutual correction",
         "sentence": "fallibility and mutual correction",
         "paragraph": "Every claim is provisional and every participant can be wrong, so correction and revision are treated as cooperative duties.",
@@ -1228,6 +1321,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ff72f05b-485b-7ed9-8a1b-2ac8f6316c8e",
+        "idea_type": "conceptual_idea",
         "title": "fixed connection types",
         "sentence": "fixed connection types",
         "paragraph": "Canonical relationships are limited to same_as, relative_importance, and membership, with usage metadata defining context.",
@@ -1241,6 +1335,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fbaa3fee-65e7-73f8-89c7-37f3d3909ae4",
+        "idea_type": "conceptual_idea",
         "title": "fixed idea roles",
         "sentence": "fixed idea roles",
         "paragraph": "Canonical ideas are limited to truth_claim, conceptual_idea, actionable_idea, action, and identity, with no additional top-level types.",
@@ -1254,6 +1349,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "5e6c9798-7108-7542-a226-686dc9e6e5b0",
+        "idea_type": "conceptual_idea",
         "title": "forward-only change",
         "sentence": "forward-only change",
         "paragraph": "Rule changes are append-only and never retroactively rewrite prior outcomes.",
@@ -1267,6 +1363,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d690d9bc-5694-7c0b-977d-5cb5d6431785",
+        "idea_type": "conceptual_idea",
         "title": "fragmentation of shared reality",
         "sentence": "fragmentation of shared reality",
         "paragraph": "Competing narratives and incompatible information bubbles prevent collective sense-making and mutual understanding.",
@@ -1280,6 +1377,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a2cdc2ef-25fa-7600-879d-069077d2a5bd",
+        "idea_type": "conceptual_idea",
         "title": "framing invariants",
         "sentence": "framing invariants",
         "paragraph": "Challenges must be clearly scoped and anchored to canonical objects, with prohibited framing patterns excluded.",
@@ -1293,6 +1391,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "6ff259b7-9a7e-785d-8b5f-5a0176feba63",
+        "idea_type": "conceptual_idea",
         "title": "freedom of thought and speech",
         "sentence": "freedom of thought and speech",
         "paragraph": "Ideas are universally admissible as objects, with safety limiting payload specificity rather than existence.",
@@ -1306,6 +1405,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "9a41bdae-f55e-7841-9fdb-7f2a1c331f53",
+        "idea_type": "conceptual_idea",
         "title": "global coordination substrate",
         "sentence": "global coordination substrate",
         "paragraph": "The system offers a non-coercive layer for prioritization and collective action planning.",
@@ -1319,6 +1419,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "bf9422a2-a04a-7d21-80fa-d0913f1cdf8a",
+        "idea_type": "conceptual_idea",
         "title": "governance",
         "sentence": "governance",
         "paragraph": "governance",
@@ -1332,6 +1433,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "63b83e96-f890-7acd-ba7f-9b13e3d519d0",
+        "idea_type": "conceptual_idea",
         "title": "human adoption boundary",
         "sentence": "human adoption boundary",
         "paragraph": "AI output becomes canonical only through explicit human adoption events.",
@@ -1345,6 +1447,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ed8244d9-4dc3-7856-a441-ea5cef8dc4be",
+        "idea_type": "conceptual_idea",
         "title": "human primacy",
         "sentence": "human primacy",
         "paragraph": "Every canonical event is authored by a verified human identity; ai systems cannot author or vote in canon.",
@@ -1358,6 +1461,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "4cdeda39-6760-7eed-b3ad-3e002333d5b3",
+        "idea_type": "conceptual_idea",
         "title": "human-carried exchange",
         "sentence": "human-carried exchange",
         "paragraph": "Offline exchange relies on person-to-person transfer of logs, snapshots, and manifests.",
@@ -1371,6 +1475,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "47485a2e-ee70-7937-9d7a-adb1843f4fb9",
+        "idea_type": "conceptual_idea",
         "title": "human-first authorship",
         "sentence": "human-first authorship",
         "paragraph": "human-first authorship",
@@ -1384,6 +1489,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ceb084b5-aff5-7caa-bba0-d39c97655714",
+        "idea_type": "conceptual_idea",
         "title": "idea presence invariant",
         "sentence": "idea presence invariant",
         "paragraph": "All ideas remain visible as objects even when their text is abstracted or gated.",
@@ -1397,6 +1503,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "645da8a8-097c-7a32-b7cb-b8a29fca74cc",
+        "idea_type": "conceptual_idea",
         "title": "identities and authorship",
         "sentence": "identities and authorship",
         "paragraph": "identities and authorship",
@@ -1410,6 +1517,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "b9d9735a-cb0f-7f2e-a8d7-7b67af5c6f50",
+        "idea_type": "conceptual_idea",
         "title": "identity activity records",
         "sentence": "identity activity records",
         "paragraph": "Canonical activity logs preserve accountability and auditability across time.",
@@ -1423,6 +1531,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "3237cfb8-254d-7411-844b-2354d95a70e7",
+        "idea_type": "conceptual_idea",
         "title": "identity integrity",
         "sentence": "identity integrity",
         "paragraph": "identity integrity",
@@ -1436,6 +1545,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a7060156-a680-70de-b0d7-52adc6ea7b9e",
+        "idea_type": "conceptual_idea",
         "title": "identity keys and signatures",
         "sentence": "identity keys and signatures",
         "paragraph": "Authorship is bound to signed events and verifiable identity key material.",
@@ -1449,6 +1559,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "f54188eb-e4ea-7224-8c03-dc67005fe343",
+        "idea_type": "conceptual_idea",
         "title": "identity lifecycle",
         "sentence": "identity lifecycle",
         "paragraph": "Identities have creation, verification, continuity, and succession rules that preserve accountability without retroactive edits.",
@@ -1462,6 +1573,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fdfe89b9-ad62-76b7-9c37-23868f92e8d2",
+        "idea_type": "conceptual_idea",
         "title": "implementation diversity",
         "sentence": "implementation diversity",
         "paragraph": "Multiple clients and node implementations are expected, with identical canonical outcomes.",
@@ -1475,6 +1587,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d1ec49df-3bf4-7283-a28f-628b2d577008",
+        "idea_type": "conceptual_idea",
         "title": "importance",
         "sentence": "importance",
         "paragraph": "importance",
@@ -1488,6 +1601,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "94d33d0c-6eae-797e-95d0-55318c72a393",
+        "idea_type": "conceptual_idea",
         "title": "importance determination",
         "sentence": "importance determination",
         "paragraph": "Relative importance connections encode what matters more than what, producing rankings across scopes and timeframes.",
@@ -1501,6 +1615,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "badd2c18-0ce6-74f6-bb43-d68b5dc40f48",
+        "idea_type": "conceptual_idea",
         "title": "importance model",
         "sentence": "importance model",
         "paragraph": "importance model",
@@ -1514,6 +1629,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "49216219-656e-7e03-8783-1ceaa496bf08",
+        "idea_type": "conceptual_idea",
         "title": "infrastructure neutrality",
         "sentence": "infrastructure neutrality",
         "paragraph": "No infrastructure provider or jurisdiction is privileged as a source of authority.",
@@ -1527,6 +1643,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "079983b1-3299-73fa-ac19-81db464a3ddc",
+        "idea_type": "conceptual_idea",
         "title": "institutional and civilizational role",
         "sentence": "institutional and civilizational role",
         "paragraph": "institutional and civilizational role",
@@ -1540,6 +1657,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "3e8142e2-aefb-7076-a2a2-4dd0a6deb188",
+        "idea_type": "conceptual_idea",
         "title": "interoperability and replication",
         "sentence": "interoperability and replication",
         "paragraph": "interoperability and replication",
@@ -1553,6 +1671,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "49a7e7cb-7a24-7b4f-9bd9-1ff085cd19f5",
+        "idea_type": "conceptual_idea",
         "title": "invalid event handling",
         "sentence": "invalid event handling",
         "paragraph": "Invalid events are rejected deterministically with replay-stable failure semantics.",
@@ -1566,6 +1685,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d9afa900-4835-7e91-b7b7-9149ddbadddd",
+        "idea_type": "conceptual_idea",
         "title": "irreducible transparency",
         "sentence": "irreducible transparency",
         "paragraph": "All reasoning chains, rule changes, and outcomes remain inspectable in the canonical record.",
@@ -1579,6 +1699,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "1b5d7d68-c3d5-7d6a-9f4b-877f8a1e9804",
+        "idea_type": "conceptual_idea",
         "title": "issuance and constraints",
         "sentence": "issuance and constraints",
         "paragraph": "issuance and constraints",
@@ -1592,6 +1713,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "bd55eb1d-8109-7202-8eb4-84c1182bba4d",
+        "idea_type": "conceptual_idea",
         "title": "jurisdictional lenses",
         "sentence": "jurisdictional lenses",
         "paragraph": "Local legal constraints apply as visibility overlays without creating alternate canonical histories.",
@@ -1605,6 +1727,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ccafabae-182d-7510-a8df-44fa90cd5fd0",
+        "idea_type": "conceptual_idea",
         "title": "layered descriptions",
         "sentence": "layered descriptions",
         "paragraph": "Ideas have tiered descriptions to support breadth and depth without sacrificing determinism.",
@@ -1618,6 +1741,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0f1cd057-2ef0-788d-b877-fc9f1d7b4a19",
+        "idea_type": "conceptual_idea",
         "title": "legibility and interaction",
         "sentence": "legibility and interaction",
         "paragraph": "legibility and interaction",
@@ -1631,6 +1755,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ef7fdd6f-6f36-7e64-ba10-ce2dc0fcaf7b",
+        "idea_type": "conceptual_idea",
         "title": "legitimacy crisis",
         "sentence": "legitimacy crisis",
         "paragraph": "Institutions lose trust when their reasoning is opaque or their decisions are unchallengeable, leaving a vacuum for coordinated truth and action.",
@@ -1644,6 +1769,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "2d100a43-aa29-734c-9de0-1c9d8424f4fd",
+        "idea_type": "conceptual_idea",
         "title": "lenses and explainability",
         "sentence": "lenses and explainability",
         "paragraph": "lenses and explainability",
@@ -1657,6 +1783,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "24cde97e-c7ad-7aa8-83e9-bba63a322f10",
+        "idea_type": "conceptual_idea",
         "title": "lenses and filters",
         "sentence": "lenses and filters",
         "paragraph": "Users navigate via scopes, axes, timeframes, and jurisdictional or safety lenses.",
@@ -1670,6 +1797,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "cea4f25a-b37d-710b-972d-80ef57ea37a5",
+        "idea_type": "conceptual_idea",
         "title": "light clients",
         "sentence": "light clients",
         "paragraph": "Partial or snapshot-only clients remain verifiable without full history.",
@@ -1683,6 +1811,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "4b939579-b12e-721f-b281-c683b1ed787f",
+        "idea_type": "conceptual_idea",
         "title": "living map",
         "sentence": "living map",
         "paragraph": "Importance rankings reflect the alive portion of the graph and change as ideas gain or lose sustained support.",
@@ -1696,6 +1825,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "5befba64-65fe-7ec8-9c2a-f80efbb12940",
+        "idea_type": "conceptual_idea",
         "title": "local vs global finality",
         "sentence": "local vs global finality",
         "paragraph": "Offline work can be locally final while remaining globally challengeable on reintegration.",
@@ -1709,6 +1839,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "564ba30b-d0dd-701e-9d73-77ee3ebb9a7d",
+        "idea_type": "conceptual_idea",
         "title": "loneliness and meaning crisis",
         "sentence": "loneliness and meaning crisis",
         "paragraph": "People feel disconnected from collective purpose when personal context is detached from shared structures of importance.",
@@ -1722,6 +1853,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e27b19c0-b9f1-7bf6-a69b-7f2531e5d045",
+        "idea_type": "conceptual_idea",
         "title": "loss of civilizational memory",
         "sentence": "loss of civilizational memory",
         "paragraph": "Reasoning, evidence, and trade-offs are often lost or rewritten, causing repeated mistakes and fragile knowledge.",
@@ -1735,6 +1867,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "16992c85-dcf8-7bf2-9f16-cd08b7317450",
+        "idea_type": "conceptual_idea",
         "title": "mana rate limits",
         "sentence": "mana rate limits",
         "paragraph": "Mana provides deterministic rate-limiting and pacing without conferring power.",
@@ -1748,6 +1881,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "c1a87cd6-7262-7c6a-8527-62e55ed1d09e",
+        "idea_type": "conceptual_idea",
         "title": "mandatory collective embedding",
         "sentence": "mandatory collective embedding",
         "paragraph": "Tribe membership chains upward to the collective, preventing isolated silos.",
@@ -1761,6 +1895,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "08446771-cf08-7358-a51e-d3a63fca3044",
+        "idea_type": "conceptual_idea",
         "title": "mindseed bundles",
         "sentence": "mindseed bundles",
         "paragraph": "Portable packages include snapshots, event logs, and required payload tiers for offline survival.",
@@ -1774,6 +1909,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "67668107-ad1c-7e4b-9a4f-c02b15bedbf1",
+        "idea_type": "conceptual_idea",
         "title": "mindseed packages",
         "sentence": "mindseed packages",
         "paragraph": "mindseed packages",
@@ -1787,6 +1923,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "b76cccb2-10b7-7450-8cab-0d083b08007f",
+        "idea_type": "conceptual_idea",
         "title": "minority lens requirement",
         "sentence": "minority lens requirement",
         "paragraph": "Minority-preserving lenses must remain available alongside any aggregate ranking.",
@@ -1800,6 +1937,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "9f7fc428-8287-7e26-b557-f40f31c82db8",
+        "idea_type": "conceptual_idea",
         "title": "navigation and visibility",
         "sentence": "navigation and visibility",
         "paragraph": "navigation and visibility",
@@ -1813,6 +1951,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d9f7fc37-d170-7e0f-a34c-2372492a9969",
+        "idea_type": "conceptual_idea",
         "title": "no engagement feeds",
         "sentence": "no engagement feeds",
         "paragraph": "Default views are structured maps and lenses, not infinite engagement-optimized feeds.",
@@ -1826,6 +1965,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "56ab9ffc-e788-7ed7-bf1e-5a2397d47c90",
+        "idea_type": "conceptual_idea",
         "title": "no governance weighting",
         "sentence": "no governance weighting",
         "paragraph": "Tokens cannot weight votes, eligibility, or truth outcomes.",
@@ -1839,6 +1979,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "f404a01b-7318-74ef-9c3f-56d61af300e5",
+        "idea_type": "conceptual_idea",
         "title": "no human is my enemy",
         "sentence": "no human is my enemy",
         "paragraph": "Conflict belongs between ideas, not people; adversarial testing must not justify dehumanization or violence.",
@@ -1852,6 +1993,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e7bad2aa-8211-7bd7-9a5f-c447bb3f3294",
+        "idea_type": "conceptual_idea",
         "title": "no silent suppression",
         "sentence": "no silent suppression",
         "paragraph": "Safety actions must be visible and explainable; hidden removal is forbidden.",
@@ -1865,6 +2007,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "bf20b53f-5510-73c9-bc38-fd6b4d1eac36",
+        "idea_type": "conceptual_idea",
         "title": "node conformance",
         "sentence": "node conformance",
         "paragraph": "node conformance",
@@ -1878,6 +2021,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fe7bbfb4-aac5-7a91-9240-021e5f92af62",
+        "idea_type": "conceptual_idea",
         "title": "non-engagement ranking",
         "sentence": "non-engagement ranking",
         "paragraph": "Importance is derived from explicit comparisons, not engagement metrics or attention signals.",
@@ -1891,6 +2035,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fa1d0d23-8e4c-7afe-b932-bc634f40a913",
+        "idea_type": "conceptual_idea",
         "title": "non-oracular constraint",
         "sentence": "non-oracular constraint",
         "paragraph": "AI outputs are treated as drafts or analysis, never as authoritative truth.",
@@ -1904,6 +2049,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "38aaa525-5f9c-7c15-818e-3a3226d2ab8c",
+        "idea_type": "conceptual_idea",
         "title": "non-penalization of silence",
         "sentence": "non-penalization of silence",
         "paragraph": "Abstention and refusal to participate cannot be treated as guilt, failure, or disqualification outside explicit rulebooks.",
@@ -1917,6 +2063,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a4ce06a0-18f1-7558-b85f-45f4fcb3825f",
+        "idea_type": "conceptual_idea",
         "title": "offline and mindseed distribution",
         "sentence": "offline and mindseed distribution",
         "paragraph": "offline and mindseed distribution",
@@ -1930,6 +2077,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "c9803b3d-4188-70df-9936-3f56717f0c06",
+        "idea_type": "conceptual_idea",
         "title": "offline equals online semantics",
         "sentence": "offline equals online semantics",
         "paragraph": "Offline work uses the same event types and rules, treated as delayed publication.",
@@ -1943,6 +2091,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "420f721a-34d1-7e6a-9154-11c5496e0a6d",
+        "idea_type": "conceptual_idea",
         "title": "offline equivalence",
         "sentence": "offline equivalence",
         "paragraph": "offline equivalence",
@@ -1956,6 +2105,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "13efc397-9cb4-7b96-9054-4fa01e9f9f58",
+        "idea_type": "conceptual_idea",
         "title": "one person one vote",
         "sentence": "one person one vote",
         "paragraph": "Governance uses equal human voting without token weighting or status hierarchies.",
@@ -1969,6 +2119,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "11ac3087-5b72-77f9-a793-4081744cd4fa",
+        "idea_type": "conceptual_idea",
         "title": "open tribe default",
         "sentence": "open tribe default",
         "paragraph": "Every idea defines an open tribe context, even if only one person aligns to it.",
@@ -1982,6 +2133,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "01d5950b-8a02-79c9-9cfc-4a01ce29a1d1",
+        "idea_type": "conceptual_idea",
         "title": "pairwise reasoning",
         "sentence": "pairwise reasoning",
         "paragraph": "Importance rankings are grounded in explicit pairwise comparisons rather than implicit scores.",
@@ -1995,6 +2147,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "57ce839b-124c-7346-bd02-453ae5d3d4ce",
+        "idea_type": "conceptual_idea",
         "title": "participation and verdicts",
         "sentence": "participation and verdicts",
         "paragraph": "participation and verdicts",
@@ -2008,6 +2161,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "34585f3e-9e06-76b1-8484-61440ee5df45",
+        "idea_type": "conceptual_idea",
         "title": "partition and reintegration",
         "sentence": "partition and reintegration",
         "paragraph": "partition and reintegration",
@@ -2021,6 +2175,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "88dfe4f6-e4de-7740-b558-de3937cefc78",
+        "idea_type": "conceptual_idea",
         "title": "payload specificity boundary",
         "sentence": "payload specificity boundary",
         "paragraph": "Safety rulebooks define when detail becomes harmful or illegal and requires abstraction or blocking.",
@@ -2034,6 +2189,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d4be3c62-eb4b-70a3-b1d6-08d66062db61",
+        "idea_type": "conceptual_idea",
         "title": "perpetual challengeability",
         "sentence": "perpetual challengeability",
         "paragraph": "Any truth status can be contested later without rewriting history.",
@@ -2047,6 +2203,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "13486525-ecb2-73ff-8be2-5a2b06303524",
+        "idea_type": "conceptual_idea",
         "title": "personal and tribe maps",
         "sentence": "personal and tribe maps",
         "paragraph": "personal and tribe maps",
@@ -2060,6 +2217,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "16796bd2-37ee-73dd-8313-cc6d6e7cc7bc",
+        "idea_type": "conceptual_idea",
         "title": "personal importance maps",
         "sentence": "personal importance maps",
         "paragraph": "Only individuals have private importance maps; they are personal overlays and never canonical for others.",
@@ -2073,6 +2231,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "42a64c42-9611-78bd-8edf-4108f64fe59c",
+        "idea_type": "conceptual_idea",
         "title": "philosophical foundations",
         "sentence": "philosophical foundations",
         "paragraph": "philosophical foundations",
@@ -2086,6 +2245,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fa7111b0-b9bb-757e-b24f-2a1852c38b5e",
+        "idea_type": "conceptual_idea",
         "title": "plans and actions",
         "sentence": "plans and actions",
         "paragraph": "plans and actions",
@@ -2099,6 +2259,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "7db1963e-3f33-71a7-be94-8c73347ba77d",
+        "idea_type": "conceptual_idea",
         "title": "pod and point roles",
         "sentence": "pod and point roles",
         "paragraph": "pod and point roles",
@@ -2112,6 +2273,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a0076c99-e883-7d9d-a228-c8d2a2f8e399",
+        "idea_type": "conceptual_idea",
         "title": "pod as living share",
         "sentence": "pod as living share",
         "paragraph": "POD reflects current living-map contribution rather than a permanent ledger balance.",
@@ -2125,6 +2287,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "4367f183-46a7-7ef3-884d-db48c8c774fd",
+        "idea_type": "conceptual_idea",
         "title": "pod non-transferability",
         "sentence": "pod non-transferability",
         "paragraph": "POD is a living share of importance bound to a human identity and never transferable.",
@@ -2138,6 +2301,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "86834cea-62b6-7273-a837-0e3e5a8767af",
+        "idea_type": "conceptual_idea",
         "title": "point transferability",
         "sentence": "point transferability",
         "paragraph": "POINT is a tradable economic token minted from POD at cycle boundaries.",
@@ -2151,6 +2315,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "5131e818-3eed-7031-b335-bb0b8cee7df5",
+        "idea_type": "conceptual_idea",
         "title": "point-funded actions",
         "sentence": "point-funded actions",
         "paragraph": "POINT may fund actions, but funding never grants authority or compels execution.",
@@ -2164,6 +2329,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "490f8056-14b5-7464-b54b-babd4acb3f14",
+        "idea_type": "conceptual_idea",
         "title": "preservation spine",
         "sentence": "preservation spine",
         "paragraph": "Deterministic blocks and content-addressed payloads preserve integrity without granting authority.",
@@ -2177,6 +2343,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "6550bafd-2c09-71c8-9125-60598cd7ad8a",
+        "idea_type": "conceptual_idea",
         "title": "private cognition boundary",
         "sentence": "private cognition boundary",
         "paragraph": "Drafts and private notes are non-canonical and become canonical only when explicitly published as events.",
@@ -2190,6 +2357,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "634ecfbf-46b3-7e1c-8a8c-7f6c91e2258a",
+        "idea_type": "conceptual_idea",
         "title": "protocol invariants",
         "sentence": "protocol invariants",
         "paragraph": "Constitutional values constrain all rulebooks and implementations, and cannot be overridden by governance.",
@@ -2203,6 +2371,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "1d5a2e20-3cda-77d5-b236-d6a2c38c751d",
+        "idea_type": "conceptual_idea",
         "title": "protocol mechanics",
         "sentence": "protocol mechanics",
         "paragraph": "protocol mechanics",
@@ -2216,6 +2385,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "18202ad7-8fb9-7634-a8cd-d9672158296a",
+        "idea_type": "conceptual_idea",
         "title": "public coordination function",
         "sentence": "public coordination function",
         "paragraph": "public coordination function",
@@ -2229,6 +2399,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "11233402-3ce2-793b-92c2-119b99e65d60",
+        "idea_type": "conceptual_idea",
         "title": "public on reintegration",
         "sentence": "public on reintegration",
         "paragraph": "Offline events become public upon canonical ingestion, subject only to safety overlays.",
@@ -2242,6 +2413,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a67b9c12-9c91-705f-b944-ff06ad516874",
+        "idea_type": "conceptual_idea",
         "title": "quorum and thresholds",
         "sentence": "quorum and thresholds",
         "paragraph": "Governance decisions require explicit quorums and decision thresholds defined in rulebooks.",
@@ -2255,6 +2427,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "56c113cc-40bd-71df-a529-187c554dbea6",
+        "idea_type": "conceptual_idea",
         "title": "ranking and lifecycle",
         "sentence": "ranking and lifecycle",
         "paragraph": "ranking and lifecycle",
@@ -2268,6 +2441,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fb84b6f5-54a6-7077-9e75-26707d48e869",
+        "idea_type": "conceptual_idea",
         "title": "raw structural view",
         "sentence": "raw structural view",
         "paragraph": "A raw canonical view is always available without personalization or hidden filtering.",
@@ -2281,6 +2455,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "ad1326cf-bcfb-759e-a081-3da5d32f070c",
+        "idea_type": "conceptual_idea",
         "title": "redistribution and melt",
         "sentence": "redistribution and melt",
         "paragraph": "POINT supply adjusts through mint, redistribution, and melt to reflect living-map dynamics.",
@@ -2294,6 +2469,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "7b3dbbfe-edcf-7743-8b15-776f06afa018",
+        "idea_type": "conceptual_idea",
         "title": "replication and verification",
         "sentence": "replication and verification",
         "paragraph": "replication and verification",
@@ -2307,6 +2483,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "2fae22fd-e5b6-7115-9169-8cd5fac3e804",
+        "idea_type": "conceptual_idea",
         "title": "replication incentives",
         "sentence": "replication incentives",
         "paragraph": "Redundancy targets and replication duties keep the shared map durable under failure.",
@@ -2320,6 +2497,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "727b0a10-ee1a-7867-a721-bfbe040a18e5",
+        "idea_type": "conceptual_idea",
         "title": "representation contests",
         "sentence": "representation contests",
         "paragraph": "Competing descriptions are resolved by representation challenges without erasing prior representations.",
@@ -2333,6 +2511,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "70f933df-ccc2-7ed9-8c9a-1598de2366a5",
+        "idea_type": "conceptual_idea",
         "title": "representation integrity",
         "sentence": "representation integrity",
         "paragraph": "Changes to wording are handled through representation challenges that preserve prior text as history.",
@@ -2346,6 +2525,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0b67deb1-b44b-79e9-a366-15fa062689df",
+        "idea_type": "conceptual_idea",
         "title": "revisability",
         "sentence": "revisability",
         "paragraph": "Finalized verdicts can be re-challenged later; no outcome is beyond future contestation.",
@@ -2359,6 +2539,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "c2f35d67-385e-7a13-9fd0-7a32cf71a1aa",
+        "idea_type": "conceptual_idea",
         "title": "rot and burn",
         "sentence": "rot and burn",
         "paragraph": "Inactive or invalidated structures are excluded from the living map without erasing history.",
@@ -2372,6 +2553,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "2a1f47f2-bf73-7f03-9c31-919e0437a9c2",
+        "idea_type": "conceptual_idea",
         "title": "rulebook categories",
         "sentence": "rulebook categories",
         "paragraph": "Protocol, governance, safety, identity, and token rulebooks are distinct and cannot override constitutional invariants.",
@@ -2385,6 +2567,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e40ede2b-255c-71e6-91e4-f5cf9eb889c9",
+        "idea_type": "conceptual_idea",
         "title": "rulebook lineage",
         "sentence": "rulebook lineage",
         "paragraph": "Supersession and version history are preserved to keep governance changes traceable.",
@@ -2398,6 +2581,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "4c2a0347-f1a5-7e18-8890-195bbf40ff8f",
+        "idea_type": "conceptual_idea",
         "title": "rulebooks and activation",
         "sentence": "rulebooks and activation",
         "paragraph": "rulebooks and activation",
@@ -2411,6 +2595,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d95509b4-d19f-71ba-aa31-d4475f4ee284",
+        "idea_type": "conceptual_idea",
         "title": "rulebooks as ideas",
         "sentence": "rulebooks as ideas",
         "paragraph": "Governance, safety, identity, token, and protocol rules exist as versioned ideas with explicit lineage.",
@@ -2424,6 +2609,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "097541f9-29a5-7120-9dfc-41f317a39c53",
+        "idea_type": "conceptual_idea",
         "title": "run a node",
         "sentence": "run a node",
         "paragraph": "Conformant nodes validate, replay, and serve the canonical log or verified snapshots.",
@@ -2437,6 +2623,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "6c2100c9-47e7-7c37-8d86-1ad309017d08",
+        "idea_type": "conceptual_idea",
         "title": "safety and visibility",
         "sentence": "safety and visibility",
         "paragraph": "safety and visibility",
@@ -2450,6 +2637,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "208a7726-1ac6-7899-a124-27b2d70b0b33",
+        "idea_type": "conceptual_idea",
         "title": "safety as visibility",
         "sentence": "safety as visibility",
         "paragraph": "Safety modifies presentation of payloads, never the existence or structure of ideas.",
@@ -2463,6 +2651,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "282c3d3a-2c26-7a60-94e8-7b820d25308e",
+        "idea_type": "conceptual_idea",
         "title": "safety invariants",
         "sentence": "safety invariants",
         "paragraph": "safety invariants",
@@ -2476,6 +2665,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "00e8824c-4095-7adf-9087-391c2aa32ac7",
+        "idea_type": "conceptual_idea",
         "title": "safety rulebooks",
         "sentence": "safety rulebooks",
         "paragraph": "Safety constraints are versioned rulebooks adopted through governance and applied at snapshot boundaries.",
@@ -2489,6 +2679,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "06ae0b26-9732-7a5d-a533-612c30e86c87",
+        "idea_type": "conceptual_idea",
         "title": "sandbox and ents",
         "sentence": "sandbox and ents",
         "paragraph": "sandbox and ents",
@@ -2502,6 +2693,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "31d6de72-d2ef-7482-a337-ff0914937b18",
+        "idea_type": "conceptual_idea",
         "title": "sandbox separation",
         "sentence": "sandbox separation",
         "paragraph": "AI operates in a non-canonical sandbox that never affects deterministic replay.",
@@ -2515,6 +2707,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "04f0770a-03ff-7fcb-a2c3-58fd68ed4eea",
+        "idea_type": "conceptual_idea",
         "title": "scope and transparency",
         "sentence": "scope and transparency",
         "paragraph": "scope and transparency",
@@ -2528,6 +2721,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "91e2ce15-4153-7c85-a79c-4e2f4198df5f",
+        "idea_type": "conceptual_idea",
         "title": "scope separation",
         "sentence": "scope separation",
         "paragraph": "Importance is tracked separately for universal, personal, and tribe overlays, with no mixing of scopes.",
@@ -2541,6 +2735,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a8fcbbe2-1424-7edf-ac17-a9443e8f35a1",
+        "idea_type": "conceptual_idea",
         "title": "separation of domains",
         "sentence": "separation of domains",
         "paragraph": "separation of domains",
@@ -2554,6 +2749,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "214e3bb0-1559-79c1-bb48-46a52b0bb8c5",
+        "idea_type": "conceptual_idea",
         "title": "separation of representation and obligation",
         "sentence": "separation of representation and obligation",
         "paragraph": "Representation of an action never implies an obligation to perform it.",
@@ -2567,6 +2763,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fd0fcc04-f177-7069-b03e-7fecd5e239f6",
+        "idea_type": "conceptual_idea",
         "title": "shared map of reality",
         "sentence": "shared map of reality",
         "paragraph": "A single canonical map derived from human-authored ideas and events that any conformant node can replay deterministically. It preserves disagreement and provenance rather than forcing consensus or erasure.",
@@ -2580,6 +2777,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "50d8e75e-6adf-7339-bd80-81fe51ca53a7",
+        "idea_type": "conceptual_idea",
         "title": "shared ordering",
         "sentence": "shared ordering",
         "paragraph": "Canonical ordering and rankings are shared, not personalized by engagement data.",
@@ -2593,6 +2791,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "847899e0-bfa9-7ff3-864b-dfc38bf75b1f",
+        "idea_type": "conceptual_idea",
         "title": "shared reasoning substrate",
         "sentence": "shared reasoning substrate",
         "paragraph": "A system where truth, importance, and action are determined through explicit, challengeable structures rather than feeds or hidden curation.",
@@ -2606,6 +2805,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "6478d731-fff3-7abf-a8d6-b67d92f2aa92",
+        "idea_type": "conceptual_idea",
         "title": "shared representation obligation",
         "sentence": "shared representation obligation",
         "paragraph": "Participants must express ideas in understandable form so disputes can be tested in a shared public language.",
@@ -2619,6 +2819,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "cf506a1b-c8a3-7d06-a82d-d2f1bb4b88c6",
+        "idea_type": "conceptual_idea",
         "title": "shared_map_commitment",
         "sentence": "shared_map_commitment",
         "paragraph": "A single commitment binds canonical facts with tier-0 text payload roots for shared verification.",
@@ -2632,6 +2833,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "9234d73d-2eda-7235-8368-0db9fa8eb1f6",
+        "idea_type": "conceptual_idea",
         "title": "single canonical universe",
         "sentence": "single canonical universe",
         "paragraph": "One append-only history of human-authored events that preserves all claims, conflicts, and revisions without retroactive edits.",
@@ -2645,6 +2847,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "b7b99fea-3d21-7a67-bd09-3d8f82c7eae8",
+        "idea_type": "conceptual_idea",
         "title": "single content model",
         "sentence": "single content model",
         "paragraph": "Challenges never introduce special content types beyond ordinary ideas and connections.",
@@ -2658,6 +2861,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0800f8fd-d5cd-7fdb-8432-f01ea5cbd30a",
+        "idea_type": "conceptual_idea",
         "title": "snapshot tiers",
         "sentence": "snapshot tiers",
         "paragraph": "Snapshot tiers define deterministic payload inclusion without changing canonical semantics.",
@@ -2671,6 +2875,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "456b82c1-af38-7796-9633-c73a145bc977",
+        "idea_type": "conceptual_idea",
         "title": "snapshots and preservation",
         "sentence": "snapshots and preservation",
         "paragraph": "snapshots and preservation",
@@ -2684,6 +2889,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "dad34fbd-21dd-765f-93d4-a4ad2a0d7447",
+        "idea_type": "conceptual_idea",
         "title": "snapshots by block height",
         "sentence": "snapshots by block height",
         "paragraph": "Snapshots are keyed to block height, provide replay acceleration, and never redefine semantics.",
@@ -2697,6 +2903,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "798827a8-c417-7524-81d6-a44ab6c91915",
+        "idea_type": "conceptual_idea",
         "title": "sole resolution primitive",
         "sentence": "sole resolution primitive",
         "paragraph": "Challenges are the only canonical path for resolving contested truth, importance, action, or representation.",
@@ -2710,6 +2917,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "f0834cd9-f184-7db0-9cfa-d4ec8aeb9981",
+        "idea_type": "conceptual_idea",
         "title": "specificity and classification",
         "sentence": "specificity and classification",
         "paragraph": "specificity and classification",
@@ -2723,6 +2931,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "8efae3fa-1b26-763d-ac7a-146eac803b6a",
+        "idea_type": "conceptual_idea",
         "title": "standardized decentralized protocol",
         "sentence": "standardized decentralized protocol",
         "paragraph": "A ruleset for representing ideas, events, and challenges that any implementation can replay to the same canonical state.",
@@ -2736,6 +2945,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "368dbf49-ae4c-78ea-b33a-0e2a5b6a10fc",
+        "idea_type": "conceptual_idea",
         "title": "state_root_hash",
         "sentence": "state_root_hash",
         "paragraph": "Snapshots commit to canonical facts only, excluding derived views like rankings and token balances.",
@@ -2749,6 +2959,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "c8bf427d-646c-7b4c-a6c6-6bfc84391d08",
+        "idea_type": "conceptual_idea",
         "title": "stewardship across generations",
         "sentence": "stewardship across generations",
         "paragraph": "The system is built to preserve meaning and accountability for future beings, not just present participants.",
@@ -2762,6 +2973,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "a5c6a3ca-9220-7750-8537-4c814a9112e8",
+        "idea_type": "conceptual_idea",
         "title": "structural identity spaces",
         "sentence": "structural identity spaces",
         "paragraph": "structural identity spaces",
@@ -2775,6 +2987,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "df8afac0-a6b3-7325-9171-cbbf12950435",
+        "idea_type": "conceptual_idea",
         "title": "structural roles",
         "sentence": "structural roles",
         "paragraph": "Personal and relational spaces (e.g., backyard, self_tree, relationship_garden, anthill) are canonical metadata overlays that never affect truth, importance, or tokens.",
@@ -2788,6 +3001,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "407e2a6e-ded4-7c95-8da3-bb0765380d1f",
+        "idea_type": "conceptual_idea",
         "title": "supra-institutional memory layer",
         "sentence": "supra-institutional memory layer",
         "paragraph": "The canonical record provides a shared reasoning substrate above any single institution.",
@@ -2801,6 +3015,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "be1136a3-d1a9-7b23-89f3-a0555a1a1c25",
+        "idea_type": "conceptual_idea",
         "title": "tempo modes",
         "sentence": "tempo modes",
         "paragraph": "Tempo outputs mode flags that constrain acceleration without granting authority.",
@@ -2814,6 +3029,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "88641f78-6872-7ffd-a5a9-b766a296a06f",
+        "idea_type": "conceptual_idea",
         "title": "tempo predicates",
         "sentence": "tempo predicates",
         "paragraph": "Time enters only as challengeable claims that produce guardrail predicates for cycles.",
@@ -2827,6 +3043,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "1aaf2e69-9116-7e1b-88cc-18ea57cb0684",
+        "idea_type": "conceptual_idea",
         "title": "textual visibility states",
         "sentence": "textual visibility states",
         "paragraph": "Payloads may be visible, abstracted, or blocked while idea objects remain present.",
@@ -2840,6 +3057,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "47183fc8-e39e-7679-a7c2-6ff8e060d2e1",
+        "idea_type": "conceptual_idea",
         "title": "the problems",
         "sentence": "the problems",
         "paragraph": "the problems",
@@ -2853,6 +3071,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d575e443-295a-79c8-b260-0f375c131862",
+        "idea_type": "conceptual_idea",
         "title": "the seed in my mind",
         "sentence": "the seed in my mind",
         "paragraph": "A standardized, decentralized system for collective ideation, reasoning, and truth determination that grows a shared map of reality through time. It is human-first, challengeable, and built to preserve meaning across generations without centralized authority.",
@@ -2866,6 +3085,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "faa3df47-4838-75f7-923e-5a5075d8ad90",
+        "idea_type": "conceptual_idea",
         "title": "the seed in my mind (root concept)",
         "sentence": "the seed in my mind (root concept)",
         "paragraph": "the seed in my mind (root concept)",
@@ -2879,6 +3099,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e2ec4d31-f4a2-73ff-9d87-145d00c16d1f",
+        "idea_type": "conceptual_idea",
         "title": "the three core functions (truth, importance, action)",
         "sentence": "the three core functions (truth, importance, action)",
         "paragraph": "the three core functions (truth, importance, action)",
@@ -2892,6 +3113,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "349c60fa-5db4-79e7-8df6-a0f4fa1aa2a9",
+        "idea_type": "conceptual_idea",
         "title": "time claims",
         "sentence": "time claims",
         "paragraph": "Time information enters as challengeable truth claims with evidence, never as trusted timestamps.",
@@ -2905,6 +3127,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "3dc294ad-7e11-7567-8741-cad11b5a0cee",
+        "idea_type": "conceptual_idea",
         "title": "time horizons",
         "sentence": "time horizons",
         "paragraph": "Importance comparisons are explicitly scoped to timeframes rather than implicit recency.",
@@ -2918,6 +3141,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "c51e455b-41df-7c01-b327-e16001dd064b",
+        "idea_type": "conceptual_idea",
         "title": "tokens",
         "sentence": "tokens",
         "paragraph": "tokens",
@@ -2931,6 +3155,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "fdc5330f-02bc-7054-8800-e4bf7f9036ef",
+        "idea_type": "conceptual_idea",
         "title": "transparent history",
         "sentence": "transparent history",
         "paragraph": "Users can inspect how claims, rankings, and rulebooks evolved over time.",
@@ -2944,6 +3169,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0c4d163e-1cff-70c5-893c-4c3b8081335a",
+        "idea_type": "conceptual_idea",
         "title": "transport independence",
         "sentence": "transport independence",
         "paragraph": "Canonical data can move over any medium without changing meaning or validity.",
@@ -2957,6 +3183,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "1c24f425-e406-76d3-9b33-926f93635b12",
+        "idea_type": "conceptual_idea",
         "title": "tribe governance limits",
         "sentence": "tribe governance limits",
         "paragraph": "Tribes use the same governance mechanics and cannot create private or hidden governance histories.",
@@ -2970,6 +3197,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "f76d4a28-2dc7-7db4-9cd8-3bec97202f36",
+        "idea_type": "conceptual_idea",
         "title": "tribe importance overlays",
         "sentence": "tribe importance overlays",
         "paragraph": "Tribe maps are public overlays derived from shared importance alignment and never private.",
@@ -2983,6 +3211,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "c5c4bad8-9ee4-7b4d-a032-1344964f145d",
+        "idea_type": "conceptual_idea",
         "title": "truth",
         "sentence": "truth",
         "paragraph": "truth",
@@ -2996,6 +3225,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "45241ca6-ed8b-742c-b2a2-825a75216a12",
+        "idea_type": "conceptual_idea",
         "title": "truth claims",
         "sentence": "truth claims",
         "paragraph": "truth claims",
@@ -3009,6 +3239,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "be35204c-8d3d-7a40-bd46-7d7ced7558d0",
+        "idea_type": "conceptual_idea",
         "title": "truth determination",
         "sentence": "truth determination",
         "paragraph": "Truth claims are challengeable assertions whose status is derived from evidence, arguments, and verdicts rather than authority.",
@@ -3022,6 +3253,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "865dabf6-c542-7e79-ba33-1f0f8a197ccf",
+        "idea_type": "conceptual_idea",
         "title": "truth model",
         "sentence": "truth model",
         "paragraph": "truth model",
@@ -3035,6 +3267,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "f48cebee-fe59-7205-8f43-8c6a19d318f8",
+        "idea_type": "conceptual_idea",
         "title": "truth-claim types",
         "sentence": "truth-claim types",
         "paragraph": "Truth claims include subtypes such as observation, causal, prediction, and model integration, with explicit subtype metadata.",
@@ -3048,6 +3281,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "2a9320f8-0a58-7f7f-a378-e9a5e2226105",
+        "idea_type": "conceptual_idea",
         "title": "twenty-axis importance space",
         "sentence": "twenty-axis importance space",
         "paragraph": "Importance is expressed across a fixed set of axes and timeframes to keep value trade-offs explicit.",
@@ -3061,6 +3295,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "df43017c-66ba-701e-9177-a69ea1109e78",
+        "idea_type": "conceptual_idea",
         "title": "uniqueness constraints",
         "sentence": "uniqueness constraints",
         "paragraph": "Duplicate concurrent challenges on the same instance are disallowed to prevent parallel authority.",
@@ -3074,6 +3309,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "070bbef0-3c9b-7d55-8391-ce074da9518c",
+        "idea_type": "conceptual_idea",
         "title": "universal governance",
         "sentence": "universal governance",
         "paragraph": "Canonical rulebooks apply globally and remain public and auditable.",
@@ -3087,6 +3323,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "7402403c-e738-759f-8937-3342b4442ed6",
+        "idea_type": "conceptual_idea",
         "title": "universal partition mode",
         "sentence": "universal partition mode",
         "paragraph": "Local reasoning continues without claiming global finality during extreme disconnection.",
@@ -3100,6 +3337,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0ccfb347-f0f7-73b8-9a9a-60c4fb55df54",
+        "idea_type": "conceptual_idea",
         "title": "user experience",
         "sentence": "user experience",
         "paragraph": "user experience",
@@ -3113,6 +3351,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "dd3e0369-f730-770e-9055-19e64199bde9",
+        "idea_type": "conceptual_idea",
         "title": "verdict finalization",
         "sentence": "verdict finalization",
         "paragraph": "A verdict applies a deterministic state transformation and remains visible and replayable forever.",
@@ -3126,6 +3365,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "d7283b46-54b9-709f-824e-f13a4d131349",
+        "idea_type": "conceptual_idea",
         "title": "verifiable selection",
         "sentence": "verifiable selection",
         "paragraph": "Voter pools are selected by deterministic or verifiable random procedures under rulebook constraints.",
@@ -3139,6 +3379,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "7fc75c39-306e-77fd-af7e-4513af989179",
+        "idea_type": "conceptual_idea",
         "title": "verification and continuity",
         "sentence": "verification and continuity",
         "paragraph": "verification and continuity",
@@ -3152,6 +3393,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "030aa1ff-6392-73e9-9de8-c8e584be7c02",
+        "idea_type": "conceptual_idea",
         "title": "verification levels",
         "sentence": "verification levels",
         "paragraph": "Eligibility tiers are derived deterministically from vh/vi certainty without creating authority or rank.",
@@ -3165,6 +3407,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "b6c61250-43f6-7bf6-8231-b430d2f10cfb",
+        "idea_type": "conceptual_idea",
         "title": "verification tracks",
         "sentence": "verification tracks",
         "paragraph": "Human presence (vh) and identity correspondence (vi) are separate certainty tracks that gate eligibility without weighting votes.",
@@ -3178,6 +3421,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "47d016cb-ffff-7484-af67-34dca9816467",
+        "idea_type": "conceptual_idea",
         "title": "verification without trust",
         "sentence": "verification without trust",
         "paragraph": "Users can verify state by hashes, snapshots, and shared_map_commitment without central authority.",
@@ -3191,6 +3435,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "7bc53bd6-f4ca-75cb-bfdc-f8e304c9150c",
+        "idea_type": "conceptual_idea",
         "title": "voluntary action invariant",
         "sentence": "voluntary action invariant",
         "paragraph": "No decision compels real-world action without a willing human executor.",
@@ -3204,6 +3449,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e647a3ec-25f9-70d4-a3f7-bfc31196d036",
+        "idea_type": "conceptual_idea",
         "title": "voluntary execution",
         "sentence": "voluntary execution",
         "paragraph": "Governance decisions require voluntary human executors and cannot compel action.",
@@ -3217,6 +3463,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "2828a834-e173-73bf-a4da-fa46e9e02ca1",
+        "idea_type": "conceptual_idea",
         "title": "voter eligibility",
         "sentence": "voter eligibility",
         "paragraph": "Eligible voters are selected deterministically by rulebook constraints and never weighted by tokens or status.",
@@ -3230,6 +3477,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0ab3a379-2791-77ab-a61a-c136b8433707",
+        "idea_type": "conceptual_idea",
         "title": "voting and legitimacy",
         "sentence": "voting and legitimacy",
         "paragraph": "voting and legitimacy",
@@ -3243,6 +3491,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "dddee00e-e1b1-7584-9fe5-d766d4b5702a",
+        "idea_type": "conceptual_idea",
         "title": "what the system is",
         "sentence": "what the system is",
         "paragraph": "what the system is",
@@ -3256,6 +3505,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "46c9e2ac-b6a8-7165-98f7-b696b46e4765",
+        "idea_type": "conceptual_idea",
         "title": "why am i seeing this",
         "sentence": "why am i seeing this",
         "paragraph": "Every visibility change must be explainable via rulebook, classifier, and lens metadata.",
@@ -6745,4 +6995,3 @@
     }
   ]
 }
-

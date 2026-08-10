@@ -106,17 +106,11 @@ const exists = async (targetPath) => fs.stat(targetPath).then(() => true).catch(
 
 const loadManifest = async () => JSON.parse(await fs.readFile(manifestPath, "utf8"));
 
-const resolveExportRoot = async (manifest) => {
-  if (options.exportRoot) {
-    return options.exportRoot;
+const resolveExportRoot = async () => {
+  if (!options.exportRoot) {
+    throw new Error("[verify-open-core-export] --export-root is required");
   }
-  // Current behavior is intentionally dual-use:
-  // - if the repo root already carries EXPORT_INFO.txt, verify the repo tree itself
-  // - otherwise, verify the generated export tree at manifest.export_root
-  if (await exists(path.join(repoRoot, "EXPORT_INFO.txt"))) {
-    return repoRoot;
-  }
-  return path.join(repoRoot, ...manifest.export_root.split("/"));
+  return options.exportRoot;
 };
 
 const verifyExportInfo = async (exportRoot) => {

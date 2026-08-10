@@ -15,8 +15,8 @@ use common::security_limits::{
 
 use crate::server::errors::json_error;
 use crate::server::helpers::{
-    ensure_pathway_items, normalize_optional_text, parse_private_ordering_items, parse_uuid_any,
-    parse_ordering_profile_input, parse_vine_type_input, validate_max_len,
+    ensure_pathway_items, normalize_optional_text, parse_ordering_profile_input,
+    parse_private_ordering_items, parse_uuid_any, parse_vine_type_input, validate_max_len,
     validate_optional_max_len, validate_ordering_profile_vine_type,
 };
 use crate::server::mapping::{
@@ -323,9 +323,7 @@ pub(crate) async fn private_create_ordering(
         },
         None => None,
     };
-    if let Err(response) =
-        validate_ordering_profile_vine_type(ordering_profile, vine_type)
-    {
+    if let Err(response) = validate_ordering_profile_vine_type(ordering_profile, vine_type) {
         return response;
     }
     let items = match parse_private_ordering_items(&payload.items) {
@@ -453,9 +451,7 @@ pub(crate) async fn private_update_ordering(
         None if ordering_profile == existing.ordering_profile => existing.vine_type,
         None => None,
     };
-    if let Err(response) =
-        validate_ordering_profile_vine_type(ordering_profile, vine_type)
-    {
+    if let Err(response) = validate_ordering_profile_vine_type(ordering_profile, vine_type) {
         return response;
     }
 

@@ -6,8 +6,12 @@ import path from "node:path";
 
 const repoRoot = process.cwd();
 const manifestPath = path.join(repoRoot, "tools", "open-core", "export-manifest.json");
+const exportRootArgIndex = process.argv.indexOf("--export-root");
 const cliOptions = {
-  zip: process.argv.includes("--zip")
+  zip: process.argv.includes("--zip"),
+  exportRoot: exportRootArgIndex >= 0 && process.argv[exportRootArgIndex + 1]
+    ? path.resolve(process.argv[exportRootArgIndex + 1])
+    : null
 };
 
 const escapeRegexChar = (char) => /[|\\{}()[\]^$+?.]/.test(char) ? `\\${char}` : char;
@@ -161,31 +165,28 @@ const readEnvFile = async (filePath) => {
 };
 
 const buildVerificationEnv = async () => {
-  const sourceBackendEnv = await readEnvFile(path.join(repoRoot, "backend", ".env"));
   const mergedEnv = { ...process.env };
-
-  for (const [key, value] of Object.entries(sourceBackendEnv)) {
-    if (!mergedEnv[key]) {
-      if (key === "PGPASSFILE" && value && !path.isAbsolute(value)) {
-        mergedEnv[key] = path.join(repoRoot, "backend", value);
-      } else {
-        mergedEnv[key] = value;
-      }
+  const inheritedDatabaseUrl = mergedEnv.DATABASE_URL ?? mergedEnv.database_url;
+  if (inheritedDatabaseUrl) {
+    const databaseName = new URL(inheritedDatabaseUrl).pathname.replace(/^\/+|\/+$/g, "");
+    if (!databaseName.startsWith("seed_opencore_m1_reviewer_repair_001_")) {
+      throw new Error("[open-core-extract] refuses ordinary or protected DATABASE_URL target");
     }
   }
-
-  if (!mergedEnv.DATABASE_URL && mergedEnv.database_url) {
-    mergedEnv.DATABASE_URL = mergedEnv.database_url;
-  }
-  if (!mergedEnv.PGPASSFILE && mergedEnv.pgpassfile) {
-    mergedEnv.PGPASSFILE = mergedEnv.pgpassfile;
-  }
-
+  delete mergedEnv.DATABASE_URL;
+  delete mergedEnv.database_url;
   return mergedEnv;
 };
 
 const extract = async (manifest) => {
-  const exportRoot = resolveInRepo(manifest.export_root);
+  if (!cliOptions.exportRoot) {
+    throw new Error("[open-core-extract] --export-root is required");
+  }
+  const exportRoot = cliOptions.exportRoot;
+  const relativeToRepo = path.relative(repoRoot, exportRoot);
+  if (relativeToRepo === "" || (!relativeToRepo.startsWith("..") && !path.isAbsolute(relativeToRepo))) {
+    throw new Error("[open-core-extract] --export-root must be outside the source repository");
+  }
   const includePatterns = manifest.include_globs.map(globToRegExp);
   const excludePatterns = manifest.exclude_globs.map(globToRegExp);
 
@@ -399,7 +400,8 @@ const runBoundaryCheck = (manifest, exportRoot) => {
 
 const runVerificationCommands = (manifest, exportRoot, verificationEnv) => {
   for (const command of manifest.verification_commands ?? []) {
-    runCommand(command[0], command.slice(1), { cwd: exportRoot, env: verificationEnv });
+    const args = command.slice(1).map((value) => value === "{export_root}" ? exportRoot : value);
+    runCommand(command[0], args, { cwd: exportRoot, env: verificationEnv });
   }
 };
 
@@ -435,8 +437,8 @@ const writeExportInfo = async (exportRoot, metadata) => {
     `git_commit=${metadata.gitCommit}`,
     `manifest_version=${metadata.manifestVersion}`,
     `manifest_sha256=${metadata.manifestSha256}`,
-    "extract_command=npm run extract:open-core",
-    "verify_commands=npm run verify:backend | npm run verify:boundaries | npm run verify:canonical-dto | npm run extract:open-core | powershell -ExecutionPolicy Bypass -File tools/open-core/smoke-export.ps1",
+    "extract_command=npm run extract:open-core:dir -- <outside-repository-export-root>",
+    "verify_commands=npm run verify:backend | npm run verify:boundaries | npm run verify:canonical-dto | npm run conformance | node scripts/identity-source-integrity-harness.mjs | node scripts/verify-open-core-export.mjs --export-root <export-root>",
     "reviewer_guide=docs/open-core-reviewer-guide.md",
     "demo_guide=docs/open-core-demo-flow.md",
     "implementation_status=docs/open-core-implementation-status.md",
@@ -448,7 +450,7 @@ const writeExportInfo = async (exportRoot, metadata) => {
 
 const createZipArtifact = async (manifest, exportRoot) => {
   const packageScriptPath = path.join(repoRoot, "tools", "open-core", "package-export.ps1");
-  const outputZipPath = path.join(repoRoot, "tools", "open-core", "dist", "open-core-export.zip");
+  const outputZipPath = `${exportRoot}.zip`;
   const metadata = await getExportMetadata(manifest);
 
   runPowerShellScript(
@@ -486,7 +488,7 @@ const main = async () => {
   await verifyRustWorkspaces(manifest, exportRoot, verificationEnv);
   await verifyNpmProjects(manifest, exportRoot);
   runExportSmokeCheck(exportRoot, verificationEnv);
-  runCommand("node", ["scripts/verify-open-core-export.mjs"], { cwd: exportRoot, env: verificationEnv });
+  runCommand("node", ["scripts/verify-open-core-export.mjs", "--export-root", exportRoot], { cwd: exportRoot, env: verificationEnv });
 
   console.log("[open-core-extract] report");
   console.log(`- export_root: ${toPosixRelative(exportRoot)}`);
@@ -494,7 +496,7 @@ const main = async () => {
   console.log(`- excluded_files: ${excludedCount}`);
   if (cliOptions.zip) {
     await createZipArtifact(manifest, exportRoot);
-    console.log("- zip_artifact: tools/open-core/dist/open-core-export.zip");
+    console.log(`- zip_artifact: ${exportRoot}.zip`);
   }
   console.log("[open-core-extract] success");
 };

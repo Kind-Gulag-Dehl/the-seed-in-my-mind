@@ -24,8 +24,8 @@ use crate::server::helpers::{
 };
 use crate::server::router::build_app;
 use crate::server::types::{
-    AppState, PrivateIdeaPayload, PrivateOrderingCreatePayload, PrivateOrderingItemPayload,
-    OrderingProfileInput, PrivateOrderingUpdatePayload, RelativeImportanceDirection,
+    AppState, OrderingProfileInput, PrivateIdeaPayload, PrivateOrderingCreatePayload,
+    PrivateOrderingItemPayload, PrivateOrderingUpdatePayload, RelativeImportanceDirection,
     VineTypeInput,
 };
 use serde_json::Value;

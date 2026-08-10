@@ -23,6 +23,7 @@ const SNAPSHOT_COMMIT_KEY_FILE_ENV_KEYS: [&str; 2] = [
     "SNAPSHOT_COMMIT_HMAC_KEY_FILE",
 ];
 const SNAPSHOT_COMMIT_MODE_ENV_KEYS: [&str; 3] = ["SEED_ENV", "APP_ENV", "RUST_ENV"];
+const SNAPSHOT_ARTIFACT_BASE_DIR_ENV: &str = "SEED_SNAPSHOT_ARTIFACT_BASE_DIR";
 const DEV_SNAPSHOT_COMMIT_SIGNING_KEY: &[u8] = b"seed.snapshot_commit.dev_key.v1";
 static SNAPSHOT_COMMIT_SIGNING_KEY: OnceLock<Vec<u8>> = OnceLock::new();
 
@@ -216,16 +217,13 @@ fn write_snapshot_artifact(
     height: i64,
     snapshot_id: &str,
 ) -> Result<String, anyhow::Error> {
-    let backend_root = backend_root()?;
-    let repo_root = backend_root
-        .parent()
-        .ok_or_else(|| anyhow::anyhow!("unable to resolve repo root"))?;
+    let artifact_base = snapshot_artifact_base_dir()?;
 
     let relative = format!(
         "backend/var/snapshots/v0/{}/{}.snapshot",
         height, snapshot_id
     );
-    let abs_path = repo_root.join(Path::new(&relative));
+    let abs_path = artifact_base.join(Path::new(&relative));
     let parent = abs_path
         .parent()
         .ok_or_else(|| anyhow::anyhow!("invalid artifact path"))?;
@@ -233,6 +231,25 @@ fn write_snapshot_artifact(
     fs::write(&abs_path, bytes)?;
 
     Ok(relative)
+}
+
+fn snapshot_artifact_base_dir() -> Result<PathBuf, anyhow::Error> {
+    if let Some(configured) = std::env::var_os(SNAPSHOT_ARTIFACT_BASE_DIR_ENV) {
+        let configured = PathBuf::from(configured);
+        if !configured.is_absolute() {
+            return Err(anyhow::anyhow!(
+                "{} must be an absolute path",
+                SNAPSHOT_ARTIFACT_BASE_DIR_ENV
+            ));
+        }
+        return Ok(configured);
+    }
+
+    let backend_root = backend_root()?;
+    backend_root
+        .parent()
+        .map(Path::to_path_buf)
+        .ok_or_else(|| anyhow::anyhow!("unable to resolve repo root"))
 }
 
 fn backend_root() -> Result<PathBuf, anyhow::Error> {

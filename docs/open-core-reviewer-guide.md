@@ -3,105 +3,48 @@ doc_id: open_core_reviewer_guide
 title: Open-Core Reviewer Guide
 status: derived
 version: v0
-last_reviewed: 2026-03-05
+last_reviewed: 2026-08-10
 scope:
-  - Gives grant reviewers a short, deterministic evaluation path for the public open-core package.
+  - Gives reviewers a guarded evaluation path for the public package.
 authoritative_for:
   - Reviewer workflow only.
 not_authoritative_for:
   - Protocol semantics
 depends_on:
   - open-core-demo-flow.md
-  - open-core-architecture-overview.md
   - open-core-implementation-status.md
-  - stage0-runtime-configuration.md
 ---
 
 # Open-Core Reviewer Guide
 
 ## 1. What to evaluate
 
-The public package is meant to prove four concrete things:
-
-1. canonical data can be ingested deterministically,
-2. replay and snapshot commitments are reproducible,
-3. a read-only reference node can serve verified state,
-4. the open-core boundary is enforced and exportable.
-
-Some additional protocol/spec documents in `docs/` are published for architectural transparency. Reviewers should use this guide and [open-core-implementation-status.md](open-core-implementation-status.md) to distinguish runnable public surfaces from future/spec-only design material.
+Evaluate deterministic current-profile ingestion, replay, representation-bearing snapshot verification, read-only serving, conformance/DTO boundaries, and isolated export reproducibility. Use the implementation-status page to distinguish implemented, partial, and specification-only behavior.
 
 ## 2. Prerequisites
 
-- Windows PowerShell
-- Rust stable
-- Node.js 20+
-- Postgres with `psql` on PATH
-- `DATABASE_URL` set in the environment, or `backend/.env` created from `backend/.env.example`
+Windows PowerShell, Rust stable, Node.js 20+, Postgres with psql, and a process-local SEED_TEST_DATABASE_ADMIN_URL targeting the postgres maintenance database on a disposable server. Ordinary DATABASE_URL targets are rejected by reviewer verification.
 
-When you run the repo-level reviewer scripts from the source tree, they will load `backend/.env` automatically if the variable is not already set. The exported package does not ship a real `.env`; reviewers should copy `backend/.env.example` to `backend/.env` or set `DATABASE_URL` directly before running the exported runtime demo.
+## 3. Reviewer paths
 
-## 3. 15-minute path
+15-minute path:
 
-From the repo root:
+    npm run review:quickstart
 
-```powershell
-npm run review:quickstart
-```
+30-minute path:
 
-If you do not already have a local Postgres database configured, see the minimal setup section in `README.md` or `docs/stage0-runtime-configuration.md`.
+    powershell -ExecutionPolicy Bypass -File scripts/grant-reviewer-quickstart.ps1 -Profile 30
 
-This path runs:
-- boundary verification,
-- canonical DTO drift verification,
-- the deterministic open-core demo report.
+The longer path adds an isolated reference-frontend build and the guarded 19-case migration-0025 semantic matrix. Both paths create only exact task-prefixed databases and print cleanup evidence.
 
-What you should see:
-- boundary checks pass,
-- DTO checks pass,
-- the demo resets the database, imports a tiny public seed, builds and verifies a snapshot, starts the read-only API, and prints the imported idea titles and resulting snapshot commitments.
+## 4. Isolated export verification
 
-## 4. 30-minute path
+Choose a new temporary output directory:
 
-From the repo root:
+    npm run extract:open-core:dir -- C:\Temp\seed-open-core-export
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/grant-reviewer-quickstart.ps1 -Profile 30
-```
+The generator verifies the explicit export root, builds/tests with temporary Cargo/frontend outputs, and runs the exported guarded demo. Do not use the zip option unless release packaging is separately authorized.
 
-This path adds:
-- reference frontend install/test/build,
-- broader open-core backend surface verification.
+## 5. Scope boundary
 
-What you should see:
-- the same deterministic demo report,
-- a successful build of the reference frontend,
-- a successful open-core backend verification pass.
-
-## 5. Public export verification
-
-To verify the publishable open-core artifact:
-
-```powershell
-npm run extract:open-core
-```
-
-That command must produce:
-- `_export/open-core/`
-- `_export/open-core/EXPORT_INFO.txt`
-- `tools/open-core/dist/open-core-export.zip`
-
-It also re-runs:
-- export cleanliness verification,
-- exported backend build/test,
-- exported reference frontend build/test,
-- exported-runtime smoke verification.
-
-## 6. What is intentionally out of scope
-
-This review package does not claim that the project is already:
-- a live multi-node decentralized network,
-- a finished governance runtime,
-- a finished token/economics runtime,
-- the full game/product experience.
-
-For that status split, see [open-core-implementation-status.md](open-core-implementation-status.md).
+This package does not claim a live multi-node network, complete governance/token runtime, or the proprietary product/game experience.

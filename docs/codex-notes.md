@@ -63,3 +63,34 @@ Documentation-only coordination work does not require a notes entry unless it ch
   - Authored events are `ordering_create` and `ordering_fork`; profiles are `vine`, `evidence_rail`, and `action_rail`. Representation pointers remain in the snapshot representation index and outside the authored Ordering state root.
   - Added migration `0024_native_ordering_cutover.sql`, native Ordering conformance fixtures/harness, deterministic replay/snapshot/API/importer tests, and reviewer-facing implementation/conformance documentation.
   - Historical migrations and negative conformance cases retain old tokens only to document or prove rejection; there is no live compatibility layer.
+
+- 2026-07-26 18:13:35 -04:00 - OPENCORE-IDENTITY-SOURCE-INTEGRITY-001 / INTEGRATION-SEED-V4-PILOT-001
+  - Repaired only the eight-pass UTF-8/Windows-1252 mojibake in the authoritative Profile-v0 identity-admission specification and normalized its single CR to LF. No wording, headings, protocol semantics, or source classification changed.
+  - Added a focused source-integrity harness that pins the repaired UTF-8/NFC/LF bytes and Unicode inventory, rejects BOM/replacement/mojibake/control patterns, proves reconstruction normalization is byte-stable, and proves the repaired source forward-round-trips to the frozen V3 hash.
+  - Added one explicit non-authoritative negative fixture containing a single exact historical corrupted token; the harness requires it to fail with `known_mojibake_pattern`.
+
+- 2026-07-26 18:35:00 -04:00 - OPENCORE-SEED-V4-PROFILE0-VALIDATION-001 / INTEGRATION-SEED-V4-PILOT-001
+  - Added a separate `--validate-only` importer path for the exact unsigned, noncanonical Seed V4 pilot manifest. The path verifies the full manifest/component commitment set, deterministic UUIDv7 projections, record shapes, native Orderings, review/provenance state, DEC-037 derived ranks, relative contexts, and unsigned Profile-v0 event templates.
+- V4 packages are rejected without `--validate-only`, and `--force` cannot be combined with validation. Successful validation returns before database configuration or canonical mutation setup; ordinary legacy Seed import behavior is unchanged.
+
+- 2026-07-27 10:24:00 -04:00 - INTEGRATION-GATE0-RATIFICATION-001
+  - Before genesis, ratified source documents and the bootstrap profile guide construction. After genesis, canonical event history, replay-derived graph state, and activated ordinary rulebook ideas are semantic authority; Markdown is provenance, conformance material, or a generated reading projection.
+  - Rulebook identifiers reference ordinary rulebook ideas. Snapshots may commit the derived active set but never activate rules themselves.
+  - Persistent public human graph content is canonical and rate constrained. Private journals/queues and Public AI/model/agent realms remain noncanonical product state and cannot affect replay.
+
+- 2026-07-28 12:02:07 -04:00 - INTEGRATION-SEED-CONFORMANCE-BINDINGS-001 Open Core phase
+  - Canonical `representation_create` now distinguishes one `title` slot from `description` cells. Title omits tier and vocabulary fields; descriptions use three named lengths by four named complexities; `vocabulary_version_id` is required exactly for canonical complexity.
+  - Representation authorship is explicit and bound to the already-existing event speaker across validation, materialized storage, replay, snapshots, importer checks, and canonical reads.
+  - Native Evidence/Action Rails now carry typed `subject_idea_id` and aligned roles. Standardized forks preserve subject, retained-item roles, and the Action Rail lane; Vines continue to omit standardized subject/role metadata.
+  - Added migration `0025_seed_conformance_bindings.sql`, a canonical representation read endpoint, shared native Ordering and representation conformance suites, and exact commitment vectors. Disposable PostgreSQL application of migration 0025 remains pending because no guarded database URL was present.
+
+- 2026-08-10 12:16:48 -04:00 - OPENCORE-M1-REVIEWER-REPAIR-001
+  - Files changed: snapshot builder/verifier/library export; guarded migration/reviewer/backend/demo/export scripts; export manifest; package scripts; current Seed fixtures.
+  - Description: aligned Stage-0 verification with representation-bearing snapshots, added a fixed golden regression and external artifact root, repaired bundled idea types, added a 19-case exact-prefix migration matrix, removed global process killing, rejected ordinary database targets, and isolated frontend/Cargo/snapshot/export outputs.
+  - Commands/results: Rust bootstrap pass; snapshot-verifier tests 2/2 pass; script/JSON/fixture syntax checks pass. Guarded PostgreSQL/demo/export/full-suite execution remains pending because no process-local administrator URL was available and stored-secret access was rejected.
+  - Result: code/tooling repair implemented; run blocked before database-backed completion.
+- 2026-08-10 13:20:41 -04:00 - OPENCORE-M1-REVIEWER-REPAIR-001 complete
+  - Files changed: snapshot builder/verifier/library; migration 0025 and guarded matrix; Seed fixtures; reviewer/backend/demo/export tooling; public status/registry/report/coordination docs.
+  - Description: aligned representation-bearing state roots, enforced non-null description complexity, made reviewer and export execution exact-prefix/outside-repository isolated, and completed the inherited conformance gate.
+  - Commands/results: full Rust, 67/67 conformance, 22/22 DTO, boundaries, identity integrity, frontend, 19/19 PostgreSQL matrix, source demo, exported demo, export verifier, and cleanup/catalog gates passed.
+  - Result: implementation complete; no staging or checkpoint action performed.

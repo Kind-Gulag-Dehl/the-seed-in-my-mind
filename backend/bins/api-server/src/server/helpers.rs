@@ -9,8 +9,8 @@ use uuid::Uuid;
 
 use crate::server::errors::json_error;
 use crate::server::types::{
-    IdeasTopOrder, OrderingProfileInput, PrivateOrderingItemPayload,
-    RelativeImportanceDirection, VineTypeInput,
+    IdeasTopOrder, OrderingProfileInput, PrivateOrderingItemPayload, RelativeImportanceDirection,
+    VineTypeInput,
 };
 
 const INVALID_FIELD_LENGTH_CODE: &str = "invalid_field_length";
@@ -66,9 +66,7 @@ pub(crate) fn parse_vine_type_input(input: &VineTypeInput) -> Result<i16, Respon
     }
 }
 
-pub(crate) fn parse_ordering_profile_input(
-    input: &OrderingProfileInput,
-) -> Result<i16, Response> {
+pub(crate) fn parse_ordering_profile_input(input: &OrderingProfileInput) -> Result<i16, Response> {
     match input {
         OrderingProfileInput::String(value) => match value.trim() {
             "vine" => Ok(0),

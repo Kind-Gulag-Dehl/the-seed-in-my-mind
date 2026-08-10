@@ -1216,3 +1216,155 @@ This file is append-only completed-run history for Codex work in the open-core r
   - Commands and results: focused contradiction scans passed with no authoritative hits; 9 semantic assertions passed; Markdown fence/control-character validation passed for 17 scoped files; scoped `git diff --check` passed with line-ending warnings only. Documentation-only work, so no build or runtime tests were run.
   - Failures and resolution: the first contradiction scan exposed obsolete personal-publication wording and importance-derived tribe membership, both corrected; the first Markdown check found a pre-existing unmatched terminal fence in Appendix A, which was removed; added trailing spaces and a duplicate conformance bullet were corrected.
   - Unresolved risks and follow-ups: no runtime schema, migration, API/DTO, UI, or compatibility transition was implemented. Existing canonical data, if any, needs an explicit migration/compatibility decision before implementation. Planning-only generated exact-source snapshots remain historical non-accepted artifacts and may be regenerated later. Open Core authority must integrate before private downstream implementation.
+
+- 2026-07-26 18:13:35 -04:00
+  - Active task ID: `OPENCORE-IDENTITY-SOURCE-INTEGRITY-001` under registered cross-repository task `INTEGRATION-SEED-V4-PILOT-001`.
+  - Track name: Open-core runtime, conformance, and Seed V4 integration.
+  - Repository name: the-seed-in-my-mind-open-core.
+  - Repository role: authoritative public/open-core.
+  - Codex conversation label: Control Room coordinated parallel batch / Maps, World & Launch Integration workstream.
+  - Active-task overlap detected: coordinated overlap only. The shared task explicitly divided the identity-source repair from the concurrent Profile-v0 importer sub-run; `backend/bins/seed-importer/**` was not touched.
+  - Cross-repository: yes; counterpart task `INTEGRATION-SEED-V4-PILOT-001` exists in `A:\the-seed-in-my-mind`, but no private-repository file was modified.
+  - Task summary: Repaired the authoritative identity-admission source's eight-pass UTF-8/Windows-1252 mojibake through a mechanically reversible, meaning-preserving transform; normalized one CR to LF; preserved frozen V3 bytes/hashes as history; added one explicit non-authoritative negative fixture and one focused source-integrity harness.
+  - Files changed:
+    - `docs/identity-admission-and-invitation-capacity-spec-v0.md`
+    - `docs/conformance/identity-admission-source-encoding-negative.v0.json`
+    - `scripts/identity-source-integrity-harness.mjs`
+    - `docs/reports/seed-v4/seed-v4-identity-source-integrity-report.md`
+    - `docs/codex-devlog.md`
+    - `docs/codex-notes.md`
+  - Commands and results:
+    - Baseline commit `6068072160fc032eb1ec3b7641cb917c38f08776` confirmed.
+    - Pre-repair worktree SHA-256 `dd28615f...f73b1` and frozen V3 blob SHA-256 `914effee...a20b01` confirmed; removing the single CR made the worktree bytes exactly equal the frozen blob.
+    - Exact eight-pass inverse inventory proved 110 `U+2019`, 28 `U+2192`, 9 `U+201C`, 9 `U+201D`, and 12 `U+2014` locations; a ninth inverse stopped because `U+2192` is not Windows-1252-encodable.
+    - Deterministic bulk transform produced 445,992 UTF-8 bytes with SHA-256 `063c7db8f73c79e50db870d7a43392188dc2a42f377211117d31f10301445a0c`.
+    - `node --check scripts/identity-source-integrity-harness.mjs` passed.
+    - `node scripts/identity-source-integrity-harness.mjs` passed strict UTF-8, NFC, LF-only, no-BOM, no-replacement, no-known-mojibake, exact Unicode inventory, byte-stable reconstruction normalization, exact frozen-V3 round trip, and expected negative-fixture rejection.
+    - Heading/line validation passed at 847 headings and 13,953 line objects.
+    - Focused `git diff --check` passed with a Windows LF-to-CRLF warning only.
+  - Failures and resolution: two exploratory inline Node commands failed before editing because of command-line quoting and an unbound `String.fromCodePoint` callback; both were corrected, produced no file changes, and did not affect the repair proof.
+  - Unresolved risks and follow-ups:
+    - Git reports that a future worktree rewrite may convert LF to CRLF under the current Windows attributes/configuration. The current source is LF-only and the harness fails closed if conversion occurs; changing `.gitattributes` was outside the authorized file claim.
+    - The repaired source has a new source hash. The old V3 reconstruction and freeze remain historical evidence and were intentionally not regenerated or ratified.
+    - `INTEGRATION-SEED-V4-PILOT-001` remains active for the concurrent Profile-v0 importer work; this sub-run did not edit the shared active-task entry.
+
+- 2026-07-26 18:35:00 -04:00
+  - Active task ID: `OPENCORE-SEED-V4-PROFILE0-VALIDATION-001` under registered cross-repository task `INTEGRATION-SEED-V4-PILOT-001`.
+  - Track name: Open-core runtime, conformance, and Seed V4 integration.
+  - Repository name: the-seed-in-my-mind-open-core.
+  - Repository role: authoritative public/open-core.
+  - Codex conversation label: Control Room coordinated parallel batch / Maps, World & Launch Integration workstream.
+  - Active-task overlap detected: coordinated overlap only. This sub-run changed only `backend/bins/seed-importer/src/main.rs`, its focused report, and append-only coordination records; it did not touch the concurrently owned identity-admission source or conformance repair artifacts.
+  - Cross-repository: yes; the exact private V4 package was read from the counterpart repository, but no private file was modified.
+  - Task summary: Added a separate fail-closed `--validate-only` path for the exact unsigned, noncanonical `seed-v4-pilot-manifest-v1` package. It independently verifies manifest/component commitments, deterministic UUIDv7 records, 50 ideas and 600 representations, native Orderings, provenance/review boundaries, 49 complete plus one explicitly unresolved universal profile, DEC-037 derived ranks, relative contexts, unsigned Profile-v0 templates, and isolated import-projection status.
+  - Zero-write boundary: V4 detection and `--validate-only` enforcement execute before `DATABASE_URL`, pool, transaction, or canonical mutation setup. The exact package passed with `canonical_writes=0`; the same package without `--validate-only` rejected before database access as ineligible for canonical import, signing, or genesis.
+  - Verification: exact package counts were 50 ideas, 600 representations, 84 connections, 3 native Orderings, 50 universal profiles, and 120 relative contexts; component digest `8cca9190326dd6afe4519b344c15b9274c146bee74398efa212a16f981862880`. `cargo check -p seed-importer` passed and `cargo test -p seed-importer` passed 6/6. Private independent evidence reported 21/21 structural checks, 0 failures.
+  - Safety: no database was contacted; `seed_dev` was not touched. No canonical import, signing, genesis, full-Seed generation, stage, commit, push, deployment, or private integration occurred. The three retained Tempo files remained at their previously recorded hashes.
+  - Detailed evidence: `docs/reports/seed-v4/seed-v4-pilot-profile0-validation.md`.
+  - Status: focused sub-run complete; shared task remains active for downstream package regeneration and review readiness.
+
+- 2026-07-27 10:24:00 -04:00
+  - Active task ID: `INTEGRATION-GATE0-RATIFICATION-001`.
+  - Track name: Public protocol authority and cross-repository Gate 0 reconciliation.
+  - Repository name: the-seed-in-my-mind-open-core.
+  - Repository role: authoritative public/open-core.
+  - Codex conversation label: Control Room coordinated parallel documentation batch.
+  - Active-task overlap detected: the active Seed V4 importer/source-repair work, blocked Tempo work, and unrelated changes remained protected. No runtime, identity-admission, V4, Tempo, or private-product file was modified by this sub-run.
+  - Cross-repository: yes; private counterpart `INTEGRATION-GATE0-RATIFICATION-001` applied downstream product/control-plane/Seed-successor documentation after this upstream authority reconciliation.
+  - Task summary: Reconciled DEC-054 through DEC-064 across nine public authority/boundary documents. Established the pre-genesis document-authority versus post-genesis replay-derived graph-authority boundary; ordinary idea-based rulebooks; the complete idea-native Genesis Seed; non-coercive external authority; verdict/implementation/completion separation; private semantic journals outside canonical conformance; new-ID delayed publication; no public noncanonical human-writing plane; and noncanonical Public AI/model/agent/simulation boundaries.
+  - Files changed: `docs/authoritative-index.md`, `docs/protocol v5.md`, `docs/protocol v5-appendix-a.md`, `docs/governance-spec.md`, `docs/offline-and-mindseed-spec.md`, `docs/ai-boundaries-spec.md`, `docs/canonical-encoding-and-hashing-spec.md`, `docs/deterministic-replay-and-merge-spec.md`, `docs/open-core-split-and-data-boundary-spec.md`, and `docs/reports/gate0/integration-gate0-ratification-001-open-core-report.md`.
+  - Validation: Tempo/Cycle conformance 29/29; native Ordering conformance 10/10; frontend/backend boundary checks pass; focused contradiction, Markdown fence/control-character, and scoped diff checks pass.
+  - Owner closeout: downstream DEC-065 selects a short Public AI initiator correction window followed by shared safety/privacy/lifecycle control. It is private noncanonical product policy and requires no additional Open Core semantic change in this batch.
+  - Boundaries: no runtime, encoding bytes, schema, migration, API/DTO, UI, database, Seed artifact, import, signing, genesis, canonical write, deployment, staging, commit, or push occurred.
+- 2026-07-27 11:53:45 -04:00
+  - Active task ID: `INTEGRATION-SEED-GRAPH-MATERIALIZATION-001`.
+  - Track name: Public authority maintenance and graph-native Seed integration.
+  - Repository name: the-seed-in-my-mind-open-core.
+  - Repository role: authoritative public/open-core.
+  - Codex conversation label: Control Room parallel materialization batch.
+  - Active-task overlap detected: none on claimed files; active Profile-v0/V4 work, blocked Tempo authority, and unrelated changes remained protected.
+  - Cross-repository: yes; private counterpart used the same task ID.
+  - Task summary: Proved Appendix A and the canonical event registry each contain exactly 38 unique event names, corrected the derived registry's single 39-to-38 clerical count, and supplied current Open Core semantic/event materialization evidence for downstream Gate 04 closure.
+  - Files changed: `docs/protocol-event-registry.v1.md`, `docs/reports/seed-graph-native-materialization-open-core.v1.md`, and coordination records. The specialist also produced its explicitly assigned downstream private evidence JSON/report.
+  - Commands and results: Appendix A/event-table extraction and symmetric comparison (pass: 38/38, zero difference); Open Core unit/event materialization coverage (pass: 58/58 units and 38/38 events, zero owner ambiguity); canonical catalog count recheck (pass: 38).
+  - Unresolved risks and follow-ups: none in Open Core. Downstream `GATE-SEED-003-05` owner ratification remains required before candidate generation.
+  - Boundaries: no new event type, protocol-policy change, runtime, schema, API/DTO, database, candidate, import, genesis, signature, canonical write, bundle, deployment, staging, commit, push, or PR occurred.
+  - Required merge order completed: derived Open Core registry correction and authority evidence -> private semantic materialization integration and Gate 04 closure.
+- 2026-07-27 13:44:03 -04:00
+  - Active task ID: `DOCS-PROTOCOL-POD-ALIGNMENT-001`.
+  - Track name: Public documentation and protocol consistency.
+  - Repository name: the-seed-in-my-mind-open-core.
+  - Repository role: authoritative public/open-core.
+  - Codex conversation label: Protocol POD alignment with token specification.
+  - Active-task overlap detected: no claimed-file overlap. Existing unrelated Protocol V5 edits concerning genesis, private publication, governance activation, and associated semantics were inspected and preserved; active Seed V4 and blocked Tempo work remained untouched.
+  - Cross-repository: no. The private repository's token/protocol documents are subordinate pointers to this Open Core authority and required no downstream semantic edit.
+  - Task summary: Reconciled Protocol V5 with the token specification and the owner's explicit clarification. POD is now a non-transferable, replay-derived current share of universal importance attributed through eligible canonical events of living verified humans. It is not a permanent earned balance or positively cumulative score and may rise, fall, or become zero at later qualifying cycle boundaries.
+  - Historical/death semantics: preserved immutable canonical events, attribution lineage, and completed-cycle POD derivations while distinguishing them from current POD. Deceased identities cease to be POD sinks, have zero POD in future cycles, and cannot transfer or bequeath POD; only eligible POINT and explicitly transferable responsibilities may follow succession rules.
+  - Token-spec repair: completed the living-share definition and formal boundary-indexed POD formula, and replaced contradictory fraud-era balance-freezing language with prospective eligibility filtering and recomputation.
+  - Files changed: `docs/token-spec.md`, `docs/protocol v5.md`, `docs/map.protocol-v5.md`, `docs/codex-active-tasks.md`, and `docs/codex-devlog.md`.
+  - Commands and results: authority/precedence and coordination preflight (pass); scoped dirty-diff inspection (pass; unrelated edits preserved); UTF-8 decode checks (pass); required living-POD, rise/fall/zero, universal-importance, death, non-inheritance, and historical-boundary semantics scan (pass); forbidden permanent/cumulative/inherited/frozen-balance protocol phrase scan (pass: zero); selected protocol-anchor/map synchronization (pass); `git diff --check` on semantic files (pass).
+  - Failure and resolution: the first broad patch matched PowerShell's incorrectly displayed mojibake rather than the file's UTF-8 curly punctuation and did not apply. No file content changed in that failed attempt; the same edit was applied in smaller UTF-8-safe patches.
+  - Unresolved risks and follow-ups: no runtime implementation or conformance-vector behavior was changed or tested. Implementations that currently persist cumulative POD will require a separately scoped implementation audit before token activation.
+  - Required merge order completed: authoritative token definition clarification -> Protocol V5 reconciliation -> protocol map synchronization.
+  - Boundaries: documentation only; no runtime, schema, encoding, API/DTO, database, canonical event, Seed artifact, import, genesis, signature, bundle, deployment, staging, commit, push, or PR occurred.
+- 2026-07-28 03:32:41 -04:00
+  - Active task ID: `INTEGRATION-SEED-V4-PILOT-001` completion -> `INTEGRATION-SEED-CONFORMANCE-BINDINGS-001` handoff.
+  - Track name: Open-core Seed importer validation and cross-repository ownership.
+  - Repository name: the-seed-in-my-mind-open-core.
+  - Repository role: authoritative public/open-core.
+  - Codex conversation label: Control Room ownership handoff.
+  - Active-task overlap detected: resolved through an exact ownership transfer; blocked Tempo and all unrelated dirty work remained protected.
+  - Cross-repository: yes; the private counterpart narrowed its V4 claims and registered the same receiving task.
+  - Task summary: Closed the Open Core portion of the V4 shared task and handed its only importer surface, including all six co-located tests, to `INTEGRATION-SEED-CONFORMANCE-BINDINGS-001`. Conformance-bindings implementation did not begin.
+  - Files changed: `docs/codex-active-tasks.md` and append-only `docs/codex-devlog.md`.
+  - Exact dirty handoff: `backend/bins/seed-importer/src/main.rs` remains byte-for-byte at SHA-256 `acc40792a2db107e8da479e83384b083338e89fb1e8cec4b969d80258bd95510` with a `+1677/-25` working diff. `backend/bins/seed-importer/Cargo.toml` is clean, and no additional seed-importer test file exists.
+  - Commands and results: Windows Rust bootstrap passed with Cargo 1.93.0 and rustc 1.93.0; `cargo check -p seed-importer` passed; `cargo test -p seed-importer` passed 6/6; the exact private V4 manifest passed `--validate-only` with `canonical_writes=0`, 50 ideas, 600 representations, 84 connections, three Orderings, 50 universal profiles, 120 relative contexts, and non-manifest digest `8cca9190326dd6afe4519b344c15b9274c146bee74398efa212a16f981862880`.
+  - Evidence correction: the importer contains and runs six tests. Repository 8/8 references are unrelated event-log admission tests and are not claimed as importer validation.
+  - Preserved work: the completed identity-source repair, negative fixture, source-integrity harness, V4 reports, importer bytes, and all unrelated tracked/untracked changes remain in place. Nothing was reset, restored, reformatted, staged, committed, pushed, or deleted.
+  - Boundaries: no canonical import, database contact, canonical write, genesis, signing, full-Seed generation, deployment, or authority change occurred.
+  - Required merge order: preserved Open Core importer bytes and conformance evidence -> separately authorized Open Core conformance implementation -> private importer/API bindings -> V4 read-only consumption of the settled validation result.
+
+- 2026-07-28 12:02:07 -04:00
+  - Active task ID: `INTEGRATION-SEED-CONFORMANCE-BINDINGS-001`.
+  - Track name: Open-core runtime, conformance, and cross-repository Seed integration.
+  - Repository name: the-seed-in-my-mind-open-core.
+  - Repository role: authoritative public/open-core.
+  - Codex conversation label: Control Room ownership handoff.
+  - Active-task overlap detected: coordinated handoff only. Existing Gate 0 authority, identity-source-integrity, V4 importer, and blocked Tempo work was preserved; no reset, restore, staging, commit, push, or deletion occurred.
+  - Cross-repository: yes. This entry closes the non-database Open Core phase; the same task remains active for guarded migration validation and the private counterpart implementation.
+  - Task summary: bound the canonical representation vocabulary version and author to every representation event/state projection, and bound typed subjects plus aligned per-item roles to standardized native Orderings. Preserved one separate title slot plus twelve description cells; retained the two-Ordering potential/proposed Action Rail model; added no inference, default, legacy current-profile alias, or dual substrate.
+  - Runtime/materialization: added migration `0025_seed_conformance_bindings.sql`; strict event validation; deterministic replay; representation and Ordering snapshot commitments; storage/read projections; public representation API/DTO mapping; frontend canonical types; and fail-closed importer validation.
+  - Conformance: expanded native Ordering vectors from 10 to 20 and added 18 representation-binding vectors covering 12/12 description cells. Exact canonical JSON/BLAKE3 vectors commit Ordering subjects/roles and representation kind/authorship/vocabulary fields.
+  - Commands and results: full Rust workspace tests 147/147; workspace all-target compile pass; event-log 44/44; replay 24/24; snapshot 9/9; importer 6/6; JavaScript conformance 67/67 (Tempo 29, Ordering 20, representation bindings 18); canonical DTO agreement 22/22; Open Core frontend boundaries, tests 2/2, and production build pass.
+  - V4 preservation: exact unsigned noncanonical V4 pilot remains validate-only with `canonical_writes=0`, 50 ideas, 600 representations, 84 connections, three Orderings, 50 universal profiles, 120 relative contexts, and digest `8cca9190326dd6afe4519b344c15b9274c146bee74398efa212a16f981862880`.
+  - Database limitation: neither `SEED_TEST_DATABASE_ADMIN_URL` nor `DATABASE_URL` was available. Migration 0025 received static review, including a corrected Action Rail base-lane trigger boundary, but was not applied to a disposable PostgreSQL database in this run.
+  - Detailed evidence: `docs/reports/seed-conformance/integration-seed-conformance-bindings-001-open-core-report.md`.
+  - Boundaries: no private-repository edit, import, canonical write, genesis, signing, publication, bundle, deployment, staging, commit, push, or PR.
+
+- 2026-08-10 12:16:48 -04:00
+  - Active task ID: OPENCORE-M1-REVIEWER-REPAIR-001
+  - Track name: Open-core runtime, conformance, reviewer tooling, and closeout coordination
+  - Repository name: the-seed-in-my-mind-open-core
+  - Repository role: authoritative public/open-core
+  - Codex conversation label: Repair - Open Core M1 Baseline
+  - Active-task overlap detected: authorized inheritance from INTEGRATION-SEED-CONFORMANCE-BINDINGS-001; unrelated dirty work preserved.
+  - Cross-repository: private repository inspected read-only only; no private bytes changed.
+  - Task summary: repaired the Open Core snapshot verifier section-set drift, current-profile bundled Seed idea types, exact-prefix migration-0025 matrix, isolated artifact output, and unsafe reviewer/demo/backend/export orchestration.
+  - Historical Active reconciliation: TEMPO-005D and TEMPO-005A were stale blocked rows. Their full history and blockers remain in this append-only devlog; neither retained Tempo authority file was modified. Both rows were removed from Active.
+  - Files changed: snapshot builder/verifier/library export; three pre-existing rustfmt-only api-server files; bundled Seed fixtures; guarded database/reviewer/backend/demo/export scripts and manifest; reviewer/status/registry/report/coordination documentation.
+  - Commands/results: Rust bootstrap passed; snapshot-verify 2/2 passed; PowerShell/JavaScript/JSON/fixture syntax checks passed; all 253 bundled idea_create records have valid idea_type.
+  - Blocker: guarded PostgreSQL execution was not authorized because the only available credential was stored in the private .env and the task forbids touching secrets. No database was contacted or modified by this run.
+  - Safety: seed_dev, all persistent databases, the two seed_admission_p3_test_32944_* databases, private files, secrets, Git index/history/remotes, and release/genesis outputs were untouched.
+  - Status: blocked pending user-owned npm run verify:seed-bindings-db with SEED_TEST_DATABASE_ADMIN_URL already set process-locally, followed by remaining demo/export/full-suite gates.
+- 2026-08-10 13:20:41 -04:00
+  - Active task ID: OPENCORE-M1-REVIEWER-REPAIR-001 (including inherited INTEGRATION-SEED-CONFORMANCE-BINDINGS-001 closeout)
+  - Track name: Open-core runtime, conformance, reviewer tooling, and closeout coordination
+  - Repository role: authoritative public/open-core
+  - Active-task overlap detected: authorized inheritance only; unrelated dirty work remained protected.
+  - Task summary: completed builder/verifier representation parity, current-profile fixtures, migration-0025 semantics, reviewer/demo/backend/export hardening, and reviewer-status reconciliation.
+  - Verification: Rust fmt/build/all-target tests passed; conformance 67/67; DTO 22/22; boundaries and identity integrity passed; frontend 2/2/build passed; migration matrix 19/19 passed; source and exported demos passed; documented external-root export generation/smoke/cleanliness passed.
+  - Database cleanup: zero seed_opencore_m1_reviewer_repair_001_* databases remain; seed_admission_p3_test_32944_* count remained 2; zero api-server.exe processes and zero task demo/export temp roots remain.
+  - Repairs during validation: expected psql rejection capture, explicit description-complexity non-null guard, exact owned-server launch, explicit outside-repo export root, verifier root forwarding, and exported conformance-fixture allowlist.
+  - Cross-repository: private repository was not modified. Exact downstream obligations are snapshot representations parity/goldens and migration-0030 non-null parity, followed by guarded private verification.
+  - Safety: no seed_dev, persistent database, secret, Git index/history/remote, zip/release, genesis, or historical artifact was touched.
+  - Status: complete and awaiting Control Room authorization for the audited three-cohort Git checkpoint.

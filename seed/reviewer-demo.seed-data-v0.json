@@ -19,6 +19,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "59427f80-5901-7128-990e-90b49f288bcc",
+        "idea_type": "conceptual_idea",
         "title": "abstraction over redaction",
         "sentence": "abstraction over redaction",
         "paragraph": "Abstraction preserves meaning at safe levels; redaction is a last-resort, explicit action.",
@@ -32,6 +33,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "e4eb0525-bba3-764f-96c7-f4afdb0f99c5",
+        "idea_type": "conceptual_idea",
         "title": "acceleration capture",
         "sentence": "acceleration capture",
         "paragraph": "Speed and volume allow coordinated actors to force outcomes before others can examine or respond, creating brittle and unaccountable power.",
@@ -45,6 +47,7 @@
       "speaker_identity_id": "380b7817-db3b-7b76-8cf3-87df879ddddb",
       "payload": {
         "idea_id": "0cc62835-6d37-75b6-bc5a-7ea0c73afa89",
+        "idea_type": "conceptual_idea",
         "title": "accountability and budgets",
         "sentence": "accountability and budgets",
         "paragraph": "accountability and budgets",
