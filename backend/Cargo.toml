@@ -13,6 +13,7 @@ members = [
   "crates/api-types-canonical",
   "crates/api",
   "crates/tooling",
+  "crates/canonical-history",
   "crates/tests",
   "bins/api-server",
   "bins/replay-worker",
@@ -23,6 +24,7 @@ members = [
   "bins/seed-importer",
   "bins/curator-admin",
   "bins/verify-replay",
+  "bins/canonical-history-transfer",
 ]
 # Stage0 production/default workflows intentionally exclude stage1 experimental stubs.
 default-members = [
@@ -37,12 +39,14 @@ default-members = [
   "crates/api-types-canonical",
   "crates/api",
   "crates/tooling",
+  "crates/canonical-history",
   "crates/tests",
   "bins/api-server",
   "bins/snapshot-builder",
   "bins/snapshot-verify",
   "bins/payload-hash-seeder",
   "bins/seed-importer",
+  "bins/canonical-history-transfer",
 ]
 resolver = "2"
 

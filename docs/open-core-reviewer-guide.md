@@ -35,9 +35,23 @@ Windows PowerShell, Rust stable, Node.js 20+, Postgres with psql, and a process-
 
     powershell -ExecutionPolicy Bypass -File scripts/grant-reviewer-quickstart.ps1 -Profile 30
 
-The longer path adds an isolated reference-frontend build and the guarded 19-case migration-0025 semantic matrix. Both paths create only exact task-prefixed databases and print cleanup evidence.
+The longer path adds an isolated reference-frontend build, the guarded 19-case migration-0025 semantic matrix, and the canonical-history two-database round trip. Both paths create only exact task-prefixed databases and print cleanup evidence.
 
-## 4. Isolated export verification
+## 4. Canonical-history transfer review
+
+The package format and excluded data are documented in `docs/canonical-history-transfer.md`. Run the non-database fixture checks with:
+
+This transfer directory is a narrow canonical-history artifact, not a `.seedpkg`, closed SeedPackage profile, or Full Recovery Bundle. Recovery-profile conformance remains specification/static-vector scope.
+
+    npm run verify:canonical-history
+
+With the guarded administrator URL configured, run the full isolated round trip with:
+
+    npm run verify:canonical-history-db
+
+The database verifier proves byte-identical repeat export, validate-only with zero database writes, fresh-target import, exact retry idempotency, source/target package equality, replay/snapshot commitments and counts, fixed-snapshot API equality, and exact cleanup. It preserves the two pre-existing `seed_admission_p3_test_32944_*` databases.
+
+## 5. Isolated export verification
 
 Choose a new temporary output directory:
 
@@ -45,6 +59,6 @@ Choose a new temporary output directory:
 
 The generator verifies the explicit export root, builds/tests with temporary Cargo/frontend outputs, and runs the exported guarded demo. Do not use the zip option unless release packaging is separately authorized.
 
-## 5. Scope boundary
+## 6. Scope boundary
 
 This package does not claim a live multi-node network, complete governance/token runtime, or the proprietary product/game experience.

@@ -4,6 +4,7 @@ const APPROVED_TEST_DATABASE_PREFIXES: &[&str] = &[
     "seed_signed_ingress_test_",
     "seed_tempo_005c_r2_",
     "seed_test_",
+    "seed_opencore_canonical_history_transfer_001_",
 ];
 const PROTECTED_DATABASES: &[&str] = &[
     "seed_dev",
@@ -88,6 +89,13 @@ mod tests {
             )
             .unwrap(),
             "seed_admission_p3_test_019f"
+        );
+        assert_eq!(
+            require_disposable_database_url(
+                "postgresql://seed_app@127.0.0.1:5432/seed_opencore_canonical_history_transfer_001_source"
+            )
+            .unwrap(),
+            "seed_opencore_canonical_history_transfer_001_source"
         );
     }
 

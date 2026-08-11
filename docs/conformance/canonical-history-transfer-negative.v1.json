@@ -1,0 +1,36 @@
+{
+  "schema_version": "canonical-history-transfer-negative-fixtures-v1",
+  "package_schema_version": "canonical-history-package-v1",
+  "cases": [
+    {
+      "id": "tampered_component",
+      "mutation": "Flip one byte in events.ndjson without updating its descriptor.",
+      "expected_failure": "component hash mismatch"
+    },
+    {
+      "id": "omitted_event",
+      "mutation": "Remove one canonical event record.",
+      "expected_failure": "manifest event_count mismatch or event_index omission"
+    },
+    {
+      "id": "reordered_events",
+      "mutation": "Swap two adjacent event records.",
+      "expected_failure": "event records are reordered or duplicated"
+    },
+    {
+      "id": "duplicate_event",
+      "mutation": "Append a second copy of an existing event record.",
+      "expected_failure": "duplicate canonical position or duplicate event_id"
+    },
+    {
+      "id": "unsupported_version",
+      "mutation": "Replace the package or event-record schema version with a future value.",
+      "expected_failure": "unsupported schema version"
+    },
+    {
+      "id": "oversize_payload",
+      "mutation": "Validate with a payload limit smaller than the decoded canonical payload.",
+      "expected_failure": "canonical payload exceeds configured limit"
+    }
+  ]
+}

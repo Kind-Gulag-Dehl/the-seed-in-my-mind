@@ -18,6 +18,7 @@ if($Profile -eq "15"){
 }else{
  Step "run isolated demo and reference frontend verification" {powershell -ExecutionPolicy Bypass -File scripts/open-core-demo.ps1 -BuildReferenceFrontend}
  Step "run guarded migration-0025 semantic matrix" {npm run verify:seed-bindings-db}
+ Step "run guarded canonical-history two-database round trip" {npm run verify:canonical-history-db}
 }
 Write-Host "$Profile-minute path complete." -ForegroundColor Green
 Write-Host "Read docs/open-core-reviewer-guide.md and docs/open-core-implementation-status.md."

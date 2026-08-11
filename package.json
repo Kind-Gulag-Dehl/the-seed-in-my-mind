@@ -15,6 +15,8 @@
     "conformance:ordering": "node ./scripts/native-ordering-fixture-harness.mjs",
     "conformance:seed-bindings": "node ./scripts/seed-conformance-bindings-harness.mjs",
     "verify:seed-bindings-db": "powershell -ExecutionPolicy Bypass -File scripts/verify-seed-conformance-bindings-postgres.ps1",
+    "verify:canonical-history": "cargo test --manifest-path backend/Cargo.toml -p canonical-history --all-targets",
+    "verify:canonical-history-db": "powershell -ExecutionPolicy Bypass -File scripts/verify-canonical-history-transfer-postgres.ps1",
     "conformance:tempo-cycle": "node ./scripts/tempo-cycle-fixture-harness.mjs",
     "build": "npm --prefix frontend/open-core-reference run build",
     "verify:boundaries": "node ./scripts/check-open-core-boundaries.mjs --frontend-dir frontend/open-core-reference",

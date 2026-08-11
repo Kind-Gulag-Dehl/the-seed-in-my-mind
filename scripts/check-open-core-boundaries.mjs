@@ -48,6 +48,15 @@ const backendForbiddenPatterns = [
   /api-types-private/,
   /api_types_private/
 ];
+const canonicalHistoryForbiddenPatterns = [
+  /\b(?:accounts|auth_sessions|private_orderings|private_vines|documents|document_chunks|ai_sessions|ai_messages|prompts|secrets)\b/i
+];
+
+const canonicalHistoryRoots = [
+  ["backend", "crates", "canonical-history"],
+  ["backend", "bins", "canonical-history-transfer"]
+];
+
 
 const backendIgnoredPathSegments = [
   `${path.sep}target${path.sep}`,
@@ -132,6 +141,41 @@ const runBackendBoundaryCheck = async () => {
   console.log(`[open-core-boundary] backend check ok (scanned ${files.length} files)`);
 };
 
+const runCanonicalHistoryBoundaryCheck = async () => {
+  const files = (
+    await Promise.all(
+      canonicalHistoryRoots.map((segments) => walk(path.join(repoRoot, ...segments)))
+    )
+  ).flat();
+  const violations = [];
+
+  for (const filePath of files) {
+    const content = await fs.readFile(filePath, "utf8");
+    content.split(/\r?\n/).forEach((line, index) => {
+      const hit = canonicalHistoryForbiddenPatterns.find((pattern) => pattern.test(line));
+      if (hit) {
+        violations.push({
+          file: toPosixRelative(filePath),
+          line: index + 1,
+          text: line.trim()
+        });
+      }
+    });
+  }
+
+  if (violations.length > 0) {
+    console.error("[open-core-boundary] canonical-history private authority references found:");
+    violations.forEach((violation) => {
+      console.error(`- ${violation.file}:${violation.line} -> ${violation.text}`);
+    });
+    throw new Error("[open-core-boundary] canonical-history boundary check failed");
+  }
+
+  console.log(
+    `[open-core-boundary] canonical-history check ok (scanned ${files.length} files)`
+  );
+};
+
 const main = async () => {
   if (!await fs
     .stat(path.join(repoRoot, options.frontendDir))
@@ -142,6 +186,7 @@ const main = async () => {
 
   runFrontendBoundaryCheck();
   await runBackendBoundaryCheck();
+  await runCanonicalHistoryBoundaryCheck();
   console.log("[open-core-boundary] all checks passed");
 };
 

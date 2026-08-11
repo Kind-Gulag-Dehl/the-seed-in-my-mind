@@ -5,6 +5,9 @@
     ".github/workflows/open-core-boundary.yml",
     "backend/**",
     "docs/authoritative-index.md",
+    "docs/collective-seedpackage-and-recovery-profile-v0.md",
+    "docs/conformance/collective-seedpackage-profile-v0.schema.json",
+    "docs/conformance/collective-seedpackage-profile-v0.vectors.json",
     "docs/conformance/**",
     "docs/identity-admission-and-invitation-capacity-spec-v0.md",
     "docs/api-contract-read-only.md",
@@ -41,6 +44,7 @@
     "docs/open-core-demo-flow.md",
     "docs/open-core-implementation-status.md",
     "docs/open-core-reviewer-guide.md",
+    "docs/canonical-history-transfer.md",
     "docs/open-core-split-and-data-boundary-spec.md",
     "docs/pod-consensus-and-canonical-publication-spec.md",
     "docs/privacy-and-high-risk-submission-spec.md",
@@ -62,6 +66,7 @@
     "package-lock.json",
     "scripts/check-open-core-boundaries.mjs",
     "scripts/grant-reviewer-quickstart.ps1",
+    "scripts/verify-canonical-history-transfer-postgres.ps1",
     "scripts/open-core-demo.ps1",
     "scripts/verify-seed-conformance-bindings-postgres.ps1",
     "scripts/verify-open-core-export.mjs",
@@ -164,6 +169,11 @@
       "exclude_globs": [
         "backend/crates/api-types-private/**"
       ]
+    },
+    {
+      "glob": "backend/**/canonical-history*/**/*.{rs,toml}",
+      "pattern": "\\b(accounts|auth_sessions|private_orderings|private_vines|documents|document_chunks|ai_sessions|ai_messages|prompts|secrets)\\b",
+      "description": "canonical-history transfer tooling must not read or copy private or derived authority"
     }
   ],
   "required_root_files": [
@@ -182,6 +192,9 @@
     "docs/open-core-implementation-status.md",
     "docs/open-core-reviewer-guide.md",
     "docs/authoritative-index.md",
+    "docs/collective-seedpackage-and-recovery-profile-v0.md",
+    "docs/conformance/collective-seedpackage-profile-v0.schema.json",
+    "docs/conformance/collective-seedpackage-profile-v0.vectors.json",
     "docs/identity-admission-and-invitation-capacity-spec-v0.md",
     "docs/map.index.md",
     "docs/conformance/canonical-event-signature-profile-v0.vectors.json",
@@ -205,7 +218,11 @@
     "tools/open-core/verify-public-api-contract.mjs",
     "tools/open-core/public-api-contract.v1.json",
     "tools/open-core/canonical-dto-surface.json",
-    "tools/open-core/smoke-export.ps1"
+    "tools/open-core/smoke-export.ps1",
+    "docs/canonical-history-transfer.md",
+    "docs/conformance/canonical-history-transfer-negative.v1.json",
+    "scripts/verify-canonical-history-transfer-postgres.ps1",
+    "tools/open-core/canonical-history-package.v1.schema.json"
   ],
   "verification_commands": [
     [
@@ -268,6 +285,7 @@
       "path": "backend",
       "required_workspace_members": [
         "crates/common",
+        "crates/canonical-history",
         "crates/encoding",
         "crates/event-log",
         "crates/replay",
@@ -277,7 +295,8 @@
         "bins/api-server",
         "bins/snapshot-builder",
         "bins/snapshot-verify",
-        "bins/seed-importer"
+        "bins/seed-importer",
+        "bins/canonical-history-transfer"
       ],
       "commands": [
         [

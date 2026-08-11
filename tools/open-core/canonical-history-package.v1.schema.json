@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://seed.example/open-core/canonical-history-package.v1.schema.json",
+  "title": "Open Core canonical-history package manifest v1",
+  "description": "Machine schema for manifest.json. The block_record and event_record definitions govern one JSON object per LF-terminated line in blocks.ndjson and events.ndjson. This narrow canonical_history tooling artifact is not a .seedpkg container, a closed SeedPackage profile, or a Full Recovery Bundle implementation.",
+  "$ref": "#/$defs/manifest",
+  "x-package-files": [
+    "manifest.json",
+    "blocks.ndjson",
+    "events.ndjson"
+  ],
+  "x-resource-limits": {
+    "package_bytes": 536870912,
+    "component_bytes": 524288000,
+    "record_bytes": 8388608,
+    "canonical_payload_bytes": 4194304,
+    "signed_candidate_bytes": 1048576,
+    "events": 10000000,
+    "blocks": 10000000
+  },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "lower_hex": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{2})+$"
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "uuid_v7": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "byte_length",
+        "blake3_256"
+      ],
+      "properties": {
+        "name": {
+          "enum": [
+            "blocks.ndjson",
+            "events.ndjson"
+          ]
+        },
+        "byte_length": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 524288000
+        },
+        "blake3_256": {
+          "$ref": "#/$defs/hash"
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "block_height",
+        "snapshot_hash",
+        "state_root_hash",
+        "title_sentence_payload_root",
+        "shared_map_commitment",
+        "active_rulebook_set_hash",
+        "last_event_id",
+        "event_count"
+      ],
+      "properties": {
+        "block_height": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "snapshot_hash": {
+          "$ref": "#/$defs/hash"
+        },
+        "state_root_hash": {
+          "$ref": "#/$defs/hash"
+        },
+        "title_sentence_payload_root": {
+          "$ref": "#/$defs/hash"
+        },
+        "shared_map_commitment": {
+          "$ref": "#/$defs/hash"
+        },
+        "active_rulebook_set_hash": {
+          "$ref": "#/$defs/hash"
+        },
+        "last_event_id": {
+          "$ref": "#/$defs/uuid_v7"
+        },
+        "event_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000000
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "height",
+        "event_count",
+        "last_event_id",
+        "open_core_migration_count",
+        "open_core_latest_migration",
+        "open_core_migration_set_hash",
+        "snapshot"
+      ],
+      "properties": {
+        "height": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "last_event_id": {
+          "$ref": "#/$defs/uuid_v7"
+        },
+        "open_core_migration_count": {
+          "const": 25
+        },
+        "open_core_latest_migration": {
+          "const": 25
+        },
+        "open_core_migration_set_hash": {
+          "$ref": "#/$defs/hash"
+        },
+        "snapshot": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/snapshot"
+            }
+          ]
+        }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "event_record_schema_version",
+        "hash_algorithm",
+        "source",
+        "components",
+        "whole_package_hash"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "canonical-history-package-v1"
+        },
+        "event_record_schema_version": {
+          "const": "canonical-event-record-v1"
+        },
+        "hash_algorithm": {
+          "const": "blake3-256"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "components": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/component"
+          }
+        },
+        "whole_package_hash": {
+          "$ref": "#/$defs/hash"
+        }
+      }
+    },
+    "block_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "block_height",
+        "block_hash",
+        "prev_block_hash"
+      ],
+      "properties": {
+        "block_height": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "block_hash": {
+          "$ref": "#/$defs/lower_hex"
+        },
+        "prev_block_hash": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/lower_hex"
+            }
+          ]
+        }
+      }
+    },
+    "event_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_schema_version",
+        "block_height",
+        "event_index",
+        "event_id",
+        "event_type",
+        "speaker_identity_id",
+        "canonical_payload_bytes_hex",
+        "signature",
+        "signature_profile",
+        "author_identity_id",
+        "public_key_ref",
+        "payload_hash",
+        "payload_binding_mode",
+        "payload_ref_hex",
+        "author_observed_at",
+        "signed_candidate_bytes_v0_hex",
+        "authored_candidate_hash_v0",
+        "publication_profile",
+        "finalized_prefix_certificate_ref",
+        "record_hash"
+      ],
+      "properties": {
+        "record_schema_version": {
+          "const": "canonical-event-record-v1"
+        },
+        "block_height": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "event_id": {
+          "$ref": "#/$defs/uuid_v7"
+        },
+        "event_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "speaker_identity_id": {
+          "$ref": "#/$defs/nullable_uuid"
+        },
+        "canonical_payload_bytes_hex": {
+          "$ref": "#/$defs/lower_hex"
+        },
+        "signature": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "signature_profile": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "author_identity_id": {
+          "$ref": "#/$defs/nullable_uuid"
+        },
+        "public_key_ref": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "payload_hash": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "payload_binding_mode": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "payload_ref_hex": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/lower_hex"
+            }
+          ]
+        },
+        "author_observed_at": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "signed_candidate_bytes_v0_hex": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/lower_hex"
+            }
+          ]
+        },
+        "authored_candidate_hash_v0": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "publication_profile": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "finalized_prefix_certificate_ref": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "record_hash": {
+          "$ref": "#/$defs/hash"
+        }
+      }
+    },
+    "nullable_string": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "nullable_uuid": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/uuid"
+        }
+      ]
+    }
+  }
+}
